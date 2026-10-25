@@ -3143,6 +3143,7 @@ body.theme-light .hub-item-pill {
     background: rgba(255, 255, 255, 0.3) !important;
   }
 
+  .tools-stack-menu.open-mobile-sheet,
   .tools-stack-wrapper.open .tools-stack-menu {
     display: flex !important;
     flex-direction: column !important;
@@ -3197,6 +3198,19 @@ body.theme-light .hub-item-pill {
 
   .tools-stack-menu .item-desc {
     font-size: 11.5px !important;
+  }
+
+  /* Responsive modals on mobile */
+  .update-modal-card,
+  .modal-dialog,
+  .radar-modal-card,
+  .scheduler-modal-card,
+  .analytics-modal-card {
+    max-width: calc(100vw - 20px) !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin: auto !important;
   }
 }
 

@@ -232,21 +232,46 @@ document.addEventListener("DOMContentLoaded", () => {
   // Quản lý Ngăn Xếp Tiện Ích MT01 (Tools Stack Dropdown & Mobile Bottom Sheet)
   const toolsBackdrop = document.getElementById("toolsBackdrop");
   const btnCloseToolsMenu = document.getElementById("btnCloseToolsMenu");
+  const toolsStackMenu = document.getElementById("toolsStackMenu");
+
+  function adjustToolsMenuPlacement() {
+    if (window.innerWidth <= 992) {
+      if (toolsStackMenu && toolsStackMenu.parentElement !== document.body) {
+        document.body.appendChild(toolsStackMenu);
+      }
+    } else {
+      if (toolsStackMenu && toolsStackWrapper && toolsStackMenu.parentElement !== toolsStackWrapper) {
+        toolsStackWrapper.appendChild(toolsStackMenu);
+      }
+    }
+  }
+  adjustToolsMenuPlacement();
+  window.addEventListener("resize", adjustToolsMenuPlacement);
 
   function openToolsMenu() {
-    if (toolsStackWrapper) toolsStackWrapper.classList.add("open");
-    if (toolsBackdrop && window.innerWidth <= 992) toolsBackdrop.classList.add("active");
+    if (window.innerWidth <= 992) {
+      adjustToolsMenuPlacement();
+      if (toolsStackMenu) toolsStackMenu.classList.add("open-mobile-sheet");
+      if (toolsBackdrop) toolsBackdrop.classList.add("active");
+    } else {
+      if (toolsStackWrapper) toolsStackWrapper.classList.add("open");
+    }
   }
 
   function closeToolsMenu() {
+    if (toolsStackMenu) toolsStackMenu.classList.remove("open-mobile-sheet");
     if (toolsStackWrapper) toolsStackWrapper.classList.remove("open");
     if (toolsBackdrop) toolsBackdrop.classList.remove("active");
   }
 
-  if (btnToolsStack && toolsStackWrapper) {
+  if (btnToolsStack) {
     btnToolsStack.addEventListener("click", (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      if (toolsStackWrapper.classList.contains("open")) {
+      const isOpen = (window.innerWidth <= 992)
+        ? (toolsStackMenu && toolsStackMenu.classList.contains("open-mobile-sheet"))
+        : (toolsStackWrapper && toolsStackWrapper.classList.contains("open"));
+      if (isOpen) {
         closeToolsMenu();
       } else {
         openToolsMenu();
@@ -255,21 +280,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btnCloseToolsMenu) {
       btnCloseToolsMenu.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
         closeToolsMenu();
       });
     }
 
     if (toolsBackdrop) {
-      toolsBackdrop.addEventListener("click", () => {
+      toolsBackdrop.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         closeToolsMenu();
       });
     }
 
     document.addEventListener("click", (e) => {
-      if (!toolsStackWrapper.contains(e.target) && e.target !== toolsBackdrop) {
-        closeToolsMenu();
-      }
+      if (toolsStackMenu && toolsStackMenu.contains(e.target)) return;
+      if (toolsStackWrapper && toolsStackWrapper.contains(e.target)) return;
+      closeToolsMenu();
     });
   }
 
