@@ -23,6 +23,7 @@ TELEGRAM_CHAT_ID = "-1003940889949"
 TELEGRAM_MESSAGE_THREAD_ID = 2690
 
 URL_TRIPS = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-list-by-hub"
+URL_PROFILE = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-profile"
 
 # Danh sách 4 kho trọng điểm Miền Tây 01
 WAREHOUSES = [
@@ -51,7 +52,7 @@ def load_headers():
 
 def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False):
     """
-    Cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01 và đồng bộ lên Google Sheets
+    Cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01 và đồng bộ lên Google Sheets (đủ 36 cột)
     """
     if target_date is None:
         target_date = datetime.date.today() - datetime.timedelta(days=1)
@@ -64,7 +65,7 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
     print("=" * 60)
 
     headers = load_headers()
-    all_rows = []
+    raw_trips = []
     hub_stats = {}
 
     for wh in WAREHOUSES:
@@ -90,19 +91,48 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
                     s_date = t.get("startDateIndex")
                     e_date = t.get("endDateIndex")
                     if c_date == date_int or s_date == date_int or e_date == date_int:
-                        row = [str(t.get(k, "")) if t.get(k) is not None else "" for k in COLUMNS_36]
-                        hub_trips.append(row)
+                        hub_trips.append(t)
             else:
                 print(f"⚠️ Lỗi HTTP {res.status_code} khi cào kho {hname}")
         except Exception as e:
             print(f"❌ Lỗi kết nối API kho {hname}: {e}")
 
         hub_stats[hname] = len(hub_trips)
-        all_rows.extend(hub_trips)
+        raw_trips.extend(hub_trips)
         print(f"  📄 {hname} ({hid}) ➔ {len(hub_trips)} chuyến hoàn thành")
 
-    total_trips = len(all_rows)
-    print(f"\n👉 TỔNG CỘNG ĐÃ CÀO ĐƯỢC: {total_trips} chuyến đi ({len(COLUMNS_36)} cột) của ngày {date_display}")
+    total_trips = len(raw_trips)
+    print(f"\n👉 TỔNG CỘNG ĐÃ LẤY: {total_trips} chuyến đi ngày {date_display}")
+
+    # Lấy thêm 9 trường chi tiết (COD, giá trị, đơn hàng) từ get-trip-profile
+    profile_map = {}
+    all_codes = [t.get("tripCode") for t in raw_trips if t.get("tripCode")]
+    if all_codes:
+        print(f"🔍 Đang truy vấn get-trip-profile cho {len(all_codes)} chuyến để lấy đủ 36 cột...")
+        headers["x-warehouseid"] = "21088000"
+        batch_size = 50
+        for i in range(0, len(all_codes), batch_size):
+            chunk = all_codes[i:i + batch_size]
+            try:
+                res_prof = requests.post(URL_PROFILE, headers=headers, json={"tripCodes": chunk}, timeout=20)
+                if res_prof.status_code == 200:
+                    for p in res_prof.json().get("data", []) or []:
+                        code = p.get("tripCode")
+                        if code:
+                            profile_map[code] = p
+            except Exception as e:
+                print(f"⚠️ Lỗi get-trip-profile batch {i}: {e}")
+
+    # Ghép dữ liệu chuẩn 36 cột
+    all_rows = []
+    for t in raw_trips:
+        code = t.get("tripCode")
+        prof = profile_map.get(code, {})
+        merged = {**t, **prof}
+        row = [str(merged.get(k, "")) if merged.get(k) is not None else "" for k in COLUMNS_36]
+        all_rows.append(row)
+
+    print(f"✅ Đã chuẩn hóa toàn bộ {len(all_rows)} dòng với ĐỦ {len(COLUMNS_36)} CỘT dữ liệu!")
 
     sheet_result = "Chưa gửi (chế độ kiểm thử)"
     if send_to_sheet and total_trips > 0:
@@ -133,7 +163,7 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
     if send_to_tg:
         stat_lines = "\n".join([f"  • {h}: <b>{c} chuyến</b>" for h, c in hub_stats.items()])
         tg_msg = (
-            f"🐯 <b>[TIGER AI • CLOUD SYNC] HOÀN TẤT CÀO CHUYẾN ĐI LASTMILE (N-1)</b>\n"
+            f"🐯 <b>HOÀN TẤT CÀO CHUYẾN ĐI LASTMILE (N-1)</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
             f"📅 <b>Ngày chuyến:</b> {date_display} (Ngày hôm qua)\n"
             f"⏰ <b>Khung giờ cào:</b> 05:00 AM (Tự động 100% trên Cloud)\n"
