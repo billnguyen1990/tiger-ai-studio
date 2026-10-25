@@ -1403,15 +1403,360 @@ def export_csv():
     )
     return resp
 
+GEMINI_CONFIG_FILE = os.path.join(PARENT_DIR, "gemini_config.json")
+
+def get_gemini_api_key():
+    """Lấy Gemini API Key từ environment hoặc file gemini_config.json"""
+    env_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if env_key:
+        return env_key
+    if os.path.exists(GEMINI_CONFIG_FILE):
+        try:
+            with open(GEMINI_CONFIG_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("gemini_api_key", "").strip()
+        except Exception:
+            pass
+    return ""
+
+def save_gemini_api_key(key):
+    """Lưu Gemini API Key vào file gemini_config.json"""
+    try:
+        with open(GEMINI_CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump({"gemini_api_key": key.strip(), "updated_at": datetime.datetime.now().isoformat()}, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving Gemini API key: {e}")
+        return False
+
+def extract_ghn_order_codes(text):
+    """Trích xuất danh sách mã đơn hàng GHN (chuỗi 8-15 ký tự chữ/số, ưu tiên GYM hoặc độ dài 8)"""
+    if not text:
+        return []
+    import re
+    tokens = re.findall(r'\b[A-Za-z0-9]{8,15}\b', text)
+    ignored = {"TELEGRAM", "CANDIDATE", "SCHEDULE", "AUTOMATIC", "EXCELLENT", "YESTERDAY", "INTERNAL", "TRACUUNOI", "COPILOT", "STUDIO", "CHIASE", "CANTHO", "HAUGIANG", "SUCCESS", "DELIVER", "NOTFOUND", "STATUS", "QUESTION", "RESPONSED", "REPORTER", "PROMPT", "GEMINI"}
+    results = []
+    for t in tokens:
+        up = t.upper()
+        if up not in ignored:
+            if up.startswith("GYM") or len(up) == 8:
+                results.append(up)
+    return list(dict.fromkeys(results))
+
+ACTION_MAP = {
+    "DELIVER_SUCCESS": ("Giao Thành Công", "✅"),
+    "PICK_SUCCESS": ("Lấy Thành Công", "📦"),
+    "DELIVER_FAIL": ("Giao Thất Bại", "❌"),
+    "PICK_FAIL": ("Lấy Thất Bại / Hẹn Lại", "⚠️"),
+    "ADD_TO_TRIP": ("Lên Chuyến Xuất Bến", "🚚"),
+    "RECEIVE_AT_WAREHOUSE": ("Nhập Kho", "🏢"),
+    "UPLOAD_POD": ("Chụp Ảnh POD / Xác Nhận", "📸"),
+    "CALL_LOG": ("Gọi Khách Hàng", "📞"),
+    "UPDATE_ITEM": ("Cập Nhật Thao Tác", "📝")
+}
+
+HUB_NAMES_MAP = {
+    "21088000": "Kho Cái Răng",
+    "21985000": "Kho Bình Thủy",
+    "22862000": "Kho Vị Thanh",
+    "22917000": "Kho Ô Môn"
+}
+
+def query_ghn_order_history(order_code):
+    """Truy vấn hành trình chi tiết 1 mã đơn qua API GHN"""
+    headers_file = os.path.join(PARENT_DIR, "headers_found.json")
+    if not os.path.exists(headers_file):
+        headers_file = os.path.join(os.path.dirname(BASE_DIR), "headers_found.json")
+    
+    headers = {}
+    if os.path.exists(headers_file):
+        try:
+            with open(headers_file, "r", encoding="utf-8") as f:
+                headers = json.load(f)
+        except Exception:
+            pass
+
+    tracuu_link = f"https://tracuunoibo.ghn.vn/internal?order_code={order_code}"
+    url = "https://nhanh-api.ghn.vn/api/lastmile/history/get-order-history"
+    
+    import requests
+    try:
+        r = requests.post(url, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 10}}, headers=headers, timeout=6)
+        if r.status_code == 200:
+            events = r.json().get("data", {}).get("data", []) or []
+            if not events:
+                return {
+                    "order_code": order_code,
+                    "found": False,
+                    "status_text": "Chưa có dữ liệu hành trình",
+                    "actor": "—",
+                    "hub_name": "—",
+                    "time": "—",
+                    "trip_code": "—",
+                    "note": "Không tìm thấy lịch sử đơn hàng trên hệ thống GHN",
+                    "tracuu_link": tracuu_link
+                }
+            
+            latest = events[0]
+            action_code = latest.get("actionName") or latest.get("historyType") or "UNKNOWN"
+            note = ""
+            action_label, action_icon = ACTION_MAP.get(action_code, (action_code, "📌"))
+            
+            for ev in events:
+                data_str = ev.get("data")
+                if data_str:
+                    try:
+                        d = json.loads(data_str)
+                        if isinstance(d, dict):
+                            act = d.get("action")
+                            if act in ACTION_MAP:
+                                action_label, action_icon = ACTION_MAP[act]
+                            if d.get("failNote"):
+                                note = d.get("failNote")
+                            if d.get("nextRedoTime"):
+                                note += f" (Hẹn lại: {d.get('nextRedoTime')[:10]})"
+                            break
+                    except Exception:
+                        pass
+
+            hub_id = str(latest.get("hubId") or "")
+            hub_name = HUB_NAMES_MAP.get(hub_id, f"Kho {hub_id}" if hub_id else "Chưa rõ")
+            raw_time = latest.get("createdTime") or ""
+            fmt_time = raw_time.replace("T", " ")[:16] if raw_time else ""
+
+            return {
+                "order_code": order_code,
+                "found": True,
+                "status_text": f"{action_icon} {action_label}",
+                "actor": latest.get("createdByName") or "Hệ thống",
+                "hub_name": hub_name,
+                "time": fmt_time,
+                "trip_code": latest.get("tripCode") or "—",
+                "note": note,
+                "tracuu_link": tracuu_link
+            }
+        else:
+            return {
+                "order_code": order_code,
+                "found": False,
+                "status_text": f"Lỗi GHN API ({r.status_code})",
+                "actor": "—",
+                "hub_name": "—",
+                "time": "—",
+                "trip_code": "—",
+                "note": f"Phản hồi HTTP {r.status_code}",
+                "tracuu_link": tracuu_link
+            }
+    except Exception as e:
+        return {
+            "order_code": order_code,
+            "found": False,
+            "status_text": "Lỗi kết nối",
+            "actor": "—",
+            "hub_name": "—",
+            "time": "—",
+            "trip_code": "—",
+            "note": str(e),
+            "tracuu_link": tracuu_link
+        }
+
+def build_mt01_system_context():
+    """Xây dựng dữ liệu thời gian thực của 4 kho MT01 đưa vào ngữ cảnh Google Gemini"""
+    history_dir = os.path.join(PARENT_DIR, "kpi_history")
+    latest_kpi = {}
+    if os.path.exists(history_dir):
+        files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)
+        if files:
+            try:
+                with open(files[0], "r", encoding="utf-8") as f:
+                    latest_kpi = json.load(f)
+            except Exception:
+                pass
+    
+    context = (
+        "Bạn là TIGER AI COPILOT — Trợ lý AI điều hành tác chiến và phân tích vận hành cho Cụm Miền Tây 01 (GHN Lastmile).\n"
+        "Quy tắc xưng hô: Luôn xưng là 'Tiger AI' hoặc 'em', gọi người dùng là 'sếp' hoặc 'anh/chị'.\n"
+        "Quy tắc thuật ngữ BẮT BUỘC: Luôn dùng 'NV' (tuyệt đối KHÔNG dùng 'tài xế'), và 'NVXL' cho nhân viên xử lý kho.\n"
+        "Thông tin 4 kho trong Cụm Miền Tây 01:\n"
+        "1. Kho Giao Hàng Nặng - Cái Răng - Cần Thơ (ID: 21088000) - NVXL: Công Bằng (@CONGBANGCAIRANGCANTHO) - Đ/c: 531 Võ Nguyên Giáp, Cái Răng, Cần Thơ (Định vị: https://maps.app.goo.gl/P9uhaYrMCpTUT3no6)\n"
+        "2. Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ (ID: 21985000) - NVXL: Bảo Toàn (@Nguyen_Toan) - Đ/c: 531 Võ Nguyên Giáp, Cái Răng, Cần Thơ (Định vị: https://maps.app.goo.gl/P9uhaYrMCpTUT3no6)\n"
+        "3. Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang (ID: 22862000) - NVXL: Đức Trung (@DUCTRUNG17TUOI) - Đ/c: 175 Ba Tháng Hai, Phường 5, Vị Thanh, Hậu Giang (Định vị: https://maps.app.goo.gl/nHbev35odq76Lqm29)\n"
+        "4. Kho Giao Hàng Nặng - Ô Môn - Cần Thơ (ID: 22917000) - NVXL: Trọng Bằng (@pinca0602) - Đ/c: 1962 , Ngã 3 Nông Trường , QL91 , KV Thới Hưng , Phường Long Hưng , TP.Cần Thơ (Định vị: https://maps.app.goo.gl/R6BBvb1tbsLn2cXS6)\n\n"
+        "Cổng tra cứu mã đơn hàng nội bộ GHN: https://tracuunoibo.ghn.vn/internal?order_code={MÃ_ĐƠN}\n\n"
+    )
+    if latest_kpi:
+        context += f"Dữ liệu KPI Snapshot mới nhất: {json.dumps(latest_kpi, ensure_ascii=False)}\n\n"
+    else:
+        context += (
+            "Dữ liệu chuẩn gần nhất: Toàn cụm gán 746 đơn, GTC+LTC 639 đơn (85.66%), Bình Thủy 91.6% (Top 1), "
+            "Cái Răng 86.5%, Vị Thanh 84.3%, Ô Môn 76.5% (Cần giải trình 28 đơn thất bại).\n\n"
+        )
+    context += "Hãy trả lời thông minh, chuyên nghiệp, súc tích, định dạng markdown đẹp mắt với bảng hoặc danh sách gạch đầu dòng, kèm emoji sinh động, hỗ trợ đắc lực cho công tác quản lý điều hành."
+    return context
+
+def call_gemini_api(prompt, system_context, api_key):
+    """Gọi Google Gemini API (gemini-1.5-flash / gemini-2.0-flash)"""
+    import requests
+    models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]
+    for model_name in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": f"{system_context}\n\n[CÂU HỎI TỪ NGƯỜI DÙNG]: {prompt}"
+                        }
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.35,
+                "maxOutputTokens": 1500
+            }
+        }
+        try:
+            r = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=20)
+            if r.status_code == 200:
+                data = r.json()
+                candidates = data.get("candidates", [])
+                if candidates:
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    if parts:
+                        return parts[0].get("text", "")
+            elif r.status_code == 404:
+                continue
+            else:
+                print(f"Gemini API ({model_name}) error {r.status_code}: {r.text[:200]}")
+        except Exception as e:
+            print(f"Gemini API call failed for {model_name}: {e}")
+    return ""
+
+@app.route("/api/gemini-config", methods=["GET", "POST"])
+def gemini_config():
+    """Quản lý kết nối Google Gemini API (Gemini.google.com)"""
+    if request.method == "GET":
+        key = get_gemini_api_key()
+        masked = ""
+        if key:
+            masked = key[:6] + "..." + key[-4:] if len(key) > 10 else "***"
+        return jsonify({
+            "configured": bool(key),
+            "masked_key": masked
+        })
+    else:
+        data = request.get_json(silent=True, force=True) or {}
+        new_key = data.get("api_key", "").strip()
+        if not new_key:
+            return jsonify({"success": False, "message": "Vui lòng nhập API Key hợp lệ!"}), 400
+        
+        # Test ping Gemini API
+        test_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={new_key}"
+        import requests
+        try:
+            r = requests.post(
+                test_url,
+                json={"contents": [{"parts": [{"text": "Xin chào"}]}]},
+                headers={"Content-Type": "application/json"},
+                timeout=12
+            )
+            if r.status_code == 200:
+                save_gemini_api_key(new_key)
+                return jsonify({"success": True, "message": "Kết nối Google Gemini AI thành công 100%!"})
+            else:
+                err_msg = r.json().get("error", {}).get("message", f"HTTP {r.status_code}")
+                return jsonify({"success": False, "message": f"API Key không hợp lệ: {err_msg}"}), 400
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Lỗi kết nối kiểm tra: {str(e)}"}), 500
+
+@app.route("/api/track-orders", methods=["POST"])
+def track_orders_endpoint():
+    """Tra cứu mã đơn hàng nội bộ GHN (1 đơn hoặc nhiều đơn cùng lúc)"""
+    data = request.get_json(silent=True, force=True) or {}
+    raw_text = data.get("raw_text") or ""
+    order_codes = data.get("orders") or []
+    
+    if raw_text:
+        extracted = extract_ghn_order_codes(raw_text)
+        for code in extracted:
+            if code not in order_codes:
+                order_codes.append(code)
+    
+    if not order_codes:
+        return jsonify({"success": False, "message": "Không tìm thấy mã đơn hàng hợp lệ nào trong nội dung nhập!"}), 400
+    
+    order_codes = order_codes[:30] # Giới hạn tối đa 30 đơn 1 lần
+    
+    results = []
+    for code in order_codes:
+        results.append(query_ghn_order_history(code))
+        
+    return jsonify({
+        "success": True,
+        "total": len(results),
+        "orders": results,
+        "tracuu_base_url": "https://tracuunoibo.ghn.vn/internal"
+    })
+
 @app.route("/api/copilot-ask", methods=["POST"])
 def copilot_ask():
-    """Trợ lý AI Copilot đàm thoại và phân tích chuyên sâu nghiệp vụ MT01 (GTC, LTC, COD, Tồn kho)"""
+    """Trợ lý AI Copilot kết nối Google Gemini & Tra cứu mã đơn GHN (1 hoặc nhiều đơn)"""
     data = request.get_json(silent=True, force=True) or {}
-    prompt = (data.get("prompt") or "").strip().lower()
+    raw_prompt = (data.get("prompt") or "").strip()
+    prompt = raw_prompt.lower()
 
-    if not prompt:
-        return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Sếp có thể hỏi em bất kỳ thông tin nào về 4 kho Miền Tây 01 (KPI GTC, đơn Lấy Thành Công LTC, đơn chưa gán, nợ COD, điểm danh hoặc soi NV)."})
+    if not raw_prompt:
+        return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Sếp có thể hỏi em bất kỳ thông tin nào về 4 kho MT01 (KPI GTC, LTC, nợ COD, đơn hẹn), dán mã đơn hàng GHN để tra cứu nội bộ, hoặc kết nối Google Gemini AI để hỏi mọi chủ đề!"})
 
+    # BƯỚC 1: TỰ ĐỘNG PHÁT HIỆN VÀ TRA CỨU MÃ ĐƠN HÀNG GHN
+    order_codes = extract_ghn_order_codes(raw_prompt)
+    if order_codes:
+        results = []
+        for code in order_codes[:10]:
+            results.append(query_ghn_order_history(code))
+        
+        count = len(results)
+        answer = f"🔍 **Tiger AI đã tra cứu nội bộ GHN cho {count} mã đơn hàng:**\n\n"
+        for idx, res in enumerate(results, 1):
+            if res.get("found"):
+                answer += (
+                    f"{idx}. 📦 **`{res['order_code']}`**: {res['status_text']}\n"
+                    f"   • 🏢 Kho xử lý: **{res['hub_name']}** | 👤 NV: **{res['actor']}**\n"
+                    f"   • 🕒 Cập nhật: `{res['time']}`\n"
+                )
+                if res.get("note"):
+                    answer += f"   • 📝 Ghi chú: *{res['note']}*\n"
+                answer += f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo GHN ↗</a>\n\n"
+            else:
+                answer += (
+                    f"{idx}. ⚠ **`{res['order_code']}`**: {res['status_text']}\n"
+                    f"   • 📝 *{res.get('note', 'Không tìm thấy')}*\n"
+                    f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Kiểm tra trên Tracuunoibo GHN ↗</a>\n\n"
+                )
+        if count > 1:
+            all_links = " ".join([f"<a href='{r['tracuu_link']}' target='_blank' class='badge-order-link'>Mở {r['order_code']} ↗</a>" for r in results])
+            answer += f"🌐 **Phím tắt mở nhanh trên Tracuunoibo:**<br>{all_links}\n"
+        
+        return jsonify({
+            "answer": answer,
+            "time": datetime.datetime.now().strftime("%H:%M:%S"),
+            "type": "order_tracking"
+        })
+
+    # BƯỚC 2: NẾU ĐÃ CẤU HÌNH GOOGLE GEMINI API KEY -> GỌI GEMINI VỚI NGỮ CẢNH MT01
+    gemini_key = get_gemini_api_key()
+    if gemini_key:
+        system_ctx = build_mt01_system_context()
+        gemini_reply = call_gemini_api(raw_prompt, system_ctx, gemini_key)
+        if gemini_reply:
+            return jsonify({
+                "answer": gemini_reply,
+                "time": datetime.datetime.now().strftime("%H:%M:%S"),
+                "source": "gemini_ai"
+            })
+
+    # BƯỚC 3: DÙNG BỘ PHÂN TÍCH QUY TẮC NỘI BỘ (LOCAL SMART ENGINE)
     if any(k in prompt for k in ["ltc", "lấy thành công", "lay thanh cong", "lấy hàng", "lay hang"]):
         answer = (
             "📦 **Báo cáo Đơn Lấy Thành Công (LTC) & Cộng Gộp Toàn Cụm MT01:**\n\n"
@@ -1431,7 +1776,7 @@ def copilot_ask():
             "• **Giao hàng riêng**: 89/117 GTC (76.1%).\n"
             "• **Lấy hàng riêng**: 2/2 LTC (100.0%).\n"
             "• **Nhân sự phụ trách**: NVXL **Trần Trọng Bằng** (`@pinca0602`).\n"
-            "• **Hành động đề xuất**: Đã tự động @tag NVXL vào Topic Báo Cáo yêu cầu làm rõ nguyên nhân 28 đơn GTB ngày 22/10."
+            "• **Hành động đề xuất**: Đã tự động @tag NVXL vào Topic Báo Cáo yêu cầu làm rõ nguyên nhân 28 đơn GTB."
         )
     elif any(k in prompt for k in ["bình thủy", "binh thuy"]):
         answer = (
@@ -1490,7 +1835,7 @@ def copilot_ask():
         )
     else:
         answer = (
-            f"🤖 **Tiger AI đã phân tích câu hỏi của sếp:** *'{prompt}'*\n\n"
+            f"🤖 **Tiger AI đã ghi nhận câu hỏi của sếp:** *'{raw_prompt}'*\n\n"
             "Hệ thống tự động giám sát 24/7 của Tiger AI đang kiểm soát chặt chẽ cả 6 mốc giờ điều hành:\n"
             "1. **07:00**: Đánh giá KPI GTC (Giao Thành Công) & LTC (Lấy Thành Công) hôm qua.\n"
             "2. **07:35**: Điểm danh ca sáng & lịch OFF.\n"
@@ -1498,10 +1843,12 @@ def copilot_ask():
             "4. **10:00**: Phân loại tồn kho & bóc tách ngày hẹn SMS.\n"
             "5. **12h/15h/19h**: Soi timeline thao tác PDA NV (Giao & Lấy).\n"
             "6. **21:00**: Chốt ca & đối soát nợ COD qua màn hình Thu Tiền NV.\n\n"
-            "Sếp có thể bấm các nút nghiệp vụ trên thanh công cụ hoặc chọn bảng **Biểu Đồ MT01** để xem chi tiết trực quan!"
+            "🔍 Sếp có thể **dán mã đơn hàng** (1 hoặc nhiều đơn) để em tra cứu hành trình nội bộ ngay, "
+            "hoặc bấm biểu tượng **🔑** trên thanh tiêu đề để kết nối **Google Gemini AI** giúp giải đáp không giới hạn mọi chủ đề!"
         )
 
     return jsonify({"answer": answer, "time": datetime.datetime.now().strftime("%H:%M:%S")})
+
 
 @app.route("/api/system-status")
 def get_system_status():

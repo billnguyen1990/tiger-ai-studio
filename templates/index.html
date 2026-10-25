@@ -127,6 +127,11 @@
 
       <div class="divider-v"></div>
 
+      <button id="btnOpenBulkTrack" class="btn btn-secondary" title="Tra cứu mã đơn hàng nội bộ GHN (1 hoặc nhiều đơn cùng lúc)">
+        <span class="btn-icon">🔍</span>
+        <span>Tra Đơn GHN</span>
+      </button>
+
       <button id="btnOpenCopilot" class="btn btn-gradient" title="Mở Trợ Lý Đàm Thoại Thông Minh Tiger AI">
         <span class="btn-icon">💬</span>
         <span>Hỏi Tiger AI</span>
@@ -544,14 +549,19 @@
         <span class="copilot-avatar">🐅</span>
         <div>
           <div class="copilot-title">TIGER AI COPILOT</div>
-          <div class="copilot-sub">Trợ lý Hỏi Đáp Nghiệp Vụ 4 Kho MT01</div>
+          <div class="copilot-sub" id="copilotSubText">Trợ lý Hỏi Đáp Nghiệp Vụ 4 Kho MT01</div>
         </div>
       </div>
-      <button class="close-copilot-btn" id="btnCloseCopilot">✕</button>
+      <div class="copilot-header-actions">
+        <button class="copilot-action-btn" id="btnCopilotGeminiKey" title="Cấu hình Google Gemini AI (Gemini.google.com)">🔑</button>
+        <button class="copilot-action-btn" id="btnCopilotExpand" title="Phóng to / Thu nhỏ khung chat">⛶</button>
+        <button class="close-copilot-btn" id="btnCloseCopilot" title="Đóng">✕</button>
+      </div>
     </div>
 
     <!-- Quick prompt chips -->
     <div class="copilot-chips-bar">
+      <span class="chip-item" data-ask="Tra cứu mã đơn GYMVUG8G GYMDPKCD">🔍 Tra mã đơn</span>
       <span class="chip-item" data-ask="Kho nào có tỉ lệ GTC thấp nhất?">🚨 Kho thấp nhất?</span>
       <span class="chip-item" data-ask="Báo cáo tình hình bóc tách đơn hẹn SMS">📦 Đơn hẹn SMS?</span>
       <span class="chip-item" data-ask="Tình hình nợ tiền COD cuối ngày">🌙 Nợ COD?</span>
@@ -561,15 +571,112 @@
 
     <div class="copilot-chat-body" id="copilotChatBody">
       <div class="chat-msg msg-ai">
-        Xin chào! Em là <b>Tiger AI Copilot</b>. Em có thể giải đáp ngay mọi số liệu vận hành của 4 kho MT01 (KPI, đơn hẹn, tiến độ PDA, nợ COD). Sếp cần soi thông tin gì cứ bấm gợi ý hoặc gõ bên dưới nhé!
+        Xin chào! Em là <b>Tiger AI Copilot</b>. Em có thể giải đáp ngay mọi số liệu vận hành của 4 kho MT01 (KPI, đơn hẹn, tiến độ PDA, nợ COD), <b>tra cứu hành trình nội bộ GHN</b> (dán 1 hoặc nhiều mã đơn), hoặc kết nối <b>Google Gemini AI</b> để trả lời không giới hạn mọi chủ đề!
       </div>
     </div>
 
     <div class="copilot-input-bar">
-      <input type="text" id="copilotInput" placeholder="Nhập câu hỏi về 4 kho MT01..." autocomplete="off">
+      <input type="text" id="copilotInput" placeholder="Hỏi số liệu 4 kho hoặc dán mã đơn (GYM...)..." autocomplete="off">
       <button id="btnSendCopilot" class="btn btn-primary btn-tiny">Gửi ➔</button>
     </div>
   </div>
+
+  <!-- MODAL TRA CỨU MÃ ĐƠN HÀNG NỘI BỘ GHN (BULK & SINGLE ORDER TRACKING) -->
+  <div class="modal-backdrop" id="modalBulkTrack">
+    <div class="modal-box modal-large">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🔍</span>
+          <div>
+            <h2 class="modal-title">Tra Cứu Mã Đơn Hàng Nội Bộ GHN Express</h2>
+            <div class="modal-subtitle" style="font-size: 11.5px; color: var(--text-muted);">Tra cứu hành trình thời gian thực 1 đơn hoặc nhiều đơn cùng lúc qua cổng <code>tracuunoibo.ghn.vn/internal</code></div>
+          </div>
+        </div>
+        <button class="modal-close" id="btnCloseBulkTrack">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="bulk-track-input-section">
+          <label class="form-label">
+            <b>Nhập mã đơn hàng:</b>
+            <span class="form-hint" style="color: var(--text-dim); font-size: 11px;">(Dán 1 mã đơn hoặc nhiều mã đơn phân cách bằng dấu phẩy, khoảng trắng hoặc dòng mới)</span>
+          </label>
+          <textarea id="bulkTrackInput" class="form-textarea" rows="3" placeholder="Ví dụ: GYMVUG8G, GYMDPKCD, GYMNNPAX hoặc copy từ Excel dán vào..."></textarea>
+          <div class="bulk-track-actions" style="margin-top: 10px;">
+            <button id="btnExecuteBulkTrack" class="btn btn-primary">
+              <span>🚀 Bắt Đầu Tra Cứu</span>
+            </button>
+            <button id="btnBulkOpenTracuu" class="btn btn-secondary" style="display:none;" title="Mở các tab tracuunoibo.ghn.vn">
+              <span>🌐 Mở Tất Cả Trên Tracuunoibo GHN ↗</span>
+            </button>
+            <button id="btnClearBulkTrack" class="btn btn-ghost">Xóa Nhập Lại</button>
+          </div>
+        </div>
+
+        <div id="bulkTrackLoading" style="display:none; text-align:center; padding: 24px;">
+          <div class="spinner-inline"></div>
+          <p style="margin-top: 10px; color: var(--text-muted);">Đang kết nối API GHN bóc tách hành trình các mã đơn...</p>
+        </div>
+
+        <div id="bulkTrackResults" class="bulk-track-results" style="display:none; margin-top: 16px;">
+          <div class="results-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <span id="bulkTrackCount" class="badge-count" style="background: rgba(0,229,190,0.15); color: var(--primary-accent); padding: 4px 10px; border-radius: 8px; font-weight: bold;">Tìm thấy 0 đơn</span>
+          </div>
+          <div class="table-responsive">
+            <table class="table-cyber" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Mã Đơn</th>
+                  <th>Trạng Thái</th>
+                  <th>NV Phụ Trách</th>
+                  <th>Kho Xử Lý</th>
+                  <th>Thời Gian</th>
+                  <th>Ghi Chú</th>
+                  <th>Cổng Nội Bộ</th>
+                </tr>
+              </thead>
+              <tbody id="bulkTrackTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CẤU HÌNH GOOGLE GEMINI AI KEY -->
+  <div class="modal-backdrop" id="modalGeminiConfig">
+    <div class="modal-box modal-medium">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🤖</span>
+          <div>
+            <h2 class="modal-title">Kết Nối Google Gemini AI</h2>
+            <div class="modal-subtitle" style="font-size: 11.5px; color: var(--text-muted);">Trí tuệ nhân tạo Gemini (Gemini.google.com) cho Tiger AI Copilot</div>
+          </div>
+        </div>
+        <button class="modal-close" id="btnCloseGeminiConfig">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="gemini-status-card" id="geminiStatusCard">
+          <div class="gemini-status-dot" id="geminiStatusDot"></div>
+          <div id="geminiStatusText">Đang kiểm tra kết nối Gemini...</div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label"><b>Google Gemini API Key:</b></label>
+          <input type="password" id="geminiApiKeyInput" class="form-input" placeholder="AIzaSy...">
+          <div class="form-hint" style="margin-top: 8px; line-height: 1.5; color: var(--text-muted); font-size: 11.5px;">
+            💡 <b>Nhận Key miễn phí trong 10 giây:</b> Truy cập <a href="https://aistudio.google.com/apikey" target="_blank" style="color: var(--primary-accent); text-decoration: underline;">Google AI Studio ↗</a> ➔ Nhấn <i>"Create API Key"</i> ➔ Dán vào đây.<br>
+            <i>(Khi kết nối Gemini, Tiger AI sẽ được cung cấp toàn bộ dữ liệu 4 kho MT01 và có thể trả lời thông minh, sâu sắc mọi câu hỏi mở như trên Gemini.google.com!)</i>
+          </div>
+        </div>
+        <div id="geminiSaveMsg" style="margin-top: 10px; display:none;"></div>
+      </div>
+      <div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+        <button id="btnSaveGeminiKey" class="btn btn-primary">Lưu & Kiểm Tra Kết Nối</button>
+        <button class="btn btn-ghost" id="btnCancelGeminiConfig">Hủy Bỏ</button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- MODAL CẬP NHẬT PHIÊN BẢN (ONE-CLICK UPDATE MODAL) -->
   <div class="modal-backdrop" id="updateModal" style="display:none;">

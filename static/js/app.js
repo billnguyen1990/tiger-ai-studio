@@ -1607,21 +1607,51 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================================================
-  // AI COPILOT INTERACTIVE DRAWER
+  // AI COPILOT INTERACTIVE DRAWER & GOOGLE GEMINI & BULK ORDER TRACKING
   // ==========================================================================
   const btnOpenCopilot = document.getElementById("btnOpenCopilot");
   const copilotDrawer = document.getElementById("copilotDrawer");
   const btnCloseCopilot = document.getElementById("btnCloseCopilot");
+  const btnCopilotExpand = document.getElementById("btnCopilotExpand");
+  const btnCopilotGeminiKey = document.getElementById("btnCopilotGeminiKey");
   const copilotChatBody = document.getElementById("copilotChatBody");
   const copilotInput = document.getElementById("copilotInput");
   const btnSendCopilot = document.getElementById("btnSendCopilot");
+  const copilotSubText = document.getElementById("copilotSubText");
 
+  // Gemini Config Modal Elements
+  const modalGeminiConfig = document.getElementById("modalGeminiConfig");
+  const btnCloseGeminiConfig = document.getElementById("btnCloseGeminiConfig");
+  const btnCancelGeminiConfig = document.getElementById("btnCancelGeminiConfig");
+  const btnSaveGeminiKey = document.getElementById("btnSaveGeminiKey");
+  const geminiApiKeyInput = document.getElementById("geminiApiKeyInput");
+  const geminiStatusDot = document.getElementById("geminiStatusDot");
+  const geminiStatusText = document.getElementById("geminiStatusText");
+  const geminiSaveMsg = document.getElementById("geminiSaveMsg");
+
+  // Bulk Order Track Modal Elements
+  const btnOpenBulkTrack = document.getElementById("btnOpenBulkTrack");
+  const modalBulkTrack = document.getElementById("modalBulkTrack");
+  const btnCloseBulkTrack = document.getElementById("btnCloseBulkTrack");
+  const btnClearBulkTrack = document.getElementById("btnClearBulkTrack");
+  const btnExecuteBulkTrack = document.getElementById("btnExecuteBulkTrack");
+  const btnBulkOpenTracuu = document.getElementById("btnBulkOpenTracuu");
+  const bulkTrackInput = document.getElementById("bulkTrackInput");
+  const bulkTrackLoading = document.getElementById("bulkTrackLoading");
+  const bulkTrackResults = document.getElementById("bulkTrackResults");
+  const bulkTrackTableBody = document.getElementById("bulkTrackTableBody");
+  const bulkTrackCount = document.getElementById("bulkTrackCount");
+
+  let currentTrackedOrders = [];
+
+  // Toggle Copilot Drawer
   if (btnOpenCopilot) {
     btnOpenCopilot.addEventListener("click", () => {
       copilotDrawer.classList.toggle("hidden-copilot");
       playCyberSound("start");
       if (!copilotDrawer.classList.contains("hidden-copilot")) {
         copilotInput.focus();
+        copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
       }
     });
   }
@@ -1632,6 +1662,216 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Toggle Expand / Maximize Copilot Drawer
+  if (btnCopilotExpand) {
+    btnCopilotExpand.addEventListener("click", () => {
+      copilotDrawer.classList.toggle("copilot-expanded");
+      const isExp = copilotDrawer.classList.contains("copilot-expanded");
+      btnCopilotExpand.textContent = isExp ? "🗗" : "⛶";
+      btnCopilotExpand.title = isExp ? "Thu nhỏ lại kích thước chuẩn" : "Phóng to khung chat để xem bảng đầy đủ";
+      playCyberSound("pulse");
+      setTimeout(() => {
+        copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
+      }, 200);
+    });
+  }
+
+  // Helper Markdown formatter
+  function formatMarkdownToHtml(text) {
+    if (!text) return "";
+    let s = text;
+    s = s.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+    s = s.replace(/\*(.*?)\*/g, "<i>$1</i>");
+    s = s.replace(/`([^`]+)`/g, "<code style='background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:4px;'>$1</code>");
+    s = s.replace(/\n/g, "<br>");
+    return s;
+  }
+
+  // Check Gemini Connection Status
+  async function checkGeminiStatus() {
+    try {
+      const res = await fetch("/api/gemini-config");
+      const d = await res.json();
+      if (d.configured) {
+        if (geminiStatusDot) geminiStatusDot.className = "gemini-status-dot active";
+        if (geminiStatusText) {
+          geminiStatusText.innerHTML = `<span style="color:#10b981; font-weight:700;">ĐÃ KẾT NỐI GEMINI AI (${d.masked_key})</span>`;
+        }
+        if (copilotSubText) {
+          copilotSubText.innerHTML = "Trợ lý AI Đàm Thoại • Kết Nối Google Gemini ⚡";
+        }
+      } else {
+        if (geminiStatusDot) geminiStatusDot.className = "gemini-status-dot inactive";
+        if (geminiStatusText) {
+          geminiStatusText.innerHTML = "<span style='color:#f59e0b;'>Chưa cài đặt Gemini API Key (Đang dùng Local Engine)</span>";
+        }
+      }
+    } catch (e) {
+      console.error("Lỗi kiểm tra Gemini config:", e);
+    }
+  }
+  checkGeminiStatus();
+
+  // Gemini Modal Handling
+  if (btnCopilotGeminiKey) {
+    btnCopilotGeminiKey.addEventListener("click", () => {
+      checkGeminiStatus();
+      if (modalGeminiConfig) modalGeminiConfig.classList.add("open");
+      playCyberSound("pulse");
+    });
+  }
+  if (btnCloseGeminiConfig) {
+    btnCloseGeminiConfig.addEventListener("click", () => {
+      modalGeminiConfig.classList.remove("open");
+    });
+  }
+  if (btnCancelGeminiConfig) {
+    btnCancelGeminiConfig.addEventListener("click", () => {
+      modalGeminiConfig.classList.remove("open");
+    });
+  }
+  if (modalGeminiConfig) {
+    modalGeminiConfig.addEventListener("click", (e) => {
+      if (e.target === modalGeminiConfig) modalGeminiConfig.classList.remove("open");
+    });
+  }
+  if (btnSaveGeminiKey) {
+    btnSaveGeminiKey.addEventListener("click", async () => {
+      const key = geminiApiKeyInput.value.trim();
+      if (!key) {
+        geminiSaveMsg.style.display = "block";
+        geminiSaveMsg.innerHTML = "<span style='color:#ef4444;'>Vui lòng nhập API Key!</span>";
+        return;
+      }
+      btnSaveGeminiKey.disabled = true;
+      btnSaveGeminiKey.textContent = "Đang kiểm tra kết nối với Google...";
+      geminiSaveMsg.style.display = "none";
+      try {
+        const res = await fetch("/api/gemini-config", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: key })
+        });
+        const data = await res.json();
+        if (data.success) {
+          geminiSaveMsg.style.display = "block";
+          geminiSaveMsg.innerHTML = `<span style='color:#10b981; font-weight:bold;'>${data.message}</span>`;
+          checkGeminiStatus();
+          playCyberSound("success");
+          setTimeout(() => {
+            modalGeminiConfig.classList.remove("open");
+            geminiSaveMsg.style.display = "none";
+            btnSaveGeminiKey.disabled = false;
+            btnSaveGeminiKey.textContent = "Lưu & Kiểm Tra Kết Nối";
+          }, 1500);
+        } else {
+          geminiSaveMsg.style.display = "block";
+          geminiSaveMsg.innerHTML = `<span style='color:#ef4444;'>${data.message}</span>`;
+          btnSaveGeminiKey.disabled = false;
+          btnSaveGeminiKey.textContent = "Lưu & Kiểm Tra Kết Nối";
+        }
+      } catch (err) {
+        geminiSaveMsg.style.display = "block";
+        geminiSaveMsg.innerHTML = `<span style='color:#ef4444;'>Lỗi: ${err.message}</span>`;
+        btnSaveGeminiKey.disabled = false;
+        btnSaveGeminiKey.textContent = "Lưu & Kiểm Tra Kết Nối";
+      }
+    });
+  }
+
+  // Bulk Order Tracking Modal Handling
+  if (btnOpenBulkTrack) {
+    btnOpenBulkTrack.addEventListener("click", () => {
+      modalBulkTrack.classList.add("open");
+      playCyberSound("start");
+      if (bulkTrackInput) bulkTrackInput.focus();
+    });
+  }
+  if (btnCloseBulkTrack) {
+    btnCloseBulkTrack.addEventListener("click", () => {
+      modalBulkTrack.classList.remove("open");
+    });
+  }
+  if (modalBulkTrack) {
+    modalBulkTrack.addEventListener("click", (e) => {
+      if (e.target === modalBulkTrack) modalBulkTrack.classList.remove("open");
+    });
+  }
+
+  if (btnClearBulkTrack) {
+    btnClearBulkTrack.addEventListener("click", () => {
+      bulkTrackInput.value = "";
+      bulkTrackResults.style.display = "none";
+      btnBulkOpenTracuu.style.display = "none";
+      currentTrackedOrders = [];
+    });
+  }
+  if (btnExecuteBulkTrack) {
+    btnExecuteBulkTrack.addEventListener("click", async () => {
+      const text = bulkTrackInput.value.trim();
+      if (!text) {
+        alert("Vui lòng dán hoặc nhập ít nhất 1 mã đơn hàng!");
+        return;
+      }
+      bulkTrackLoading.style.display = "block";
+      bulkTrackResults.style.display = "none";
+      btnBulkOpenTracuu.style.display = "none";
+      btnExecuteBulkTrack.disabled = true;
+      playCyberSound("pulse");
+
+      try {
+        const res = await fetch("/api/track-orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ raw_text: text })
+        });
+        const data = await res.json();
+        bulkTrackLoading.style.display = "none";
+        btnExecuteBulkTrack.disabled = false;
+
+        if (data.success && data.orders && data.orders.length > 0) {
+          currentTrackedOrders = data.orders;
+          bulkTrackTableBody.innerHTML = "";
+          data.orders.forEach((o) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td><b style="color:var(--primary-accent); font-family:monospace;">${o.order_code}</b></td>
+              <td><span class="badge ${o.found ? 'badge-success' : 'badge-warning'}">${o.status_text}</span></td>
+              <td>${o.actor || '—'}</td>
+              <td>${o.hub_name || '—'}</td>
+              <td><small style="color:var(--text-muted);">${o.time || '—'}</small></td>
+              <td><small style="color:var(--text-muted);">${o.note || '—'}</small></td>
+              <td><a href="${o.tracuu_link}" target="_blank" class="badge-order-link">🔍 Mở Tracuunoibo ↗</a></td>
+            `;
+            bulkTrackTableBody.appendChild(tr);
+          });
+          bulkTrackCount.textContent = `Tìm thấy ${data.orders.length} đơn hàng`;
+          bulkTrackResults.style.display = "block";
+          if (data.orders.length > 1) {
+            btnBulkOpenTracuu.style.display = "inline-flex";
+          }
+          playCyberSound("success");
+        } else {
+          alert(data.message || "Không tìm thấy dữ liệu đơn hàng!");
+        }
+      } catch (err) {
+        bulkTrackLoading.style.display = "none";
+        btnExecuteBulkTrack.disabled = false;
+        alert(`Lỗi khi tra cứu: ${err.message}`);
+      }
+    });
+  }
+
+  if (btnBulkOpenTracuu) {
+    btnBulkOpenTracuu.addEventListener("click", () => {
+      if (currentTrackedOrders.length === 0) return;
+      currentTrackedOrders.forEach((o) => {
+        window.open(o.tracuu_link, "_blank");
+      });
+    });
+  }
+
+  // Send Copilot Message
   async function sendCopilotMessage(text) {
     if (!text || !text.trim()) return;
     const q = text.trim();
@@ -1647,7 +1887,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Loading message
     const lMsg = document.createElement("div");
     lMsg.className = "chat-msg msg-ai";
-    lMsg.innerHTML = "<i>Tiger AI đang phân tích dữ liệu 4 kho...</i>";
+    lMsg.innerHTML = "<i>Tiger AI đang kết nối & phân tích...</i>";
     copilotChatBody.appendChild(lMsg);
     copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
     playCyberSound("pulse");
@@ -1659,7 +1899,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ prompt: q })
       });
       const data = await res.json();
-      lMsg.innerHTML = data.answer.replace(/\n/g, "<br>");
+      lMsg.innerHTML = formatMarkdownToHtml(data.answer);
       copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
       playCyberSound("success");
     } catch (err) {
@@ -1680,9 +1920,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".chip-item").forEach((chip) => {
     chip.addEventListener("click", () => {
       const ask = chip.getAttribute("data-ask");
-      sendCopilotMessage(ask);
+      if (ask && ask.includes("Tra cứu mã đơn") && !ask.includes("GYM")) {
+        modalBulkTrack.style.display = "flex";
+        if (bulkTrackInput) bulkTrackInput.focus();
+      } else {
+        sendCopilotMessage(ask);
+      }
     });
   });
+
 
   // ==========================================================================
   // CUSTOM NODE BUILDER & BRIEFING EXPORT
