@@ -582,6 +582,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="hub-id-badge">ID: ${hid}</span>
           </div>
           <div class="hub-nvxl">NVXL phụ trách: <b>${h.nvxl_name}</b> (${h.telegram_tag})</div>
+          <div class="hub-address" style="font-size:11px; color:var(--text-muted); margin:4px 0 6px; line-height:1.4;">
+            📍 ${h.address || 'Miền Tây 01'}
+            ${h.map_url ? `<br><a href="${h.map_url}" target="_blank" rel="noopener noreferrer" style="color:#06b6d4; text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:3px; margin-top:2px;">🗺️ Định Vị Google Maps ↗</a>` : ''}
+          </div>
           <div class="hub-metrics-row">
             <div class="hub-metric-box">
               <div class="metric-label">KPI Gộp (Giao + Lấy)</div>
@@ -759,7 +763,11 @@ document.addEventListener("DOMContentLoaded", () => {
               📅 <b>Ca vận hành: ${d.day_of_week || 'Thứ Bảy'}, ngày ${reportDate}</b> | ⏱ Cập nhật dữ liệu lúc: <b>${syncTime}</b>
             </div>
             <div class="hub-hero-sub" style="margin-top:3px; font-size:11.5px;">
-              📍 Địa chỉ: <b>${d.address || 'Miền Tây 01'}</b> | 👤 NVXL phụ trách: <b>${d.nvxl_name}</b> (<a href="https://t.me/${(d.telegram_tag || '').replace('@','')}" target="_blank" style="color:var(--primary-accent); text-decoration:none; font-weight:700;">${d.telegram_tag}</a>)
+              📍 <b>Địa chỉ:</b> ${d.address || 'Miền Tây 01'}
+              ${d.map_url ? `<a href="${d.map_url}" target="_blank" rel="noopener noreferrer" style="color:#06b6d4; background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.3); padding:2px 8px; border-radius:4px; text-decoration:none; margin-left:6px; font-weight:700; font-size:11px; display:inline-flex; align-items:center; gap:3px;" title="Mở bản đồ chỉ đường">🗺️ Xem Định Vị Google Maps ↗</a>` : ''}
+            </div>
+            <div class="hub-hero-sub" style="margin-top:3px; font-size:11.5px;">
+              👤 NVXL phụ trách: <b>${d.nvxl_name}</b> (<a href="https://t.me/${(d.telegram_tag || '').replace('@','')}" target="_blank" style="color:var(--primary-accent); text-decoration:none; font-weight:700;">${d.telegram_tag}</a>)
             </div>
           </div>
           <div style="text-align: right; display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:6px;">

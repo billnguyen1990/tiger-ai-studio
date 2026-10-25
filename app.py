@@ -698,7 +698,8 @@ def get_hub_detail(hub_id):
             "short_name": "Cái Răng",
             "nvxl_name": "Công Bằng",
             "telegram_tag": "@CONGBANGCAIRANGCANTHO",
-            "address": "Số 39, Khu Vực 1, P. Ba Láng, Q. Cái Răng, Cần Thơ",
+            "address": "531 Võ Nguyên Giáp, Cái Răng, Cần Thơ, Việt Nam",
+            "map_url": "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6",
             "base_staff": 12,
             "default_cod": "143,194,851 đ",
             "sms_count": 7
@@ -709,18 +710,20 @@ def get_hub_detail(hub_id):
             "short_name": "Bình Thủy",
             "nvxl_name": "Bảo Toàn",
             "telegram_tag": "@Nguyen_Toan",
-            "address": "Đường Lê Hồng Phong, P. Trà An, Q. Bình Thủy, Cần Thơ",
+            "address": "531 Võ Nguyên Giáp, Cái Răng, Cần Thơ, Việt Nam",
+            "map_url": "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6",
             "base_staff": 6,
             "default_cod": "72,338,175 đ",
             "sms_count": 0
         },
         "22862000": {
             "hub_id": "22862000",
-            "hub_name": "Kho Giao Hàng Nặng - Vị Thanh - Hậu Giang",
+            "hub_name": "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang",
             "short_name": "Vị Thanh",
             "nvxl_name": "Đức Trung",
             "telegram_tag": "@DUCTRUNG17TUOI",
-            "address": "Đường Trần Hưng Đạo, P. 1, TP. Vị Thanh, Hậu Giang",
+            "address": "175 Ba Tháng Hai, Phường 5, Vị Thanh, Hậu Giang, Việt Nam",
+            "map_url": "https://maps.app.goo.gl/nHbev35odq76Lqm29",
             "base_staff": 5,
             "default_cod": "45,089,508 đ",
             "sms_count": 0
@@ -731,7 +734,8 @@ def get_hub_detail(hub_id):
             "short_name": "Ô Môn",
             "nvxl_name": "Trọng Bằng",
             "telegram_tag": "@pinca0602",
-            "address": "QL91, P. Châu Văn Liêm, Q. Ô Môn, Cần Thơ",
+            "address": "1962 , Ngã 3 Nông Trường , QL91 , KV Thới Hưng , Phường Long Hưng , TP.Cần Thơ",
+            "map_url": "https://maps.app.goo.gl/R6BBvb1tbsLn2cXS6",
             "base_staff": 4,
             "default_cod": "62,022,821 đ",
             "sms_count": 4
@@ -876,6 +880,7 @@ def get_hub_detail(hub_id):
         "nvxl_name": meta["nvxl_name"],
         "telegram_tag": meta["telegram_tag"],
         "address": meta["address"],
+        "map_url": meta.get("map_url", ""),
         "report_date": date_display,
         "day_of_week": day_of_week,
         "yesterday_date": date_display,
@@ -1511,10 +1516,10 @@ def get_system_status():
             nvxl_data = json.load(f)
     if not nvxl_data:
         nvxl_data = {
-            "21088000": {"hub_id": "21088000", "hub_name": "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ", "short_name": "Cái Răng", "nvxl_name": "Công Bằng", "telegram_tag": "@CONGBANGCAIRANGCANTHO"},
-            "21985000": {"hub_id": "21985000", "hub_name": "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ", "short_name": "Bình Thủy", "nvxl_name": "Bảo Toàn", "telegram_tag": "@Nguyen_Toan"},
-            "22862000": {"hub_id": "22862000", "hub_name": "Kho Giao Hàng Nặng - Vị Thanh - Hậu Giang", "short_name": "Vị Thanh", "nvxl_name": "Đức Trung", "telegram_tag": "@DUCTRUNG17TUOI"},
-            "22917000": {"hub_id": "22917000", "hub_name": "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ", "short_name": "Ô Môn", "nvxl_name": "Trọng Bằng", "telegram_tag": "@pinca0602"}
+            "21088000": {"hub_id": "21088000", "hub_name": "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ", "short_name": "Cái Răng", "nvxl_name": "Công Bằng", "telegram_tag": "@CONGBANGCAIRANGCANTHO", "address": "531 Võ Nguyên Giáp, Cái Răng, Cần Thơ, Việt Nam", "map_url": "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6"},
+            "21985000": {"hub_id": "21985000", "hub_name": "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ", "short_name": "Bình Thủy", "nvxl_name": "Bảo Toàn", "telegram_tag": "@Nguyen_Toan", "address": "531 Võ Nguyên Giáp, Cái Răng, Cần Thơ, Việt Nam", "map_url": "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6"},
+            "22862000": {"hub_id": "22862000", "hub_name": "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang", "short_name": "Vị Thanh", "nvxl_name": "Đức Trung", "telegram_tag": "@DUCTRUNG17TUOI", "address": "175 Ba Tháng Hai, Phường 5, Vị Thanh, Hậu Giang, Việt Nam", "map_url": "https://maps.app.goo.gl/nHbev35odq76Lqm29"},
+            "22917000": {"hub_id": "22917000", "hub_name": "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ", "short_name": "Ô Môn", "nvxl_name": "Trọng Bằng", "telegram_tag": "@pinca0602", "address": "1962 , Ngã 3 Nông Trường , QL91 , KV Thới Hưng , Phường Long Hưng , TP.Cần Thơ", "map_url": "https://maps.app.goo.gl/R6BBvb1tbsLn2cXS6"}
         }
 
     # Đọc snapshot KPI mới nhất từ kpi_history/
