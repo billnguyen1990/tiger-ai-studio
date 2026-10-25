@@ -217,33 +217,42 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
             print(f"\n🏭 [{q_idx + 1}/21] Đang quét kho: {short_name}...", flush=True)
 
         hub_trips = []
-        payload = {
-            "hub_id": wid,
-            "status": "FINISHED",
-            "is_ready": 0,
-            "offset": 0,
-            "limit": 100
-        }
+        hub_seen_codes = set()
+        fetch_ok = True
 
-        # Gọi API danh sách chuyến với retry nếu mạng chập chờn
-        fetch_ok = False
-        for att in range(1, 4):
-            try:
-                res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=20)
-                if res.status_code == 200:
-                    data = res.json().get("data", []) or []
-                    for t in data:
-                        c_date = t.get("createDateIndex")
-                        s_date = t.get("startDateIndex")
-                        e_date = t.get("endDateIndex")
-                        if c_date == date_int or s_date == date_int or e_date == date_int:
-                            hub_trips.append(t)
-                    fetch_ok = True
-                    break
-                else:
+        # Quét cả 2 trạng thái: FINISHED (Kết thúc) và ON_TRIP (Đang chạy) để không bao giờ bị sót chuyến
+        for trip_st in ["FINISHED", "ON_TRIP"]:
+            payload = {
+                "hub_id": wid,
+                "status": trip_st,
+                "is_ready": 0,
+                "offset": 0,
+                "limit": 100
+            }
+
+            st_ok = False
+            for att in range(1, 4):
+                try:
+                    res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=20)
+                    if res.status_code == 200:
+                        data = res.json().get("data", []) or []
+                        for t in data:
+                            t_code = t.get("tripCode")
+                            if t_code and t_code not in hub_seen_codes:
+                                c_date = t.get("createDateIndex")
+                                s_date = t.get("startDateIndex")
+                                e_date = t.get("endDateIndex")
+                                if c_date == date_int or s_date == date_int or e_date == date_int:
+                                    hub_trips.append(t)
+                                    hub_seen_codes.add(t_code)
+                        st_ok = True
+                        break
+                    else:
+                        time.sleep(1.5)
+                except Exception:
                     time.sleep(2.0)
-            except Exception:
-                time.sleep(3.0)
+            if not st_ok:
+                fetch_ok = False
 
         # Nếu quét lần đầu mà kho bị lỗi mạng/rớt data -> Tự động đưa kho vào cuối hàng đợi để lát quét lại
         if not fetch_ok and retry_count < 2:
