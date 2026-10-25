@@ -856,10 +856,11 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
             print(f"[RUN-WORKFLOW] Bắn Telegram cho {wf_id}...", flush=True)
             if wf_id == "truck_odo_365":
                 sent = send_telegram_direct(out, chat_id="-5295214199", thread_id=None)
+                send_telegram_direct(out, chat_id="-1003940889949", thread_id=2690)
                 if sent:
-                    out += "\n\n🚀 Đang tiến hành gửi lên nhóm The 5 Guardians...\n✅ Đã gửi báo cáo lên Telegram The 5 Guardians thành công!"
+                    out += "\n\n🚀 Đã gửi báo cáo lên Telegram cả 2 nhóm: The 5 Guardians & Miền Tây 01 (Topic Báo Cáo) thành công!"
                 else:
-                    out += "\n\n❌ Lỗi kết nối gửi Telegram The 5 Guardians."
+                    out += "\n\n❌ Lỗi kết nối gửi Telegram."
             else:
                 sent = send_telegram_direct(out)
                 if sent:

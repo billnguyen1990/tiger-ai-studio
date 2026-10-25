@@ -449,20 +449,28 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
         tg_msg = "\n".join(lines)
         tg_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
 
-        try:
-            payload = {
-                "chat_id": TELEGRAM_CHAT_ID,
-                "text": tg_msg,
-                "parse_mode": "HTML",
-                "disable_web_page_preview": True
-            }
-            tg_res = requests.post(tg_url, json=payload, timeout=15)
-            if tg_res.status_code == 200:
-                print("📱 Đã gửi báo cáo Telegram thành công tới [The 5 Guardians]!", flush=True)
-            else:
-                print(f"⚠️ Lỗi gửi Telegram [The 5 Guardians]: {tg_res.text}", flush=True)
-        except Exception as e:
-            print(f"❌ Lỗi gửi Telegram: {e}", flush=True)
+        # Gửi đồng thời tới cả 2 nhóm: The 5 Guardians và Miền Tây 01 (Topic Báo Cáo)
+        tg_targets = [
+            {"name": "The 5 Guardians", "chat_id": "-5295214199", "thread_id": None},
+            {"name": "Miền Tây 01 (Topic Báo Cáo)", "chat_id": "-1003940889949", "thread_id": 2690}
+        ]
+        for target in tg_targets:
+            try:
+                payload = {
+                    "chat_id": target["chat_id"],
+                    "text": tg_msg,
+                    "parse_mode": "HTML",
+                    "disable_web_page_preview": True
+                }
+                if target["thread_id"]:
+                    payload["message_thread_id"] = target["thread_id"]
+                tg_res = requests.post(tg_url, json=payload, timeout=15)
+                if tg_res.status_code == 200:
+                    print(f"📱 Đã gửi báo cáo Telegram thành công tới [{target['name']}]!", flush=True)
+                else:
+                    print(f"⚠️ Lỗi gửi Telegram [{target['name']}]: {tg_res.text}", flush=True)
+            except Exception as e:
+                print(f"❌ Lỗi gửi Telegram [{target['name']}]: {e}", flush=True)
 
     return {
         "success": True,
