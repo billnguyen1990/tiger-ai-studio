@@ -229,37 +229,67 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Quản lý Ngăn Xếp Tiện Ích MT01 (Tools Stack Dropdown)
+  // Quản lý Ngăn Xếp Tiện Ích MT01 (Tools Stack Dropdown & Mobile Bottom Sheet)
+  const toolsBackdrop = document.getElementById("toolsBackdrop");
+  const btnCloseToolsMenu = document.getElementById("btnCloseToolsMenu");
+
+  function openToolsMenu() {
+    if (toolsStackWrapper) toolsStackWrapper.classList.add("open");
+    if (toolsBackdrop && window.innerWidth <= 992) toolsBackdrop.classList.add("active");
+  }
+
+  function closeToolsMenu() {
+    if (toolsStackWrapper) toolsStackWrapper.classList.remove("open");
+    if (toolsBackdrop) toolsBackdrop.classList.remove("active");
+  }
+
   if (btnToolsStack && toolsStackWrapper) {
     btnToolsStack.addEventListener("click", (e) => {
       e.stopPropagation();
-      toolsStackWrapper.classList.toggle("open");
+      if (toolsStackWrapper.classList.contains("open")) {
+        closeToolsMenu();
+      } else {
+        openToolsMenu();
+      }
     });
 
+    if (btnCloseToolsMenu) {
+      btnCloseToolsMenu.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeToolsMenu();
+      });
+    }
+
+    if (toolsBackdrop) {
+      toolsBackdrop.addEventListener("click", () => {
+        closeToolsMenu();
+      });
+    }
+
     document.addEventListener("click", (e) => {
-      if (!toolsStackWrapper.contains(e.target)) {
-        toolsStackWrapper.classList.remove("open");
+      if (!toolsStackWrapper.contains(e.target) && e.target !== toolsBackdrop) {
+        closeToolsMenu();
       }
     });
   }
 
   if (stackItemAnalytics) {
     stackItemAnalytics.addEventListener("click", () => {
-      if (toolsStackWrapper) toolsStackWrapper.classList.remove("open");
+      closeToolsMenu();
       if (typeof loadAnalytics === "function") loadAnalytics();
     });
   }
 
   if (stackItemRadar) {
     stackItemRadar.addEventListener("click", () => {
-      if (toolsStackWrapper) toolsStackWrapper.classList.remove("open");
+      closeToolsMenu();
       if (modalRadar) modalRadar.classList.add("open");
     });
   }
 
   if (stackItemScheduler) {
     stackItemScheduler.addEventListener("click", () => {
-      if (toolsStackWrapper) toolsStackWrapper.classList.remove("open");
+      closeToolsMenu();
       if (typeof loadSystemStatus === "function") loadSystemStatus();
       if (modalScheduler) modalScheduler.classList.add("open");
     });
@@ -273,8 +303,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnTriggerUpdate = document.getElementById("btnTriggerUpdate");
 
   function openUpdateModal() {
-    if (toolsStackWrapper) toolsStackWrapper.classList.remove("open");
+    closeToolsMenu();
     if (updateModal) updateModal.style.display = "flex";
+    fetch("/api/version")
+      .then(res => res.json())
+      .then(data => {
+        const modalCurrentVer = document.getElementById("modalCurrentVer");
+        const modalLatestVer = document.getElementById("modalLatestVer");
+        const versionTag = document.getElementById("versionTag");
+        if (modalCurrentVer && data.current_version) modalCurrentVer.textContent = data.current_version;
+        if (modalLatestVer && data.latest_version) modalLatestVer.textContent = "🟢 " + data.latest_version + " (MỚI NHẤT)";
+        if (versionTag && data.current_version) versionTag.textContent = data.current_version;
+      })
+      .catch(err => console.log("Fetch version err:", err));
   }
 
   if (btnUpdateQuick) btnUpdateQuick.addEventListener("click", openUpdateModal);
@@ -282,6 +323,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnCloseUpdateModal) {
     btnCloseUpdateModal.addEventListener("click", () => {
       if (updateModal) updateModal.style.display = "none";
+    });
+  }
+  if (updateModal) {
+    updateModal.addEventListener("click", (e) => {
+      if (e.target === updateModal) {
+        updateModal.style.display = "none";
+      }
     });
   }
 
@@ -294,10 +342,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await res.json();
         if (data.status === "success") {
           btnTriggerUpdate.innerHTML = "<span>✅</span><span>Đã cập nhật mới nhất!</span>";
+          const versionTag = document.getElementById("versionTag");
+          const modalCurrentVer = document.getElementById("modalCurrentVer");
+          if (versionTag) versionTag.textContent = data.version || "v2.5.2";
+          if (modalCurrentVer) modalCurrentVer.textContent = data.version || "v2.5.2";
           if (typeof showToast === "function") {
-            showToast(data.message || "🎉 Cập nhật phiên bản v2.5.1 thành công!");
+            showToast(data.message || "🎉 Cập nhật phiên bản v2.5.2 thành công!");
           } else {
-            alert(data.message || "🎉 Cập nhật phiên bản v2.5.1 thành công!");
+            alert(data.message || "🎉 Cập nhật phiên bản v2.5.2 thành công!");
           }
           setTimeout(() => {
             if (updateModal) updateModal.style.display = "none";

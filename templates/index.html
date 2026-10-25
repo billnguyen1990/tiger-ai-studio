@@ -43,7 +43,7 @@
     <div class="header-actions">
       <button id="btnUpdateQuick" class="btn btn-update" title="Kiểm tra & Cập nhật phiên bản mới">
         <span class="btn-icon">⚡</span>
-        <span id="versionTag">v2.5.1</span>
+        <span id="versionTag">v2.5.2</span>
       </button>
       <button id="btnRunTest" class="btn btn-secondary" title="Chạy kiểm thử quy trình">
         <span class="btn-icon">▶</span>
@@ -60,13 +60,17 @@
 
       <!-- NGĂN XẾP CÔNG CỤ (STACKED DROPDOWN) -->
       <div class="tools-stack-wrapper" id="toolsStackWrapper">
-        <button id="btnToolsStack" class="btn btn-glass btn-stack" title="Mở ngăn xếp các tiện ích và cài đặt">
+        <button id="btnToolsStack" class="btn btn-glass btn-stack" title="Mở ngăn xếp các tiện ích và cài đặt" type="button">
           <span class="btn-icon">📂</span>
           <span>Tiện Ích MT01</span>
           <span class="stack-arrow">▾</span>
         </button>
 
         <div class="tools-stack-menu" id="toolsStackMenu">
+          <div class="tools-mobile-header">
+            <span class="tools-mobile-title">📂 TIỆN ÍCH MT01</span>
+            <button class="tools-mobile-close" id="btnCloseToolsMenu" type="button">✕</button>
+          </div>
           <div class="stack-menu-item" id="stackItemAnalytics">
             <span class="item-icon">📊</span>
             <div class="item-info">
@@ -77,7 +81,7 @@
           <div class="stack-menu-item" id="stackItemUpdate">
             <span class="item-icon">🔄</span>
             <div class="item-info">
-              <div class="item-name">Cập Nhật Hệ Thống (v2.5.1)</div>
+              <div class="item-name">Cập Nhật Hệ Thống (v2.5.2)</div>
               <div class="item-desc">Đồng bộ quy tắc, đổi mới tính năng 1-click</div>
             </div>
           </div>
@@ -584,7 +588,7 @@
         <div class="version-compare-card">
           <div class="ver-col">
             <span class="ver-label">Phiên bản hiện tại</span>
-            <span class="ver-val current" id="modalCurrentVer">v2.5.1</span>
+            <span class="ver-val current" id="modalCurrentVer">v2.5.2</span>
           </div>
           <div class="ver-arrow">➔</div>
           <div class="ver-col">
@@ -596,11 +600,11 @@
         <div class="changelog-box">
           <h4>📋 CÁC NÂNG CẤP VÀ CHUẨN HÓA MỚI:</h4>
           <ul>
-            <li>✅ <b>Chuẩn hóa ngôn từ:</b> Toàn bộ hệ thống gọi tên <code>NV</code> (thay vì Tài xế) và điều hành qua <code>NVXL</code> (thay vì Anh).</li>
-            <li>🎨 <b>Khung Diff Telegram:</b> Đơn lỗi <code>- ❌</code> và hẹn <code>- ⚠️</code> tô ĐỎ, tỉ lệ thành công <code>+ ✅</code> tô XANH LÁ.</li>
-            <li>🌙 <b>Mốc 21:30 & Im Lặng Thông Minh:</b> Nghiệm thu sau 30 phút, nếu 4 kho đã sạch từ 21:00 sẽ tự động im lặng không spam Telegram.</li>
-            <li>⏰ <b>Đếm ngược 5 phút tắt máy:</b> Giao diện Card VIP nổi trên màn hình lúc 21:30, bấm ESC hoặc nút trên màn hình để hủy.</li>
-            <li>🌐 <b>Chuyển đổi Link Web Online:</b> Truy cập mượt mà trên điện thoại, máy tính bảng từ mọi nơi qua Cloud Link.</li>
+            <li>⚡ <b>v2.5.2 Mobile Responsive:</b> Tối ưu 100% giao diện cho iPhone/Android, sơ đồ full màn hình, Tiện ích MT01 dạng iOS Bottom Sheet mượt mà.</li>
+            <li>✅ <b>v2.5.1 Chuẩn hóa ngôn từ:</b> Toàn bộ hệ thống gọi tên <code>NV</code> (thay vì Tài xế) và điều hành qua <code>NVXL</code> (thay vì Anh).</li>
+            <li>🎨 <b>v2.5.1 Khung Diff Telegram:</b> Đơn lỗi <code>- ❌</code> và hẹn <code>- ⚠️</code> tô ĐỎ, tỉ lệ thành công <code>+ ✅</code> tô XANH LÁ.</li>
+            <li>🌙 <b>v2.5.0 Mốc 21:30 & Im Lặng Thông Minh:</b> Nghiệm thu sau 30 phút, nếu 4 kho đã sạch từ 21:00 sẽ tự động im lặng không spam Telegram.</li>
+            <li>🌐 <b>v2.5.0 Cloud 24/7 Render:</b> Truy cập mượt mà trên điện thoại, máy tính bảng từ mọi nơi qua Cloud Link vĩnh viễn.</li>
           </ul>
         </div>
       </div>
@@ -612,6 +616,8 @@
       </div>
     </div>
   </div>
+
+  <div class="tools-backdrop" id="toolsBackdrop"></div>
 
   <script src="/static/js/canvas.js?v=2.5.2"></script>
   <script src="/static/js/app.js?v=2.5.2"></script>

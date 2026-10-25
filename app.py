@@ -1688,17 +1688,18 @@ def get_system_status():
 def get_version():
     """Thông tin phiên bản hệ thống và nhật ký cập nhật (Changelog)"""
     return jsonify({
-        "current_version": "v2.5.1",
-        "latest_version": "v2.5.1",
+        "current_version": "v2.5.2",
+        "latest_version": "v2.5.2",
         "has_update": False,
         "release_date": "25/10/2026",
         "system_status": "ONLINE",
         "changelog": [
-            "Chuẩn hóa 100% ngôn từ: Định danh thống nhất NV (Nhân Viên) và NVXL (Nhân Viên Xử Lý).",
-            "Nâng cấp định dạng Diff Telegram: Tô màu ĐỎ (- ❌, - ⚠️) cho đơn lỗi/hẹn, màu XANH LÁ (+ ✅) cho đơn thành công.",
-            "Tích hợp mốc nghiệm thu 21:30 & cơ chế im lặng thông minh khi 4 kho đã sạch.",
-            "Khởi chạy bảng đếm ngược 5 phút tự động tắt máy tính cuối ngày (Giao diện Card VIP).",
-            "Chuyển đổi sang Native App & hỗ trợ Link Web Online truy cập mọi lúc mọi nơi."
+            "v2.5.2: Tối ưu 100% giao diện cho Điện Thoại (iOS & Android) - Sơ đồ Nodes toàn màn hình.",
+            "v2.5.2: Nâng cấp Tiện Ích MT01 thành iOS Bottom Sheet mượt mà, hỗ trợ cảm ứng vuốt chạm.",
+            "v2.5.2: Triển khai Đám mây Cloud 24/7 trên Render & lập lịch tự động APScheduler (UTC+7).",
+            "v2.5.1: Chuẩn hóa 100% ngôn từ: Định danh thống nhất NV (Nhân Viên) và NVXL (Nhân Viên Xử Lý).",
+            "v2.5.1: Nâng cấp định dạng Diff Telegram: Tô màu ĐỎ (- ❌, - ⚠️) cho đơn lỗi/hẹn, XANH LÁ (+ ✅) cho đơn thành công.",
+            "v2.5.0: Tích hợp mốc nghiệm thu 21:30 & cơ chế im lặng thông minh khi 4 kho đã sạch."
         ]
     })
 
@@ -1714,8 +1715,8 @@ def update_system():
 
         return jsonify({
             "status": "success",
-            "version": "v2.5.1",
-            "message": "🎉 Hệ thống Tiger AI đã cập nhật lên phiên bản v2.5.1 mới nhất thành công!",
+            "version": "v2.5.2",
+            "message": "🎉 Hệ thống Tiger AI đã cập nhật lên phiên bản v2.5.2 mới nhất thành công!",
             "updated_at": datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         })
     except Exception as e:
