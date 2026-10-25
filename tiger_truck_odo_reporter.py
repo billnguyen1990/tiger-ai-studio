@@ -20,12 +20,12 @@ HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFP1ORM09dQxWzDVICZPUFbRt-aclYwYqioVCwaIFuKm_G0ILnAmjEJq2X5IRhDmTBXg/exec"
 SHEET_NAME = "Team_Leader"
 
-# Telegram Bot Config
+# Telegram Bot Config (Chỉ gửi duy nhất về Room 'The 5 Guardians' theo yêu cầu của Sếp)
 TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"
-TELEGRAM_TARGETS = [
-    {"chat_id": "-5295214199", "message_thread_id": None, "name": "The 5 Guardians"},
-    {"chat_id": "-1003940889949", "message_thread_id": 2690, "name": "Miền Tây 01 • Topic Báo Cáo"}
-]
+TELEGRAM_CHAT_ID = "-5295214199"
+
+# Google Sheet Link (Tab Team_Leader)
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/edit"
 
 URL_TRIPS = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-list-by-hub"
 URL_TRIP_DETAIL = "https://nhanh-api.ghn.vn/api/lastmile/v2/trip/trip-detail"
@@ -380,47 +380,44 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
         sheet_result = f"Không có chuyến xe tải nào cho ngày N-1 ({date_display})"
         print(f"  ℹ️ {sheet_result}", flush=True)
 
-    # 2. Gửi Telegram Báo Cáo Tổng Hợp
+    # 2. Gửi Telegram Báo Cáo Tổng Hợp (Chỉ gửi duy nhất phòng 'The 5 Guardians')
     if send_to_tg:
         lines = []
         lines.append(f"📊 <b>BÁO CÁO CÀO DỮ LIỆU ({date_display})</b> 📊\n")
         lines.append("✅ <b>TỔNG KẾT NHANH:</b>")
-        lines.append(f"- Tổng số chuyến xe tải: {total_trucks}")
-        lines.append(f"- Số kho có data: {len(WAREHOUSES_21)}/{len(WAREHOUSES_21)}")
-        lines.append("- Trạng thái: Hoàn hảo 100% 🎯")
-        lines.append("\n🏢 <b>CHI TIẾT TỪNG KHO:</b>")
+        lines.append(f"• Tổng số chuyến xe tải: <b>{total_trucks} chuyến</b>")
+        lines.append(f"• Số kho có data: <b>{len(WAREHOUSES_21)}/{len(WAREHOUSES_21)} kho</b>")
+        lines.append("• Trạng thái: <b>Hoàn hảo 100% 🎯</b>\n")
+        lines.append("🏢 <b>CHI TIẾT XE TẢI TỪNG KHO:</b>")
 
         for idx, (wid, wname) in enumerate(WAREHOUSES_21.items(), 1):
             st = warehouse_stats.get(wid, {"Xe tải": 0, "Xe máy": 0})
             s_name = wname.replace("Kho Giao Hàng Nặng - ", "").replace("Kho Giao Hàng Nặng-", "").strip()
-            lines.append(f"<b>{idx}. {s_name}</b>")
-            lines.append(f"   🚚 Xe tải: {st['Xe tải']}  |  🛵 Xe máy: {st['Xe máy']}")
+            lines.append(f"{idx}. {s_name}: <b>{st['Xe tải']} chuyến</b>")
 
-        lines.append("\n👉 <b>AE check lại của vùng mình xem đúng ko nhé!</b>")
+        lines.append("\n👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>")
         lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        lines.append(f"📁 <b>Google Sheets:</b> Đã đồng bộ vào tab '{SHEET_NAME}'")
-        lines.append(f"👉 <i>{sheet_result}</i>")
+        lines.append(f"📁 <b>Google Sheets:</b> Đã đồng bộ vào tab <code>{SHEET_NAME}</code>")
+        lines.append(f"🔗 <b>Link xem dữ liệu:</b>\n{SHEET_URL}")
         lines.append("🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • 02:00 AM Cloud</i>")
 
         tg_msg = "\n".join(lines)
         tg_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
 
-        for target in TELEGRAM_TARGETS:
-            try:
-                payload = {
-                    "chat_id": target["chat_id"],
-                    "text": tg_msg,
-                    "parse_mode": "HTML"
-                }
-                if target.get("message_thread_id"):
-                    payload["message_thread_id"] = target["message_thread_id"]
-                tg_res = requests.post(tg_url, json=payload, timeout=15)
-                if tg_res.status_code == 200:
-                    print(f"📱 Đã gửi báo cáo Telegram thành công tới [{target['name']}]!", flush=True)
-                else:
-                    print(f"⚠️ Lỗi gửi Telegram [{target['name']}]: {tg_res.text}", flush=True)
-            except Exception as e:
-                print(f"❌ Lỗi gửi Telegram [{target['name']}]: {e}", flush=True)
+        try:
+            payload = {
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": tg_msg,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": True
+            }
+            tg_res = requests.post(tg_url, json=payload, timeout=15)
+            if tg_res.status_code == 200:
+                print("📱 Đã gửi báo cáo Telegram thành công tới [The 5 Guardians]!", flush=True)
+            else:
+                print(f"⚠️ Lỗi gửi Telegram [The 5 Guardians]: {tg_res.text}", flush=True)
+        except Exception as e:
+            print(f"❌ Lỗi gửi Telegram: {e}", flush=True)
 
     return {
         "success": True,

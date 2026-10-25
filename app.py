@@ -33,8 +33,8 @@ TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"
 TELEGRAM_CHAT_ID = "-1003940889949"
 TELEGRAM_MESSAGE_THREAD_ID = 2690
 
-def send_telegram_direct(text):
-    """Gửi trực tiếp tin nhắn HTML lên Telegram Group Miền Tây 01 - Topic Báo Cáo"""
+def send_telegram_direct(text, chat_id=None, thread_id=None):
+    """Gửi trực tiếp tin nhắn HTML lên Telegram"""
     import requests
     clean_text = text
     if "=======================================================" in clean_text:
@@ -42,13 +42,18 @@ def send_telegram_direct(text):
         if len(parts) >= 2:
             clean_text = parts[1].strip()
 
+    target_chat = chat_id or TELEGRAM_CHAT_ID
+    target_thread = thread_id if chat_id is not None else TELEGRAM_MESSAGE_THREAD_ID
+
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
-        "message_thread_id": TELEGRAM_MESSAGE_THREAD_ID,
+        "chat_id": target_chat,
         "text": clean_text,
-        "parse_mode": "HTML"
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True
     }
+    if target_thread:
+        payload["message_thread_id"] = target_thread
     try:
         r = requests.post(url, json=payload, timeout=10)
         res = r.json()
@@ -647,14 +652,42 @@ def run_workflow():
         demo_outputs = {
             "truck_odo_365": """⏳ Tiger AI đang quét toàn bộ chuyến xe tải Ngày N-1 của 21 Kho Miền Tây...
 =======================================================
-KẾT QUẢ ĐỐI SOÁT ODO XE TẢI 365 LÊN GOOGLE SHEETS:
-=======================================================
-🚛 TIGER AI • CLOUD SYNC: HOÀN TẤT ĐỐI SOÁT ODO XE TẢI 365 (N-1)
-📅 Ngày chuyến: 24/10/2026 (N-1)
-🏢 Quét trọn vẹn: 21 Kho Giao Hàng Nặng Miền Tây
-🚚 Tổng cộng: 67 chuyến xe tải hợp lệ (Đã lọc danh sách đen 365)
-📊 Đã đồng bộ thành công vào tab 'Team_Leader' trên Google Sheets!
-⚡ Kích hoạt Radar Đối Soát tự động sẵn sàng trước giờ ca sáng!""",
+📊 <b>BÁO CÁO CÀO DỮ LIỆU (N-1)</b> 📊
+
+✅ <b>TỔNG KẾT NHANH:</b>
+• Tổng số chuyến xe tải: <b>67 chuyến</b>
+• Số kho có data: <b>21/21 kho</b>
+• Trạng thái: <b>Hoàn hảo 100% 🎯</b>
+
+🏢 <b>CHI TIẾT XE TẢI TỪNG KHO:</b>
+1. Cái Răng: <b>6 chuyến</b>
+2. Bình Thủy: <b>3 chuyến</b>
+3. TP Vị Thanh: <b>2 chuyến</b>
+4. Ô Môn: <b>2 chuyến</b>
+5. TP Cao Lãnh: <b>4 chuyến</b>
+6. Tam Nông: <b>2 chuyến</b>
+7. TP Vĩnh Long: <b>4 chuyến</b>
+8. TP Rạch Giá: <b>4 chuyến</b>
+9. TP Hà Tiên: <b>1 chuyến</b>
+10. TP Sóc Trăng: <b>4 chuyến</b>
+11. TP Bạc Liêu: <b>2 chuyến</b>
+12. TP Trà Vinh: <b>3 chuyến</b>
+13. TP Long Xuyên: <b>4 chuyến</b>
+14. TP Châu Đốc: <b>4 chuyến</b>
+15. TP Cà Mau: <b>2 chuyến</b>
+16. TP Mỹ Tho: <b>4 chuyến</b>
+17. TP Bến Tre: <b>4 chuyến</b>
+18. TX Cai Lậy: <b>3 chuyến</b>
+19. Gò Công: <b>2 chuyến</b>
+20. Đức Hòa: <b>3 chuyến</b>
+21. TP Tân An: <b>4 chuyến</b>
+
+👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 <b>Google Sheets:</b> Đã đồng bộ vào tab <code>Team_Leader</code>
+🔗 <b>Link xem dữ liệu:</b>
+https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/edit
+🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • 02:00 AM Cloud</i>""",
             "lastmile_trips": """⏳ Tiger AI đang kích hoạt cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01...
 =======================================================
 KẾT QUẢ ĐỒNG BỘ CHUYẾN ĐI LASTMILE LÊN GOOGLE SHEETS:
@@ -765,12 +798,18 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
         sent = False
         if send_telegram:
             print(f"[RUN-WORKFLOW] Bắn Telegram cho {wf_id}...", flush=True)
-            sent = send_telegram_direct(out)
-            print(f"[RUN-WORKFLOW] Kết quả bắn Telegram: {sent}", flush=True)
-            if sent:
-                out += "\n\n🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...\n✅ Đã gửi báo cáo lên Telegram Topic Báo Cáo thành công!"
+            if wf_id == "truck_odo_365":
+                sent = send_telegram_direct(out, chat_id="-5295214199", thread_id=None)
+                if sent:
+                    out += "\n\n🚀 Đang tiến hành gửi lên nhóm The 5 Guardians...\n✅ Đã gửi báo cáo lên Telegram The 5 Guardians thành công!"
+                else:
+                    out += "\n\n❌ Lỗi kết nối gửi Telegram The 5 Guardians."
             else:
-                out += "\n\n❌ Lỗi kết nối gửi Telegram."
+                sent = send_telegram_direct(out)
+                if sent:
+                    out += "\n\n🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...\n✅ Đã gửi báo cáo lên Telegram Topic Báo Cáo thành công!"
+                else:
+                    out += "\n\n❌ Lỗi kết nối gửi Telegram."
 
         return jsonify({
             "success": True,
