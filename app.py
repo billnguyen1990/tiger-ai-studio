@@ -19,6 +19,16 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = BASE_DIR
 
+def get_vietnam_now():
+    """Lấy thời gian chuẩn theo múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh)"""
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
+def get_vietnam_today():
+    """Lấy ngày hôm nay chuẩn theo giờ Việt Nam"""
+    return get_vietnam_now().date()
+
 SCRIPTS_MAP = {
     "gtc_07h00": os.path.join(PARENT_DIR, "tiger_gtc_kpi_reporter.py"),
     "checkin_07h35": os.path.join(PARENT_DIR, "tiger_checkin_reporter.py"),
@@ -649,11 +659,14 @@ def run_workflow():
     if demo_mode:
         import time
         time.sleep(1.2) # Giả lập 1.2s xử lý chuyên nghiệp
+        vn_today = get_vietnam_today()
+        vn_yday = vn_today - datetime.timedelta(days=1)
+        yday_display = vn_yday.strftime("%d/%m/%Y")
         demo_outputs = {
-            "truck_odo_365": """⏳ Tiger AI đang quét toàn bộ chuyến xe tải Ngày N-1 của 21 Kho Miền Tây...
+            "truck_odo_365": f"""⏳ Tiger AI đang quét toàn bộ chuyến xe tải Ngày N-1 của 21 Kho Miền Tây...
 =======================================================
 🚛💨 <b>BÁO CÁO ODO XE TẢI 365 • TOÀN MIỀN TÂY</b> 🚛💨
-📅 <i>Ngày chuyến:</i> <b>24/10/2026 (Ngày N-1)</b>
+📅 <i>Ngày chuyến:</i> <b>{yday_display} (Ngày N-1)</b>
 ⏰ <i>Khung giờ chốt:</i> <code>02:00 AM</code> (Tự động 100% trên Cloud)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 📊 <b>TỔNG KẾT VẬN HÀNH:</b>
@@ -731,12 +744,12 @@ def run_workflow():
 🔗 <b>Link xem dữ liệu trực tiếp:</b>
 https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/edit
 🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • Đám mây Cloud Render 24/7</i>""",
-            "lastmile_trips": """⏳ Tiger AI đang kích hoạt cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01...
+            "lastmile_trips": f"""⏳ Tiger AI đang kích hoạt cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01...
 =======================================================
 KẾT QUẢ ĐỒNG BỘ CHUYẾN ĐI LASTMILE LÊN GOOGLE SHEETS:
 =======================================================
 🐯 TIGER AI • CLOUD SYNC: HOÀN TẤT ĐỒNG BỘ CHUYẾN ĐI (N-1)
-📅 Ngày chuyến: 24/10/2026 (N-1)
+📅 Ngày chuyến: {yday_display} (N-1)
 🏢 4 Kho: Cái Răng (7 chuyến), Bình Thủy (5 chuyến), Vị Thanh (3 chuyến), Ô Môn (3 chuyến)
 📊 Tổng cộng: 18 chuyến FINISHED (36 cột dữ liệu)
 ✅ Đã ghi thành công vào tab 'Miền Tây 01 Đối Chiếu ODO' trên Google Sheets!""",
@@ -932,8 +945,9 @@ def get_hub_detail(hub_id):
     
     req_date = request.args.get("date", "").strip()
     target_file = None
-    date_key = "20261024"
-    date_display = "24/10/2026"
+    vn_yday = get_vietnam_today() - datetime.timedelta(days=1)
+    date_key = vn_yday.strftime("%Y%m%d")
+    date_display = vn_yday.strftime("%d/%m/%Y")
     
     if req_date:
         candidate = os.path.join(history_dir, f"kpi_{req_date}.json")

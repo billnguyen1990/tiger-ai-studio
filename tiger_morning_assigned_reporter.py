@@ -27,12 +27,20 @@ def get_nvxl_map():
     with open(MAP_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def get_vietnam_now():
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
+def get_vietnam_today():
+    return get_vietnam_now().date()
+
 def run_assigned_audit(target_date=None):
     headers = get_headers()
     nvxl_map = get_nvxl_map()
 
     if target_date is None:
-        target_date = datetime.date.today()
+        target_date = get_vietnam_today()
 
     date_int = int(target_date.strftime("%Y%m%d"))
     date_display = target_date.strftime("%d/%m/%Y")

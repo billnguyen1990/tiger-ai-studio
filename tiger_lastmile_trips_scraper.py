@@ -50,13 +50,34 @@ def load_headers():
     with open(HEADERS_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def get_vietnam_now():
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
+def get_vietnam_today():
+    return get_vietnam_now().date()
+
+def parse_target_date(target_date):
+    if target_date is None:
+        return get_vietnam_today() - datetime.timedelta(days=1)
+    if isinstance(target_date, datetime.date):
+        return target_date
+    if isinstance(target_date, datetime.datetime):
+        return target_date.date()
+    date_str = str(target_date).strip()
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%Y%m%d", "%d-%m-%Y"):
+        try:
+            return datetime.datetime.strptime(date_str, fmt).date()
+        except ValueError:
+            continue
+    raise ValueError(f"Không nhận diện được định dạng ngày: {target_date}")
+
 def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False):
     """
     Cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01 và đồng bộ lên Google Sheets (đủ 36 cột)
     """
-    if target_date is None:
-        target_date = datetime.date.today() - datetime.timedelta(days=1)
-    
+    target_date = parse_target_date(target_date)
     date_int = int(target_date.strftime("%Y%m%d"))
     date_display = target_date.strftime("%d/%m/%Y")
     

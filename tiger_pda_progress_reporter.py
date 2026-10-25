@@ -40,10 +40,15 @@ def get_order_assign_count(headers, order_code):
     except:
         return 1
 
+def get_vietnam_now():
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
 def run_pda_progress_audit():
     headers = get_headers()
     nvxl_map = get_nvxl_map()
-    now = datetime.datetime.now()
+    now = get_vietnam_now()
     today_int = int(now.strftime("%Y%m%d"))
     time_str = now.strftime("%H:%M")
 

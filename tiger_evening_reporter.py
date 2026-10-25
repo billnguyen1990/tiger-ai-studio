@@ -30,6 +30,11 @@ def get_nvxl_map():
     with open(MAP_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def get_vietnam_now():
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
 def run_evening_audit(target_date=None):
     """
     Quét dữ liệu chốt ca 21h cuối ngày:
@@ -39,7 +44,7 @@ def run_evening_audit(target_date=None):
     headers = get_headers()
     nvxl_map = get_nvxl_map()
 
-    now = datetime.datetime.now()
+    now = get_vietnam_now()
     if target_date is None:
         target_date = now.date()
 
@@ -359,18 +364,20 @@ def main():
     # Kích hoạt bảng thông báo tắt máy tự động 5 phút (nếu có cờ --shutdown)
     if is_shutdown:
         print("\n⏳ [TỰ ĐỘNG TẮT NGUỒN] Đang khởi chạy bảng đếm ngược 5 phút tắt máy (Giao diện Card VIP)...")
-        hta_path = os.path.join(BASE_DIR, "tiger_shutdown.hta")
-        if os.path.exists(hta_path):
+        ps1_path = os.path.join(BASE_DIR, "tiger_shutdown_ui.ps1")
+        if os.path.exists(ps1_path):
             try:
                 import win32process
                 si = win32process.STARTUPINFO()
                 si.lpDesktop = r"WinSta0\Default"
-                cmd = f'mshta.exe "{hta_path}" --real --seconds 300'
+                cmd = f'powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "{ps1_path}" -Seconds 300'
                 win32process.CreateProcess(None, cmd, None, None, False, 0, None, BASE_DIR, si)
-                print("✅ Đã kích hoạt bảng đếm ngược trên màn hình chính của sếp!")
+                print("✅ Đã kích hoạt bảng đếm ngược WPF VIP trên màn hình chính của sếp!")
             except Exception as e:
                 # Fallback subprocess nếu win32process lỗi
-                subprocess.run(["mshta.exe", hta_path, "--real", "--seconds", "300"], check=False)
+                import subprocess
+                subprocess.Popen(["powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-File", ps1_path, "-Seconds", "300"])
+                print(f"✅ Đã kích hoạt bảng đếm ngược qua subprocess.Popen: {e}")
 
 if __name__ == "__main__":
     main()

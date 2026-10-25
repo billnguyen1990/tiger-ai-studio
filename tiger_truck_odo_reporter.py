@@ -173,16 +173,45 @@ def _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_ret
         "success": success
     }
 
+def get_vietnam_now():
+    """
+    Luôn lấy thời gian chính xác theo múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh)
+    bất kể script đang chạy trên Render (Linux UTC), Windows hay Docker.
+    """
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
+def get_vietnam_today():
+    """Lấy ngày hôm nay chuẩn theo giờ Việt Nam"""
+    return get_vietnam_now().date()
+
+def parse_target_date(target_date):
+    """
+    Nhận diện linh hoạt target_date:
+    - None: Tự động lấy Ngày N-1 theo múi giờ Việt Nam (hôm qua)
+    - string: Hỗ trợ '%Y-%m-%d', '%d/%m/%Y', '%Y%m%d', '%d-%m-%Y'
+    """
+    if target_date is None:
+        return get_vietnam_today() - datetime.timedelta(days=1)
+    if isinstance(target_date, datetime.date):
+        return target_date
+    if isinstance(target_date, datetime.datetime):
+        return target_date.date()
+    date_str = str(target_date).strip()
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%Y%m%d", "%d-%m-%Y"):
+        try:
+            return datetime.datetime.strptime(date_str, fmt).date()
+        except ValueError:
+            continue
+    raise ValueError(f"Không nhận diện được định dạng ngày: {target_date}")
+
 def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True, fast_mode=False):
     """
     Cào toàn bộ chuyến xe tải Ngày N-1 của 21 kho Miền Tây.
     Có cơ chế cào chậm an toàn: Nghỉ 30s - 60s giữa các kho + Tự động cào bù khi mạng yếu.
     """
-    if target_date is None:
-        target_date = datetime.date.today() - datetime.timedelta(days=1)
-    elif isinstance(target_date, str):
-        target_date = datetime.datetime.strptime(target_date, "%Y-%m-%d").date()
-
+    target_date = parse_target_date(target_date)
     date_int = int(target_date.strftime("%Y%m%d"))
     date_display = target_date.strftime("%d/%m/%Y")
 

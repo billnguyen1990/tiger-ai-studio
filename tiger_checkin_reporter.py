@@ -30,12 +30,17 @@ def get_nvxl_map():
     with open(MAP_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def get_vietnam_now():
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
 def run_checkin_audit(target_date=None):
     """Quét dữ liệu lịch làm việc và check-in của 4 kho MT01 cho ngày target_date (mặc định hôm nay)"""
     headers = get_headers()
     nvxl_map = get_nvxl_map()
 
-    now = datetime.datetime.now()
+    now = get_vietnam_now()
     if target_date is None:
         target_date = now.date()
 

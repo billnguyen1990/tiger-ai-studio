@@ -29,6 +29,29 @@ def get_nvxl_map():
     with open(MAP_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def get_vietnam_now():
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    return utc_now.astimezone(vn_tz)
+
+def get_vietnam_today():
+    return get_vietnam_now().date()
+
+def parse_target_date(target_date):
+    if target_date is None:
+        return get_vietnam_today() - datetime.timedelta(days=1)
+    if isinstance(target_date, datetime.date):
+        return target_date
+    if isinstance(target_date, datetime.datetime):
+        return target_date.date()
+    date_str = str(target_date).strip()
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%Y%m%d", "%d-%m-%Y"):
+        try:
+            return datetime.datetime.strptime(date_str, fmt).date()
+        except ValueError:
+            continue
+    raise ValueError(f"Không nhận diện được định dạng ngày: {target_date}")
+
 def run_kpi_audit(target_date=None):
     """
     Quét và tổng hợp KPI Giao thành công (GTC) / Giao thất bại (GTB) của ngày hôm trước
@@ -36,9 +59,7 @@ def run_kpi_audit(target_date=None):
     headers = get_headers()
     nvxl_map = get_nvxl_map()
 
-    if target_date is None:
-        target_date = datetime.date.today() - datetime.timedelta(days=1)
-
+    target_date = parse_target_date(target_date)
     date_int = int(target_date.strftime("%Y%m%d"))
     date_display = target_date.strftime("%d/%m/%Y")
 
@@ -303,7 +324,7 @@ def main():
     is_send = "--send" in args
     is_today = "--today" in args
 
-    target_date = datetime.date.today() if is_today else (datetime.date.today() - datetime.timedelta(days=1))
+    target_date = get_vietnam_today() if is_today else (get_vietnam_today() - datetime.timedelta(days=1))
 
     # Hỗ trợ truyền ngày tùy chọn --date YYYYMMDD
     for i, a in enumerate(args):
