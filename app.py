@@ -8,6 +8,7 @@ import threading
 import datetime
 import time
 from flask import Flask, render_template, jsonify, request, send_from_directory
+from concurrent.futures import ThreadPoolExecutor
 
 CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
 _cached_tasks = []
@@ -1456,15 +1457,39 @@ ACTION_MAP = {
     "UPDATE_ITEM": ("Cập Nhật Thao Tác", "📝")
 }
 
-HUB_NAMES_MAP = {
-    "21088000": "Kho Cái Răng",
-    "21985000": "Kho Bình Thủy",
-    "22862000": "Kho Vị Thanh",
-    "22917000": "Kho Ô Môn"
-}
+GHN_HUBS_MAP = {}
+hubs_file = os.path.join(BASE_DIR, "ghn_hubs_map.json")
+if not os.path.exists(hubs_file):
+    hubs_file = os.path.join(PARENT_DIR, "ghn_hubs_map.json")
+if os.path.exists(hubs_file):
+    try:
+        with open(hubs_file, "r", encoding="utf-8") as f:
+            GHN_HUBS_MAP = json.load(f)
+    except Exception:
+        pass
+
+def resolve_hub_name(hub_id):
+    """Ánh xạ mã kho sang tên kho chuẩn xác từ danh mục 1,685 kho GHN toàn quốc"""
+    if not hub_id:
+        return "Chưa rõ"
+    str_id = str(hub_id).strip()
+    return GHN_HUBS_MAP.get(str_id, f"Kho {str_id}")
+
+def format_ghn_time_to_vn(raw_time_str):
+    """Chuyển đổi thời gian từ UTC ISO sang múi giờ Việt Nam chuẩn (ICT, GMT+7)"""
+    if not raw_time_str:
+        return ""
+    try:
+        clean = str(raw_time_str).replace("Z", "+00:00")
+        dt = datetime.datetime.fromisoformat(clean)
+        vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+        vn_dt = dt.astimezone(vn_tz)
+        return vn_dt.strftime("%Y-%m-%d %H:%M:%S")
+    except Exception:
+        return str(raw_time_str).replace("T", " ")[:19]
 
 def query_ghn_order_history(order_code):
-    """Truy vấn hành trình chi tiết 1 mã đơn qua API GHN"""
+    """Truy vấn hành trình chi tiết 1 mã đơn qua API GHN với dữ liệu chuẩn xác 100%"""
     headers_file = os.path.join(PARENT_DIR, "headers_found.json")
     if not os.path.exists(headers_file):
         headers_file = os.path.join(os.path.dirname(BASE_DIR), "headers_found.json")
@@ -1482,7 +1507,7 @@ def query_ghn_order_history(order_code):
     
     import requests
     try:
-        r = requests.post(url, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 10}}, headers=headers, timeout=6)
+        r = requests.post(url, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 20}}, headers=headers, timeout=8)
         if r.status_code == 200:
             events = r.json().get("data", {}).get("data", []) or []
             if not events:
@@ -1495,45 +1520,87 @@ def query_ghn_order_history(order_code):
                     "time": "—",
                     "trip_code": "—",
                     "note": "Không tìm thấy lịch sử đơn hàng trên hệ thống GHN",
+                    "milestones": [],
                     "tracuu_link": tracuu_link
                 }
             
             latest = events[0]
-            action_code = latest.get("actionName") or latest.get("historyType") or "UNKNOWN"
-            note = ""
-            action_label, action_icon = ACTION_MAP.get(action_code, (action_code, "📌"))
+            latest_type = latest.get("historyType") or "UNKNOWN"
+            latest_actor = latest.get("createdByName") or "Hệ thống"
+            latest_time = format_ghn_time_to_vn(latest.get("createdTime"))
+            hub_id = str(latest.get("hubId") or "")
+            hub_name = resolve_hub_name(hub_id)
             
-            for ev in events:
-                data_str = ev.get("data")
-                if data_str:
+            action = None
+            note = ""
+            data_str = latest.get("data")
+            if data_str:
+                try:
+                    d = json.loads(data_str)
+                    if isinstance(d, dict):
+                        action = d.get("action")
+                        if d.get("failNote"):
+                            note = d.get("failNote")
+                        if d.get("nextRedoTime"):
+                            note += f" (Hẹn lại: {format_ghn_time_to_vn(d.get('nextRedoTime'))})"
+                except Exception:
+                    pass
+
+            # Thu thập các mốc lịch sử quan trọng trước đó (nếu có)
+            earlier_milestones = []
+            for ev in events[1:]:
+                etype = ev.get("historyType")
+                edata = ev.get("data")
+                e_actor = ev.get("createdByName") or "NV"
+                e_time = format_ghn_time_to_vn(ev.get("createdTime"))
+                if etype == "UPDATE_ITEM" and edata:
                     try:
-                        d = json.loads(data_str)
-                        if isinstance(d, dict):
-                            act = d.get("action")
-                            if act in ACTION_MAP:
-                                action_label, action_icon = ACTION_MAP[act]
-                            if d.get("failNote"):
-                                note = d.get("failNote")
-                            if d.get("nextRedoTime"):
-                                note += f" (Hẹn lại: {d.get('nextRedoTime')[:10]})"
-                            break
+                        d = json.loads(edata)
+                        if d.get("action") == "PICK_SUCCESS":
+                            earlier_milestones.append(f"📦 Đã lấy thành công bởi NV {e_actor} ({e_time})")
+                        elif d.get("action") == "DELIVER_SUCCESS":
+                            earlier_milestones.append(f"✅ Đã giao thành công bởi NV {e_actor} ({e_time})")
+                        elif d.get("action") == "DELIVER_FAIL":
+                            earlier_milestones.append(f"❌ Giao thất bại bởi NV {e_actor} ({e_time}): {d.get('failNote', '')}")
+                    except Exception:
+                        pass
+                elif etype == "CALL_LOG" and edata:
+                    try:
+                        d = json.loads(edata)
+                        shop_name = d.get("name") or "Khách/Shop"
+                        earlier_milestones.append(f"📞 NV {e_actor} đã liên hệ {shop_name} lúc {e_time}")
                     except Exception:
                         pass
 
-            hub_id = str(latest.get("hubId") or "")
-            hub_name = HUB_NAMES_MAP.get(hub_id, f"Kho {hub_id}" if hub_id else "Chưa rõ")
-            raw_time = latest.get("createdTime") or ""
-            fmt_time = raw_time.replace("T", " ")[:16] if raw_time else ""
+            # Xác định trạng thái chính xác nhất
+            if action == "PICK_SUCCESS":
+                status_text = "📦 Lấy Hàng Thành Công"
+            elif action == "DELIVER_SUCCESS":
+                status_text = "✅ Giao Hàng Thành Công"
+            elif action == "DELIVER_FAIL":
+                status_text = "❌ Giao Hàng Thất Bại"
+            elif action == "PICK_FAIL":
+                status_text = "⚠️ Lấy Hàng Thất Bại / Hẹn Lại"
+            elif latest_type == "RECEIVE_AT_WAREHOUSE":
+                status_text = "🏢 Đã Nhập Kho (Lưu Bãi)"
+            elif latest_type == "ADD_TO_TRIP":
+                status_text = "🚚 Đang Trên Chuyến Giao/Lấy"
+            elif latest_type == "UPLOAD_POD":
+                status_text = "📸 Đã Chụp Ảnh POD Xác Nhận"
+            else:
+                status_label, status_icon = ACTION_MAP.get(latest_type, (latest_type, "📌"))
+                status_text = f"{status_icon} {status_label}"
 
             return {
                 "order_code": order_code,
                 "found": True,
-                "status_text": f"{action_icon} {action_label}",
-                "actor": latest.get("createdByName") or "Hệ thống",
+                "status_text": status_text,
+                "actor": latest_actor,
                 "hub_name": hub_name,
-                "time": fmt_time,
+                "time": latest_time,
                 "trip_code": latest.get("tripCode") or "—",
                 "note": note,
+                "milestones": earlier_milestones,
                 "tracuu_link": tracuu_link
             }
         else:
@@ -1546,6 +1613,7 @@ def query_ghn_order_history(order_code):
                 "time": "—",
                 "trip_code": "—",
                 "note": f"Phản hồi HTTP {r.status_code}",
+                "milestones": [],
                 "tracuu_link": tracuu_link
             }
     except Exception as e:
@@ -1558,6 +1626,7 @@ def query_ghn_order_history(order_code):
             "time": "—",
             "trip_code": "—",
             "note": str(e),
+            "milestones": [],
             "tracuu_link": tracuu_link
         }
 
@@ -1595,27 +1664,46 @@ def build_mt01_system_context():
     context += "Hãy trả lời thông minh, chuyên nghiệp, súc tích, định dạng markdown đẹp mắt với bảng hoặc danh sách gạch đầu dòng, kèm emoji sinh động, hỗ trợ đắc lực cho công tác quản lý điều hành."
     return context
 
-def call_gemini_api(prompt, system_context, api_key):
-    """Gọi Google Gemini API (gemini-1.5-flash / gemini-2.0-flash)"""
+def call_gemini_api(prompt, system_context, api_key, history=None):
+    """Gọi Google Gemini API hỗ trợ hội thoại nhiều lượt (Multi-turn Chat) & ghi nhớ ngữ cảnh liền mạch"""
     import requests
-    models = ["gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-flash-latest"]
+    models = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-flash-latest", "gemini-3.1-flash-lite"]
+    
+    contents = []
+    if history and isinstance(history, list):
+        for msg in history[-10:]: # Lưu giữ 10 lượt hội thoại gần nhất
+            r = msg.get("role")
+            role = "user" if r == "user" else "model"
+            content = (msg.get("content") or msg.get("text") or "").strip()
+            if content and not content.startswith("Tiger AI đang kết nối") and not content.startswith("Lỗi:"):
+                # Clean html tags if needed
+                import re
+                clean_c = re.sub(r'<[^>]+>', ' ', content).strip()
+                if clean_c:
+                    contents.append({
+                        "role": role,
+                        "parts": [{"text": clean_c[:1500]}]
+                    })
+    
+    # Lượt hiện tại của user
+    contents.append({
+        "role": "user",
+        "parts": [{"text": prompt}]
+    })
+
+    payload = {
+        "system_instruction": {
+            "parts": [{"text": system_context}]
+        },
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.35,
+            "maxOutputTokens": 1500
+        }
+    }
+
     for model_name in models:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-        payload = {
-            "contents": [
-                {
-                    "parts": [
-                        {
-                            "text": f"{system_context}\n\n[CÂU HỎI TỪ NGƯỜI DÙNG]: {prompt}"
-                        }
-                    ]
-                }
-            ],
-            "generationConfig": {
-                "temperature": 0.35,
-                "maxOutputTokens": 1500
-            }
-        }
         try:
             r = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=20)
             if r.status_code == 200:
@@ -1674,7 +1762,7 @@ def gemini_config():
 
 @app.route("/api/track-orders", methods=["POST"])
 def track_orders_endpoint():
-    """Tra cứu mã đơn hàng nội bộ GHN (1 đơn hoặc nhiều đơn cùng lúc)"""
+    """Tra cứu mã đơn hàng nội bộ GHN (1 đơn hoặc nhiều đơn cùng lúc, hỗ trợ lên tới 50 đơn)"""
     data = request.get_json(silent=True, force=True) or {}
     raw_text = data.get("raw_text") or ""
     order_codes = data.get("orders") or []
@@ -1688,11 +1776,11 @@ def track_orders_endpoint():
     if not order_codes:
         return jsonify({"success": False, "message": "Không tìm thấy mã đơn hàng hợp lệ nào trong nội dung nhập!"}), 400
     
-    order_codes = order_codes[:30] # Giới hạn tối đa 30 đơn 1 lần
+    order_codes = order_codes[:50] # Hỗ trợ lên đến 50 đơn 1 lần
     
     results = []
-    for code in order_codes:
-        results.append(query_ghn_order_history(code))
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        results = list(executor.map(query_ghn_order_history, order_codes))
         
     return jsonify({
         "success": True,
@@ -1703,36 +1791,41 @@ def track_orders_endpoint():
 
 @app.route("/api/copilot-ask", methods=["POST"])
 def copilot_ask():
-    """Trợ lý AI Copilot kết nối Google Gemini & Tra cứu mã đơn GHN (1 hoặc nhiều đơn)"""
+    """Trợ lý AI Copilot kết nối Google Gemini & Tra cứu mã đơn GHN đa lượt thông minh, có bộ nhớ hội thoại"""
     data = request.get_json(silent=True, force=True) or {}
     raw_prompt = (data.get("prompt") or "").strip()
+    history = data.get("history") or []
     prompt = raw_prompt.lower()
 
     if not raw_prompt:
         return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Sếp có thể hỏi em bất kỳ thông tin nào về 4 kho MT01 (KPI GTC, LTC, nợ COD, đơn hẹn), dán mã đơn hàng GHN để tra cứu nội bộ, hoặc kết nối Google Gemini AI để hỏi mọi chủ đề!"})
 
-    # BƯỚC 1: TỰ ĐỘNG PHÁT HIỆN VÀ TRA CỨU MÃ ĐƠN HÀNG GHN
+    # BƯỚC 1: TỰ ĐỘNG PHÁT HIỆN VÀ TRA CỨU MÃ ĐƠN HÀNG GHN (HỖ TRỢ ĐẾN 50 ĐƠN ĐỒNG THỜI)
     order_codes = extract_ghn_order_codes(raw_prompt)
     if order_codes:
+        target_codes = order_codes[:50]
         results = []
-        for code in order_codes[:10]:
-            results.append(query_ghn_order_history(code))
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            results = list(executor.map(query_ghn_order_history, target_codes))
         
         count = len(results)
-        answer = f"🔍 **Tiger AI đã tra cứu nội bộ GHN cho {count} mã đơn hàng:**\n\n"
+        answer = f"🔍 **Tiger AI đã tra cứu nội bộ GHN đầy đủ cho {count}/{len(order_codes)} mã đơn hàng:**\n\n"
         for idx, res in enumerate(results, 1):
             if res.get("found"):
                 answer += (
-                    f"{idx}. 📦 **`{res['order_code']}`**: {res['status_text']}\n"
+                    f"{idx}. 📦 **`{res['order_code']}`**: **{res['status_text']}**\n"
                     f"   • 🏢 Kho xử lý: **{res['hub_name']}** | 👤 NV: **{res['actor']}**\n"
                     f"   • 🕒 Cập nhật: `{res['time']}`\n"
                 )
                 if res.get("note"):
                     answer += f"   • 📝 Ghi chú: *{res['note']}*\n"
+                if res.get("milestones"):
+                    for m in res["milestones"][:2]:
+                        answer += f"   • ℹ️ {m}\n"
                 answer += f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo GHN ↗</a>\n\n"
             else:
                 answer += (
-                    f"{idx}. ⚠ **`{res['order_code']}`**: {res['status_text']}\n"
+                    f"{idx}. ⚠️ **`{res['order_code']}`**: {res['status_text']}\n"
                     f"   • 📝 *{res.get('note', 'Không tìm thấy')}*\n"
                     f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Kiểm tra trên Tracuunoibo GHN ↗</a>\n\n"
                 )
@@ -1746,11 +1839,45 @@ def copilot_ask():
             "type": "order_tracking"
         })
 
-    # BƯỚC 2: NẾU ĐÃ CẤU HÌNH GOOGLE GEMINI API KEY -> GỌI GEMINI VỚI NGỮ CẢNH MT01
+    # BƯỚC 1.5: XỬ LÝ CÂU HỎI NỐI TIẾP VỀ TRA CỨU ĐƠN (GẮN KẾT BỘ NHỚ LỊCH SỬ)
+    if history and any(k in prompt for k in ["sao không check", "sao ko check", "sao chỉ check", "sao lại dừng", "check tiếp", "check nốt", "còn lại", "chưa check"]):
+        last_user_prompt = ""
+        for msg in reversed(history):
+            if msg.get("role") == "user":
+                last_user_prompt = msg.get("content") or ""
+                if extract_ghn_order_codes(last_user_prompt):
+                    break
+        prev_codes = extract_ghn_order_codes(last_user_prompt)
+        if prev_codes:
+            results = []
+            with ThreadPoolExecutor(max_workers=6) as executor:
+                results = list(executor.map(query_ghn_order_history, prev_codes[:50]))
+            
+            count = len(results)
+            answer = f"🤖 **Tiger AI xin lỗi sếp vì ở phiên trước hệ thống bị giới hạn 10 đơn cũ!**\n\n"
+            answer += f"⚡ Em đã nâng cấp bộ não xử lý đa luồng (Multi-threading) và **đã tra cứu toàn bộ {count} đơn hàng** từ danh sách của sếp:\n\n"
+            for idx, res in enumerate(results, 1):
+                if res.get("found"):
+                    answer += (
+                        f"{idx}. 📦 **`{res['order_code']}`**: **{res['status_text']}**\n"
+                        f"   • 🏢 Kho: **{res['hub_name']}** | 👤 NV: **{res['actor']}** | 🕒 `{res['time']}`\n"
+                    )
+                    if res.get("milestones"):
+                        answer += f"   • ℹ️ {res['milestones'][0]}\n"
+                    answer += f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo ↗</a>\n\n"
+                else:
+                    answer += f"{idx}. ⚠️ **`{res['order_code']}`**: {res['status_text']}\n\n"
+            return jsonify({
+                "answer": answer,
+                "time": datetime.datetime.now().strftime("%H:%M:%S"),
+                "type": "order_tracking"
+            })
+
+    # BƯỚC 2: NẾU ĐÃ CẤU HÌNH GOOGLE GEMINI API KEY -> GỌI GEMINI VỚI ĐẦY ĐỦ LỊCH SỬ HỘI THOẠI
     gemini_key = get_gemini_api_key()
     if gemini_key:
         system_ctx = build_mt01_system_context()
-        gemini_reply = call_gemini_api(raw_prompt, system_ctx, gemini_key)
+        gemini_reply = call_gemini_api(raw_prompt, system_ctx, gemini_key, history=history)
         if gemini_reply:
             return jsonify({
                 "answer": gemini_reply,

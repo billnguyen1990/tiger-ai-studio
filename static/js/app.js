@@ -1871,6 +1871,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Conversation history memory for multi-turn chat
+  let copilotHistory = [];
+
   // Send Copilot Message
   async function sendCopilotMessage(text) {
     if (!text || !text.trim()) return;
@@ -1892,16 +1895,31 @@ document.addEventListener("DOMContentLoaded", () => {
     copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
     playCyberSound("pulse");
 
+    // Push user message to history
+    copilotHistory.push({ role: "user", content: q });
+    if (copilotHistory.length > 20) {
+      copilotHistory = copilotHistory.slice(-20);
+    }
+
     try {
       const res = await fetch("/api/copilot-ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: q })
+        body: JSON.stringify({ 
+          prompt: q,
+          history: copilotHistory.slice(0, -1) // All prior turns
+        })
       });
       const data = await res.json();
       lMsg.innerHTML = formatMarkdownToHtml(data.answer);
       copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
       playCyberSound("success");
+
+      // Save assistant response to conversation history
+      copilotHistory.push({ role: "assistant", content: data.answer || "" });
+      if (copilotHistory.length > 20) {
+        copilotHistory = copilotHistory.slice(-20);
+      }
     } catch (err) {
       lMsg.textContent = `Lỗi: ${err.message}`;
     }
