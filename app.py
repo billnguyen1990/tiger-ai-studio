@@ -1431,17 +1431,27 @@ def save_gemini_api_key(key):
         return False
 
 def extract_ghn_order_codes(text):
-    """Trích xuất danh sách mã đơn hàng GHN (chuỗi 8-15 ký tự chữ/số, ưu tiên GYM hoặc độ dài 8)"""
+    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, hoặc chuỗi 8-16 ký tự)"""
     if not text:
         return []
     import re
-    tokens = re.findall(r'\b[A-Za-z0-9]{8,15}\b', text)
-    ignored = {"TELEGRAM", "CANDIDATE", "SCHEDULE", "AUTOMATIC", "EXCELLENT", "YESTERDAY", "INTERNAL", "TRACUUNOI", "COPILOT", "STUDIO", "CHIASE", "CANTHO", "HAUGIANG", "SUCCESS", "DELIVER", "NOTFOUND", "STATUS", "QUESTION", "RESPONSED", "REPORTER", "PROMPT", "GEMINI"}
+    tokens = re.findall(r'\b[A-Za-z0-9_-]{8,18}\b', text)
+    ignored = {
+        "TELEGRAM", "CANDIDATE", "SCHEDULE", "AUTOMATIC", "EXCELLENT", 
+        "YESTERDAY", "INTERNAL", "TRACUUNOI", "COPILOT", "STUDIO", 
+        "CHIASE", "CANTHO", "HAUGIANG", "SUCCESS", "DELIVER", 
+        "NOTFOUND", "STATUS", "QUESTION", "RESPONSED", "REPORTER", 
+        "PROMPT", "GEMINI", "BINHTHUY", "CAIRANG", "VITHANH", "BINHMINH",
+        "WAREHOUSE", "TRACKING", "HISTORY", "LOCATION", "ORDERCODE"
+    }
     results = []
     for t in tokens:
-        up = t.upper()
+        up = t.upper().replace("-", "").replace("_", "")
         if up not in ignored:
-            if up.startswith("GYM") or len(up) == 8:
+            has_letter = any(c.isalpha() for c in up)
+            has_digit = any(c.isdigit() for c in up)
+            is_prefixed = up.startswith(("GYM", "ICT", "GHN", "G", "N"))
+            if is_prefixed or (has_letter and has_digit and 8 <= len(up) <= 16) or len(up) == 8:
                 results.append(up)
     return list(dict.fromkeys(results))
 
