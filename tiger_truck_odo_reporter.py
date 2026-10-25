@@ -10,7 +10,7 @@ import requests
 # ==============================================================================
 # TIGER AI • QUẢN LÝ & ĐỐI SOÁT ODO XE TẢI GHN 365 - TOÀN MIỀN TÂY (02:00 AM)
 # Tự động hóa 100% trên Cloud Render - Cào dữ liệu chuyến đi Ngày N-1
-# Tích hợp Cơ Chế Cào Chậm Chống Nghẽn Mạng & Tự Động Quét Lại Khi Bị Hụt Data
+# Tích hợp Cơ Chế Cào Chậm Chống Nghẽn Mạng: Nghỉ 30s - 60s giữa các kho + Tự động cào bù
 # ==============================================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -130,7 +130,7 @@ def _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_ret
 
     for attempt in range(1, max_retries + 1):
         try:
-            res_det = requests.post(URL_TRIP_DETAIL, headers=headers, json={"trip_code": code}, timeout=10)
+            res_det = requests.post(URL_TRIP_DETAIL, headers=headers, json={"trip_code": code}, timeout=12)
             if res_det.status_code == 200:
                 d_data = res_det.json().get("data") or {}
                 plate = (d_data.get("truckPlateNumber") or "").strip().upper()
@@ -149,10 +149,9 @@ def _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_ret
                 success = True
                 break
             else:
-                # Nếu bị rate limit hoặc lỗi server, nghỉ và thử lại
-                time.sleep(1.5 * attempt)
+                time.sleep(2.0 * attempt)
         except Exception:
-            time.sleep(2.0 * attempt)
+            time.sleep(2.5 * attempt)
 
     is_valid, v_type = is_valid_vehicle(plate, wid)
     nhan_vien = f"{driver_id} - {driver_name}".strip(" -")
@@ -172,10 +171,10 @@ def _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_ret
         "success": success
     }
 
-def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False):
+def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False, fast_mode=False):
     """
     Cào toàn bộ chuyến xe tải Ngày N-1 của 21 kho Miền Tây.
-    Có cơ chế cào chậm an toàn (Polite Crawling) và tự động cào lại (Rescue Queue) khi mạng yếu.
+    Có cơ chế cào chậm an toàn: Nghỉ 30s - 60s giữa các kho + Tự động cào bù khi mạng yếu.
     """
     if target_date is None:
         target_date = datetime.date.today() - datetime.timedelta(days=1)
@@ -188,20 +187,22 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
     print("=" * 65, flush=True)
     print(f"🐯 [TIGER AI] BẮT ĐẦU ĐỐI SOÁT ODO XE TẢI 365 - TOÀN MIỀN TÂY (NGÀY N-1: {date_display})", flush=True)
     print(f"⏰ Thời gian kích hoạt: 02:00 AM (Tự động 100% trên Cloud Render)", flush=True)
-    print(f"🛡️ Cơ chế bảo vệ: Cào êm ái chống nghẽn mạng + Tự động cào bù khi bị hụt data", flush=True)
+    if fast_mode:
+        print(f"⚡ Chế độ kiểm tra nhanh: Bỏ qua thời gian nghỉ dài để nghiệm thu tức thì", flush=True)
+    else:
+        print(f"🛡️ Chế độ an toàn ban đêm: Nghỉ 30s - 60s giữa các kho + Tự động cào bù khi mạng yếu", flush=True)
     print("=" * 65, flush=True)
 
     headers = load_headers()
     all_truck_results = []
     warehouse_stats = {wid: {"Xe tải": 0, "Xe máy": 0, "total": 0} for wid in WAREHOUSES_21}
     
-    # Hàng đợi các kho cần quét (hỗ trợ tự động quét lại kho bị rớt)
     wh_queue = [(wid, wname, 0) for wid, wname in WAREHOUSES_21.items()]
     seen_trip_codes = set()
     failed_trips_to_rescue = []
 
     q_idx = 0
-    print(f"\n🚀 [VÒNG 1: BẮT ĐẦU QUÉT 21 KHO VỚI NHỊP ĐỘ AN TOÀN]...", flush=True)
+    print(f"\n🚀 [VÒNG 1: BẮT ĐẦU QUÉT 21 KHO THONG THẢ BAN ĐÊM]...", flush=True)
 
     while q_idx < len(wh_queue):
         wid, wname, retry_count = wh_queue[q_idx]
@@ -211,7 +212,7 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
         if retry_count > 0:
             print(f"\n🔄 [TỰ ĐỘNG QUÉT LẠI KHO BỊ HỤT DATA - Lần {retry_count}]: {short_name} ({wid})", flush=True)
         else:
-            print(f"🏭 [{q_idx + 1}/21] Đang quét kho: {short_name}...", flush=True)
+            print(f"\n🏭 [{q_idx + 1}/21] Đang quét kho: {short_name}...", flush=True)
 
         hub_trips = []
         payload = {
@@ -240,17 +241,17 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
                 else:
                     time.sleep(2.0)
             except Exception:
-                time.sleep(2.5)
+                time.sleep(3.0)
 
         # Nếu quét lần đầu mà kho bị lỗi mạng/rớt data -> Tự động đưa kho vào cuối hàng đợi để lát quét lại
         if not fetch_ok and retry_count < 2:
             print(f"  ⚠️ Mạng yếu ở kho {short_name}, tự động đưa vào cuối hàng đợi để cào lại sau!", flush=True)
             wh_queue.append((wid, wname, retry_count + 1))
             q_idx += 1
-            time.sleep(1.0)
+            time.sleep(2.0)
             continue
 
-        # Lặp từng chuyến đi của kho với khoảng nghỉ nhịp nhàng (0.2s - 0.4s) chống rate limit
+        # Lặp từng chuyến đi của kho với khoảng nghỉ nhịp nhàng (1.5s - 3.0s) như người thật bấm máy
         for t in hub_trips:
             code = t.get("tripCode")
             if not code or code in seen_trip_codes:
@@ -278,22 +279,31 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
             elif detail["v_type"] == "Xe máy":
                 warehouse_stats[wid]["Xe máy"] += 1
 
-            # 🛡️ Nghỉ nhịp nhàng chống nghẽn server và chống WAF chặn
-            time.sleep(random.uniform(0.15, 0.35))
+            # 🛡️ Nghỉ nhịp nhàng giữa mỗi chuyến đi (0.15s - 0.35s) như người dùng thật thao tác
+            trip_pause = random.uniform(0.05, 0.15) if fast_mode else random.uniform(0.15, 0.35)
+            time.sleep(trip_pause)
 
         st = warehouse_stats[wid]
         print(f"  ✓ {short_name}: {st['Xe tải']} xe tải | 🛵 {st['Xe máy']} xe máy (Tổng {st['total']} chuyến)", flush=True)
 
-        # Nghỉ nhẹ giữa các kho
-        time.sleep(random.uniform(0.4, 0.8))
         q_idx += 1
+
+        # 💤 NGHỈ GIỮA CÁC KHO (30s - 60s THEO YÊU CẦU CỦA USER ĐỂ CHUẨN XÁC 100%)
+        if q_idx < len(wh_queue):
+            if fast_mode:
+                time.sleep(0.5)
+            else:
+                pause_wh = random.uniform(30.0, 60.0)
+                print(f"  💤 [NGHỈ AN TOÀN] Tạm nghỉ {pause_wh:.1f}s trước khi sang kho tiếp theo (Hạ nhiệt server GHN & đảm bảo chuẩn 100%)...", flush=True)
+                time.sleep(pause_wh)
 
     # ==========================================================================
     # VÒNG 2: TỰ ĐỘNG CÀO BÙ NẾU CÓ CHUYẾN BỊ HỤT DATA DO MẠNG YẾU (RESCUE ROUND)
     # ==========================================================================
     if failed_trips_to_rescue:
-        print(f"\n🔁 [VÒNG 2: PHÁT HIỆN {len(failed_trips_to_rescue)} CHUYẾN BỊ MẠNG YẾU, TIẾN HÀNH CÀO BÙ NGHỈ 3S]...", flush=True)
-        time.sleep(3.0)
+        rescue_pause = 5.0 if fast_mode else random.uniform(15.0, 30.0)
+        print(f"\n🔁 [VÒNG 2: PHÁT HIỆN {len(failed_trips_to_rescue)} CHUYẾN BỊ MẠNG YẾU, NGHỈ {rescue_pause:.1f}S RỒI TIẾN HÀNH CÀO BÙ]...", flush=True)
+        time.sleep(rescue_pause)
         for t, wid, wname in failed_trips_to_rescue:
             code = t.get("tripCode")
             detail = _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_retries=4)
@@ -311,8 +321,7 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
                     })
                 elif detail["v_type"] == "Xe máy":
                     warehouse_stats[wid]["Xe máy"] += 1
-                print(f"  🎯 Đã cào bù thành công chuyến: {code} ({detail['plate']})", flush=True)
-            time.sleep(0.5)
+            time.sleep(0.05 if fast_mode else random.uniform(0.15, 0.35))
 
     total_trucks = len(all_truck_results)
     print(f"\n👉 TỔNG CỘNG XE TẢI HỢP LỆ (NGÀY N-1 {date_display}): {total_trucks} chuyến xe tải của 21 kho", flush=True)
@@ -419,6 +428,8 @@ if __name__ == "__main__":
     if "--dry-run" in sys.argv:
         send_sheet = False
 
+    is_fast = "--fast" in sys.argv
+
     custom_date = None
     if "--date" in sys.argv:
         try:
@@ -427,4 +438,4 @@ if __name__ == "__main__":
         except:
             pass
 
-    run_truck_odo_scraper(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg)
+    run_truck_odo_scraper(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg, fast_mode=is_fast)

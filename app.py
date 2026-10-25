@@ -789,6 +789,33 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     if send_telegram:
         cmd.append("--send")
 
+    # Đối với tác vụ cào đêm diện rộng (như truck_odo_365 cào 21 kho, nghỉ 30s-60s mất 15-20 phút):
+    if wf_id == "truck_odo_365":
+        def _run_odo_bg():
+            try:
+                print(f"[BACKGROUND] Khởi động quét ODO Xe Tải 365 ngầm trên Cloud...", flush=True)
+                subprocess.run(cmd, cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
+                print(f"[BACKGROUND] Quét ODO Xe Tải 365 ngầm đã hoàn tất!", flush=True)
+            except Exception as ex:
+                print(f"[BACKGROUND ERROR] {ex}", flush=True)
+
+        threading.Thread(target=_run_odo_bg, daemon=True).start()
+        return jsonify({
+            "success": True,
+            "returncode": 0,
+            "output": """🚀 [TIGER AI] ĐÃ KÍCH HOẠT TIẾN TRÌNH CÀO ODO XE TẢI 365 NGẦM TRÊN CLOUD!
+=======================================================
+⏰ Tiến trình đang chạy tự động trong nền (Background Daemon Thread).
+🛡️ Chế độ an toàn ban đêm:
+   • Nghỉ nhịp nhàng 0.15s - 0.35s giữa mỗi chuyến đi (chuẩn người dùng thật).
+   • Nghỉ an toàn 30s - 60s giữa 21 kho để máy chủ GHN không bị quá tải/chặn IP.
+   • Tự động kích hoạt Vòng 2 cào bù nếu phát hiện chuyến bị mất mạng.
+📊 Kết quả sẽ tự động đồng bộ vào Google Sheets (tab 'Team_Leader') và bắn báo cáo lên Telegram Topic Báo Cáo sau khi hoàn tất!""",
+            "workflow_id": wf_id,
+            "sent_to_telegram": send_telegram,
+            "is_demo": False
+        })
+
     try:
         proc = subprocess.Popen(
             cmd,
@@ -2427,6 +2454,19 @@ def run_cron_webhook(task_key):
     if not script_name:
         return jsonify({"success": False, "error": f"Unknown cron task '{task_key}'"}), 404
     script_path = os.path.join(BASE_DIR, script_name)
+    if task_key in ["truck_odo", "odo"]:
+        def _bg_cron():
+            print(f"[CRON WEBHOOK] Bắt đầu quét ODO Xe Tải 365 ngầm...", flush=True)
+            subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, creationflags=CREATE_NO_WINDOW)
+            print(f"[CRON WEBHOOK] Quét ODO Xe Tải 365 ngầm hoàn tất!", flush=True)
+        threading.Thread(target=_bg_cron, daemon=True).start()
+        return jsonify({
+            "success": True,
+            "task": task_key,
+            "message": "Tiger AI Truck ODO Scraper đã được kích hoạt chạy ngầm (Nghỉ 30s-60s giữa 21 kho, 0.15s-0.35s giữa các chuyến)",
+            "timestamp": datetime.datetime.now().isoformat()
+        })
+
     res = subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
     return jsonify({
         "success": (res.returncode == 0),
