@@ -1468,8 +1468,50 @@ if os.path.exists(hubs_file):
     except Exception:
         pass
 
+CUSTOMER_STATUS_MAP = {
+    "storing": "Sẵn sàng giao hàng",
+    "delivering": "Đang giao hàng",
+    "delivered": "Giao hàng thành công",
+    "delivery_fail": "Giao hàng không thành công",
+    "picking": "Đang lấy hàng",
+    "picked": "Lấy hàng thành công",
+    "waiting_to_return": "Chờ xác nhận giao lại/chuyển hoàn",
+    "return": "Đang chuyển hoàn",
+    "returned": "Đã trả hàng",
+    "cancel": "Đơn đã hủy",
+    "ready_to_pick": "Chờ lấy hàng"
+}
+
+OPERATION_STATUS_MAP = {
+    "STORING": "Lưu kho giao",
+    "UNPACKED_AT_LASTMILE": "Lưu kho giao",
+    "DELIVERING": "Đang đi giao",
+    "DELIVERED": "Giao thành công",
+    "FAIL_TO_DELIVER": "Giao thất bại",
+    "PICKING": "Đang đi lấy",
+    "PICKED": "Đã lấy hàng",
+    "WAITING_TO_RETURN": "Chờ chuyển hoàn",
+    "RETURNING": "Đang chuyển hoàn",
+    "RETURNED": "Đã trả hàng",
+    "CANCELLED": "Đã hủy"
+}
+
+TRANSIT_STATUS_MAP = {
+    "DELIVER": "Đơn hàng mới",
+    "PICK": "Đang điều phối lấy",
+    "RETURN": "Đang xử lý hoàn"
+}
+
+def resolve_hub_full(hub_id):
+    """Ánh xạ mã kho sang định dạng đầy đủ chuẩn Tracuunoibo GHN (Mã kho - Tên kho)"""
+    if not hub_id:
+        return "—"
+    str_id = str(hub_id).strip()
+    name = GHN_HUBS_MAP.get(str_id, f"Kho {str_id}")
+    return f"{str_id}- {name}"
+
 def resolve_hub_name(hub_id):
-    """Ánh xạ mã kho sang tên kho chuẩn xác từ danh mục 1,685 kho GHN toàn quốc"""
+    """Ánh xạ mã kho sang tên kho ngắn gọn"""
     if not hub_id:
         return "Chưa rõ"
     str_id = str(hub_id).strip()
@@ -1489,7 +1531,7 @@ def format_ghn_time_to_vn(raw_time_str):
         return str(raw_time_str).replace("T", " ")[:19]
 
 def query_ghn_order_history(order_code):
-    """Truy vấn hành trình chi tiết 1 mã đơn qua API GHN với dữ liệu chuẩn xác 100%"""
+    """Truy vấn chuẩn 100% Thông tin kho & Thông tin trạng thái vận hành từ Tracuunoibo GHN"""
     headers_file = os.path.join(PARENT_DIR, "headers_found.json")
     if not os.path.exists(headers_file):
         headers_file = os.path.join(os.path.dirname(BASE_DIR), "headers_found.json")
@@ -1503,132 +1545,139 @@ def query_ghn_order_history(order_code):
             pass
 
     tracuu_link = f"https://tracuunoibo.ghn.vn/internal?order_code={order_code}"
-    url = "https://nhanh-api.ghn.vn/api/lastmile/history/get-order-history"
-    
     import requests
+
+    # 1. TRUY VẤN COMMON-INFO (THÔNG TIN KHO & TRẠNG THÁI VẬN HÀNH)
+    url_common = "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info"
+    common_data = {}
     try:
-        r = requests.post(url, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 20}}, headers=headers, timeout=8)
-        if r.status_code == 200:
-            events = r.json().get("data", {}).get("data", []) or []
-            if not events:
-                return {
-                    "order_code": order_code,
-                    "found": False,
-                    "status_text": "Chưa có dữ liệu hành trình",
-                    "actor": "—",
-                    "hub_name": "—",
-                    "time": "—",
-                    "trip_code": "—",
-                    "note": "Không tìm thấy lịch sử đơn hàng trên hệ thống GHN",
-                    "milestones": [],
-                    "tracuu_link": tracuu_link
-                }
-            
-            latest = events[0]
-            latest_type = latest.get("historyType") or "UNKNOWN"
-            latest_actor = latest.get("createdByName") or "Hệ thống"
-            latest_time = format_ghn_time_to_vn(latest.get("createdTime"))
-            hub_id = str(latest.get("hubId") or "")
-            hub_name = resolve_hub_name(hub_id)
-            
-            action = None
-            note = ""
-            data_str = latest.get("data")
-            if data_str:
-                try:
-                    d = json.loads(data_str)
-                    if isinstance(d, dict):
-                        action = d.get("action")
-                        if d.get("failNote"):
-                            note = d.get("failNote")
-                        if d.get("nextRedoTime"):
-                            note += f" (Hẹn lại: {format_ghn_time_to_vn(d.get('nextRedoTime'))})"
-                except Exception:
-                    pass
+        rc = requests.post(url_common, json={"order_code": order_code}, headers=headers, timeout=8)
+        if rc.status_code == 200:
+            common_data = rc.json().get("data", {}) or {}
+    except Exception:
+        pass
 
-            # Thu thập các mốc lịch sử quan trọng trước đó (nếu có)
-            earlier_milestones = []
-            for ev in events[1:]:
-                etype = ev.get("historyType")
-                edata = ev.get("data")
-                e_actor = ev.get("createdByName") or "NV"
-                e_time = format_ghn_time_to_vn(ev.get("createdTime"))
-                if etype == "UPDATE_ITEM" and edata:
-                    try:
-                        d = json.loads(edata)
-                        if d.get("action") == "PICK_SUCCESS":
-                            earlier_milestones.append(f"📦 Đã lấy thành công bởi NV {e_actor} ({e_time})")
-                        elif d.get("action") == "DELIVER_SUCCESS":
-                            earlier_milestones.append(f"✅ Đã giao thành công bởi NV {e_actor} ({e_time})")
-                        elif d.get("action") == "DELIVER_FAIL":
-                            earlier_milestones.append(f"❌ Giao thất bại bởi NV {e_actor} ({e_time}): {d.get('failNote', '')}")
-                    except Exception:
-                        pass
-                elif etype == "CALL_LOG" and edata:
-                    try:
-                        d = json.loads(edata)
-                        shop_name = d.get("name") or "Khách/Shop"
-                        earlier_milestones.append(f"📞 NV {e_actor} đã liên hệ {shop_name} lúc {e_time}")
-                    except Exception:
-                        pass
+    # 2. TRUY VẤN GET-ORDER-HISTORY (NHẬT KÝ THAO TÁC LASTMILE)
+    url_hist = "https://nhanh-api.ghn.vn/api/lastmile/history/get-order-history"
+    events = []
+    try:
+        rh = requests.post(url_hist, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 20}}, headers=headers, timeout=8)
+        if rh.status_code == 200:
+            events = rh.json().get("data", {}).get("data", []) or []
+    except Exception:
+        pass
 
-            # Xác định trạng thái chính xác nhất
-            if action == "PICK_SUCCESS":
-                status_text = "📦 Lấy Hàng Thành Công"
-            elif action == "DELIVER_SUCCESS":
-                status_text = "✅ Giao Hàng Thành Công"
-            elif action == "DELIVER_FAIL":
-                status_text = "❌ Giao Hàng Thất Bại"
-            elif action == "PICK_FAIL":
-                status_text = "⚠️ Lấy Hàng Thất Bại / Hẹn Lại"
-            elif latest_type == "RECEIVE_AT_WAREHOUSE":
-                status_text = "🏢 Đã Nhập Kho (Lưu Bãi)"
-            elif latest_type == "ADD_TO_TRIP":
-                status_text = "🚚 Đang Trên Chuyến Giao/Lấy"
-            elif latest_type == "UPLOAD_POD":
-                status_text = "📸 Đã Chụp Ảnh POD Xác Nhận"
-            else:
-                status_label, status_icon = ACTION_MAP.get(latest_type, (latest_type, "📌"))
-                status_text = f"{status_icon} {status_label}"
-
-            return {
-                "order_code": order_code,
-                "found": True,
-                "status_text": status_text,
-                "actor": latest_actor,
-                "hub_name": hub_name,
-                "time": latest_time,
-                "trip_code": latest.get("tripCode") or "—",
-                "note": note,
-                "milestones": earlier_milestones,
-                "tracuu_link": tracuu_link
-            }
-        else:
-            return {
-                "order_code": order_code,
-                "found": False,
-                "status_text": f"Lỗi GHN API ({r.status_code})",
-                "actor": "—",
-                "hub_name": "—",
-                "time": "—",
-                "trip_code": "—",
-                "note": f"Phản hồi HTTP {r.status_code}",
-                "milestones": [],
-                "tracuu_link": tracuu_link
-            }
-    except Exception as e:
+    if not common_data and not events:
         return {
             "order_code": order_code,
             "found": False,
-            "status_text": "Lỗi kết nối",
+            "status_text": "Không tìm thấy dữ liệu trên GHN",
             "actor": "—",
             "hub_name": "—",
             "time": "—",
             "trip_code": "—",
-            "note": str(e),
+            "note": "Không tìm thấy mã đơn hàng trên hệ thống GHN",
             "milestones": [],
             "tracuu_link": tracuu_link
         }
+
+    # Bóc tách Thông tin kho (Warehouse Info)
+    current_hub_id = str(common_data.get("currentId") or (events[0].get("hubId") if events else "") or "")
+    deliver_hub_id = str(common_data.get("deliverId") or "")
+    pick_hub_id = str(common_data.get("pickId") or "")
+    return_hub_id = str(common_data.get("returnId") or "")
+
+    current_hub = resolve_hub_full(current_hub_id)
+    deliver_hub = resolve_hub_full(deliver_hub_id)
+    pick_hub = resolve_hub_full(pick_hub_id)
+    return_hub = resolve_hub_full(return_hub_id)
+
+    # Bóc tách Thông tin trạng thái (Status Info)
+    raw_cust_st = common_data.get("partnerStatus") or ""
+    raw_oper_st = common_data.get("status") or ""
+    raw_trans_st = common_data.get("action") or ""
+
+    cust_status = CUSTOMER_STATUS_MAP.get(raw_cust_st, raw_cust_st or "—")
+    oper_status = OPERATION_STATUS_MAP.get(raw_oper_st, raw_oper_st or "—")
+    trans_status = TRANSIT_STATUS_MAP.get(raw_trans_st, raw_trans_st or "—")
+
+    # Bóc tách Thông tin kiện hàng
+    weight_kg = round((common_data.get("weight") or 0) / 1000, 1)
+    order_val = common_data.get("orderValue", 0)
+    order_val_str = f"{order_val:,} đ".replace(",", ".") if order_val else "0 đ"
+    items_count = len(common_data.get("items") or [])
+
+    # Phân tích sự kiện gần nhất & mốc thời gian
+    latest_actor = "—"
+    latest_time = "—"
+    latest_trip = "—"
+    latest_note = ""
+    earlier_milestones = []
+
+    if events:
+        latest = events[0]
+        latest_actor = latest.get("createdByName") or "Hệ thống"
+        latest_time = format_ghn_time_to_vn(latest.get("createdTime"))
+        latest_trip = latest.get("tripCode") or "—"
+        
+        data_str = latest.get("data")
+        if data_str:
+            try:
+                d = json.loads(data_str)
+                if isinstance(d, dict):
+                    if d.get("failNote"):
+                        latest_note = d.get("failNote")
+                    if d.get("nextRedoTime"):
+                        latest_note += f" (Hẹn lại: {format_ghn_time_to_vn(d.get('nextRedoTime'))})"
+            except Exception:
+                pass
+
+        for ev in events[1:]:
+            etype = ev.get("historyType")
+            edata = ev.get("data")
+            e_actor = ev.get("createdByName") or "NV"
+            e_time = format_ghn_time_to_vn(ev.get("createdTime"))
+            if etype == "UPDATE_ITEM" and edata:
+                try:
+                    d = json.loads(edata)
+                    if d.get("action") == "PICK_SUCCESS":
+                        earlier_milestones.append(f"📦 Đã lấy thành công bởi NV {e_actor} ({e_time})")
+                    elif d.get("action") == "DELIVER_SUCCESS":
+                        earlier_milestones.append(f"✅ Đã giao thành công bởi NV {e_actor} ({e_time})")
+                    elif d.get("action") == "DELIVER_FAIL":
+                        earlier_milestones.append(f"❌ Giao thất bại bởi NV {e_actor} ({e_time}): {d.get('failNote', '')}")
+                except Exception:
+                    pass
+            elif etype == "CALL_LOG" and edata:
+                try:
+                    d = json.loads(edata)
+                    shop_name = d.get("name") or "Khách/Shop"
+                    earlier_milestones.append(f"📞 NV {e_actor} đã liên hệ {shop_name} lúc {e_time}")
+                except Exception:
+                    pass
+
+    return {
+        "order_code": order_code,
+        "found": True,
+        "status_text": oper_status,
+        "customer_status": cust_status,
+        "operation_status": oper_status,
+        "transit_status": trans_status,
+        "current_hub": current_hub,
+        "deliver_hub": deliver_hub,
+        "pick_hub": pick_hub,
+        "return_hub": return_hub,
+        "hub_name": current_hub,
+        "actor": latest_actor,
+        "time": latest_time,
+        "trip_code": latest_trip,
+        "weight_kg": weight_kg,
+        "order_value_str": order_val_str,
+        "items_count": items_count,
+        "note": latest_note,
+        "milestones": earlier_milestones,
+        "tracuu_link": tracuu_link
+    }
 
 def build_mt01_system_context():
     """Xây dựng dữ liệu thời gian thực của 4 kho MT01 đưa vào ngữ cảnh Google Gemini"""
@@ -1813,16 +1862,23 @@ def copilot_ask():
         for idx, res in enumerate(results, 1):
             if res.get("found"):
                 answer += (
-                    f"{idx}. 📦 **`{res['order_code']}`**: **{res['status_text']}**\n"
-                    f"   • 🏢 Kho xử lý: **{res['hub_name']}** | 👤 NV: **{res['actor']}**\n"
-                    f"   • 🕒 Cập nhật: `{res['time']}`\n"
+                    f"### {idx}. 📦 Mã đơn: **`{res['order_code']}`**\n\n"
+                    f"**📊 Thông tin trạng thái:**\n"
+                    f"• Trạng thái khách hàng: **{res.get('customer_status', '—')}**\n"
+                    f"• Trạng thái vận hành: **`{res.get('operation_status', '—')}`**\n"
+                    f"• Trạng thái luân chuyển: **{res.get('transit_status', '—')}**\n\n"
+                    f"**🏢 Thông tin kho:**\n"
+                    f"• Kho hiện tại: **`{res.get('current_hub', '—')}`**\n"
+                    f"• Kho giao: **`{res.get('deliver_hub', '—')}`**\n"
+                    f"• Kho lấy: `{res.get('pick_hub', '—')}`\n"
+                    f"• Kho trả: `{res.get('return_hub', '—')}`\n\n"
+                    f"**📦 Thông tin kiện:** Trọng lượng `{res.get('weight_kg', 0)} kg` | Tiền hàng: `{res.get('order_value_str', '—')}` | `{res.get('items_count', 1)} kiện`\n"
+                    f"• 👤 NV xử lý gần nhất: **{res['actor']}** | 🕒 Lúc: `{res['time']}` (GMT+7)\n"
                 )
-                if res.get("note"):
-                    answer += f"   • 📝 Ghi chú: *{res['note']}*\n"
                 if res.get("milestones"):
                     for m in res["milestones"][:2]:
-                        answer += f"   • ℹ️ {m}\n"
-                answer += f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo GHN ↗</a>\n\n"
+                        answer += f"• ℹ️ {m}\n"
+                answer += f"• 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo GHN ↗</a>\n\n---\n\n"
             else:
                 answer += (
                     f"{idx}. ⚠️ **`{res['order_code']}`**: {res['status_text']}\n"
@@ -1859,12 +1915,18 @@ def copilot_ask():
             for idx, res in enumerate(results, 1):
                 if res.get("found"):
                     answer += (
-                        f"{idx}. 📦 **`{res['order_code']}`**: **{res['status_text']}**\n"
-                        f"   • 🏢 Kho: **{res['hub_name']}** | 👤 NV: **{res['actor']}** | 🕒 `{res['time']}`\n"
+                        f"### {idx}. 📦 Mã đơn: **`{res['order_code']}`**\n\n"
+                        f"**📊 Thông tin trạng thái:**\n"
+                        f"• Trạng thái khách hàng: **{res.get('customer_status', '—')}**\n"
+                        f"• Trạng thái vận hành: **`{res.get('operation_status', '—')}`**\n"
+                        f"• Trạng thái luân chuyển: **{res.get('transit_status', '—')}**\n\n"
+                        f"**🏢 Thông tin kho:**\n"
+                        f"• Kho hiện tại: **`{res.get('current_hub', '—')}`**\n"
+                        f"• Kho giao: **`{res.get('deliver_hub', '—')}`**\n"
+                        f"• Kho lấy: `{res.get('pick_hub', '—')}`\n"
+                        f"• Kho trả: `{res.get('return_hub', '—')}`\n\n"
+                        f"• 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo ↗</a>\n\n---\n\n"
                     )
-                    if res.get("milestones"):
-                        answer += f"   • ℹ️ {res['milestones'][0]}\n"
-                    answer += f"   • 🔗 <a href='{res['tracuu_link']}' target='_blank' class='badge-order-link'>Mở Tracuunoibo ↗</a>\n\n"
                 else:
                     answer += f"{idx}. ⚠️ **`{res['order_code']}`**: {res['status_text']}\n\n"
             return jsonify({
