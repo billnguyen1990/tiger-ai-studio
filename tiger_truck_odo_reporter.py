@@ -2,15 +2,15 @@ import os
 import sys
 import json
 import time
+import random
 import re
 import datetime
 import requests
-from concurrent.futures import ThreadPoolExecutor
 
 # ==============================================================================
 # TIGER AI • QUẢN LÝ & ĐỐI SOÁT ODO XE TẢI GHN 365 - TOÀN MIỀN TÂY (02:00 AM)
 # Tự động hóa 100% trên Cloud Render - Cào dữ liệu chuyến đi Ngày N-1
-# Thay thế hoàn toàn App Desktop, không cần bật máy tính, bảo toàn tâm huyết vĩnh viễn!
+# Tích hợp Cơ Chế Cào Chậm Chống Nghẽn Mạng & Tự Động Quét Lại Khi Bị Hụt Data
 # ==============================================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -118,39 +118,41 @@ def load_headers():
     with open(HEADERS_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def _fetch_single_trip_detail(item_tuple, headers):
-    t, wid, wname, date_display = item_tuple
-    code = t.get("tripCode")
-    if not code:
-        return None
-
+def _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_retries=3):
+    """
+    Lấy chi tiết chuyến đi có cơ chế thử lại thông minh (Exponential Backoff) nếu mạng yếu
+    """
     plate = ""
-    driver_name = t.get("driverName") or ""
-    driver_id = str(t.get("driverId") or "")
-    created_time_raw = t.get("createdTime") or t.get("date") or ""
-    
-    # Format ngày giờ tạo chuẩn (VD: 24/10/2026 - 07:25:33)
+    driver_name = ""
+    driver_id = ""
     created_fmt = date_display
-    if created_time_raw:
-        try:
-            dt = datetime.datetime.fromisoformat(created_time_raw.replace("Z", "+00:00"))
-            dt_vn = dt + datetime.timedelta(hours=7)
-            created_fmt = dt_vn.strftime("%d/%m/%Y - %H:%M:%S")
-        except:
-            created_fmt = created_time_raw
+    success = False
 
-    # Gọi trip-detail lấy truckPlateNumber
-    try:
-        res_det = requests.post(URL_TRIP_DETAIL, headers=headers, json={"trip_code": code}, timeout=8)
-        if res_det.status_code == 200:
-            d_data = res_det.json().get("data") or {}
-            plate = (d_data.get("truckPlateNumber") or "").strip().upper()
-            if not driver_name:
+    for attempt in range(1, max_retries + 1):
+        try:
+            res_det = requests.post(URL_TRIP_DETAIL, headers=headers, json={"trip_code": code}, timeout=10)
+            if res_det.status_code == 200:
+                d_data = res_det.json().get("data") or {}
+                plate = (d_data.get("truckPlateNumber") or "").strip().upper()
                 driver_name = d_data.get("driverName") or ""
-            if not driver_id:
                 driver_id = str(d_data.get("driverId") or "")
-    except Exception:
-        pass
+                
+                created_time_raw = d_data.get("createdTime") or d_data.get("date") or ""
+                if created_time_raw:
+                    try:
+                        dt = datetime.datetime.fromisoformat(created_time_raw.replace("Z", "+00:00"))
+                        dt_vn = dt + datetime.timedelta(hours=7)
+                        created_fmt = dt_vn.strftime("%d/%m/%Y - %H:%M:%S")
+                    except:
+                        created_fmt = created_time_raw
+
+                success = True
+                break
+            else:
+                # Nếu bị rate limit hoặc lỗi server, nghỉ và thử lại
+                time.sleep(1.5 * attempt)
+        except Exception:
+            time.sleep(2.0 * attempt)
 
     is_valid, v_type = is_valid_vehicle(plate, wid)
     nhan_vien = f"{driver_id} - {driver_name}".strip(" -")
@@ -166,12 +168,14 @@ def _fetch_single_trip_detail(item_tuple, headers):
         "ncc": "365",
         "is_truck": is_valid,
         "v_type": v_type,
-        "wid": wid
+        "wid": wid,
+        "success": success
     }
 
 def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False):
     """
-    Cào toàn bộ chuyến xe tải Ngày N-1 của 21 kho Miền Tây, lọc xe thật và đồng bộ lên Google Sheets (tab Team_Leader)
+    Cào toàn bộ chuyến xe tải Ngày N-1 của 21 kho Miền Tây.
+    Có cơ chế cào chậm an toàn (Polite Crawling) và tự động cào lại (Rescue Queue) khi mạng yếu.
     """
     if target_date is None:
         target_date = datetime.date.today() - datetime.timedelta(days=1)
@@ -184,19 +188,31 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
     print("=" * 65, flush=True)
     print(f"🐯 [TIGER AI] BẮT ĐẦU ĐỐI SOÁT ODO XE TẢI 365 - TOÀN MIỀN TÂY (NGÀY N-1: {date_display})", flush=True)
     print(f"⏰ Thời gian kích hoạt: 02:00 AM (Tự động 100% trên Cloud Render)", flush=True)
+    print(f"🛡️ Cơ chế bảo vệ: Cào êm ái chống nghẽn mạng + Tự động cào bù khi bị hụt data", flush=True)
     print("=" * 65, flush=True)
 
     headers = load_headers()
     all_truck_results = []
-    warehouse_stats = {}
-    missing_wids = []
-    all_tasks = []
+    warehouse_stats = {wid: {"Xe tải": 0, "Xe máy": 0, "total": 0} for wid in WAREHOUSES_21}
+    
+    # Hàng đợi các kho cần quét (hỗ trợ tự động quét lại kho bị rớt)
+    wh_queue = [(wid, wname, 0) for wid, wname in WAREHOUSES_21.items()]
+    seen_trip_codes = set()
+    failed_trips_to_rescue = []
 
-    # Quét danh sách chuyến từ 21 kho
-    for wid, wname in WAREHOUSES_21.items():
+    q_idx = 0
+    print(f"\n🚀 [VÒNG 1: BẮT ĐẦU QUÉT 21 KHO VỚI NHỊP ĐỘ AN TOÀN]...", flush=True)
+
+    while q_idx < len(wh_queue):
+        wid, wname, retry_count = wh_queue[q_idx]
         headers["x-warehouseid"] = wid
         short_name = wname.replace("Kho Giao Hàng Nặng - ", "").replace("Kho Giao Hàng Nặng-", "").strip()
-        
+
+        if retry_count > 0:
+            print(f"\n🔄 [TỰ ĐỘNG QUÉT LẠI KHO BỊ HỤT DATA - Lần {retry_count}]: {short_name} ({wid})", flush=True)
+        else:
+            print(f"🏭 [{q_idx + 1}/21] Đang quét kho: {short_name}...", flush=True)
+
         hub_trips = []
         payload = {
             "hub_id": wid,
@@ -206,63 +222,102 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=False
             "limit": 100
         }
 
-        try:
-            res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=15)
-            if res.status_code == 200:
-                data = res.json().get("data", []) or []
-                for t in data:
-                    c_date = t.get("createDateIndex")
-                    s_date = t.get("startDateIndex")
-                    e_date = t.get("endDateIndex")
-                    if c_date == date_int or s_date == date_int or e_date == date_int:
-                        all_tasks.append((t, wid, wname, date_display))
-                        hub_trips.append(t)
-            else:
-                print(f"  ⚠️ Kho {short_name} ({wid}) HTTP {res.status_code}", flush=True)
-        except Exception as e:
-            print(f"  ❌ Lỗi kết nối kho {short_name}: {e}", flush=True)
+        # Gọi API danh sách chuyến với retry nếu mạng chập chờn
+        fetch_ok = False
+        for att in range(1, 4):
+            try:
+                res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=20)
+                if res.status_code == 200:
+                    data = res.json().get("data", []) or []
+                    for t in data:
+                        c_date = t.get("createDateIndex")
+                        s_date = t.get("startDateIndex")
+                        e_date = t.get("endDateIndex")
+                        if c_date == date_int or s_date == date_int or e_date == date_int:
+                            hub_trips.append(t)
+                    fetch_ok = True
+                    break
+                else:
+                    time.sleep(2.0)
+            except Exception:
+                time.sleep(2.5)
 
-        if len(hub_trips) == 0:
-            missing_wids.append(wid)
-
-    print(f"📡 Đang tải chi tiết biển số cho {len(all_tasks)} chuyến (Song song đa luồng siêu tốc)...", flush=True)
-
-    # Đa luồng lấy chi tiết từng chuyến xe
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        parsed_results = list(executor.map(lambda item: _fetch_single_trip_detail(item, headers), all_tasks))
-
-    # Tổng hợp theo kho
-    for wid, wname in WAREHOUSES_21.items():
-        warehouse_stats[wid] = {"Xe tải": 0, "Xe máy": 0, "total": 0}
-
-    for res in parsed_results:
-        if not res:
+        # Nếu quét lần đầu mà kho bị lỗi mạng/rớt data -> Tự động đưa kho vào cuối hàng đợi để lát quét lại
+        if not fetch_ok and retry_count < 2:
+            print(f"  ⚠️ Mạng yếu ở kho {short_name}, tự động đưa vào cuối hàng đợi để cào lại sau!", flush=True)
+            wh_queue.append((wid, wname, retry_count + 1))
+            q_idx += 1
+            time.sleep(1.0)
             continue
-        wid = res["wid"]
-        warehouse_stats[wid]["total"] += 1
-        if res["is_truck"]:
-            warehouse_stats[wid]["Xe tải"] += 1
-            all_truck_results.append({
-                "ma_chuyen": res["code"],
-                "plate": res["plate"],
-                "nhan_vien": res["nhan_vien"],
-                "ngay_tao": res["ngay_tao"],
-                "ten_kho": res["ten_kho"],
-                "ncc": res["ncc"]
-            })
-        elif res["v_type"] == "Xe máy":
-            warehouse_stats[wid]["Xe máy"] += 1
 
-    # In báo cáo từng kho
-    for wid, wname in WAREHOUSES_21.items():
-        short_name = wname.replace("Kho Giao Hàng Nặng - ", "").replace("Kho Giao Hàng Nặng-", "").strip()
+        # Lặp từng chuyến đi của kho với khoảng nghỉ nhịp nhàng (0.2s - 0.4s) chống rate limit
+        for t in hub_trips:
+            code = t.get("tripCode")
+            if not code or code in seen_trip_codes:
+                continue
+            seen_trip_codes.add(code)
+
+            detail = _get_trip_detail_with_retry(code, wid, wname, date_display, headers)
+            
+            # Nếu chuyến này bị lỗi mạng hoàn toàn (success = False), ghi nhận để cào vét ở Vòng 2
+            if not detail["success"]:
+                failed_trips_to_rescue.append((t, wid, wname))
+                continue
+
+            warehouse_stats[wid]["total"] += 1
+            if detail["is_truck"]:
+                warehouse_stats[wid]["Xe tải"] += 1
+                all_truck_results.append({
+                    "ma_chuyen": detail["code"],
+                    "plate": detail["plate"],
+                    "nhan_vien": detail["nhan_vien"],
+                    "ngay_tao": detail["ngay_tao"],
+                    "ten_kho": detail["ten_kho"],
+                    "ncc": detail["ncc"]
+                })
+            elif detail["v_type"] == "Xe máy":
+                warehouse_stats[wid]["Xe máy"] += 1
+
+            # 🛡️ Nghỉ nhịp nhàng chống nghẽn server và chống WAF chặn
+            time.sleep(random.uniform(0.15, 0.35))
+
         st = warehouse_stats[wid]
-        print(f"  🚚 {short_name} ➔ {st['Xe tải']} xe tải | 🛵 {st['Xe máy']} xe máy (Tổng {st['total']} chuyến)", flush=True)
+        print(f"  ✓ {short_name}: {st['Xe tải']} xe tải | 🛵 {st['Xe máy']} xe máy (Tổng {st['total']} chuyến)", flush=True)
+
+        # Nghỉ nhẹ giữa các kho
+        time.sleep(random.uniform(0.4, 0.8))
+        q_idx += 1
+
+    # ==========================================================================
+    # VÒNG 2: TỰ ĐỘNG CÀO BÙ NẾU CÓ CHUYẾN BỊ HỤT DATA DO MẠNG YẾU (RESCUE ROUND)
+    # ==========================================================================
+    if failed_trips_to_rescue:
+        print(f"\n🔁 [VÒNG 2: PHÁT HIỆN {len(failed_trips_to_rescue)} CHUYẾN BỊ MẠNG YẾU, TIẾN HÀNH CÀO BÙ NGHỈ 3S]...", flush=True)
+        time.sleep(3.0)
+        for t, wid, wname in failed_trips_to_rescue:
+            code = t.get("tripCode")
+            detail = _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_retries=4)
+            if detail["success"]:
+                warehouse_stats[wid]["total"] += 1
+                if detail["is_truck"]:
+                    warehouse_stats[wid]["Xe tải"] += 1
+                    all_truck_results.append({
+                        "ma_chuyen": detail["code"],
+                        "plate": detail["plate"],
+                        "nhan_vien": detail["nhan_vien"],
+                        "ngay_tao": detail["ngay_tao"],
+                        "ten_kho": detail["ten_kho"],
+                        "ncc": detail["ncc"]
+                    })
+                elif detail["v_type"] == "Xe máy":
+                    warehouse_stats[wid]["Xe máy"] += 1
+                print(f"  🎯 Đã cào bù thành công chuyến: {code} ({detail['plate']})", flush=True)
+            time.sleep(0.5)
 
     total_trucks = len(all_truck_results)
     print(f"\n👉 TỔNG CỘNG XE TẢI HỢP LỆ (NGÀY N-1 {date_display}): {total_trucks} chuyến xe tải của 21 kho", flush=True)
 
-    # Sắp xếp theo ngày cũ -> mới, cùng ngày thì theo thứ tự kho chuẩn
+    # Sắp xếp theo thứ tự kho chuẩn của Sếp
     wh_order = list(WAREHOUSES_21.values())
     def sort_key(x):
         tk = x.get("ten_kho", "")
