@@ -30,8 +30,9 @@
     <div class="workflow-selector-wrapper">
       <label for="workflowSelect" class="selector-label">Quy Trình:</label>
       <select id="workflowSelect" class="workflow-dropdown">
+        <option value="truck_odo_365" selected>🚛 02:00 • Đối Soát ODO Xe Tải 365 (N-1) ➔ Google Sheets</option>
         <option value="lastmile_trips">📦 05:00 • Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets</option>
-        <option value="kpi_gtc" selected>📊 07:00 • KPI GTC Hôm Qua (Chuẩn 85%)</option>
+        <option value="kpi_gtc">📊 07:00 • KPI GTC Hôm Qua (Chuẩn 85%)</option>
         <option value="checkin">⏰ 07:35 • Điểm Danh & Check-in Ca Sáng</option>
         <option value="assigned">🚚 09:00 • Giám Sát Chuyến Xe Xuất Bến</option>
         <option value="unassigned">📦 10:00 • Đơn Chưa Gán & Ngày Hẹn SMS</option>
@@ -56,7 +57,7 @@
       <div id="adminActionGroup" class="admin-action-group locked-hidden" style="display: none; align-items: center; gap: 8px;">
         <button id="btnUpdateQuick" class="btn btn-update" title="Kiểm tra & Cập nhật phiên bản mới">
           <span class="btn-icon">⚡</span>
-          <span id="versionTag">v2.5.2</span>
+          <span id="versionTag">v2.6.0</span>
         </button>
         <button id="btnRunTest" class="btn btn-secondary" title="Chạy kiểm thử quy trình">
           <span class="btn-icon">▶</span>
@@ -95,7 +96,7 @@
           <div class="stack-menu-item admin-only-item locked-hidden" id="stackItemUpdate">
             <span class="item-icon">🔄</span>
             <div class="item-info">
-              <div class="item-name">Cập Nhật Hệ Thống (v2.5.2)</div>
+              <div class="item-name">Cập Nhật Hệ Thống (v2.6.0)</div>
               <div class="item-desc">Đồng bộ quy tắc, đổi mới tính năng 1-click</div>
             </div>
           </div>

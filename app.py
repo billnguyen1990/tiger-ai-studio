@@ -25,7 +25,8 @@ SCRIPTS_MAP = {
     "assigned_09h00": os.path.join(PARENT_DIR, "tiger_morning_assigned_reporter.py"),
     "unassigned_10h00": os.path.join(PARENT_DIR, "tiger_unassigned_backlog_reporter.py"),
     "pda_progress": os.path.join(PARENT_DIR, "tiger_pda_progress_reporter.py"),
-    "evening_21h": os.path.join(PARENT_DIR, "tiger_evening_reporter.py")
+    "evening_21h": os.path.join(PARENT_DIR, "tiger_evening_reporter.py"),
+    "truck_odo_02h00": os.path.join(PARENT_DIR, "tiger_truck_odo_reporter.py")
 }
 
 TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"
@@ -62,8 +63,73 @@ def index():
 
 @app.route("/api/workflows")
 def get_workflows():
-    """Trả về danh sách 7 Workflow chuẩn hóa dạng Nodes & Edges"""
+    """Trả về danh sách 8 Workflow chuẩn hóa dạng Nodes & Edges"""
     workflows = {
+        "truck_odo_365": {
+            "id": "truck_odo_365",
+            "name": "Quản Lý & Đối Soát ODO Xe Tải 365 (02:00)",
+            "description": "Tự động cào toàn bộ chuyến xe tải Ngày N-1 của 21 Kho Miền Tây lúc 02h đêm, lọc danh sách đen và đồng bộ lên Google Sheets Radar ODO 365.",
+            "schedule": "02:00 hàng ngày (Ngày N-1)",
+            "script_key": "truck_odo_02h00",
+            "nodes": [
+                {
+                    "id": "node_trigger",
+                    "title": "Hẹn Giờ 02:00 AM",
+                    "category": "trigger",
+                    "icon": "⏰",
+                    "x": 60,
+                    "y": 180,
+                    "description": "Kích hoạt tự động lúc 02:00 sáng mỗi ngày trên Cloud Render (quét ngày N-1 hôm qua).",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_api_trips",
+                    "title": "API 21 Kho Miền Tây",
+                    "category": "api",
+                    "icon": "🚚",
+                    "x": 340,
+                    "y": 180,
+                    "description": "POST get-trip-list-by-hub quét trọn vẹn 21 kho Giao Hàng Nặng Miền Tây.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_brain",
+                    "title": "Tiger AI • Bộ Lọc Xe Tải 365",
+                    "category": "brain",
+                    "icon": "🧠",
+                    "x": 640,
+                    "y": 180,
+                    "description": "Lọc xe tải chuẩn (TRUCK_PATTERN), loại trừ xe máy và loại bỏ hơn 55 biển số ảo Danh Sách Đen 365.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_sheets",
+                    "title": "Google Sheets • Radar ODO",
+                    "category": "output",
+                    "icon": "📊",
+                    "x": 960,
+                    "y": 100,
+                    "description": "Đồng bộ vào tab 'Team_Leader' kích hoạt công thức Radar so khớp với báo cáo 365.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_telegram",
+                    "title": "Telegram Bot • Báo Cáo 21 Kho",
+                    "category": "output",
+                    "icon": "📱",
+                    "x": 960,
+                    "y": 270,
+                    "description": "Báo cáo tổng kết chi tiết số xe tải/xe máy của 21 kho vào Topic Báo Cáo.",
+                    "status": "ready"
+                }
+            ],
+            "edges": [
+                {"from": "node_trigger", "to": "node_api_trips"},
+                {"from": "node_api_trips", "to": "node_brain"},
+                {"from": "node_brain", "to": "node_sheets"},
+                {"from": "node_brain", "to": "node_telegram"}
+            ]
+        },
         "lastmile_trips": {
             "id": "lastmile_trips",
             "name": "Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets (05:00)",
@@ -560,6 +626,7 @@ def run_workflow():
     print(f"[RUN-WORKFLOW RECEIVE] wf_id={wf_id}, send_telegram={send_telegram}, demo_mode={demo_mode}", flush=True)
 
     script_map = {
+        "truck_odo_365": "tiger_truck_odo_reporter.py",
         "lastmile_trips": "tiger_lastmile_trips_scraper.py",
         "kpi_gtc": "tiger_gtc_kpi_reporter.py",
         "checkin": "tiger_checkin_reporter.py",
@@ -578,6 +645,16 @@ def run_workflow():
         import time
         time.sleep(1.2) # Giả lập 1.2s xử lý chuyên nghiệp
         demo_outputs = {
+            "truck_odo_365": """⏳ Tiger AI đang quét toàn bộ chuyến xe tải Ngày N-1 của 21 Kho Miền Tây...
+=======================================================
+KẾT QUẢ ĐỐI SOÁT ODO XE TẢI 365 LÊN GOOGLE SHEETS:
+=======================================================
+🚛 TIGER AI • CLOUD SYNC: HOÀN TẤT ĐỐI SOÁT ODO XE TẢI 365 (N-1)
+📅 Ngày chuyến: 24/10/2026 (N-1)
+🏢 Quét trọn vẹn: 21 Kho Giao Hàng Nặng Miền Tây
+🚚 Tổng cộng: 67 chuyến xe tải hợp lệ (Đã lọc danh sách đen 365)
+📊 Đã đồng bộ thành công vào tab 'Team_Leader' trên Google Sheets!
+⚡ Kích hoạt Radar Đối Soát tự động sẵn sàng trước giờ ca sáng!""",
             "lastmile_trips": """⏳ Tiger AI đang kích hoạt cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01...
 =======================================================
 KẾT QUẢ ĐỒNG BỘ CHUYẾN ĐI LASTMILE LÊN GOOGLE SHEETS:
@@ -2260,18 +2337,18 @@ def get_system_status():
 def get_version():
     """Thông tin phiên bản hệ thống và nhật ký cập nhật (Changelog)"""
     return jsonify({
-        "current_version": "v2.5.2",
-        "latest_version": "v2.5.2",
+        "current_version": "v2.6.0",
+        "latest_version": "v2.6.0",
         "has_update": False,
         "release_date": "25/10/2026",
         "system_status": "ONLINE",
         "changelog": [
+            "v2.6.0: Tích hợp Siêu Phẩm: Quản Lý & Đối Soát ODO Xe Tải 365 (02:00 AM) toàn bộ 21 Kho Miền Tây chạy 100% trên Cloud.",
+            "v2.6.0: Bảo toàn nguyên vẹn tâm huyết: Bộ lọc xe tải TRUCK_PATTERN, phân loại xe máy và Blacklist hơn 55 biển số ảo 365.",
+            "v2.6.0: Cào tự động dữ liệu Ngày N-1, đồng bộ thẳng lên Google Sheets Radar ODO và báo cáo Telegram Topic Báo Cáo.",
             "v2.5.2: Tối ưu 100% giao diện cho Điện Thoại (iOS & Android) - Sơ đồ Nodes toàn màn hình.",
             "v2.5.2: Nâng cấp Tiện Ích MT01 thành iOS Bottom Sheet mượt mà, hỗ trợ cảm ứng vuốt chạm.",
-            "v2.5.2: Triển khai Đám mây Cloud 24/7 trên Render & lập lịch tự động APScheduler (UTC+7).",
-            "v2.5.1: Chuẩn hóa 100% ngôn từ: Định danh thống nhất NV (Nhân Viên) và NVXL (Nhân Viên Xử Lý).",
-            "v2.5.1: Nâng cấp định dạng Diff Telegram: Tô màu ĐỎ (- ❌, - ⚠️) cho đơn lỗi/hẹn, XANH LÁ (+ ✅) cho đơn thành công.",
-            "v2.5.0: Tích hợp mốc nghiệm thu 21:30 & cơ chế im lặng thông minh khi 4 kho đã sạch."
+            "v2.5.2: Triển khai Đám mây Cloud 24/7 trên Render & lập lịch tự động APScheduler (UTC+7)."
         ]
     })
 
@@ -2317,6 +2394,7 @@ try:
         if os.path.exists(script_path):
             subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, creationflags=CREATE_NO_WINDOW)
 
+    scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
     scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=0, args=["tiger_gtc_kpi_reporter.py"], id="gtc_07h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=35, args=["tiger_checkin_reporter.py"], id="checkin_07h35")
@@ -2335,6 +2413,8 @@ except Exception as e:
 def run_cron_webhook(task_key):
     """Trigger a reporter via external webhook (e.g. cron-job.org)"""
     script_map = {
+        "truck_odo": "tiger_truck_odo_reporter.py",
+        "odo": "tiger_truck_odo_reporter.py",
         "lastmile": "tiger_lastmile_trips_scraper.py",
         "gtc": "tiger_gtc_kpi_reporter.py",
         "checkin": "tiger_checkin_reporter.py",
