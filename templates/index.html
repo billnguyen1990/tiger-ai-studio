@@ -42,8 +42,14 @@
     <!-- ACTION CONTROLS & STACKED UTILITIES -->
     <!-- ACTION CONTROLS & STACKED UTILITIES -->
     <div class="header-actions">
-      <!-- Subtle Lock indicator ( Khóa Quyền ) -->
-      <span id="btnRoleStatus" class="badge-lock-text" title="Bấm để nhập mã PIN" style="font-size: 11.5px; color: var(--text-muted); opacity: 0.65; cursor: pointer; padding: 4px 6px; user-select: none;">( Khóa Quyền )</span>
+      <!-- Role Badge & Admin Unlock Trigger -->
+      <div id="roleBadgeContainer" class="role-badge-container">
+        <button id="btnRoleStatus" class="btn btn-role-pill" title="Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị Viên">
+          <span class="role-dot viewer" id="roleDot"></span>
+          <span id="roleLabel">NVXL (Chỉ Xem)</span>
+          <span id="roleActionHint" class="role-hint">🔑 Mở Khóa</span>
+        </button>
+      </div>
 
       <!-- ADMIN ONLY CONTROLS (TỰ ĐỘNG ẨN VỚI NVXL) -->
       <div id="adminActionGroup" class="admin-action-group locked-hidden" style="display: none; align-items: center; gap: 8px;">
@@ -747,6 +753,37 @@
           <span>🔄</span>
           <span>Bấm Cập Nhật Hệ Thống Ngay (One-Click Update)</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL XÁC THỰC MÃ PIN QUẢN TRỊ VIÊN (CHO SẾP) -->
+  <div class="modal-backdrop" id="modalAdminAuth" style="display: none;">
+    <div class="modal-box modal-small cyber-auth-box" style="max-width: 420px; border-radius: 16px;">
+      <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle); padding: 16px 20px;">
+        <div class="modal-title-group">
+          <span class="modal-icon" style="font-size: 24px;">👑</span>
+          <div>
+            <h2 class="modal-title" style="font-size: 16px; margin: 0;">Xác Thực Quản Trị Viên</h2>
+            <div class="modal-subtitle" style="font-size: 11.5px; color: var(--text-muted);">Mở khóa quyền chạy báo cáo & bắn Telegram cho Sếp</div>
+          </div>
+        </div>
+        <button class="modal-close" id="btnCloseAdminAuth" type="button">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 24px 20px; text-align: center;">
+        <div style="font-size: 13px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.5;">
+          Nhập <b>Mã PIN Quản Trị (6 số)</b> của Sếp để mở khóa các tính năng điều hành:
+        </div>
+        <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+          <input type="password" id="adminPinInput" class="form-input pin-input" maxlength="6" placeholder="••••••" autocomplete="off" style="width: 220px; font-size: 26px; text-align: center; letter-spacing: 10px; font-family: monospace; font-weight: bold; color: #10b981; border: 2px solid rgba(16, 185, 129, 0.4); background: rgba(15, 23, 42, 0.85); padding: 10px; border-radius: 10px;">
+        </div>
+        <div id="adminAuthMsg" style="font-size: 12.5px; min-height: 20px; margin-bottom: 4px;"></div>
+      </div>
+      <div class="modal-footer" style="padding: 14px 20px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+        <button id="btnSubmitAdminPin" class="btn btn-primary" type="button" style="flex: 1; justify-content: center; font-weight: 700;">
+          <span>🔓 Mở Khóa Quyền Sếp</span>
+        </button>
+        <button class="btn btn-ghost" id="btnCancelAdminAuth" type="button">Hủy</button>
       </div>
     </div>
   </div>

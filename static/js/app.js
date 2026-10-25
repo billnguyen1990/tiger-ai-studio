@@ -43,13 +43,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const terminalDrawer = document.getElementById("terminalDrawer");
 
   // ==========================================================================
-  // ROLE-BASED ACCESS CONTROL (RBAC) - CHẾ ĐỘ ( Khóa Quyền ) (PIN: 150917)
+  // ROLE-BASED ACCESS CONTROL (RBAC) - NVXL & SẾP (PIN: 150917)
   // ==========================================================================
   let currentAdminPin = localStorage.getItem("tiger_admin_pin") || "";
   let isUserAdmin = false;
 
   const btnRoleStatus = document.getElementById("btnRoleStatus");
+  const roleDot = document.getElementById("roleDot");
+  const roleLabel = document.getElementById("roleLabel");
+  const roleActionHint = document.getElementById("roleActionHint");
   const adminActionGroup = document.getElementById("adminActionGroup");
+  const modalAdminAuth = document.getElementById("modalAdminAuth");
+  const btnCloseAdminAuth = document.getElementById("btnCloseAdminAuth");
+  const btnCancelAdminAuth = document.getElementById("btnCancelAdminAuth");
+  const btnSubmitAdminPin = document.getElementById("btnSubmitAdminPin");
+  const adminPinInput = document.getElementById("adminPinInput");
+  const adminAuthMsg = document.getElementById("adminAuthMsg");
 
   function applyRoleUI(isAdmin) {
     isUserAdmin = isAdmin;
@@ -57,29 +66,26 @@ document.addEventListener("DOMContentLoaded", () => {
       if (adminActionGroup) adminActionGroup.style.display = "flex";
       document.querySelectorAll(".admin-only-item").forEach(el => el.classList.remove("locked-hidden"));
       if (btnRoleStatus) {
-        btnRoleStatus.textContent = "( Sếp )";
-        btnRoleStatus.className = "badge-lock-text admin-active";
-        btnRoleStatus.title = "Đang ở quyền Sếp. Bấm để khóa lại ( Khóa Quyền )";
+        btnRoleStatus.className = "btn btn-role-pill admin-active";
+        btnRoleStatus.title = "Đang ở chế độ Sếp (Quản Trị Viên). Bấm để khóa lại chế độ NVXL";
       }
+      if (roleDot) roleDot.className = "role-dot admin";
+      if (roleLabel) roleLabel.textContent = "👑 Sếp (Quản Trị)";
+      if (roleActionHint) roleActionHint.textContent = "🔒 Khóa lại";
     } else {
       if (adminActionGroup) adminActionGroup.style.display = "none";
       document.querySelectorAll(".admin-only-item").forEach(el => el.classList.add("locked-hidden"));
       if (btnRoleStatus) {
-        btnRoleStatus.textContent = "( Khóa Quyền )";
-        btnRoleStatus.className = "badge-lock-text";
-        btnRoleStatus.title = "Bấm để mở quyền";
+        btnRoleStatus.className = "btn btn-role-pill";
+        btnRoleStatus.title = "Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị";
       }
+      if (roleDot) roleDot.className = "role-dot viewer";
+      if (roleLabel) roleLabel.textContent = "NVXL (Chỉ Xem)";
+      if (roleActionHint) roleActionHint.textContent = "🔑 Mở Khóa";
     }
   }
 
   async function checkInitialRole() {
-    // Tự động mở quyền nếu URL có ?pin=150917
-    const urlParams = new URLSearchParams(window.location.search);
-    const pinParam = urlParams.get("pin");
-    if (pinParam) {
-      currentAdminPin = pinParam.trim();
-    }
-
     if (currentAdminPin) {
       try {
         const res = await fetch("/api/admin/verify-pin", {
@@ -89,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         const d = await res.json();
         if (d.success) {
-          localStorage.setItem("tiger_admin_pin", currentAdminPin);
           applyRoleUI(true);
           return;
         }
@@ -538,9 +543,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (progressTimer) clearInterval(progressTimer);
 
       if (response.status === 403) {
-        execStatus.textContent = "( Khóa Quyền )";
+        execStatus.textContent = "Bị khóa quyền";
         execStatus.style.color = "var(--ruby-accent)";
-        addLog("error", `🔒 BỊ TỪ CHỐI: ${res.error || "( Khóa Quyền )"}`);
+        addLog("error", `🔒 BỊ TỪ CHỐI: ${res.error || "Yêu cầu quyền Quản Trị Viên (Mã PIN 150917)!"}`);
+        if (modalAdminAuth) {
+          modalAdminAuth.style.display = "flex";
+          if (adminPinInput) adminPinInput.focus();
+        }
         return;
       }
 
@@ -638,39 +647,90 @@ document.addEventListener("DOMContentLoaded", () => {
   // RBAC Admin Lock/Unlock Event Handlers
   // ==========================================================================
   if (btnRoleStatus) {
-    btnRoleStatus.addEventListener("click", async () => {
+    btnRoleStatus.addEventListener("click", () => {
       if (isUserAdmin) {
-        if (confirm("Sếp có muốn khóa lại ( Khóa Quyền ) không?")) {
+        if (confirm("Sếp có muốn khóa lại Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI) không?")) {
           localStorage.removeItem("tiger_admin_pin");
           currentAdminPin = "";
           applyRoleUI(false);
           playCyberSound("click");
-          addLog("info", "🔒 Đã chuyển về: ( Khóa Quyền ).");
+          addLog("info", "🔒 Đã khóa lại Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI).");
         }
       } else {
-        const pin = window.prompt("Nhập mã PIN Quản Trị:");
-        if (pin && pin.trim()) {
-          try {
-            const res = await fetch("/api/admin/verify-pin", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ pin: pin.trim() })
-            });
-            const d = await res.json();
-            if (d.success) {
-              currentAdminPin = pin.trim();
-              localStorage.setItem("tiger_admin_pin", currentAdminPin);
-              applyRoleUI(true);
-              playCyberSound("success");
-              addLog("success", "👑 Đã mở khóa quyền Sếp (Quản Trị) thành công!");
-            } else {
-              alert(d.message || "Mã PIN không đúng!");
-            }
-          } catch (e) {
-            alert("Lỗi kết nối kiểm tra mã PIN: " + e.message);
+        if (modalAdminAuth) {
+          modalAdminAuth.style.display = "flex";
+          if (adminPinInput) {
+            adminPinInput.value = "";
+            adminPinInput.focus();
           }
+          if (adminAuthMsg) adminAuthMsg.innerHTML = "";
+          playCyberSound("pulse");
         }
       }
+    });
+  }
+
+  function closeAdminAuthModal() {
+    if (modalAdminAuth) modalAdminAuth.style.display = "none";
+  }
+  if (btnCloseAdminAuth) btnCloseAdminAuth.addEventListener("click", closeAdminAuthModal);
+  if (btnCancelAdminAuth) btnCancelAdminAuth.addEventListener("click", closeAdminAuthModal);
+  if (modalAdminAuth) {
+    modalAdminAuth.addEventListener("click", (e) => {
+      if (e.target === modalAdminAuth) closeAdminAuthModal();
+    });
+  }
+
+  async function handleAdminPinSubmit() {
+    const pin = (adminPinInput ? adminPinInput.value : "").trim();
+    if (!pin) {
+      if (adminAuthMsg) adminAuthMsg.innerHTML = "<span style='color:#ef4444;'>Vui lòng nhập mã PIN 6 số!</span>";
+      return;
+    }
+    if (btnSubmitAdminPin) {
+      btnSubmitAdminPin.disabled = true;
+      btnSubmitAdminPin.innerHTML = "<span>Đang xác thực...</span>";
+    }
+    try {
+      const res = await fetch("/api/admin/verify-pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: pin })
+      });
+      const d = await res.json();
+      if (d.success) {
+        currentAdminPin = pin;
+        localStorage.setItem("tiger_admin_pin", pin);
+        applyRoleUI(true);
+        if (adminAuthMsg) adminAuthMsg.innerHTML = "<span style='color:#10b981; font-weight:bold;'>🎉 Mở khóa quyền Sếp thành công!</span>";
+        playCyberSound("success");
+        setTimeout(() => {
+          closeAdminAuthModal();
+          if (btnSubmitAdminPin) {
+            btnSubmitAdminPin.disabled = false;
+            btnSubmitAdminPin.innerHTML = "<span>🔓 Mở Khóa Quyền Sếp</span>";
+          }
+        }, 800);
+      } else {
+        if (adminAuthMsg) adminAuthMsg.innerHTML = `<span style='color:#ef4444; font-weight:bold;'>❌ ${d.message || "Mã PIN không đúng!"}</span>`;
+        if (btnSubmitAdminPin) {
+          btnSubmitAdminPin.disabled = false;
+          btnSubmitAdminPin.innerHTML = "<span>🔓 Mở Khóa Quyền Sếp</span>";
+        }
+      }
+    } catch (err) {
+      if (adminAuthMsg) adminAuthMsg.innerHTML = `<span style='color:#ef4444;'>Lỗi kết nối: ${err.message}</span>`;
+      if (btnSubmitAdminPin) {
+        btnSubmitAdminPin.disabled = false;
+        btnSubmitAdminPin.innerHTML = "<span>🔓 Mở Khóa Quyền Sếp</span>";
+      }
+    }
+  }
+
+  if (btnSubmitAdminPin) btnSubmitAdminPin.addEventListener("click", handleAdminPinSubmit);
+  if (adminPinInput) {
+    adminPinInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleAdminPinSubmit();
     });
   }
 
