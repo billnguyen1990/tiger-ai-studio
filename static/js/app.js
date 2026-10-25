@@ -1916,18 +1916,110 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Chips
-  document.querySelectorAll(".chip-item").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const ask = chip.getAttribute("data-ask");
-      if (ask && ask.includes("Tra cứu mã đơn") && !ask.includes("GYM")) {
-        modalBulkTrack.style.display = "flex";
-        if (bulkTrackInput) bulkTrackInput.focus();
-      } else {
-        sendCopilotMessage(ask);
+  // ==========================================================================
+  // COPILOT CHIPS BAR: DRAGGABLE (GRAB & DRAG), MOUSE WHEEL & CHEVRON BUTTONS
+  // ==========================================================================
+  const copilotChipsBar = document.getElementById("copilotChipsBar") || document.querySelector(".copilot-chips-bar");
+  const btnScrollChipsLeft = document.getElementById("btnScrollChipsLeft");
+  const btnScrollChipsRight = document.getElementById("btnScrollChipsRight");
+  
+  if (copilotChipsBar) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeftVal = 0;
+    let hasMoved = false;
+
+    // Grab & Drag with Mouse
+    copilotChipsBar.addEventListener("mousedown", (e) => {
+      isDown = true;
+      hasMoved = false;
+      copilotChipsBar.classList.add("is-dragging");
+      startX = e.pageX - copilotChipsBar.offsetLeft;
+      scrollLeftVal = copilotChipsBar.scrollLeft;
+    });
+
+    copilotChipsBar.addEventListener("mouseleave", () => {
+      if (isDown) {
+        isDown = false;
+        copilotChipsBar.classList.remove("is-dragging");
       }
     });
-  });
+
+    window.addEventListener("mouseup", () => {
+      if (isDown) {
+        isDown = false;
+        copilotChipsBar.classList.remove("is-dragging");
+        setTimeout(() => { hasMoved = false; }, 80);
+      }
+    });
+
+    copilotChipsBar.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - copilotChipsBar.offsetLeft;
+      const walk = (x - startX) * 1.5; // Drag sensitivity
+      if (Math.abs(walk) > 4) {
+        hasMoved = true;
+      }
+      copilotChipsBar.scrollLeft = scrollLeftVal - walk;
+      updateChipsNavButtons();
+    });
+
+    // Horizontal Scroll with Mouse Wheel
+    copilotChipsBar.addEventListener("wheel", (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        copilotChipsBar.scrollLeft += e.deltaY * 1.2;
+        updateChipsNavButtons();
+      }
+    }, { passive: false });
+
+    // Chevron Nav Buttons (Left / Right)
+    function updateChipsNavButtons() {
+      if (!btnScrollChipsLeft || !btnScrollChipsRight) return;
+      const atStart = copilotChipsBar.scrollLeft <= 4;
+      const atEnd = copilotChipsBar.scrollLeft >= (copilotChipsBar.scrollWidth - copilotChipsBar.clientWidth - 4);
+      btnScrollChipsLeft.style.opacity = atStart ? "0.3" : "1";
+      btnScrollChipsLeft.style.pointerEvents = atStart ? "none" : "auto";
+      btnScrollChipsRight.style.opacity = atEnd ? "0.3" : "1";
+      btnScrollChipsRight.style.pointerEvents = atEnd ? "none" : "auto";
+    }
+
+    if (btnScrollChipsLeft) {
+      btnScrollChipsLeft.addEventListener("click", () => {
+        copilotChipsBar.scrollBy({ left: -180, behavior: "smooth" });
+        setTimeout(updateChipsNavButtons, 250);
+      });
+    }
+
+    if (btnScrollChipsRight) {
+      btnScrollChipsRight.addEventListener("click", () => {
+        copilotChipsBar.scrollBy({ left: 180, behavior: "smooth" });
+        setTimeout(updateChipsNavButtons, 250);
+      });
+    }
+
+    copilotChipsBar.addEventListener("scroll", updateChipsNavButtons);
+    setTimeout(updateChipsNavButtons, 400);
+
+    // Prompt Chips Click (suppressed if dragged)
+    copilotChipsBar.querySelectorAll(".chip-item").forEach((chip) => {
+      chip.addEventListener("click", (e) => {
+        if (hasMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        const ask = chip.getAttribute("data-ask");
+        if (ask && ask.includes("Tra cứu mã đơn") && !ask.includes("GYM")) {
+          modalBulkTrack.style.display = "flex";
+          if (bulkTrackInput) bulkTrackInput.focus();
+        } else if (ask) {
+          sendCopilotMessage(ask);
+        }
+      });
+    });
+  }
 
 
   // ==========================================================================

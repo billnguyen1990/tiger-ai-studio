@@ -560,13 +560,21 @@
     </div>
 
     <!-- Quick prompt chips -->
-    <div class="copilot-chips-bar">
-      <span class="chip-item" data-ask="Tra cứu mã đơn GYMVUG8G GYMDPKCD">🔍 Tra mã đơn</span>
-      <span class="chip-item" data-ask="Kho nào có tỉ lệ GTC thấp nhất?">🚨 Kho thấp nhất?</span>
-      <span class="chip-item" data-ask="Báo cáo tình hình bóc tách đơn hẹn SMS">📦 Đơn hẹn SMS?</span>
-      <span class="chip-item" data-ask="Tình hình nợ tiền COD cuối ngày">🌙 Nợ COD?</span>
-      <span class="chip-item" data-ask="Soi chi tiết kho Cái Răng">🏢 Cái Răng</span>
-      <span class="chip-item" data-ask="Soi chi tiết kho Bình Thủy">🏢 Bình Thủy</span>
+    <div class="copilot-chips-wrapper">
+      <button class="chips-nav-btn left" id="btnScrollChipsLeft" title="Kéo sang trái">‹</button>
+      <div class="copilot-chips-bar" id="copilotChipsBar">
+        <span class="chip-item" data-ask="Tra cứu mã đơn GYMVUG8G GYMDPKCD">🔍 Tra mã đơn</span>
+        <span class="chip-item" data-ask="Kho nào có tỉ lệ GTC thấp nhất?">🚨 Kho thấp nhất?</span>
+        <span class="chip-item" data-ask="Báo cáo tình hình bóc tách đơn hẹn SMS">📦 Đơn hẹn SMS?</span>
+        <span class="chip-item" data-ask="Tình hình nợ tiền COD cuối ngày">🌙 Nợ COD?</span>
+        <span class="chip-item" data-ask="Soi chi tiết kho Cái Răng">🏢 Cái Răng</span>
+        <span class="chip-item" data-ask="Soi chi tiết kho Bình Thủy">🏢 Bình Thủy</span>
+        <span class="chip-item" data-ask="Soi chi tiết kho Vị Thanh">🏢 Vị Thanh</span>
+        <span class="chip-item" data-ask="Soi chi tiết kho Ô Môn">🏢 Ô Môn</span>
+        <span class="chip-item" data-ask="Tổng hợp tình hình tồn đọng 4 kho">📊 Tồn đọng</span>
+        <span class="chip-item" data-ask="Cho xem địa chỉ và định vị GPS của 4 kho MT01">📍 Địa chỉ & GPS</span>
+      </div>
+      <button class="chips-nav-btn right" id="btnScrollChipsRight" title="Kéo sang phải">›</button>
     </div>
 
     <div class="copilot-chat-body" id="copilotChatBody">
