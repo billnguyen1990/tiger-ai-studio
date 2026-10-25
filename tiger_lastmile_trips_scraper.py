@@ -225,4 +225,12 @@ if __name__ == "__main__":
     if "--dry-run" in sys.argv:
         send_sheet = False
     
-    run_lastmile_scraper(send_to_sheet=send_sheet, send_to_tg=send_tg)
+    custom_date = None
+    if "--date" in sys.argv:
+        try:
+            idx = sys.argv.index("--date")
+            custom_date = sys.argv[idx + 1]
+        except:
+            pass
+
+    run_lastmile_scraper(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg)
