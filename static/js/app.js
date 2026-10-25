@@ -1687,23 +1687,33 @@ document.addEventListener("DOMContentLoaded", () => {
     return s;
   }
 
-  // Check Gemini Connection Status
+  // Check Gemini Connection Status (ĐÃ KHÓA BẢO MẬT VĨNH VIỄN)
   async function checkGeminiStatus() {
     try {
       const res = await fetch("/api/gemini-config");
       const d = await res.json();
-      if (d.configured) {
+      if (d.configured || d.locked) {
         if (geminiStatusDot) geminiStatusDot.className = "gemini-status-dot active";
         if (geminiStatusText) {
-          geminiStatusText.innerHTML = `<span style="color:#10b981; font-weight:700;">ĐÃ KẾT NỐI GEMINI AI (${d.masked_key})</span>`;
+          geminiStatusText.innerHTML = `<span style="color:#10b981; font-weight:700;">🔒 ĐÃ KẾT NỐI & KHÓA BẢO MẬT GEMINI AI (${d.masked_key || 'AQ.Ab8...xnJA'})</span>`;
+        }
+        if (geminiApiKeyInput) {
+          geminiApiKeyInput.value = "•••••••••••••••••••••••••••••••••••••••••••••••••";
+          geminiApiKeyInput.readOnly = true;
+          geminiApiKeyInput.disabled = true;
+        }
+        if (btnSaveGeminiKey) {
+          btnSaveGeminiKey.disabled = true;
+          btnSaveGeminiKey.innerHTML = "<span>🔒 Đã Khóa Bảo Mật Vĩnh Viễn</span>";
+          btnSaveGeminiKey.style.cursor = "not-allowed";
         }
         if (copilotSubText) {
-          copilotSubText.innerHTML = "Trợ lý AI Đàm Thoại • Kết Nối Google Gemini ⚡";
+          copilotSubText.innerHTML = "Trợ lý AI Đàm Thoại • Google Gemini Đã Khóa Bảo Mật ⚡";
         }
       } else {
         if (geminiStatusDot) geminiStatusDot.className = "gemini-status-dot inactive";
         if (geminiStatusText) {
-          geminiStatusText.innerHTML = "<span style='color:#f59e0b;'>Chưa cài đặt Gemini API Key (Đang dùng Local Engine)</span>";
+          geminiStatusText.innerHTML = "<span style='color:#f59e0b;'>Chưa cài đặt Gemini API Key</span>";
         }
       }
     } catch (e) {
@@ -1736,46 +1746,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   if (btnSaveGeminiKey) {
-    btnSaveGeminiKey.addEventListener("click", async () => {
-      const key = geminiApiKeyInput.value.trim();
-      if (!key) {
-        geminiSaveMsg.style.display = "block";
-        geminiSaveMsg.innerHTML = "<span style='color:#ef4444;'>Vui lòng nhập API Key!</span>";
-        return;
-      }
-      btnSaveGeminiKey.disabled = true;
-      btnSaveGeminiKey.textContent = "Đang kiểm tra kết nối với Google...";
-      geminiSaveMsg.style.display = "none";
-      try {
-        const res = await fetch("/api/gemini-config", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ api_key: key })
-        });
-        const data = await res.json();
-        if (data.success) {
-          geminiSaveMsg.style.display = "block";
-          geminiSaveMsg.innerHTML = `<span style='color:#10b981; font-weight:bold;'>${data.message}</span>`;
-          checkGeminiStatus();
-          playCyberSound("success");
-          setTimeout(() => {
-            modalGeminiConfig.classList.remove("open");
-            geminiSaveMsg.style.display = "none";
-            btnSaveGeminiKey.disabled = false;
-            btnSaveGeminiKey.textContent = "Lưu & Kiểm Tra Kết Nối";
-          }, 1500);
-        } else {
-          geminiSaveMsg.style.display = "block";
-          geminiSaveMsg.innerHTML = `<span style='color:#ef4444;'>${data.message}</span>`;
-          btnSaveGeminiKey.disabled = false;
-          btnSaveGeminiKey.textContent = "Lưu & Kiểm Tra Kết Nối";
-        }
-      } catch (err) {
-        geminiSaveMsg.style.display = "block";
-        geminiSaveMsg.innerHTML = `<span style='color:#ef4444;'>Lỗi: ${err.message}</span>`;
-        btnSaveGeminiKey.disabled = false;
-        btnSaveGeminiKey.textContent = "Lưu & Kiểm Tra Kết Nối";
-      }
+    btnSaveGeminiKey.addEventListener("click", () => {
+      geminiSaveMsg.style.display = "block";
+      geminiSaveMsg.innerHTML = "<span style='color:#10b981; font-weight:bold;'>🔒 API Key đã được KHÓA BẢO MẬT VĨNH VIỄN theo yêu cầu của Quản Trị Viên! Tuyệt đối không thể sửa đổi hoặc xóa bỏ.</span>";
     });
   }
 
