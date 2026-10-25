@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: tiger-ai-studio
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --timeout 180
+    plan: free
+    region: singapore
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9

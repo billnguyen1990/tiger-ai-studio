@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GHN Lastmile • Tiger AI Flow Studio MT01</title>
+  <meta name="description" content="Hệ thống Điều hành Vòng lặp AI Agent Kéo Thả Node-based chuyên nghiệp cho 4 kho Miền Tây 01 - GHN Lastmile">
+  <link rel="icon" type="image/png" href="/static/img/ghn_tiger_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="theme-ghn-teal">
+
+  <!-- TOP APP BAR -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="logo-badge-container">
+        <img src="/static/img/ghn_tiger_logo.png" alt="GHN Heavy Logo" class="brand-logo-img">
+        <span class="tiger-badge-mini" title="Powered by Tiger AI">🐅</span>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">GHN <span class="badge-heavy">HEAVY</span> <span class="badge-pro">TIGER AI</span></div>
+        <div class="brand-sub">COMMAND CENTER MT01</div>
+      </div>
+    </div>
+
+    <!-- WORKFLOW SELECTOR -->
+    <div class="workflow-selector-wrapper">
+      <label for="workflowSelect" class="selector-label">Quy Trình:</label>
+      <select id="workflowSelect" class="workflow-dropdown">
+        <option value="kpi_gtc">📊 07:00 • KPI GTC Hôm Qua (Chuẩn 85%)</option>
+        <option value="checkin">⏰ 07:35 • Điểm Danh & Check-in Ca Sáng</option>
+        <option value="assigned">🚚 09:00 • Giám Sát Chuyến Xe Xuất Bến</option>
+        <option value="unassigned">📦 10:00 • Đơn Chưa Gán & Ngày Hẹn SMS</option>
+        <option value="pda">📱 12h/15h/19h • Tiến Độ & PDA NV</option>
+        <option value="evening_cod">🌙 21:00 & 21:30 • Chốt Ca Cuối Ngày & Nợ COD</option>
+      </select>
+    </div>
+
+    <!-- ACTION CONTROLS & STACKED UTILITIES -->
+    <div class="header-actions">
+      <button id="btnUpdateQuick" class="btn btn-update" title="Kiểm tra & Cập nhật phiên bản mới">
+        <span class="btn-icon">⚡</span>
+        <span id="versionTag">v2.5.1</span>
+      </button>
+      <button id="btnRunTest" class="btn btn-secondary" title="Chạy kiểm thử quy trình">
+        <span class="btn-icon">▶</span>
+        <span>Chạy Thử</span>
+      </button>
+      <button id="btnRunTelegram" class="btn btn-primary" title="Chạy thực tế và bắn báo cáo lên Telegram">
+        <span class="btn-icon">🚀</span>
+        <span>Bắn Telegram</span>
+      </button>
+      <button id="btnTimeWarp" class="btn btn-warning" title="Mô phỏng tự động tua nhanh toàn bộ 24h vận hành (6 mốc giờ)">
+        <span class="btn-icon">⏱️</span>
+        <span id="timeWarpLabel">Diễn Tập 24H</span>
+      </button>
+
+      <!-- NGĂN XẾP CÔNG CỤ (STACKED DROPDOWN) -->
+      <div class="tools-stack-wrapper" id="toolsStackWrapper">
+        <button id="btnToolsStack" class="btn btn-glass btn-stack" title="Mở ngăn xếp các tiện ích và cài đặt">
+          <span class="btn-icon">📂</span>
+          <span>Tiện Ích MT01</span>
+          <span class="stack-arrow">▾</span>
+        </button>
+
+        <div class="tools-stack-menu" id="toolsStackMenu">
+          <div class="stack-menu-item" id="stackItemAnalytics">
+            <span class="item-icon">📊</span>
+            <div class="item-info">
+              <div class="item-name">Biểu Đồ & Phân Tích KPI</div>
+              <div class="item-desc">Tỉ lệ GTC 4 kho, đơn hẹn SMS & Bảng NV</div>
+            </div>
+          </div>
+          <div class="stack-menu-item" id="stackItemUpdate">
+            <span class="item-icon">🔄</span>
+            <div class="item-info">
+              <div class="item-name">Cập Nhật Hệ Thống (v2.5.1)</div>
+              <div class="item-desc">Đồng bộ quy tắc, đổi mới tính năng 1-click</div>
+            </div>
+          </div>
+          <div class="stack-menu-item" id="stackItemRadar">
+            <span class="item-icon">📡</span>
+            <div class="item-info">
+              <div class="item-name">Radar Giám Sát Thời Gian Thực</div>
+              <div class="item-desc">Quét trạng thái 4 kho: Cái Răng, Bình Thủy, Vị Thanh, Ô Môn</div>
+            </div>
+          </div>
+          <div class="stack-menu-item" id="stackItemScheduler">
+            <span class="item-icon">📅</span>
+            <div class="item-info">
+              <div class="item-name">Lịch Trình Task Scheduler</div>
+              <div class="item-desc">Quản lý 6 mốc giờ chạy ngầm 24/7 trên máy tính</div>
+            </div>
+          </div>
+          <div class="stack-menu-item" id="stackItemSound">
+            <span class="item-icon" id="soundIcon">🔊</span>
+            <div class="item-info">
+              <div class="item-name" id="soundLabel">Âm Thanh & Giọng Nói AI</div>
+              <div class="item-desc" id="soundSubLabel">Bật/tắt hiệu ứng âm thanh viễn tưởng & giọng đọc</div>
+            </div>
+          </div>
+          <div class="stack-divider"></div>
+          <div class="stack-setting-row">
+            <span class="setting-title">🎨 Giao Diện:</span>
+            <select id="themeSelect" class="theme-dropdown-stack">
+              <option value="theme-ghn-teal">🟢 Xanh Đen GHN</option>
+              <option value="theme-light">☀️ Sáng Thanh Lịch</option>
+              <option value="theme-amber">🟠 Cam Hổ Cyber</option>
+            </select>
+          </div>
+          <div class="stack-setting-row">
+            <span class="setting-title">⚡ Chế Độ:</span>
+            <button id="btnToggleDemo" class="btn-demo-pill" title="Chuyển chế độ Trình Diễn / Trực Tiếp">
+              <span class="demo-dot"></span>
+              <span id="demoModeLabel">⚡ Trực Tiếp (Live API)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider-v"></div>
+
+      <button id="btnOpenCopilot" class="btn btn-gradient" title="Mở Trợ Lý Đàm Thoại Thông Minh Tiger AI">
+        <span class="btn-icon">💬</span>
+        <span>Hỏi Tiger AI</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN STUDIO LAYOUT -->
+  <main class="studio-container">
+    
+    <!-- LEFT SIDEBAR: PALETTE / WORKFLOW INFO -->
+    <aside class="sidebar-left" id="sidebarLeft">
+      <div class="sidebar-header">
+        <span class="sidebar-title">QUY TRÌNH HIỆN TẠI</span>
+        <button class="sidebar-toggle-btn" id="btnToggleLeft" title="Thu gọn bảng quy trình">◀ Thu Gọn</button>
+      </div>
+      
+      <div class="workflow-meta-card">
+        <div class="meta-title" id="wfName">Đang tải quy trình...</div>
+        <div class="meta-desc" id="wfDesc">-</div>
+        <div class="meta-tag" id="wfSchedule">⏰ Lịch: -</div>
+      </div>
+
+      <div class="sidebar-section-title">CÁC KHỐI NODE TRONG LUỒNG</div>
+      <div class="node-palette-list" id="paletteNodeList">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="connection-status">
+          <span class="status-dot online"></span>
+          <span>Telegram: <b>Miền Tây 01</b> (Topic 2690)</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: INFINITE NODE CANVAS -->
+    <section class="canvas-viewport" id="canvasViewport">
+      <div class="canvas-grid-bg">
+        <div class="laser-beam beam-diag-1"></div>
+        <div class="laser-beam beam-diag-2"></div>
+      </div>
+
+      <!-- FLOATING BUTTON TO RE-OPEN LEFT SIDEBAR -->
+      <button class="floating-sidebar-tab tab-left hidden-tab" id="btnOpenLeftTab" title="Mở lại bảng Quy Trình">
+        <span>☰ Mở Quy Trình</span>
+      </button>
+
+      <!-- FLOATING BUTTON TO RE-OPEN RIGHT SIDEBAR -->
+      <button class="floating-sidebar-tab tab-right" id="btnOpenRightTab" title="Mở lại bảng Chi Tiết Node">
+        <span>ℹ Chi Tiết Node ◀</span>
+      </button>
+
+      <!-- SVG EDGES LAYER -->
+      <svg id="svgEdges" class="svg-edges-layer"></svg>
+
+      <!-- NODES CONTAINER LAYER -->
+      <div id="nodesContainer" class="nodes-container">
+        <!-- Dynamic Nodes added by JS -->
+      </div>
+
+      <!-- CANVAS FLOATING CONTROLS -->
+      <div class="canvas-toolbar">
+        <button id="btnZoomIn" class="tool-btn" title="Phóng to">+</button>
+        <button id="btnZoomOut" class="tool-btn" title="Thu nhỏ">−</button>
+        <button id="btnResetView" class="tool-btn" title="Đặt lại góc nhìn">⟲</button>
+        <div class="divider-h"></div>
+        <button id="btnAddNode" class="tool-btn" title="Thêm Khối Node Mới vào Quy Trình">＋</button>
+        <button id="btnExportBrief" class="tool-btn" title="Xuất Báo Cáo Điều Hành">📑</button>
+      </div>
+    </section>
+
+    <!-- RIGHT SIDEBAR: NODE INSPECTOR -->
+    <aside class="sidebar-right hidden-sidebar" id="nodeInspector">
+      <div class="inspector-header">
+        <span class="inspector-title">CHI TIẾT NODE</span>
+        <button class="sidebar-toggle-btn" id="btnCloseInspector" title="Thu gọn bảng chi tiết">Thu Gọn ▶</button>
+      </div>
+
+      <div class="inspector-content" id="inspectorContent">
+        <div class="empty-inspector">
+          <div class="empty-icon">👈</div>
+          <p>Click chuột vào một Khối Node bất kỳ trên bàn vẽ để xem chi tiết cấu hình, tham số API và dữ liệu thực tế.</p>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- BOTTOM FLOATING TERMINAL DRAWER -->
+  <div class="terminal-drawer" id="terminalDrawer">
+    <div class="terminal-header" id="terminalHeader">
+      <div class="terminal-title-group">
+        <span class="terminal-dot green"></span>
+        <span class="terminal-title">TIGER AI EXECUTION CONSOLE</span>
+        <span class="terminal-status" id="execStatus">Sẵn sàng</span>
+      </div>
+      <div class="terminal-actions">
+        <button id="btnClearLogs" class="btn-tiny">Xóa Log</button>
+        <button id="btnToggleTerminal" class="btn-tiny">Ẩn/Hiện</button>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminalOutput">
+      <div class="log-line info">[00:00:00] Tiger AI Flow Studio đã kết nối sẵn sàng tới hệ thống lõi MT01.</div>
+      <div class="log-line tip">[HƯỚNG DẪN] Bấm nút 'Chạy Thử Luồng' hoặc 'Chạy & Bắn Telegram' để kích hoạt Agent ReAct Loop thực tế.</div>
+    </div>
+  </div>
+
+  <!-- RADAR MT01 MODAL -->
+  <div class="modal-backdrop" id="modalRadar">
+    <div class="modal-box modal-large">
+      <div class="modal-header">
+        <div class="modal-title">📡 RADAR GIÁM SÁT THỜI GIAN THỰC • 4 KHO MIỀN TÂY 01</div>
+        <button class="modal-close" data-close="modalRadar">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="radar-grid" id="radarHubsGrid">
+          <!-- Rendered by JS: 4 Hub Cards -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUB DRILL-DOWN INSPECTION MODAL -->
+  <div class="modal-backdrop" id="modalHubDetail">
+    <div class="modal-box modal-large" style="max-width: 900px;">
+      <div class="modal-header">
+        <div class="modal-title" id="hubDetailTitle">🔍 SOI CHI TIẾT VẬN HÀNH KHO</div>
+        <button class="modal-close" data-close="modalHubDetail">✕</button>
+      </div>
+      <div class="modal-body" id="hubDetailBody" style="max-height: 80vh; overflow-y: auto;">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK SCHEDULER MODAL -->
+  <div class="modal-backdrop" id="modalScheduler">
+    <div class="modal-box modal-medium">
+      <div class="modal-header">
+        <div class="modal-title">📅 TRUNG TÂM LỊCH TRÌNH TỰ ĐỘNG (WINDOWS TASK SCHEDULER)</div>
+        <button class="modal-close" data-close="modalScheduler">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="scheduler-intro">
+          Tất cả 6 tác vụ điều hành của cụm MT01 đang được cài đặt chạy ngầm tự động 24/7 trên máy tính:
+        </div>
+        <div class="tasks-table-wrapper">
+          <table class="tasks-table" id="tasksTable">
+            <thead>
+              <tr>
+                <th>Khung Giờ</th>
+                <th>Tên Tác Vụ</th>
+                <th>Nhiệm Vụ Điều Hành</th>
+                <th>Lần Chạy Kế Tiếp</th>
+                <th>Trạng Thái</th>
+              </tr>
+            </thead>
+            <tbody id="tasksTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELEGRAM PREVIEW MODAL -->
+  <div class="modal-backdrop" id="modalTelegramPreview">
+    <div class="modal-box modal-medium">
+      <div class="modal-header">
+        <div class="modal-title">📱 XEM TRƯỚC BẢN TIN TELEGRAM (TOPIC BÁO CÁO)</div>
+        <button class="modal-close" data-close="modalTelegramPreview">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="telegram-chat-window">
+          <div class="telegram-msg-bubble" id="tgPreviewContent">
+            Đang tải nội dung...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS HUD MODAL -->
+  <div class="modal-backdrop" id="modalAnalytics">
+    <div class="modal-box modal-large modal-analytics-expanded">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title">📊 TRUNG TÂM PHÂN TÍCH CHỈ SỐ VẬN HÀNH • 4 KHO MIỀN TÂY 01</div>
+          <div class="modal-subtitle-badges">
+            <div class="date-selector-wrapper" title="Chọn ngày trong kho lưu trữ để xem lại">
+              <span class="date-selector-label">📅 CHỌN NGÀY LỊCH SỬ:</span>
+              <select id="analyticsDateSelect" class="analytics-date-select">
+                <option value="20261023">23/10/2026 (Chốt ca)</option>
+                <option value="20261022">22/10/2026 (Đã lưu trữ)</option>
+              </select>
+            </div>
+            <span class="analytics-live-badge">⚡ GHN LASTMILE CỤM MT01</span>
+            <span class="analytics-storage-badge" title="Tất cả dữ liệu từng ngày được lưu snapshot vĩnh viễn trên máy tính">💾 ĐÃ LƯU TRỮ VĨNH VIỄN</span>
+            <span class="analytics-refresh-badge" id="analyticsSyncTime">🕒 Đồng bộ: 07:00</span>
+          </div>
+        </div>
+        <div class="modal-actions-right">
+          <button class="btn btn-secondary btn-tiny" id="btnExportModalCsv" title="Tải file CSV báo cáo đối soát chi tiết">📥 Tải Excel / CSV</button>
+          <button class="btn-modal-action" id="btnToggleFullscreenAnalytics" title="Phóng to toàn màn hình">⛶</button>
+          <button class="modal-close" data-close="modalAnalytics" title="Đóng bảng">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <!-- Summary Stats Cards -->
+        <div class="analytics-kpi-grid" id="analyticsKpiGrid">
+          <div class="kpi-mini-card">
+            <div class="kpi-label">Tổng Đơn Gán Giao</div>
+            <div class="kpi-val" id="statAssigned">746</div>
+            <div class="kpi-sub" id="statAssignedSub">Giao 732 + Lấy 14 • Toàn cụm MT01</div>
+          </div>
+          <div class="kpi-mini-card">
+            <div class="kpi-label">Giao & Lấy Thành Công</div>
+            <div class="kpi-val" id="statGtc" style="color: #10b981;">639</div>
+            <div class="kpi-sub">Đạt 85.66% (Chuẩn mục tiêu >= 85%)</div>
+          </div>
+          <div class="kpi-mini-card">
+            <div class="kpi-label">Đơn Hẹn Khách SMS</div>
+            <div class="kpi-val" id="statSms" style="color: #8b5cf6;">128</div>
+            <div class="kpi-sub">Trích xuất chính xác ngày hẹn</div>
+          </div>
+          <div class="kpi-mini-card">
+            <div class="kpi-label">Nợ COD Thu Hộ</div>
+            <div class="kpi-val" id="statCod" style="color: #06b6d4;">0 VNĐ</div>
+            <div class="kpi-sub">100% tài xế nộp đủ (Quỹ: 322,645,355 đ)</div>
+          </div>
+        </div>
+
+        <!-- Charts Layout -->
+        <div class="analytics-charts-grid">
+          <div class="chart-box">
+            <div class="chart-header">
+              <span class="chart-title">🎯 Tỉ Lệ GTC 4 Kho vs Mục Tiêu Chuẩn 85.0%</span>
+              <span class="chart-badge" id="chartDateBadge">KPI Ngày 22/10</span>
+            </div>
+            <div class="chart-bars-container" id="gtcBarsContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-header">
+              <span class="chart-title">📦 Phân Bổ 10 Khung Giờ Lưu Kho & Hẹn SMS</span>
+              <span class="chart-badge">Backlog 10:00</span>
+            </div>
+            <div class="chart-bars-container" id="backlogBarsContainer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Bảng Đối Soát Chi Tiết 4 Kho (Ẩn/Hiện bằng nút bấm) -->
+        <div class="chart-box" id="hubDetailSection" style="margin-top: 18px; display: none;">
+          <div class="chart-header">
+            <span class="chart-title">📋 Bảng Số Liệu Chi Tiết 4 Kho Miền Tây 01 (Giao + Lấy + COD)</span>
+            <span class="chart-badge">Số Liệu Đầy Đủ</span>
+          </div>
+          <div id="hubDetailTableContainer" style="overflow-x: auto;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Section: Top Shipper & Cảnh Báo Tuyến Cụm MT01 -->
+        <div class="chart-box" style="margin-top: 18px;">
+          <div class="chart-header" style="flex-wrap: wrap; gap: 10px;">
+            <div style="display:flex; align-items:center; gap: 8px;">
+              <span class="chart-title">🏆 Top Shipper Xuất Sắc & Cảnh Báo Tuyến Cụm MT01</span>
+              <span class="chart-badge" id="driverCountBadge">21 Tài Xế</span>
+            </div>
+            <div class="analytics-view-controls">
+              <div class="hub-filter-pills" id="hubFilterPills">
+                <button class="pill-btn active" data-filter="all">Tất Cả (21)</button>
+                <button class="pill-btn" data-filter="Bình Thủy">Bình Thủy (5)</button>
+                <button class="pill-btn" data-filter="Cái Răng">Cái Răng (8)</button>
+                <button class="pill-btn" data-filter="Vị Thanh">Vị Thanh (5)</button>
+                <button class="pill-btn" data-filter="Ô Môn">Ô Môn (3)</button>
+              </div>
+              <button class="btn btn-primary btn-tiny" id="btnToggleFullDrivers">
+                <span id="toggleFullDriversIcon">👁️</span>
+                <span id="toggleFullDriversText">Xem Đầy Đủ (21 Tài Xế)</span>
+              </button>
+              <button class="btn btn-secondary btn-tiny" id="btnToggleHubTable">
+                <span>📋 Bảng Số Liệu 4 Kho</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Container hiển thị danh sách tài xế (mặc định hoặc đầy đủ) -->
+          <div class="drivers-leaderboard-container" id="driversLeaderboardContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Section: Top Lý Do Thất Bại (GTB) Toàn Cụm -->
+        <div class="chart-box" id="failureReasonsSection" style="margin-top: 18px;">
+          <div class="chart-header">
+            <span class="chart-title">⚠️ Phân Tích Các Lý Do Giao Thất Bại (GTB) Toàn Cụm</span>
+            <span class="chart-badge">Tổng 107 Đơn GTB</span>
+          </div>
+          <div id="failureReasonsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-top: 10px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD NODE MODAL (CUSTOM WORKFLOW BUILDER) -->
+  <div class="modal-backdrop" id="modalAddNode">
+    <div class="modal-box modal-medium">
+      <div class="modal-header">
+        <div class="modal-title">🧩 THÊM KHỐI NODE MỚI VÀO BÀN CỜ VẬN HÀNH</div>
+        <button class="modal-close" data-close="modalAddNode">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="node-library-grid">
+          <div class="lib-node-card" data-node-type="email_director">
+            <div class="lib-node-icon">📧</div>
+            <div class="lib-node-info">
+              <div class="lib-node-title">Gửi Email Giám Đốc Vùng</div>
+              <div class="lib-node-desc">Tự động tổng hợp báo cáo gửi email định kỳ cho Ban Giám Đốc Vùng.</div>
+            </div>
+            <button class="btn btn-secondary btn-tiny">+ Thêm</button>
+          </div>
+
+          <div class="lib-node-card" data-node-type="if_risk_filter">
+            <div class="lib-node-icon">🛑</div>
+            <div class="lib-node-info">
+              <div class="lib-node-title">Bộ Lọc Rủi Ro IF/ELSE</div>
+              <div class="lib-node-desc">Tách nhánh cảnh báo khẩn nếu kho nào có tỉ lệ GTC < 80%.</div>
+            </div>
+            <button class="btn btn-secondary btn-tiny">+ Thêm</button>
+          </div>
+
+          <div class="lib-node-card" data-node-type="zalo_zns">
+            <div class="lib-node-icon">📱</div>
+            <div class="lib-node-info">
+              <div class="lib-node-title">Bắn Zalo ZNS Nhắc Tài Xế</div>
+              <div class="lib-node-desc">Gửi thông báo Zalo ZNS cho tài xế có đơn GTB chưa liên hệ lại khách.</div>
+            </div>
+            <button class="btn btn-secondary btn-tiny">+ Thêm</button>
+          </div>
+
+          <div class="lib-node-card" data-node-type="export_excel">
+            <div class="lib-node-icon">📑</div>
+            <div class="lib-node-info">
+              <div class="lib-node-title">Xuất Báo Cáo Excel Tự Động</div>
+              <div class="lib-node-desc">Trích xuất bảng dữ liệu đơn hàng và chuyến xe ra file Excel (.xlsx).</div>
+            </div>
+            <button class="btn btn-secondary btn-tiny">+ Thêm</button>
+          </div>
+
+          <div class="lib-node-card" data-node-type="cod_vault_check">
+            <div class="lib-node-icon">🔒</div>
+            <div class="lib-node-info">
+              <div class="lib-node-title">Chốt Két Tiền Mặt Cuối Ca</div>
+              <div class="lib-node-desc">Xác nhận số dư tiền mặt két sắt trùng khớp với bảng kê thu COD.</div>
+            </div>
+            <button class="btn btn-secondary btn-tiny">+ Thêm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE BRIEFING EXPORT MODAL -->
+  <div class="modal-backdrop" id="modalBriefing">
+    <div class="modal-box modal-medium">
+      <div class="modal-header">
+        <div class="modal-title">📑 BẢN TIN ĐIỀU HÀNH TỔNG HỢP • MIỀN TÂY 01</div>
+        <button class="modal-close" data-close="modalBriefing">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="briefing-sheet" id="briefingContent">
+          <h3>BÁO CÁO VẬN HÀNH CUỐI NGÀY - TIGER AI AGENT</h3>
+          <p><b>Thời gian xuất:</b> <span id="briefTime"></span> | <b>Đơn vị:</b> Cụm Vận Hành Miền Tây 01</p>
+          <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-subtle);">
+          <p>• <b>Chỉ số KPI Tổng Hợp (Giao + Lấy) toàn cụm:</b> 85.66% (639/746 đơn - ĐẠT MỤC TIÊU &ge; 85.0%)</p>
+          <p>• <b>Kho xuất sắc nhất:</b> Bình Thủy (91.6%) & Cái Răng (86.5%)</p>
+          <p>• <b>Kho cận chuẩn:</b> Vị Thanh (84.3% - Cần cố gắng ca hôm nay)</p>
+          <p>• <b>Kho cần giải trình:</b> Ô Môn (76.5% - 28 đơn thất bại, yêu cầu làm rõ)</p>
+          <p>• <b>Tồn kho chưa gán:</b> 11 đơn (Đã bóc tách 100% địa chỉ và ngày hẹn khách SMS)</p>
+          <p>• <b>Nợ COD:</b> Đã quét nợ từng shipper theo mã Hub, đảm bảo thu hồi đầy đủ.</p>
+        </div>
+        
+        <div class="briefing-actions" style="display: flex; gap: 10px; margin-top: 16px;">
+          <a href="/api/export-csv" class="btn btn-secondary" style="flex: 1; justify-content: center; text-decoration: none;" download>
+            <span class="btn-icon">📥</span>
+            <span>Tải Excel (.CSV)</span>
+          </a>
+          <button class="btn btn-secondary" id="btnCopyBriefing" style="flex: 1; justify-content: center;">
+            <span class="btn-icon">📋</span>
+            <span id="copyBriefLabel">Copy Báo Cáo</span>
+          </button>
+          <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="window.print()">
+            <span class="btn-icon">🖨️</span>
+            <span>In / PDF</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING AI COPILOT DRAWER -->
+  <div class="copilot-drawer hidden-copilot" id="copilotDrawer">
+    <div class="copilot-header">
+      <div class="copilot-title-group">
+        <span class="copilot-avatar">🐅</span>
+        <div>
+          <div class="copilot-title">TIGER AI COPILOT</div>
+          <div class="copilot-sub">Trợ lý Hỏi Đáp Nghiệp Vụ 4 Kho MT01</div>
+        </div>
+      </div>
+      <button class="close-copilot-btn" id="btnCloseCopilot">✕</button>
+    </div>
+
+    <!-- Quick prompt chips -->
+    <div class="copilot-chips-bar">
+      <span class="chip-item" data-ask="Kho nào có tỉ lệ GTC thấp nhất?">🚨 Kho thấp nhất?</span>
+      <span class="chip-item" data-ask="Báo cáo tình hình bóc tách đơn hẹn SMS">📦 Đơn hẹn SMS?</span>
+      <span class="chip-item" data-ask="Tình hình nợ tiền COD cuối ngày">🌙 Nợ COD?</span>
+      <span class="chip-item" data-ask="Soi chi tiết kho Cái Răng">🏢 Cái Răng</span>
+      <span class="chip-item" data-ask="Soi chi tiết kho Bình Thủy">🏢 Bình Thủy</span>
+    </div>
+
+    <div class="copilot-chat-body" id="copilotChatBody">
+      <div class="chat-msg msg-ai">
+        Xin chào! Em là <b>Tiger AI Copilot</b>. Em có thể giải đáp ngay mọi số liệu vận hành của 4 kho MT01 (KPI, đơn hẹn, tiến độ PDA, nợ COD). Sếp cần soi thông tin gì cứ bấm gợi ý hoặc gõ bên dưới nhé!
+      </div>
+    </div>
+
+    <div class="copilot-input-bar">
+      <input type="text" id="copilotInput" placeholder="Nhập câu hỏi về 4 kho MT01..." autocomplete="off">
+      <button id="btnSendCopilot" class="btn btn-primary btn-tiny">Gửi ➔</button>
+    </div>
+  </div>
+
+  <!-- MODAL CẬP NHẬT PHIÊN BẢN (ONE-CLICK UPDATE MODAL) -->
+  <div class="modal-backdrop" id="updateModal" style="display:none;">
+    <div class="modal-card update-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🔄</span>
+          <div>
+            <h3>TRUNG TÂM CẬP NHẬT HỆ THỐNG TIGER AI</h3>
+            <p class="modal-sub">Quản lý phiên bản & Đồng bộ tính năng tự động</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseUpdateModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="version-compare-card">
+          <div class="ver-col">
+            <span class="ver-label">Phiên bản hiện tại</span>
+            <span class="ver-val current" id="modalCurrentVer">v2.5.1</span>
+          </div>
+          <div class="ver-arrow">➔</div>
+          <div class="ver-col">
+            <span class="ver-label">Trạng thái hệ thống</span>
+            <span class="ver-val latest" id="modalLatestVer">🟢 MỚI NHẤT</span>
+          </div>
+        </div>
+        
+        <div class="changelog-box">
+          <h4>📋 CÁC NÂNG CẤP VÀ CHUẨN HÓA MỚI:</h4>
+          <ul>
+            <li>✅ <b>Chuẩn hóa ngôn từ:</b> Toàn bộ hệ thống gọi tên <code>NV</code> (thay vì Tài xế) và điều hành qua <code>NVXL</code> (thay vì Anh).</li>
+            <li>🎨 <b>Khung Diff Telegram:</b> Đơn lỗi <code>- ❌</code> và hẹn <code>- ⚠️</code> tô ĐỎ, tỉ lệ thành công <code>+ ✅</code> tô XANH LÁ.</li>
+            <li>🌙 <b>Mốc 21:30 & Im Lặng Thông Minh:</b> Nghiệm thu sau 30 phút, nếu 4 kho đã sạch từ 21:00 sẽ tự động im lặng không spam Telegram.</li>
+            <li>⏰ <b>Đếm ngược 5 phút tắt máy:</b> Giao diện Card VIP nổi trên màn hình lúc 21:30, bấm ESC hoặc nút trên màn hình để hủy.</li>
+            <li>🌐 <b>Chuyển đổi Link Web Online:</b> Truy cập mượt mà trên điện thoại, máy tính bảng từ mọi nơi qua Cloud Link.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnTriggerUpdate" class="btn btn-primary btn-full-update">
+          <span>🔄</span>
+          <span>Bấm Cập Nhật Hệ Thống Ngay (One-Click Update)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/canvas.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
