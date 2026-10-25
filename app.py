@@ -1598,7 +1598,7 @@ def build_mt01_system_context():
 def call_gemini_api(prompt, system_context, api_key):
     """Gọi Google Gemini API (gemini-1.5-flash / gemini-2.0-flash)"""
     import requests
-    models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]
+    models = ["gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-flash-latest"]
     for model_name in models:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
         payload = {
@@ -1651,13 +1651,15 @@ def gemini_config():
         if not new_key:
             return jsonify({"success": False, "message": "Vui lòng nhập API Key hợp lệ!"}), 400
         
-        # Test ping Gemini API
-        test_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={new_key}"
+        # Test ping Gemini API with fast modern model
+        test_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={new_key}"
         import requests
         try:
             r = requests.post(
                 test_url,
                 json={"contents": [{"parts": [{"text": "Xin chào"}]}]},
+
+
                 headers={"Content-Type": "application/json"},
                 timeout=12
             )
