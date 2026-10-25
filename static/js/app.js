@@ -92,6 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Canvas Instance
   const canvas = new FlowCanvas(viewportEl, containerEl, svgEl);
 
+  // Auto-collapse left sidebar and terminal drawer on mobile to maximize viewport
+  if (window.innerWidth <= 992) {
+    if (sidebarLeft) sidebarLeft.classList.add("collapsed");
+    if (btnOpenLeftTab) btnOpenLeftTab.classList.remove("hidden");
+    if (terminalDrawer) terminalDrawer.classList.add("collapsed");
+  }
+
   let allWorkflows = {};
   let currentWorkflowId = "kpi_gtc";
   let isRunning = false;

@@ -33,7 +33,7 @@ class FlowCanvas {
   }
 
   initEvents() {
-    // Canvas Panning
+    // Canvas Panning (Mouse)
     this.viewport.addEventListener("mousedown", (e) => {
       if (e.target === this.viewport || e.target.classList.contains("canvas-grid-bg") || e.target === this.svg) {
         this.isPanning = true;
@@ -42,6 +42,18 @@ class FlowCanvas {
         this.viewport.classList.add("panning");
       }
     });
+
+    // Canvas Panning (Touch for Mobile)
+    this.viewport.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        if (e.target === this.viewport || e.target.classList.contains("canvas-grid-bg") || e.target === this.svg) {
+          this.isPanning = true;
+          this.startX = touch.clientX - this.panX;
+          this.startY = touch.clientY - this.panY;
+        }
+      }
+    }, { passive: true });
 
     window.addEventListener("mousemove", (e) => {
       // Pan viewport
@@ -70,10 +82,46 @@ class FlowCanvas {
       }
     });
 
+    window.addEventListener("touchmove", (e) => {
+      if (this.isPanning && e.touches.length === 1) {
+        const touch = e.touches[0];
+        this.panX = touch.clientX - this.startX;
+        this.panY = touch.clientY - this.startY;
+        this.updateTransform();
+      }
+
+      if (this.draggingNode && e.touches.length === 1) {
+        const touch = e.touches[0];
+        const rect = this.viewport.getBoundingClientRect();
+        const mouseX = (touch.clientX - rect.left - this.panX) / this.scale;
+        const mouseY = (touch.clientY - rect.top - this.panY) / this.scale;
+
+        this.draggingNode.x = mouseX - this.dragOffsetX;
+        this.draggingNode.y = mouseY - this.dragOffsetY;
+
+        const nodeEl = document.getElementById(this.draggingNode.id);
+        if (nodeEl) {
+          nodeEl.style.left = `${this.draggingNode.x}px`;
+          nodeEl.style.top = `${this.draggingNode.y}px`;
+        }
+
+        this.renderEdges();
+      }
+    }, { passive: true });
+
     window.addEventListener("mouseup", () => {
       if (this.isPanning) {
         this.isPanning = false;
         this.viewport.classList.remove("panning");
+      }
+      if (this.draggingNode) {
+        this.draggingNode = null;
+      }
+    });
+
+    window.addEventListener("touchend", () => {
+      if (this.isPanning) {
+        this.isPanning = false;
       }
       if (this.draggingNode) {
         this.draggingNode = null;
@@ -113,6 +161,18 @@ class FlowCanvas {
     this.nodes = JSON.parse(JSON.stringify(workflowData.nodes || []));
     this.edges = JSON.parse(JSON.stringify(workflowData.edges || []));
     this.activeNodeId = null;
+
+    // Tự động căn chỉnh kích thước & vị trí cho màn hình điện thoại
+    if (window.innerWidth <= 992) {
+      this.scale = 0.72;
+      this.panX = 16;
+      this.panY = 16;
+    } else {
+      this.scale = 1;
+      this.panX = 40;
+      this.panY = 40;
+    }
+    this.updateTransform();
 
     this.renderNodes();
     this.renderEdges();
@@ -155,7 +215,7 @@ class FlowCanvas {
         <div class="node-port port-out"></div>
       `;
 
-      // Drag event on node
+      // Drag event on node (Mouse)
       el.addEventListener("mousedown", (e) => {
         e.stopPropagation();
         this.selectNode(n.id);
@@ -168,6 +228,23 @@ class FlowCanvas {
         this.dragOffsetX = mouseX - n.x;
         this.dragOffsetY = mouseY - n.y;
       });
+
+      // Touch drag on node (Mobile)
+      el.addEventListener("touchstart", (e) => {
+        e.stopPropagation();
+        this.selectNode(n.id);
+
+        if (e.touches.length === 1) {
+          const touch = e.touches[0];
+          const rect = this.viewport.getBoundingClientRect();
+          const mouseX = (touch.clientX - rect.left - this.panX) / this.scale;
+          const mouseY = (touch.clientY - rect.top - this.panY) / this.scale;
+
+          this.draggingNode = n;
+          this.dragOffsetX = mouseX - n.x;
+          this.dragOffsetY = mouseY - n.y;
+        }
+      }, { passive: true });
 
       this.container.appendChild(el);
     });

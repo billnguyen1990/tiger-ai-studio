@@ -2857,3 +2857,224 @@ body.theme-light .hub-item-pill {
   gap: 8px;
 }
 
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE SYSTEM (iOS & Android Optimized)
+   ========================================================================== */
+
+@media (max-width: 992px) {
+  /* Header compacting */
+  .app-header {
+    height: auto !important;
+    min-height: 48px !important;
+    padding: 6px 10px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    background: rgba(10, 15, 28, 0.96) !important;
+  }
+
+  .brand-group {
+    gap: 8px !important;
+    flex-shrink: 0;
+  }
+
+  .brand-logo-img {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 6px !important;
+  }
+
+  .brand-title {
+    font-size: 12px !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .brand-sub {
+    display: none !important;
+  }
+
+  .badge-heavy, .badge-pro {
+    font-size: 9px !important;
+    padding: 1px 4px !important;
+  }
+
+  .workflow-selector-wrapper {
+    order: 3;
+    width: 100% !important;
+    margin: 2px 0 !important;
+    padding: 5px 8px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--border-glow) !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .selector-label {
+    font-size: 10.5px !important;
+    white-space: nowrap !important;
+  }
+
+  .workflow-dropdown {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 11.5px !important;
+  }
+
+  .header-actions {
+    gap: 5px !important;
+    overflow-x: auto !important;
+    max-width: calc(100% - 120px) !important;
+    padding-bottom: 2px !important;
+    -webkit-overflow-scrolling: touch !important;
+    justify-content: flex-end;
+  }
+
+  .header-actions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    border-radius: 6px !important;
+  }
+
+  .divider-v {
+    display: none !important;
+  }
+
+  /* Sidebars: Sliding Drawer Overlays on Mobile */
+  .sidebar-left {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 270px !important;
+    min-width: 270px !important;
+    z-index: 60 !important;
+    background: rgba(10, 15, 28, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.85) !important;
+    transform: translateX(0);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease !important;
+  }
+
+  .sidebar-left.collapsed {
+    transform: translateX(-100%) !important;
+    width: 270px !important;
+    min-width: 270px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .sidebar-header {
+    min-width: 270px !important;
+    padding: 10px 14px !important;
+  }
+
+  .sidebar-right {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 290px !important;
+    min-width: 290px !important;
+    z-index: 60 !important;
+    background: rgba(10, 15, 28, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.85) !important;
+    transform: translateX(0);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease !important;
+  }
+
+  .sidebar-right.collapsed,
+  .sidebar-right.hidden-sidebar {
+    transform: translateX(100%) !important;
+    width: 290px !important;
+    min-width: 290px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Floating tabs for quick mobile toggle */
+  .floating-sidebar-tab {
+    top: 8px !important;
+    padding: 5px 8px !important;
+    font-size: 10.5px !important;
+    border-radius: 6px !important;
+    background: rgba(15, 23, 42, 0.94) !important;
+    border: 1px solid var(--border-glow) !important;
+  }
+
+  /* Terminal drawer on mobile */
+  .terminal-drawer {
+    height: 120px !important;
+    z-index: 45 !important;
+  }
+
+  .terminal-drawer.collapsed {
+    height: 30px !important;
+  }
+
+  .terminal-header {
+    height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 10.5px !important;
+  }
+
+  .terminal-output {
+    font-size: 10px !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Compact Node sizes on mobile */
+  .flow-node {
+    width: 220px !important;
+    border-radius: 10px !important;
+  }
+
+  .node-header {
+    padding: 8px 10px !important;
+  }
+
+  .node-icon-box {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 13px !important;
+  }
+
+  .node-title-text {
+    font-size: 11.5px !important;
+  }
+
+  .node-body {
+    padding: 8px 10px !important;
+  }
+
+  .node-desc {
+    font-size: 10px !important;
+  }
+
+  .node-footer {
+    padding: 6px 10px !important;
+  }
+
+  /* Canvas Controls */
+  .canvas-controls {
+    right: 8px !important;
+    top: 45px !important;
+    gap: 3px !important;
+  }
+
+  .tool-btn {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 11px !important;
+  }
+}
+
+
