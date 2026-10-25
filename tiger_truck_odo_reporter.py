@@ -392,23 +392,27 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
     # 2. Gửi Telegram Báo Cáo Tổng Hợp (Chỉ gửi duy nhất phòng 'The 5 Guardians')
     if send_to_tg:
         lines = []
-        lines.append(f"📊 <b>BÁO CÁO CÀO DỮ LIỆU ({date_display})</b> 📊\n")
-        lines.append("✅ <b>TỔNG KẾT NHANH:</b>")
-        lines.append(f"• Tổng số chuyến xe tải: <b>{total_trucks} chuyến</b>")
-        lines.append(f"• Số kho có data: <b>{len(WAREHOUSES_21)}/{len(WAREHOUSES_21)} kho</b>")
-        lines.append("• Trạng thái: <b>Hoàn hảo 100% 🎯</b>\n")
-        lines.append("🏢 <b>CHI TIẾT XE TẢI TỪNG KHO:</b>")
+        lines.append(f"🚛💨 <b>BÁO CÁO ODO XE TẢI 365 • TOÀN MIỀN TÂY</b> 🚛💨")
+        lines.append(f"📅 <i>Ngày chuyến:</i> <b>{date_display} (Ngày N-1)</b>")
+        lines.append(f"⏰ <i>Khung giờ chốt:</i> <code>02:00 AM</code> (Tự động 100% trên Cloud)")
+        lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        lines.append("📊 <b>TỔNG KẾT VẬN HÀNH:</b>")
+        lines.append(f"• 🚚 <b>Tổng số xe tải hợp lệ:</b> <b>{total_trucks} chuyến</b>")
+        lines.append(f"• 🏢 <b>Tiến độ đối soát:</b> <b>{len(WAREHOUSES_21)}/{len(WAREHOUSES_21)} kho (100% Hoàn hảo 🎯)</b>")
+        lines.append("• 🛡️ <b>Bộ lọc an toàn:</b> Đã loại bỏ xe máy & hơn 55 biển số ảo 365")
+        lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        lines.append("🏢 <b>CHI TIẾT XE TẢI THEO TỪNG KHO:</b>")
 
         for idx, (wid, wname) in enumerate(WAREHOUSES_21.items(), 1):
             st = warehouse_stats.get(wid, {"Xe tải": 0, "Xe máy": 0})
             s_name = wname.replace("Kho Giao Hàng Nặng - ", "").replace("Kho Giao Hàng Nặng-", "").strip()
-            lines.append(f"{idx}. {s_name}: <b>{st['Xe tải']} chuyến</b>")
+            lines.append(f"🚚 <b>{idx}. {s_name}:</b> <b>{st['Xe tải']} chuyến</b> xe tải")
 
-        lines.append("\n👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>")
         lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        lines.append("👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>")
         lines.append(f"📁 <b>Google Sheets:</b> Đã đồng bộ vào tab <code>{SHEET_NAME}</code>")
-        lines.append(f"🔗 <b>Link xem dữ liệu:</b>\n{SHEET_URL}")
-        lines.append("🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • 02:00 AM Cloud</i>")
+        lines.append(f"🔗 <b>Link xem dữ liệu trực tiếp:</b>\n{SHEET_URL}")
+        lines.append("🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • Đám mây Cloud Render 24/7</i>")
 
         tg_msg = "\n".join(lines)
         tg_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"

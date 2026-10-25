@@ -652,42 +652,43 @@ def run_workflow():
         demo_outputs = {
             "truck_odo_365": """⏳ Tiger AI đang quét toàn bộ chuyến xe tải Ngày N-1 của 21 Kho Miền Tây...
 =======================================================
-📊 <b>BÁO CÁO CÀO DỮ LIỆU (N-1)</b> 📊
-
-✅ <b>TỔNG KẾT NHANH:</b>
-• Tổng số chuyến xe tải: <b>67 chuyến</b>
-• Số kho có data: <b>21/21 kho</b>
-• Trạng thái: <b>Hoàn hảo 100% 🎯</b>
-
-🏢 <b>CHI TIẾT XE TẢI TỪNG KHO:</b>
-1. Cái Răng: <b>6 chuyến</b>
-2. Bình Thủy: <b>3 chuyến</b>
-3. TP Vị Thanh: <b>2 chuyến</b>
-4. Ô Môn: <b>2 chuyến</b>
-5. TP Cao Lãnh: <b>4 chuyến</b>
-6. Tam Nông: <b>2 chuyến</b>
-7. TP Vĩnh Long: <b>4 chuyến</b>
-8. TP Rạch Giá: <b>4 chuyến</b>
-9. TP Hà Tiên: <b>1 chuyến</b>
-10. TP Sóc Trăng: <b>4 chuyến</b>
-11. TP Bạc Liêu: <b>2 chuyến</b>
-12. TP Trà Vinh: <b>3 chuyến</b>
-13. TP Long Xuyên: <b>4 chuyến</b>
-14. TP Châu Đốc: <b>4 chuyến</b>
-15. TP Cà Mau: <b>2 chuyến</b>
-16. TP Mỹ Tho: <b>4 chuyến</b>
-17. TP Bến Tre: <b>4 chuyến</b>
-18. TX Cai Lậy: <b>3 chuyến</b>
-19. Gò Công: <b>2 chuyến</b>
-20. Đức Hòa: <b>3 chuyến</b>
-21. TP Tân An: <b>4 chuyến</b>
-
-👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>
+🚛💨 <b>BÁO CÁO ODO XE TẢI 365 • TOÀN MIỀN TÂY</b> 🚛💨
+📅 <i>Ngày chuyến:</i> <b>24/10/2026 (Ngày N-1)</b>
+⏰ <i>Khung giờ chốt:</i> <code>02:00 AM</code> (Tự động 100% trên Cloud)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 <b>TỔNG KẾT VẬN HÀNH:</b>
+• 🚚 <b>Tổng số xe tải hợp lệ:</b> <b>67 chuyến</b>
+• 🏢 <b>Tiến độ đối soát:</b> <b>21/21 kho (100% Hoàn hảo 🎯)</b>
+• 🛡️ <b>Bộ lọc an toàn:</b> Đã loại bỏ xe máy & hơn 55 biển số ảo 365
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏢 <b>CHI TIẾT XE TẢI THEO TỪNG KHO:</b>
+🚚 <b>1. Cái Răng:</b> <b>6 chuyến</b> xe tải
+🚚 <b>2. Bình Thủy:</b> <b>3 chuyến</b> xe tải
+🚚 <b>3. TP Vị Thanh:</b> <b>2 chuyến</b> xe tải
+🚚 <b>4. Ô Môn:</b> <b>2 chuyến</b> xe tải
+🚚 <b>5. TP Cao Lãnh:</b> <b>4 chuyến</b> xe tải
+🚚 <b>6. Tam Nông:</b> <b>2 chuyến</b> xe tải
+🚚 <b>7. TP Vĩnh Long:</b> <b>4 chuyến</b> xe tải
+🚚 <b>8. TP Rạch Giá:</b> <b>4 chuyến</b> xe tải
+🚚 <b>9. TP Hà Tiên:</b> <b>1 chuyến</b> xe tải
+🚚 <b>10. TP Sóc Trăng:</b> <b>4 chuyến</b> xe tải
+🚚 <b>11. TP Bạc Liêu:</b> <b>2 chuyến</b> xe tải
+🚚 <b>12. TP Trà Vinh:</b> <b>3 chuyến</b> xe tải
+🚚 <b>13. TP Long Xuyên:</b> <b>4 chuyến</b> xe tải
+🚚 <b>14. TP Châu Đốc:</b> <b>4 chuyến</b> xe tải
+🚚 <b>15. TP Cà Mau:</b> <b>2 chuyến</b> xe tải
+🚚 <b>16. TP Mỹ Tho:</b> <b>4 chuyến</b> xe tải
+🚚 <b>17. TP Bến Tre:</b> <b>4 chuyến</b> xe tải
+🚚 <b>18. TX Cai Lậy:</b> <b>3 chuyến</b> xe tải
+🚚 <b>19. Gò Công:</b> <b>2 chuyến</b> xe tải
+🚚 <b>20. Đức Hòa:</b> <b>3 chuyến</b> xe tải
+🚚 <b>21. TP Tân An:</b> <b>4 chuyến</b> xe tải
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>
 📁 <b>Google Sheets:</b> Đã đồng bộ vào tab <code>Team_Leader</code>
-🔗 <b>Link xem dữ liệu:</b>
+🔗 <b>Link xem dữ liệu trực tiếp:</b>
 https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/edit
-🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • 02:00 AM Cloud</i>""",
+🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • Đám mây Cloud Render 24/7</i>""",
             "lastmile_trips": """⏳ Tiger AI đang kích hoạt cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01...
 =======================================================
 KẾT QUẢ ĐỒNG BỘ CHUYẾN ĐI LASTMILE LÊN GOOGLE SHEETS:
