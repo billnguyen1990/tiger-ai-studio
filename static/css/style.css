@@ -3077,4 +3077,33 @@ body.theme-light .hub-item-pill {
   }
 }
 
+@media (max-width: 600px) {
+  /* Điện thoại dạng đứng (Portrait) */
+  .app-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    padding: 6px 10px !important;
+  }
+
+  .brand-group {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .header-actions {
+    max-width: 100% !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    order: 2 !important;
+    padding-bottom: 2px !important;
+  }
+
+  .workflow-selector-wrapper {
+    order: 3 !important;
+    width: 100% !important;
+  }
+}
+
+
 

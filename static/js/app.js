@@ -143,8 +143,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load vào canvas
     canvas.loadWorkflow(wf);
-    if (wf.nodes && wf.nodes.length > 0) {
-      canvas.selectNode(wf.nodes[0].id);
+    if (window.innerWidth > 992) {
+      if (wf.nodes && wf.nodes.length > 0) {
+        canvas.selectNode(wf.nodes[0].id);
+      }
+    } else {
+      // Trên điện thoại, đóng bảng chi tiết để chừa toàn bộ màn hình cho Sơ đồ Nodes
+      if (nodeInspector) {
+        nodeInspector.classList.add("hidden-sidebar");
+        nodeInspector.classList.add("collapsed");
+      }
+      if (btnOpenRightTab) btnOpenRightTab.classList.remove("hidden-tab");
     }
     addLog("info", `Đã nạp quy trình: [${wf.name}] vào bàn cờ AI.`);
   }
