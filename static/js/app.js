@@ -647,18 +647,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 7. Bật Modal Soi Chi Tiết Kho (6 Chiều Dữ Liệu)
-  async function openHubDetail(hubId) {
+  async function openHubDetail(hubId, targetDate) {
     const modal = document.getElementById("modalHubDetail");
     const titleEl = document.getElementById("hubDetailTitle");
     const bodyEl = document.getElementById("hubDetailBody");
     if (!modal || !bodyEl) return;
+
+    const dateToUse = targetDate || (analyticsDataCache && analyticsDataCache.date_key ? analyticsDataCache.date_key : "");
 
     bodyEl.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);"><span class="terminal-dot green" style="display:inline-block; margin-right:8px;"></span> Đang nạp toàn diện 6 chiều dữ liệu kho từ Tiger AI Data Lake...</div>`;
     modal.classList.add("open");
     playCyberSound("pulse");
 
     try {
-      const res = await fetch(`/api/hub-detail/${hubId}`);
+      const url = dateToUse ? `/api/hub-detail/${hubId}?date=${dateToUse}` : `/api/hub-detail/${hubId}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error("Không thể tải thông tin kho");
       const raw = await res.json();
       const d = raw.data || raw;
@@ -747,22 +750,32 @@ document.addEventListener("DOMContentLoaded", () => {
           <div>
             <div class="hub-hero-title">
               <span>🏢 ${d.short_name || d.hub_name}</span>
-              <div style="display:inline-flex; gap:6px;">
+              <div style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 <span class="badge-status-pill ${statusBadgeClass}">${badgeText}</span>
-                <span class="badge-status-pill ${ltcBadgeClass}">${ltc.badge || 'LTC ĐẠT CHUẨN'}</span>
+                <span class="badge-status-pill ${ltcBadgeClass}">${ltc.badge || `LTC: ${ltc.rate}%`}</span>
               </div>
             </div>
             <div class="hub-hero-sub" style="margin-top:5px; font-size:12px;">
-              📅 <b>Ca vận hành: Thứ Sáu, ngày ${reportDate}</b> | ⏱ Cập nhật dữ liệu lúc: <b>${syncTime}</b>
+              📅 <b>Ca vận hành: ${d.day_of_week || 'Thứ Bảy'}, ngày ${reportDate}</b> | ⏱ Cập nhật dữ liệu lúc: <b>${syncTime}</b>
             </div>
             <div class="hub-hero-sub" style="margin-top:3px; font-size:11.5px;">
               📍 Địa chỉ: <b>${d.address || 'Miền Tây 01'}</b> | 👤 NVXL phụ trách: <b>${d.nvxl_name}</b> (<a href="https://t.me/${(d.telegram_tag || '').replace('@','')}" target="_blank" style="color:var(--primary-accent); text-decoration:none; font-weight:700;">${d.telegram_tag}</a>)
             </div>
           </div>
-          <div style="text-align: right; display:flex; flex-direction:column; justify-content:center; align-items:flex-end;">
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 6px 12px; text-align: right;">
-              <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight:600;">Dữ liệu thời gian thực</div>
-              <div style="font-size: 13.5px; font-weight: 800; color: #10b981;">🟢 Ngày ${reportDate}</div>
+          <div style="text-align: right; display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:6px;">
+            <div class="date-selector-wrapper" style="margin-bottom:2px;" title="Chọn ngày để xem lại chi tiết ca vận hành">
+              <span class="date-selector-label" style="font-size:11px; font-weight:700; color:var(--text-muted); margin-right:4px;">📅 CA NGÀY:</span>
+              <select id="hubDetailDateSelector" class="analytics-date-select" style="font-size:11.5px; padding:3px 8px; border-radius:6px; background:var(--bg-elevated); color:var(--text-main); border:1px solid var(--border-glow);">
+                ${(d.available_dates || []).map(dt => `
+                  <option value="${dt.date_key}" ${dt.date_key === (d.date_key || targetDate) ? 'selected' : ''}>
+                    ${dt.label}
+                  </option>
+                `).join("")}
+              </select>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 4px 10px; text-align: right;">
+              <div style="font-size: 9.5px; color: var(--text-muted); text-transform: uppercase; font-weight:600;">Dữ liệu thời gian thực</div>
+              <div style="font-size: 13px; font-weight: 800; color: #10b981;">🟢 Ngày ${reportDate}</div>
             </div>
           </div>
         </div>
@@ -775,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <span>🎯 1. KPI Giao & Lấy Hàng Hôm Qua (${yesterdayDate})</span>
               <div style="display:flex; gap:6px;">
                 <span class="badge-status-pill ${statusBadgeClass}">KPI GỘP: ${kpi.rate}%</span>
-                <span class="badge-status-pill passed">LTC: 100%</span>
+                <span class="badge-status-pill ${ltcBadgeClass}">LTC: ${ltc.rate || 100}%</span>
               </div>
             </div>
             <div class="hub-stat-row" style="background: rgba(16, 185, 129, 0.08); padding: 5px 8px; border-radius: 6px; margin-bottom: 6px; border: 1px solid rgba(16, 185, 129, 0.25);">
@@ -784,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="hub-stat-row" style="padding: 2px 4px; font-size: 11.5px;">
               <span class="hub-stat-label">🚚 Trong đó Đơn Giao (GTC):</span>
-              <span class="hub-stat-value">${kpi.deliver_assigned || (kpi.assigned - (ltc.assigned || 0))} gán ➔ <b style="color:#10b981;">${kpi.deliver_gtc || (kpi.gtc - (ltc.ltc || 0))} GTC</b> (GTB: <span style="color:#ef4444;">${kpi.deliver_gtb || (kpi.gtb - (ltc.ltb || 0))}</span>) • <b>${kpi.deliver_rate || 86.2}%</b></span>
+              <span class="hub-stat-value">${kpi.deliver_assigned || (kpi.assigned - (ltc.assigned || 0))} gán ➔ <b style="color:#10b981;">${kpi.deliver_gtc || (kpi.gtc - (ltc.ltc || 0))} GTC</b> (GTB: <span style="color:#ef4444;">${kpi.deliver_gtb || (kpi.gtb - (ltc.ltb || 0))}</span>) • <b>${kpi.deliver_rate !== undefined ? kpi.deliver_rate : (kpi.deliver_assigned > 0 ? Math.round(kpi.deliver_gtc/kpi.deliver_assigned*1000)/10 : 0)}%</b></span>
             </div>
             <div class="hub-stat-row" style="padding: 2px 4px; font-size: 11.5px;">
               <span class="hub-stat-label">📦 Trong đó Đơn Lấy (LTC):</span>
@@ -994,6 +1007,13 @@ document.addEventListener("DOMContentLoaded", () => {
           </button>
         </div>
       `;
+
+      const dateSelector = document.getElementById("hubDetailDateSelector");
+      if (dateSelector) {
+        dateSelector.addEventListener("change", (e) => {
+          openHubDetail(hubId, e.target.value);
+        });
+      }
     } catch (err) {
       bodyEl.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 30px;">❌ Lỗi nạp chi tiết kho: ${err.message}</div>`;
     }
@@ -1004,7 +1024,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = e.target.closest(".btn-inspect-hub");
     if (btn) {
       const hubId = btn.getAttribute("data-hub-id");
-      if (hubId) openHubDetail(hubId);
+      const chosenDate = (analyticsDataCache && analyticsDataCache.date_key) ? analyticsDataCache.date_key : "";
+      if (hubId) openHubDetail(hubId, chosenDate);
+    }
+    const btnAnalytics = e.target.closest(".btn-inspect-analytics");
+    if (btnAnalytics) {
+      const hubId = btnAnalytics.getAttribute("data-hub-id");
+      const chosenDate = (analyticsDataCache && analyticsDataCache.date_key) ? analyticsDataCache.date_key : "";
+      if (hubId) openHubDetail(hubId, chosenDate);
     }
   });
 
@@ -1304,7 +1331,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const badgeClass = h.status === "passed" ? "GTC & LTC ĐẠT" : (h.status === "warning" ? "CẬN CHUẨN (84.3%)" : "GIẢI TRÌNH (<80%)");
             return `
               <tr>
-                <td><b>${h.hub_name}</b></td>
+                <td><b>${h.hub_name}</b> <button class="btn btn-secondary btn-tiny btn-inspect-analytics" data-hub-id="${h.hub_id}" style="font-size:9.5px; padding:1px 5px; margin-left:4px;" title="Soi chi tiết kho">⚡ Soi</button></td>
                 <td><span style="color:#60a5fa;">${h.nvxl}</span></td>
                 <td style="text-align: right; font-weight:700;">${h.assigned}</td>
                 <td style="text-align: right; color:#10b981; font-weight:700;">${h.gtc}</td>
@@ -1450,7 +1477,7 @@ document.addEventListener("DOMContentLoaded", () => {
         row.className = "gtc-bar-row";
         row.innerHTML = `
           <div class="gtc-bar-meta">
-            <span><b>${h.hub_name}</b> (NVXL: ${h.nvxl}) • Tổng gán: ${h.assigned.toLocaleString()} (Giao ${h.deliver_assigned || h.assigned} + Lấy ${h.assigned_pick || 0})</span>
+            <span style="display:inline-flex; align-items:center; gap:6px;"><b>${h.hub_name}</b> (NVXL: ${h.nvxl}) • Tổng gán: ${h.assigned.toLocaleString()} (Giao ${h.deliver_assigned || h.assigned} + Lấy ${h.assigned_pick || 0}) <button class="btn btn-secondary btn-tiny btn-inspect-analytics" data-hub-id="${h.hub_id}" style="font-size:10px; padding:1px 6px; border-radius:4px;" title="Soi chi tiết ${h.hub_name}">⚡ Soi</button></span>
             <span>
               <b style="color: ${color};">KPI Gộp: ${h.rate}%</b> • 
               <b style="color: ${ltcColor};">LTC: ${h.ltc_rate || 100.0}%</b> • 
