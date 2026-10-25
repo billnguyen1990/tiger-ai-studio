@@ -62,8 +62,73 @@ def index():
 
 @app.route("/api/workflows")
 def get_workflows():
-    """Trả về danh sách 6 Workflow chuẩn hóa dạng Nodes & Edges"""
+    """Trả về danh sách 7 Workflow chuẩn hóa dạng Nodes & Edges"""
     workflows = {
+        "lastmile_trips": {
+            "id": "lastmile_trips",
+            "name": "Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets (05:00)",
+            "description": "Tự động cào toàn bộ danh sách chuyến đi Ngày N-1 của 4 kho MT01 qua API GHN siêu tốc, lọc chuyến FINISHED và đồng bộ thẳng lên Google Sheets của Sếp.",
+            "schedule": "05:00 hàng ngày",
+            "script_key": "lastmile_05h00",
+            "nodes": [
+                {
+                    "id": "node_trigger",
+                    "title": "Hẹn Giờ 05:00 AM",
+                    "category": "trigger",
+                    "icon": "⏰",
+                    "x": 60,
+                    "y": 180,
+                    "description": "Kích hoạt tự động lúc 05:00 sáng mỗi ngày, quét dữ liệu ngày N-1 (hôm qua).",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_api_trips",
+                    "title": "API GHN Chuyến Đi (D-1)",
+                    "category": "api",
+                    "icon": "🔌",
+                    "x": 340,
+                    "y": 180,
+                    "description": "POST /api/lastmile/trip/get-trip-list-by-hub (Lọc FINISHED của 4 kho MT01).",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_brain",
+                    "title": "Tiger AI • Chuẩn Hóa 36 Cột",
+                    "category": "brain",
+                    "icon": "🧠",
+                    "x": 640,
+                    "y": 180,
+                    "description": "Chuẩn hóa mã chuyến, NV, thời gian, trạng thái, bóc tách và tạo 36 cột chuẩn khớp Google Sheets.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_sheets",
+                    "title": "Google Sheets • Webhook ODO",
+                    "category": "output",
+                    "icon": "📊",
+                    "x": 960,
+                    "y": 100,
+                    "description": "Đẩy 36 cột qua Webhook Apps Script vào tab 'Miền Tây 01 Đối Chiếu ODO'.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_telegram",
+                    "title": "Telegram Bot • Báo Cáo Đồng Bộ",
+                    "category": "output",
+                    "icon": "📱",
+                    "x": 960,
+                    "y": 270,
+                    "description": "Thông báo tổng số chuyến đi đã nạp thành công vào Google Sheet lên Topic Báo Cáo.",
+                    "status": "ready"
+                }
+            ],
+            "edges": [
+                {"from": "node_trigger", "to": "node_api_trips"},
+                {"from": "node_api_trips", "to": "node_brain"},
+                {"from": "node_brain", "to": "node_sheets"},
+                {"from": "node_brain", "to": "node_telegram"}
+            ]
+        },
         "kpi_gtc": {
             "id": "kpi_gtc",
             "name": "Báo Cáo KPI Tỉ Lệ GTC Hôm Qua (07:00)",
@@ -495,6 +560,7 @@ def run_workflow():
     print(f"[RUN-WORKFLOW RECEIVE] wf_id={wf_id}, send_telegram={send_telegram}, demo_mode={demo_mode}", flush=True)
 
     script_map = {
+        "lastmile_trips": "tiger_lastmile_trips_scraper.py",
         "kpi_gtc": "tiger_gtc_kpi_reporter.py",
         "checkin": "tiger_checkin_reporter.py",
         "assigned": "tiger_morning_assigned_reporter.py",
@@ -512,6 +578,15 @@ def run_workflow():
         import time
         time.sleep(1.2) # Giả lập 1.2s xử lý chuyên nghiệp
         demo_outputs = {
+            "lastmile_trips": """⏳ Tiger AI đang kích hoạt cào toàn bộ chuyến đi Ngày N-1 của 4 kho MT01...
+=======================================================
+KẾT QUẢ ĐỒNG BỘ CHUYẾN ĐI LASTMILE LÊN GOOGLE SHEETS:
+=======================================================
+🐯 TIGER AI • CLOUD SYNC: HOÀN TẤT ĐỒNG BỘ CHUYẾN ĐI (N-1)
+📅 Ngày chuyến: 24/10/2026 (N-1)
+🏢 4 Kho: Cái Răng (7 chuyến), Bình Thủy (5 chuyến), Vị Thanh (3 chuyến), Ô Môn (3 chuyến)
+📊 Tổng cộng: 18 chuyến FINISHED (36 cột dữ liệu)
+✅ Đã ghi thành công vào tab 'Miền Tây 01 Đối Chiếu ODO' trên Google Sheets!""",
             "kpi_gtc": """⏳ Tiger AI đang quét dữ liệu KPI Giao & Lấy Hàng ngày hôm qua (22/10/2026) cho 4 kho MT01...
 =======================================================
 NỘI DUNG BÁO CÁO KPI GIAO & LẤY HÀNG (07:00):
@@ -2242,6 +2317,7 @@ try:
         if os.path.exists(script_path):
             subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, creationflags=CREATE_NO_WINDOW)
 
+    scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=0, args=["tiger_gtc_kpi_reporter.py"], id="gtc_07h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=35, args=["tiger_checkin_reporter.py"], id="checkin_07h35")
     scheduler.add_job(_job_runner, "cron", hour=9, minute=0, args=["tiger_morning_assigned_reporter.py"], id="assigned_09h00")
@@ -2259,6 +2335,7 @@ except Exception as e:
 def run_cron_webhook(task_key):
     """Trigger a reporter via external webhook (e.g. cron-job.org)"""
     script_map = {
+        "lastmile": "tiger_lastmile_trips_scraper.py",
         "gtc": "tiger_gtc_kpi_reporter.py",
         "checkin": "tiger_checkin_reporter.py",
         "assigned": "tiger_morning_assigned_reporter.py",
