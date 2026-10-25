@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnClearLogs = document.getElementById("btnClearLogs");
   const btnToggleTerminal = document.getElementById("btnToggleTerminal");
   const terminalDrawer = document.getElementById("terminalDrawer");
+  const terminalHeader = document.getElementById("terminalHeader");
 
   // ==========================================================================
   // ROLE-BASED ACCESS CONTROL (RBAC) - NVXL & SẾP (PIN: 150917)
@@ -169,11 +170,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // Canvas Instance
   const canvas = new FlowCanvas(viewportEl, containerEl, svgEl);
 
-  // Auto-collapse left sidebar and terminal drawer on mobile to maximize viewport
+  // Luôn mặc định thu gọn thanh Terminal Console xuống dưới đáy (F5 / tải trang không bị hiện làm phiền)
+  if (terminalDrawer) {
+    terminalDrawer.classList.add("collapsed");
+  }
+  if (btnToggleTerminal) {
+    btnToggleTerminal.textContent = "▲ Mở Log";
+  }
+
+  // Auto-collapse left sidebar on mobile to maximize viewport
   if (window.innerWidth <= 992) {
     if (sidebarLeft) sidebarLeft.classList.add("collapsed");
     if (btnOpenLeftTab) btnOpenLeftTab.classList.remove("hidden");
-    if (terminalDrawer) terminalDrawer.classList.add("collapsed");
   }
 
   let allWorkflows = {};
@@ -651,9 +659,28 @@ document.addEventListener("DOMContentLoaded", () => {
     addLog("info", "Đã xóa toàn bộ log màn hình.");
   });
 
-  btnToggleTerminal.addEventListener("click", () => {
-    terminalDrawer.classList.toggle("collapsed");
-  });
+  function toggleTerminalDrawer() {
+    if (!terminalDrawer) return;
+    const isNowCollapsed = terminalDrawer.classList.toggle("collapsed");
+    if (btnToggleTerminal) {
+      btnToggleTerminal.textContent = isNowCollapsed ? "▲ Mở Log" : "▼ Thu Gọn";
+    }
+    setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 280);
+  }
+
+  if (btnToggleTerminal) {
+    btnToggleTerminal.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleTerminalDrawer();
+    });
+  }
+
+  if (terminalHeader) {
+    terminalHeader.addEventListener("click", (e) => {
+      if (e.target.closest("#btnClearLogs")) return;
+      toggleTerminalDrawer();
+    });
+  }
 
   // Canvas Toolbar
   document.getElementById("btnZoomIn").addEventListener("click", () => canvas.zoom(canvas.scale * 1.2));

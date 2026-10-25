@@ -982,10 +982,15 @@ body {
   flex-direction: column;
   z-index: 40;
   transition: height 0.25s ease;
+  overflow: hidden;
 }
 
 .terminal-drawer.collapsed {
   height: 38px;
+}
+
+.terminal-drawer.collapsed .terminal-body {
+  display: none !important;
 }
 
 .terminal-header {
