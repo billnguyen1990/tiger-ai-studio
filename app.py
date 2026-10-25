@@ -36,7 +36,8 @@ SCRIPTS_MAP = {
     "unassigned_10h00": os.path.join(PARENT_DIR, "tiger_unassigned_backlog_reporter.py"),
     "pda_progress": os.path.join(PARENT_DIR, "tiger_pda_progress_reporter.py"),
     "evening_21h": os.path.join(PARENT_DIR, "tiger_evening_reporter.py"),
-    "truck_odo_02h00": os.path.join(PARENT_DIR, "tiger_truck_odo_reporter.py")
+    "truck_odo_02h00": os.path.join(PARENT_DIR, "tiger_truck_odo_reporter.py"),
+    "lastmile_05h00": os.path.join(PARENT_DIR, "tiger_lastmile_trips_scraper.py")
 }
 
 TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"

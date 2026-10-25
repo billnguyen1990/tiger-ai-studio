@@ -155,32 +155,7 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
 
     print(f"✅ Đã chuẩn hóa toàn bộ {len(all_rows)} dòng với ĐỦ {len(COLUMNS_36)} CỘT dữ liệu!")
 
-    sheet_result = "Chưa gửi (chế độ kiểm thử)"
-    if send_to_sheet and total_trips > 0:
-        print("\n🚀 Đang gửi dữ liệu lên Google Sheets qua Apps Script Webhook...")
-        payload_sheet = {
-            "headers": COLUMNS_36,
-            "rows": all_rows
-        }
-        for attempt in range(1, 4):
-            try:
-                resp = requests.post(
-                    WEBHOOK_URL,
-                    data=json.dumps(payload_sheet, ensure_ascii=False, default=str).encode("utf-8"),
-                    headers={"Content-Type": "application/json; charset=utf-8"},
-                    timeout=45
-                )
-                sheet_result = resp.text.strip()
-                print(f"✅ Kết quả Google Sheets: {sheet_result}")
-                break
-            except Exception as e:
-                print(f"⚠️ Lần {attempt} lỗi gửi Sheet: {e}")
-                time.sleep(3)
-    elif total_trips == 0:
-        sheet_result = f"Không có chuyến nào cho ngày {date_display}"
-        print(sheet_result)
-
-    # Gửi Telegram thông báo hoàn tất
+    # 1. Gửi Telegram thông báo hoàn tất NGAY LẬP TỨC
     if send_to_tg:
         stat_lines = "\n".join([f"  • {h}: <b>{c} chuyến</b>" for h, c in hub_stats.items()])
         tg_msg = (
@@ -191,8 +166,7 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
             f"📊 <b>Tổng số chuyến đã cào:</b> <b>{total_trips} chuyến</b>\n"
             f"🏢 <b>Chi tiết từng kho:</b>\n{stat_lines}\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"📁 <b>Trạng thái Google Sheets:</b>\n"
-            f"👉 <i>{sheet_result}</i>\n"
+            f"📁 <b>Google Sheets:</b> Đang/Đã đồng bộ vào tab <code>Miền Tây 01 Đối Chiếu ODO</code>\n"
             f"⚡ <i>Hệ thống tự động đồng bộ sẵn sàng trước giờ ca sáng!</i>"
         )
         try:
@@ -210,6 +184,32 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
         except Exception as e:
             print(f"❌ Lỗi gửi Telegram: {e}")
 
+    # 2. Gửi dữ liệu lên Google Sheets qua Apps Script Webhook
+    sheet_result = "Chưa gửi (chế độ kiểm thử)"
+    if send_to_sheet and total_trips > 0:
+        print("\n🚀 Đang gửi dữ liệu lên Google Sheets qua Apps Script Webhook...")
+        payload_sheet = {
+            "headers": COLUMNS_36,
+            "rows": all_rows
+        }
+        for attempt in range(1, 3):
+            try:
+                resp = requests.post(
+                    WEBHOOK_URL,
+                    data=json.dumps(payload_sheet, ensure_ascii=False, default=str).encode("utf-8"),
+                    headers={"Content-Type": "application/json; charset=utf-8"},
+                    timeout=30
+                )
+                sheet_result = resp.text.strip()
+                print(f"✅ Kết quả Google Sheets: {sheet_result}")
+                break
+            except Exception as e:
+                print(f"⚠️ Lần {attempt} lỗi gửi Sheet: {e}")
+                time.sleep(2)
+    elif total_trips == 0:
+        sheet_result = f"Không có chuyến nào cho ngày {date_display}"
+        print(sheet_result)
+
     return {
         "success": True,
         "date": date_display,
@@ -219,11 +219,11 @@ def run_lastmile_scraper(target_date=None, send_to_sheet=True, send_to_tg=False)
     }
 
 if __name__ == "__main__":
-    send_sheet = True
-    send_tg = "--send" in sys.argv
-    # Nếu truyền cờ --dry-run thì không đẩy sheet
+    send_sheet = "--no-sheet" not in sys.argv
+    send_tg = "--no-tg" not in sys.argv
     if "--dry-run" in sys.argv:
         send_sheet = False
+        send_tg = False
     
     custom_date = None
     if "--date" in sys.argv:

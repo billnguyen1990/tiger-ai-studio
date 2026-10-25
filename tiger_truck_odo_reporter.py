@@ -374,51 +374,7 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
         return (wh_idx, x.get("ngay_tao", ""))
     all_truck_results.sort(key=sort_key)
 
-    # 1. Gửi lên Google Sheets (Tab Team_Leader kèm Radar Đối Soát 365)
-    sheet_result = "Chưa gửi (chế độ kiểm thử)"
-    if send_to_sheet and total_trucks > 0:
-        print(f"\n🚀 Đang gửi {total_trucks} chuyến xe tải lên Google Sheets qua Apps Script...", flush=True)
-        sheet_rows = []
-        for r in all_truck_results:
-            p_str = r.get("plate", "")
-            if p_str and not p_str.startswith("'"):
-                p_str = "'" + p_str
-            sheet_rows.append([
-                r.get("ma_chuyen", ""),
-                p_str,
-                r.get("nhan_vien", ""),
-                r.get("ngay_tao", ""),
-                r.get("ten_kho", "")
-            ])
-
-        payload_sheet = {
-            "action": "appendRows",
-            "sheetName": SHEET_NAME,
-            "rows": sheet_rows
-        }
-
-        for attempt in range(1, 4):
-            try:
-                resp = requests.post(
-                    APPS_SCRIPT_URL,
-                    json=payload_sheet,
-                    headers={"Content-Type": "application/json"},
-                    timeout=90
-                )
-                if resp.status_code == 200:
-                    sheet_result = f"Success: Đã ghi thành công {len(sheet_rows)} xe tải vào tab '{SHEET_NAME}'"
-                    print(f"  ✓ {sheet_result}", flush=True)
-                    break
-                else:
-                    print(f"  ⚠️ Lần {attempt} lỗi HTTP {resp.status_code}: {resp.text[:150]}", flush=True)
-            except Exception as e:
-                print(f"  ⚠️ Lần {attempt} lỗi kết nối Sheets: {e}", flush=True)
-                time.sleep(3)
-    elif total_trucks == 0:
-        sheet_result = f"Không có chuyến xe tải nào cho ngày N-1 ({date_display})"
-        print(f"  ℹ️ {sheet_result}", flush=True)
-
-    # 2. Gửi Telegram Báo Cáo Tổng Hợp (Chỉ gửi duy nhất phòng 'The 5 Guardians')
+    # 1. Gửi Telegram Báo Cáo Tổng Hợp NGAY LẬP TỨC tới cả 2 nhóm
     if send_to_tg:
         lines = []
         lines.append(f"🚛💨 <b>BÁO CÁO ODO XE TẢI 365 • TOÀN MIỀN TÂY</b> 🚛💨")
@@ -442,7 +398,7 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
 
         lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
         lines.append("👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>")
-        lines.append(f"📁 <b>Google Sheets:</b> Đã đồng bộ vào tab <code>{SHEET_NAME}</code>")
+        lines.append(f"📁 <b>Google Sheets:</b> Đang/Đã đồng bộ vào tab <code>{SHEET_NAME}</code>")
         lines.append(f"🔗 <b>Link xem dữ liệu trực tiếp:</b>\n{SHEET_URL}")
         lines.append("🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • Đám mây Cloud Render 24/7</i>")
 
@@ -471,6 +427,50 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
                     print(f"⚠️ Lỗi gửi Telegram [{target['name']}]: {tg_res.text}", flush=True)
             except Exception as e:
                 print(f"❌ Lỗi gửi Telegram [{target['name']}]: {e}", flush=True)
+
+    # 2. Gửi lên Google Sheets (Tab Team_Leader kèm Radar Đối Soát 365)
+    sheet_result = "Chưa gửi (chế độ kiểm thử)"
+    if send_to_sheet and total_trucks > 0:
+        print(f"\n🚀 Đang gửi {total_trucks} chuyến xe tải lên Google Sheets qua Apps Script...", flush=True)
+        sheet_rows = []
+        for r in all_truck_results:
+            p_str = r.get("plate", "")
+            if p_str and not p_str.startswith("'"):
+                p_str = "'" + p_str
+            sheet_rows.append([
+                r.get("ma_chuyen", ""),
+                p_str,
+                r.get("nhan_vien", ""),
+                r.get("ngay_tao", ""),
+                r.get("ten_kho", "")
+            ])
+
+        payload_sheet = {
+            "action": "appendRows",
+            "sheetName": SHEET_NAME,
+            "rows": sheet_rows
+        }
+
+        for attempt in range(1, 3):
+            try:
+                resp = requests.post(
+                    APPS_SCRIPT_URL,
+                    json=payload_sheet,
+                    headers={"Content-Type": "application/json"},
+                    timeout=25
+                )
+                if resp.status_code == 200:
+                    sheet_result = f"Success: Đã ghi thành công {len(sheet_rows)} xe tải vào tab '{SHEET_NAME}'"
+                    print(f"  ✓ {sheet_result}", flush=True)
+                    break
+                else:
+                    print(f"  ⚠️ Lần {attempt} phản hồi HTTP {resp.status_code}: {resp.text[:150]}", flush=True)
+            except Exception as e:
+                print(f"  ⚠️ Lần {attempt} Sheets phản hồi chậm: {e}", flush=True)
+                time.sleep(2)
+    elif total_trucks == 0:
+        sheet_result = f"Không có chuyến xe tải nào cho ngày N-1 ({date_display})"
+        print(f"  ℹ️ {sheet_result}", flush=True)
 
     return {
         "success": True,
