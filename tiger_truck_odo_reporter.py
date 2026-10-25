@@ -403,10 +403,13 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
         lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
         lines.append("🏢 <b>CHI TIẾT XE TẢI THEO TỪNG KHO:</b>")
 
+        diff_items = []
         for idx, (wid, wname) in enumerate(WAREHOUSES_21.items(), 1):
             st = warehouse_stats.get(wid, {"Xe tải": 0, "Xe máy": 0})
             s_name = wname.replace("Kho Giao Hàng Nặng - ", "").replace("Kho Giao Hàng Nặng-", "").strip()
-            lines.append(f"\n<b>{idx}. {s_name} :</b>\n🚚 <b>{st['Xe tải']} chuyến xe tải</b>")
+            diff_items.append(f"+ {idx}. {s_name} :\n! 🚚 {st['Xe tải']} chuyến xe tải")
+
+        lines.append('<pre><code class="language-diff">' + "\n\n".join(diff_items) + "</code></pre>")
 
         lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
         lines.append("👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>")
