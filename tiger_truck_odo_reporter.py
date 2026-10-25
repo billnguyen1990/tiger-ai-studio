@@ -406,7 +406,7 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
         for idx, (wid, wname) in enumerate(WAREHOUSES_21.items(), 1):
             st = warehouse_stats.get(wid, {"Xe tải": 0, "Xe máy": 0})
             s_name = wname.replace("Kho Giao Hàng Nặng - ", "").replace("Kho Giao Hàng Nặng-", "").strip()
-            lines.append(f"🚚 <b>{idx}. {s_name}:</b> <b>{st['Xe tải']} chuyến</b> xe tải")
+            lines.append(f"\n🟢 <b>{idx}. {s_name} :</b>\n🚚 🟡 <b>{st['Xe tải']} chuyến xe tải</b>")
 
         lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━━")
         lines.append("👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>")

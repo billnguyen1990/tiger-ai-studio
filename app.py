@@ -662,27 +662,69 @@ def run_workflow():
 • 🛡️ <b>Bộ lọc an toàn:</b> Đã loại bỏ xe máy & hơn 55 biển số ảo 365
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 🏢 <b>CHI TIẾT XE TẢI THEO TỪNG KHO:</b>
-🚚 <b>1. Cái Răng:</b> <b>6 chuyến</b> xe tải
-🚚 <b>2. Bình Thủy:</b> <b>3 chuyến</b> xe tải
-🚚 <b>3. TP Vị Thanh:</b> <b>2 chuyến</b> xe tải
-🚚 <b>4. Ô Môn:</b> <b>2 chuyến</b> xe tải
-🚚 <b>5. TP Cao Lãnh:</b> <b>4 chuyến</b> xe tải
-🚚 <b>6. Tam Nông:</b> <b>2 chuyến</b> xe tải
-🚚 <b>7. TP Vĩnh Long:</b> <b>4 chuyến</b> xe tải
-🚚 <b>8. TP Rạch Giá:</b> <b>4 chuyến</b> xe tải
-🚚 <b>9. TP Hà Tiên:</b> <b>1 chuyến</b> xe tải
-🚚 <b>10. TP Sóc Trăng:</b> <b>4 chuyến</b> xe tải
-🚚 <b>11. TP Bạc Liêu:</b> <b>2 chuyến</b> xe tải
-🚚 <b>12. TP Trà Vinh:</b> <b>3 chuyến</b> xe tải
-🚚 <b>13. TP Long Xuyên:</b> <b>4 chuyến</b> xe tải
-🚚 <b>14. TP Châu Đốc:</b> <b>4 chuyến</b> xe tải
-🚚 <b>15. TP Cà Mau:</b> <b>2 chuyến</b> xe tải
-🚚 <b>16. TP Mỹ Tho:</b> <b>4 chuyến</b> xe tải
-🚚 <b>17. TP Bến Tre:</b> <b>4 chuyến</b> xe tải
-🚚 <b>18. TX Cai Lậy:</b> <b>3 chuyến</b> xe tải
-🚚 <b>19. Gò Công:</b> <b>2 chuyến</b> xe tải
-🚚 <b>20. Đức Hòa:</b> <b>3 chuyến</b> xe tải
-🚚 <b>21. TP Tân An:</b> <b>4 chuyến</b> xe tải
+
+🟢 <b>1. Cái Răng :</b>
+🚚 🟡 <b>6 chuyến xe tải</b>
+
+🟢 <b>2. Bình Thủy :</b>
+🚚 🟡 <b>3 chuyến xe tải</b>
+
+🟢 <b>3. TP Vị Thanh :</b>
+🚚 🟡 <b>2 chuyến xe tải</b>
+
+🟢 <b>4. Ô Môn :</b>
+🚚 🟡 <b>2 chuyến xe tải</b>
+
+🟢 <b>5. TP Cao Lãnh :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>6. Tam Nông :</b>
+🚚 🟡 <b>2 chuyến xe tải</b>
+
+🟢 <b>7. TP Vĩnh Long :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>8. TP Rạch Giá :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>9. TP Hà Tiên :</b>
+🚚 🟡 <b>1 chuyến xe tải</b>
+
+🟢 <b>10. TP Sóc Trăng :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>11. TP Bạc Liêu :</b>
+🚚 🟡 <b>2 chuyến xe tải</b>
+
+🟢 <b>12. TP Trà Vinh :</b>
+🚚 🟡 <b>3 chuyến xe tải</b>
+
+🟢 <b>13. TP Long Xuyên :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>14. TP Châu Đốc :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>15. TP Cà Mau :</b>
+🚚 🟡 <b>2 chuyến xe tải</b>
+
+🟢 <b>16. TP Mỹ Tho :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>17. TP Bến Tre :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
+
+🟢 <b>18. TX Cai Lậy :</b>
+🚚 🟡 <b>3 chuyến xe tải</b>
+
+🟢 <b>19. Gò Công :</b>
+🚚 🟡 <b>2 chuyến xe tải</b>
+
+🟢 <b>20. Đức Hòa :</b>
+🚚 🟡 <b>3 chuyến xe tải</b>
+
+🟢 <b>21. TP Tân An :</b>
+🚚 🟡 <b>4 chuyến xe tải</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 👉 <b>AE check lại của vùng mình xem đúng không nhé!</b>
 📁 <b>Google Sheets:</b> Đã đồng bộ vào tab <code>Team_Leader</code>
