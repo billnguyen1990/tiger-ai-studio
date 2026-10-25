@@ -98,7 +98,7 @@ def get_workflows():
                     "icon": "🧠",
                     "x": 640,
                     "y": 180,
-                    "description": "Chuẩn hóa mã chuyến, NV, thời gian, trạng thái, bóc tách và tạo 36 cột chuẩn khớp Google Sheets.",
+                    "description": "Gọi get-trip-profile lấy nợ COD, giá trị chuyến, số đơn và chuẩn hóa đủ 36 cột chuẩn khớp 100% Google Sheets.",
                     "status": "ready"
                 },
                 {
