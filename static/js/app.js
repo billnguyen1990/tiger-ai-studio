@@ -42,6 +42,70 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnToggleTerminal = document.getElementById("btnToggleTerminal");
   const terminalDrawer = document.getElementById("terminalDrawer");
 
+  // ==========================================================================
+  // ROLE-BASED ACCESS CONTROL (RBAC) - NVXL & SẾP (PIN: 150917)
+  // ==========================================================================
+  let currentAdminPin = localStorage.getItem("tiger_admin_pin") || "";
+  let isUserAdmin = false;
+
+  const btnRoleStatus = document.getElementById("btnRoleStatus");
+  const roleDot = document.getElementById("roleDot");
+  const roleLabel = document.getElementById("roleLabel");
+  const roleActionHint = document.getElementById("roleActionHint");
+  const adminActionGroup = document.getElementById("adminActionGroup");
+  const modalAdminAuth = document.getElementById("modalAdminAuth");
+  const btnCloseAdminAuth = document.getElementById("btnCloseAdminAuth");
+  const btnCancelAdminAuth = document.getElementById("btnCancelAdminAuth");
+  const btnSubmitAdminPin = document.getElementById("btnSubmitAdminPin");
+  const adminPinInput = document.getElementById("adminPinInput");
+  const adminAuthMsg = document.getElementById("adminAuthMsg");
+
+  function applyRoleUI(isAdmin) {
+    isUserAdmin = isAdmin;
+    if (isAdmin) {
+      if (adminActionGroup) adminActionGroup.style.display = "flex";
+      document.querySelectorAll(".admin-only-item").forEach(el => el.classList.remove("locked-hidden"));
+      if (btnRoleStatus) {
+        btnRoleStatus.className = "btn btn-role-pill admin-active";
+        btnRoleStatus.title = "Đang ở chế độ Sếp (Quản Trị Viên). Bấm để khóa lại chế độ NVXL";
+      }
+      if (roleDot) roleDot.className = "role-dot admin";
+      if (roleLabel) roleLabel.textContent = "👑 Sếp (Quản Trị)";
+      if (roleActionHint) roleActionHint.textContent = "🔒 Khóa lại";
+    } else {
+      if (adminActionGroup) adminActionGroup.style.display = "none";
+      document.querySelectorAll(".admin-only-item").forEach(el => el.classList.add("locked-hidden"));
+      if (btnRoleStatus) {
+        btnRoleStatus.className = "btn btn-role-pill";
+        btnRoleStatus.title = "Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị";
+      }
+      if (roleDot) roleDot.className = "role-dot viewer";
+      if (roleLabel) roleLabel.textContent = "NVXL (Chỉ Xem)";
+      if (roleActionHint) roleActionHint.textContent = "🔑 Mở Khóa";
+    }
+  }
+
+  async function checkInitialRole() {
+    if (currentAdminPin) {
+      try {
+        const res = await fetch("/api/admin/verify-pin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pin: currentAdminPin })
+        });
+        const d = await res.json();
+        if (d.success) {
+          applyRoleUI(true);
+          return;
+        }
+      } catch (e) {}
+    }
+    localStorage.removeItem("tiger_admin_pin");
+    currentAdminPin = "";
+    applyRoleUI(false);
+  }
+  checkInitialRole();
+
   // Theme & Mode Selectors
   const themeSelect = document.getElementById("themeSelect");
   const btnToggleDemo = document.getElementById("btnToggleDemo");
@@ -462,17 +526,32 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/api/run-workflow", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-Admin-Pin": currentAdminPin
+        },
         body: JSON.stringify({
           workflow_id: currentWorkflowId,
           send_telegram: sendTelegram,
-          demo_mode: useDemo
+          demo_mode: useDemo,
+          pin: currentAdminPin
         })
       });
 
       const res = await response.json();
       clearInterval(interval);
       if (progressTimer) clearInterval(progressTimer);
+
+      if (response.status === 403) {
+        execStatus.textContent = "Bị khóa quyền";
+        execStatus.style.color = "var(--ruby-accent)";
+        addLog("error", `🔒 BỊ TỪ CHỐI: ${res.error || "Yêu cầu quyền Quản Trị Viên (Mã PIN 150917)!"}`);
+        if (modalAdminAuth) {
+          modalAdminAuth.style.display = "flex";
+          if (adminPinInput) adminPinInput.focus();
+        }
+        return;
+      }
 
       if (res.success) {
         canvas.markAllSuccess();
@@ -563,6 +642,97 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.panY = 40;
     canvas.updateTransform();
   });
+
+  // ==========================================================================
+  // RBAC Admin Lock/Unlock Event Handlers
+  // ==========================================================================
+  if (btnRoleStatus) {
+    btnRoleStatus.addEventListener("click", () => {
+      if (isUserAdmin) {
+        if (confirm("Sếp có muốn khóa lại Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI) không?")) {
+          localStorage.removeItem("tiger_admin_pin");
+          currentAdminPin = "";
+          applyRoleUI(false);
+          playCyberSound("click");
+          addLog("info", "🔒 Đã khóa lại Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI).");
+        }
+      } else {
+        if (modalAdminAuth) {
+          modalAdminAuth.style.display = "flex";
+          if (adminPinInput) {
+            adminPinInput.value = "";
+            adminPinInput.focus();
+          }
+          if (adminAuthMsg) adminAuthMsg.innerHTML = "";
+          playCyberSound("pulse");
+        }
+      }
+    });
+  }
+
+  function closeAdminAuthModal() {
+    if (modalAdminAuth) modalAdminAuth.style.display = "none";
+  }
+  if (btnCloseAdminAuth) btnCloseAdminAuth.addEventListener("click", closeAdminAuthModal);
+  if (btnCancelAdminAuth) btnCancelAdminAuth.addEventListener("click", closeAdminAuthModal);
+  if (modalAdminAuth) {
+    modalAdminAuth.addEventListener("click", (e) => {
+      if (e.target === modalAdminAuth) closeAdminAuthModal();
+    });
+  }
+
+  async function handleAdminPinSubmit() {
+    const pin = (adminPinInput ? adminPinInput.value : "").trim();
+    if (!pin) {
+      if (adminAuthMsg) adminAuthMsg.innerHTML = "<span style='color:#ef4444;'>Vui lòng nhập mã PIN 6 số!</span>";
+      return;
+    }
+    if (btnSubmitAdminPin) {
+      btnSubmitAdminPin.disabled = true;
+      btnSubmitAdminPin.innerHTML = "<span>Đang xác thực...</span>";
+    }
+    try {
+      const res = await fetch("/api/admin/verify-pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: pin })
+      });
+      const d = await res.json();
+      if (d.success) {
+        currentAdminPin = pin;
+        localStorage.setItem("tiger_admin_pin", pin);
+        applyRoleUI(true);
+        if (adminAuthMsg) adminAuthMsg.innerHTML = "<span style='color:#10b981; font-weight:bold;'>🎉 Mở khóa quyền Sếp thành công!</span>";
+        playCyberSound("success");
+        setTimeout(() => {
+          closeAdminAuthModal();
+          if (btnSubmitAdminPin) {
+            btnSubmitAdminPin.disabled = false;
+            btnSubmitAdminPin.innerHTML = "<span>🔓 Mở Khóa Quyền Sếp</span>";
+          }
+        }, 800);
+      } else {
+        if (adminAuthMsg) adminAuthMsg.innerHTML = `<span style='color:#ef4444; font-weight:bold;'>❌ ${d.message || "Mã PIN không đúng!"}</span>`;
+        if (btnSubmitAdminPin) {
+          btnSubmitAdminPin.disabled = false;
+          btnSubmitAdminPin.innerHTML = "<span>🔓 Mở Khóa Quyền Sếp</span>";
+        }
+      }
+    } catch (err) {
+      if (adminAuthMsg) adminAuthMsg.innerHTML = `<span style='color:#ef4444;'>Lỗi kết nối: ${err.message}</span>`;
+      if (btnSubmitAdminPin) {
+        btnSubmitAdminPin.disabled = false;
+        btnSubmitAdminPin.innerHTML = "<span>🔓 Mở Khóa Quyền Sếp</span>";
+      }
+    }
+  }
+
+  if (btnSubmitAdminPin) btnSubmitAdminPin.addEventListener("click", handleAdminPinSubmit);
+  if (adminPinInput) {
+    adminPinInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleAdminPinSubmit();
+    });
+  }
 
   // 6. Tải trạng thái Hệ thống & Radar 4 Kho
   async function loadSystemStatus() {

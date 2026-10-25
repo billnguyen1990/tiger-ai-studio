@@ -451,13 +451,43 @@ def get_workflows():
     }
     return jsonify(workflows)
 
-@app.route("/api/health")
-def health_check():
-    return jsonify({"status": "healthy", "timestamp": datetime.datetime.now().isoformat()})
+ADMIN_MASTER_PIN = "150917"
+
+def verify_admin_request(req):
+    """Xác thực quyền Quản Trị Viên (Sếp) qua mã PIN 150917"""
+    pin = req.headers.get("X-Admin-Pin", "").strip()
+    if not pin:
+        data = req.get_json(silent=True, force=True) or {}
+        pin = str(data.get("pin", "")).strip()
+    return pin == ADMIN_MASTER_PIN
+
+@app.route("/api/admin/verify-pin", methods=["POST"])
+def verify_admin_pin():
+    """Kiểm tra mã PIN Quản Trị Viên (150917)"""
+    data = request.get_json(silent=True, force=True) or {}
+    pin = str(data.get("pin", "")).strip()
+    if pin == ADMIN_MASTER_PIN:
+        return jsonify({
+            "success": True,
+            "role": "admin",
+            "message": "Xác thực Quản Trị Viên thành công! Đã mở khóa toàn bộ quyền hạn."
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "role": "viewer",
+            "message": "Mã PIN không đúng! Vui lòng thử lại."
+        }), 401
 
 @app.route("/api/run-workflow", methods=["POST"])
 def run_workflow():
-    """Chạy thực tế workflow và trả về log chi tiết thời gian thực"""
+    """Chạy thực tế workflow và trả về log chi tiết thời gian thực - YÊU CẦU QUYỀN SẾP (PIN 150917)"""
+    if not verify_admin_request(request):
+        return jsonify({
+            "success": False,
+            "error": "🔒 Yêu cầu quyền Quản Trị Viên (Mã PIN 150917)! NVXL chỉ có quyền xem và hỏi Tiger AI."
+        }), 403
+
     data = request.get_json(silent=True, force=True) or {}
     wf_id = data.get("workflow_id")
     send_telegram = bool(data.get("send_telegram", False))
@@ -2172,7 +2202,9 @@ def get_version():
 
 @app.route("/api/system/update", methods=["POST"])
 def update_system():
-    """Cơ chế One-Click Update: Tự động nạp lại cấu hình, làm mới cache và áp dụng rule mới nhất"""
+    """Cơ chế One-Click Update: Tự động nạp lại cấu hình, làm mới cache và áp dụng rule mới nhất - YÊU CẦU QUYỀN SẾP"""
+    if not verify_admin_request(request):
+        return jsonify({"status": "error", "message": "🔒 Yêu cầu quyền Quản Trị Viên (Mã PIN 150917)!"}), 403
     try:
         # 1. Nạp lại cấu hình bản đồ NVXL
         map_file = os.path.join(PARENT_DIR, "nvxl_telegram_map.json")
