@@ -72,9 +72,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (roleDot) roleDot.className = "role-dot admin";
       if (roleLabel) roleLabel.textContent = "👑 Sếp (Quản Trị)";
       if (roleActionHint) roleActionHint.textContent = "🔒 Khóa lại";
+      // Cho phép Sếp thấy tab mở Chi Tiết Node nếu inspector đang đóng
+      if (btnOpenRightTab && nodeInspector && (nodeInspector.classList.contains("hidden-sidebar") || nodeInspector.classList.contains("collapsed"))) {
+        btnOpenRightTab.classList.remove("hidden-tab");
+      }
     } else {
       if (adminActionGroup) adminActionGroup.style.display = "none";
       document.querySelectorAll(".admin-only-item").forEach(el => el.classList.add("locked-hidden"));
+      // Ẩn triệt để bảng Chi Tiết Node và tab mở đối với NVXL
+      if (nodeInspector) {
+        nodeInspector.classList.add("hidden-sidebar");
+        nodeInspector.classList.add("collapsed");
+      }
+      if (btnOpenRightTab) {
+        btnOpenRightTab.classList.add("hidden-tab");
+      }
       if (btnRoleStatus) {
         btnRoleStatus.className = "btn btn-role-pill";
         btnRoleStatus.title = "Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị";
@@ -83,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (roleLabel) roleLabel.textContent = "NVXL (Chỉ Xem)";
       if (roleActionHint) roleActionHint.textContent = "🔑 Mở Khóa";
     }
+    setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
   }
 
   async function checkInitialRole() {
@@ -200,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="palette-text">${n.title}</div>
       `;
       p.addEventListener("click", () => {
+        if (!isUserAdmin) return;
         canvas.selectNode(n.id);
       });
       paletteNodeList.appendChild(p);
@@ -207,23 +221,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load vào canvas
     canvas.loadWorkflow(wf);
-    if (window.innerWidth > 992) {
+    if (isUserAdmin && window.innerWidth > 992) {
       if (wf.nodes && wf.nodes.length > 0) {
         canvas.selectNode(wf.nodes[0].id);
       }
     } else {
-      // Trên điện thoại, đóng bảng chi tiết để chừa toàn bộ màn hình cho Sơ đồ Nodes
+      // Đóng bảng chi tiết đối với NVXL hoặc trên màn hình nhỏ
       if (nodeInspector) {
         nodeInspector.classList.add("hidden-sidebar");
         nodeInspector.classList.add("collapsed");
       }
-      if (btnOpenRightTab) btnOpenRightTab.classList.remove("hidden-tab");
+      if (btnOpenRightTab) {
+        if (isUserAdmin) btnOpenRightTab.classList.remove("hidden-tab");
+        else btnOpenRightTab.classList.add("hidden-tab");
+      }
     }
     addLog("info", `Đã nạp quy trình: [${wf.name}] vào bàn cờ AI.`);
   }
 
-  // 3. Xử lý click chọn Node ➔ Hiện Inspector chi tiết
+  // 3. Xử lý click chọn Node ➔ Hiện Inspector chi tiết (CHỈ DÀNH CHO ADMIN / SẾP)
   canvas.onNodeSelected = (node) => {
+    if (!isUserAdmin) {
+      // NVXL không có quyền xem bảng Chi Tiết Node hoặc cấu hình kỹ thuật
+      return;
+    }
     nodeInspector.classList.remove("hidden-sidebar");
     nodeInspector.classList.remove("collapsed");
     if (btnOpenRightTab) btnOpenRightTab.classList.add("hidden-tab");
@@ -257,18 +278,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Toggle ẩn/hiện Bảng Phải (Chi Tiết Node)
+  // Toggle ẩn/hiện Bảng Phải (Chi Tiết Node - ADMIN ONLY)
   if (btnCloseInspector) {
     btnCloseInspector.addEventListener("click", () => {
       nodeInspector.classList.add("hidden-sidebar");
       nodeInspector.classList.add("collapsed");
-      if (btnOpenRightTab) btnOpenRightTab.classList.remove("hidden-tab");
+      if (isUserAdmin && btnOpenRightTab) btnOpenRightTab.classList.remove("hidden-tab");
       setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
     });
   }
 
   if (btnOpenRightTab) {
     btnOpenRightTab.addEventListener("click", () => {
+      if (!isUserAdmin) return;
       nodeInspector.classList.remove("hidden-sidebar");
       nodeInspector.classList.remove("collapsed");
       btnOpenRightTab.classList.add("hidden-tab");

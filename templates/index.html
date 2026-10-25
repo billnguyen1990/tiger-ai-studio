@@ -193,8 +193,8 @@
         <span>☰ Mở Quy Trình</span>
       </button>
 
-      <!-- FLOATING BUTTON TO RE-OPEN RIGHT SIDEBAR -->
-      <button class="floating-sidebar-tab tab-right" id="btnOpenRightTab" title="Mở lại bảng Chi Tiết Node">
+      <!-- FLOATING BUTTON TO RE-OPEN RIGHT SIDEBAR (ADMIN ONLY) -->
+      <button class="floating-sidebar-tab tab-right admin-only-item locked-hidden hidden-tab" id="btnOpenRightTab" title="Mở lại bảng Chi Tiết Node">
         <span>ℹ Chi Tiết Node ◀</span>
       </button>
 
@@ -212,13 +212,13 @@
         <button id="btnZoomOut" class="tool-btn" title="Thu nhỏ">−</button>
         <button id="btnResetView" class="tool-btn" title="Đặt lại góc nhìn">⟲</button>
         <div class="divider-h"></div>
-        <button id="btnAddNode" class="tool-btn" title="Thêm Khối Node Mới vào Quy Trình">＋</button>
+        <button id="btnAddNode" class="tool-btn admin-only-item locked-hidden" title="Thêm Khối Node Mới vào Quy Trình">＋</button>
         <button id="btnExportBrief" class="tool-btn" title="Xuất Báo Cáo Điều Hành">📑</button>
       </div>
     </section>
 
-    <!-- RIGHT SIDEBAR: NODE INSPECTOR -->
-    <aside class="sidebar-right hidden-sidebar" id="nodeInspector">
+    <!-- RIGHT SIDEBAR: NODE INSPECTOR (ADMIN ONLY - ẨN HOÀN TOÀN VỚI NVXL) -->
+    <aside class="sidebar-right hidden-sidebar admin-only-item locked-hidden" id="nodeInspector">
       <div class="inspector-header">
         <span class="inspector-title">CHI TIẾT NODE</span>
         <button class="sidebar-toggle-btn" id="btnCloseInspector" title="Thu gọn bảng chi tiết">Thu Gọn ▶</button>
