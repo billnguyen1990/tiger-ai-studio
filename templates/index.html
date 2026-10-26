@@ -30,9 +30,8 @@
     <div class="workflow-selector-wrapper">
       <label for="workflowSelect" class="selector-label">Quy Trình:</label>
       <select id="workflowSelect" class="workflow-dropdown">
-        <option value="truck_odo_365" selected>🚛 02:00 • Đối Soát ODO Xe Tải 365 (N-1) ➔ Google Sheets</option>
         <option value="lastmile_trips">📦 05:00 • Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets</option>
-        <option value="kpi_gtc">📊 07:00 • KPI GTC Hôm Qua (Chuẩn 85%)</option>
+        <option value="kpi_gtc" selected>📊 07:00 • KPI GTC Hôm Qua (Chuẩn 85%)</option>
         <option value="checkin">⏰ 07:35 • Điểm Danh & Check-in Ca Sáng</option>
         <option value="assigned">🚚 09:00 • Giám Sát Chuyến Xe Xuất Bến</option>
         <option value="unassigned">📦 10:00 • Đơn Chưa Gán & Ngày Hẹn SMS</option>
@@ -57,7 +56,7 @@
       <div id="adminActionGroup" class="admin-action-group locked-hidden" style="display: none; align-items: center; gap: 8px;">
         <button id="btnUpdateQuick" class="btn btn-update" title="Kiểm tra & Cập nhật phiên bản mới">
           <span class="btn-icon">⚡</span>
-          <span id="versionTag">v2.6.0</span>
+          <span id="versionTag">v2.5.2</span>
         </button>
         <button id="btnRunTest" class="btn btn-secondary" title="Chạy kiểm thử quy trình">
           <span class="btn-icon">▶</span>
@@ -96,7 +95,7 @@
           <div class="stack-menu-item admin-only-item locked-hidden" id="stackItemUpdate">
             <span class="item-icon">🔄</span>
             <div class="item-info">
-              <div class="item-name">Cập Nhật Hệ Thống (v2.6.0)</div>
+              <div class="item-name">Cập Nhật Hệ Thống (v2.5.2)</div>
               <div class="item-desc">Đồng bộ quy tắc, đổi mới tính năng 1-click</div>
             </div>
           </div>
@@ -531,12 +530,14 @@
           <h3>BÁO CÁO VẬN HÀNH CUỐI NGÀY - TIGER AI AGENT</h3>
           <p><b>Thời gian xuất:</b> <span id="briefTime"></span> | <b>Đơn vị:</b> Cụm Vận Hành Miền Tây 01</p>
           <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-subtle);">
-          <p>• <b>Chỉ số KPI Tổng Hợp (Giao + Lấy) toàn cụm:</b> 85.66% (639/746 đơn - ĐẠT MỤC TIÊU &ge; 85.0%)</p>
-          <p>• <b>Kho xuất sắc nhất:</b> Bình Thủy (91.6%) & Cái Răng (86.5%)</p>
-          <p>• <b>Kho cận chuẩn:</b> Vị Thanh (84.3% - Cần cố gắng ca hôm nay)</p>
-          <p>• <b>Kho cần giải trình:</b> Ô Môn (76.5% - 28 đơn thất bại, yêu cầu làm rõ)</p>
-          <p>• <b>Tồn kho chưa gán:</b> 11 đơn (Đã bóc tách 100% địa chỉ và ngày hẹn khách SMS)</p>
-          <p>• <b>Nợ COD:</b> Đã quét nợ từng shipper theo mã Hub, đảm bảo thu hồi đầy đủ.</p>
+          <p>• <b>Chỉ số KPI Tổng Hợp (Giao + Lấy) toàn cụm:</b> <span id="briefOverall">81.74% (452/553 đơn - CẬN CHUẨN MỤC TIÊU 85.0%)</span></p>
+          <p>• <b>Kho xuất sắc nhất:</b> <span id="briefExcellent">Bình Thủy (86.1%)</span></p>
+          <p>• <b>Kho cận chuẩn:</b> <span id="briefBorderline">Cái Răng (80.7%) & Ô Môn (80.0%) - Cần cố gắng ca hôm nay</span></p>
+          <p>• <b>Kho cần giải trình:</b> <span id="briefSubstandard">Vị Thanh (78.8% - 22 đơn thất bại, yêu cầu làm rõ)</span></p>
+          <p>• <b>Tồn kho chưa gán:</b> <span id="briefBacklog">443 đơn (Cái Răng 249, Vị Thanh 91, Bình Thủy 73, Ô Môn 30 - Đã bóc tách 100% địa chỉ và ngày hẹn khách SMS)</span></p>
+          <p>• <b>Nợ COD & Chuyến đi:</b> <span id="briefCod">100% chuyến xe kết thúc an toàn, 100% NV nộp đủ tiền vào quỹ (Quỹ: 322,645,355 đ)</span></p>
+          <p>• <b>Đối soát ODO Xe tải 365 (02:00 AM):</b> <span id="briefTruckOdo">60 chuyến xe tải hợp lệ của 21 kho, 100% đối soát tab Team_Leader</span></p>
+          <p>• <b>Chuyến đi Lastmile MT01 (05:00 AM):</b> <span id="briefLastmile">19 chuyến FINISHED của 4 kho MT01, đã nạp 36 cột tab Miền Tây 01 Đối Chiếu ODO</span></p>
         </div>
         
         <div class="briefing-actions" style="display: flex; gap: 10px; margin-top: 16px;">

@@ -2281,9 +2281,39 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  async function loadBriefingSummary() {
+    try {
+      const res = await fetch("/api/briefing-summary");
+      const d = await res.json();
+      if (!d.success) return;
+      if (briefTime) briefTime.textContent = d.export_time;
+      const elOverall = document.getElementById("briefOverall");
+      if (elOverall) {
+        elOverall.innerHTML = `<b>${d.overall.rate}%</b> (${d.overall.success}/${d.overall.assigned} đơn - ${d.overall.status})`;
+      }
+      const elEx = document.getElementById("briefExcellent");
+      if (elEx) elEx.textContent = d.excellent_text;
+      const elBor = document.getElementById("briefBorderline");
+      if (elBor) elBor.textContent = d.borderline_text + " - Cần cố gắng ca hôm nay";
+      const elSub = document.getElementById("briefSubstandard");
+      if (elSub) elSub.textContent = d.substandard_text;
+      const elBacklog = document.getElementById("briefBacklog");
+      if (elBacklog) elBacklog.textContent = d.backlog_text;
+      const elCod = document.getElementById("briefCod");
+      if (elCod) elCod.textContent = d.cod_text;
+      const elTruck = document.getElementById("briefTruckOdo");
+      if (elTruck) elTruck.textContent = d.truck_odo_text;
+      const elLastmile = document.getElementById("briefLastmile");
+      if (elLastmile) elLastmile.textContent = d.lastmile_trips_text;
+    } catch (e) {
+      console.warn("Lỗi nạp bản tin điều hành:", e);
+    }
+  }
+
   if (btnExportBrief) {
-    btnExportBrief.addEventListener("click", () => {
+    btnExportBrief.addEventListener("click", async () => {
       if (briefTime) briefTime.textContent = new Date().toLocaleString("vi-VN");
+      await loadBriefingSummary();
       modalBriefing.classList.add("open");
     });
   }
@@ -2362,10 +2392,9 @@ document.addEventListener("DOMContentLoaded", () => {
     speakVietnamese("Mô phỏng 24 giờ vận hành Miền Tây 01 đã hoàn tất xuất sắc!");
 
     // Mở Bản tin Điều Hành Tổng Hợp
-    setTimeout(() => {
+    setTimeout(async () => {
       const modalBriefing = document.getElementById("modalBriefing");
-      const briefTime = document.getElementById("briefTime");
-      if (briefTime) briefTime.textContent = new Date().toLocaleString("vi-VN");
+      await loadBriefingSummary();
       if (modalBriefing) modalBriefing.classList.add("open");
     }, 1000);
   }
