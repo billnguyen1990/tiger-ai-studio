@@ -46,7 +46,8 @@ SCRIPTS_MAP = {
     "pda_progress": os.path.join(PARENT_DIR, "tiger_pda_progress_reporter.py"),
     "evening_21h": os.path.join(PARENT_DIR, "tiger_evening_reporter.py"),
     "truck_odo_02h00": os.path.join(PARENT_DIR, "tiger_truck_odo_reporter.py"),
-    "lastmile_05h00": os.path.join(PARENT_DIR, "tiger_lastmile_trips_scraper.py")
+    "lastmile_05h00": os.path.join(PARENT_DIR, "tiger_lastmile_trips_scraper.py"),
+    "b2b_looker_18h00": os.path.join(PARENT_DIR, "looker_export_temp.py")
 }
 
 TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"
@@ -610,6 +611,72 @@ def get_workflows():
                 {"from": "node_cod_audit", "to": "node_brain"},
                 {"from": "node_brain", "to": "node_telegram"}
             ]
+        },
+        "b2b_looker": {
+            "id": "b2b_looker",
+            "name": "Tự Động Xuất Đơn B2B • Looker Studio (18:00)",
+            "description": "Tự động kết nối Chrome CDP (port 9223), lọc 13 tỉnh ĐBSCL trên Looker Studio, xuất ra Google Sheets và đồng bộ vào Master Dashboard.",
+            "schedule": "18:00 hàng ngày",
+            "script_key": "b2b_looker_18h00",
+            "nodes": [
+                {
+                    "id": "node_trigger",
+                    "title": "Hẹn Giờ 18:00 PM",
+                    "category": "trigger",
+                    "icon": "⏰",
+                    "x": 60,
+                    "y": 180,
+                    "description": "Kích hoạt tự động lúc 18:00 mỗi ngày để chốt dữ liệu B2B trước ca tối.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_chrome_cdp",
+                    "title": "Chrome CDP & Looker Studio",
+                    "category": "api",
+                    "icon": "🌐",
+                    "x": 340,
+                    "y": 100,
+                    "description": "Kết nối Chrome CDP port 9223, mở Dashboard Tách Luồng Vận Chuyển (tab 1. B2B).",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_filter",
+                    "title": "Bộ Lọc 13 Tỉnh ĐBSCL",
+                    "category": "api",
+                    "icon": "📍",
+                    "x": 340,
+                    "y": 270,
+                    "description": "Lọc chuẩn xác 13 tỉnh miền Tây: Long An, Tiền Giang, Cần Thơ, Bến Tre, Vĩnh Long, An Giang, Cà Mau,...",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_brain",
+                    "title": "Tiger AI • Xuất & Làm Sạch Data",
+                    "category": "brain",
+                    "icon": "🧠",
+                    "x": 640,
+                    "y": 180,
+                    "description": "Click 3 chấm xuất sang Google Sheets, chuẩn hóa định dạng ngày tháng và chèn công thức Ngày Tạo.",
+                    "status": "ready"
+                },
+                {
+                    "id": "node_master_sheet",
+                    "title": "Master Dashboard & Telegram",
+                    "category": "output",
+                    "icon": "📊",
+                    "x": 960,
+                    "y": 180,
+                    "description": "Dán dữ liệu sang Master Dashboard, tự động cập nhật Pivot và gửi báo cáo Telegram.",
+                    "status": "ready"
+                }
+            ],
+            "edges": [
+                {"from": "node_trigger", "to": "node_chrome_cdp"},
+                {"from": "node_trigger", "to": "node_filter"},
+                {"from": "node_chrome_cdp", "to": "node_brain"},
+                {"from": "node_filter", "to": "node_brain"},
+                {"from": "node_brain", "to": "node_master_sheet"}
+            ]
         }
     }
     return jsonify(workflows)
@@ -665,6 +732,7 @@ def run_workflow():
         "assigned": "tiger_morning_assigned_reporter.py",
         "unassigned": "tiger_unassigned_backlog_reporter.py",
         "pda": "tiger_pda_progress_reporter.py",
+        "b2b_looker": "looker_export_temp.py",
         "evening_cod": "tiger_evening_reporter.py"
     }
 
@@ -865,7 +933,28 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
 • Chuyến treo chưa đóng: <b>0 chuyến</b> (Đã hoàn tất 100%)
 • Nợ nộp tiền COD: <b>Toàn bộ NV đã nộp đủ tiền vào tài khoản hoặc két kho.</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • Cụm Miền Tây 01</i>"""
+🤖 <i>Báo cáo vận hành tự động bởi Tiger AI • Cụm Miền Tây 01</i>""",
+
+            "b2b_looker": """⏳ Tiger AI đang kết nối Chrome CDP (port 9223) vào Looker Studio Dashboard...
+=======================================================
+📋 <b>TIGER AI - TỰ ĐỘNG XUẤT ĐƠN B2B • LOOKER STUDIO</b>
+⏰ <i>Khung giờ chốt:</i> <code>18:00 hàng ngày</code>
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 <b>1. Trạng thái kết nối & Bộ lọc:</b>
+• Chrome CDP Port 9223: <b>Sẵn sàng (Connected)</b>
+• Báo cáo: <b>Dashboard Tách Luồng Vận Chuyển (Tab 1. B2B)</b>
+• Bộ lọc địa bàn: <b>Đã chọn chuẩn xác 13/13 tỉnh ĐBSCL</b>
+  <i>(Long An, Tiền Giang, Bến Tre, Trà Vinh, Vĩnh Long, Đồng Tháp, An Giang, Kiên Giang, Hậu Giang, Cần Thơ, Sóc Trăng, Bạc Liêu, Cà Mau)</i>
+
+📊 <b>2. Xuất dữ liệu & Xử lý:</b>
+• Xuất sang Google Sheets: <b>Thành công (Google Trang tính mới)</b>
+• Chuẩn hóa dữ liệu: <b>Đã làm sạch cột Ngày & Thêm công thức Ngày Tạo</b>
+• Đồng bộ Master Dashboard: <b>Đã dán vào ô Data!A1 & Cập nhật Pivot Tables</b>
+
+📱 <b>3. Kết quả báo cáo:</b>
+• Bảng tổng hợp Thống kê & Biểu đồ đã tự động gửi lên Telegram thành công!
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🤖 <i>Quy trình tự động hóa bởi Tiger AI • 18:00 hàng ngày</i>"""
         }
         out = demo_outputs.get(wf_id, "✅ Quy trình mô phỏng hoàn tất thành công 100%!")
         sent = False
@@ -929,6 +1018,7 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
             "is_demo": False
         })
 
+    timeout_sec = 360 if wf_id == "b2b_looker" else 60
     try:
         proc = subprocess.Popen(
             cmd,
@@ -940,7 +1030,7 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
             errors="replace",
             creationflags=CREATE_NO_WINDOW
         )
-        stdout, _ = proc.communicate(timeout=60)
+        stdout, _ = proc.communicate(timeout=timeout_sec)
         return jsonify({
             "success": (proc.returncode == 0),
             "returncode": proc.returncode,
@@ -951,7 +1041,7 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
         })
     except subprocess.TimeoutExpired:
         proc.kill()
-        return jsonify({"success": False, "error": "Quá thời gian thực thi (Timeout 60s)"}), 504
+        return jsonify({"success": False, "error": f"Quá thời gian thực thi (Timeout {timeout_sec}s)"}), 504
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -2919,12 +3009,13 @@ def get_system_status():
 def get_version():
     """Thông tin phiên bản hệ thống và nhật ký cập nhật (Changelog)"""
     return jsonify({
-        "current_version": "v2.8.2",
-        "latest_version": "v2.8.2",
+        "current_version": "v2.9.0",
+        "latest_version": "v2.9.0",
         "has_update": False,
         "release_date": "26/10/2026",
         "system_status": "ONLINE",
         "changelog": [
+            "v2.9.0: Tích hợp Luồng 9: Tự Động Xuất Đơn B2B • Looker Studio (18:00 hàng ngày) kết nối Chrome CDP, lọc 13 tỉnh ĐBSCL, xuất Google Sheets & đồng bộ Master Dashboard.",
             "v2.8.2: Tối ưu triệt để toàn diện độ tương phản & chữ hiển thị trong Giao Diện Sáng (Theme Light) cho thanh gợi ý Copilot, hộp thoại Phân tích KPI, và Radar 4 kho.",
             "v2.8.0: Lồng danh mục Quy Trình vào thanh Quy Trình Hiện Tại, bổ sung menu thả xuống trượt mượt mà và đồng bộ 8 luồng tự động.",
             "v2.7.0: Nút bấm Cập Nhật Dữ Liệu Mới 1-Click trên bảng phân tích KPI, nạp ngay dữ liệu 25/10/2026.",
@@ -2974,20 +3065,10 @@ try:
     scheduler = BackgroundScheduler(timezone=vn_tz)
 
     def _job_runner(script_name):
-        print(f"[CRON TRIGGER] Bắt đầu chạy: {script_name}...", flush=True)
-        script_path = os.path.join(BASE_DIR, script_name)
+        print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
+        script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
-            try:
-                res = subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
-                print(f"[CRON RESULT] {script_name} hoàn tất (mã thoát: {res.returncode})", flush=True)
-                if res.stdout:
-                    print(f"[CRON OUTPUT]\n{res.stdout[-400:]}", flush=True)
-                if res.stderr:
-                    print(f"[CRON ERROR LOG]\n{res.stderr[-400:]}", flush=True)
-            except Exception as ex:
-                print(f"[CRON EXCEPTION] Lỗi khi kích hoạt {script_name}: {ex}", flush=True)
-        else:
-            print(f"[CRON ERROR] Không tìm thấy file script: {script_path}", flush=True)
+            subprocess.run([sys.executable, script_path, "--send"], cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
 
     scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
     scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
@@ -2997,6 +3078,7 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=10, minute=0, args=["tiger_unassigned_backlog_reporter.py"], id="unassigned_10h00")
     for pda_hr in [10, 12, 15, 19]:
         scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
+    scheduler.add_job(_job_runner, "cron", hour=18, minute=0, args=["looker_export_temp.py"], id="b2b_18h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
@@ -3023,12 +3105,14 @@ def run_cron_webhook(task_key):
         "assigned": "tiger_morning_assigned_reporter.py",
         "unassigned": "tiger_unassigned_backlog_reporter.py",
         "pda": "tiger_pda_progress_reporter.py",
+        "b2b": "looker_export_temp.py",
+        "b2b_looker": "looker_export_temp.py",
         "evening": "tiger_evening_reporter.py"
     }
     script_name = script_map.get(task_key)
     if not script_name:
         return jsonify({"success": False, "error": f"Unknown cron task '{task_key}'"}), 404
-    script_path = os.path.join(BASE_DIR, script_name)
+    script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
     if task_key in ["truck_odo", "odo"]:
         def _bg_cron():
             print(f"[CRON WEBHOOK] Bắt đầu quét ODO Xe Tải 365 ngầm...", flush=True)

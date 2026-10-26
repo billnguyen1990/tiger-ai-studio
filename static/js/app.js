@@ -241,6 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
       case "assigned": return "🚚";
       case "unassigned": return "📦";
       case "pda": return "📱";
+      case "b2b_looker": return "📋";
       case "evening_cod": return "🌙";
       default: return "⚡";
     }
@@ -754,9 +755,16 @@ document.addEventListener("DOMContentLoaded", () => {
       let sec = 0;
       progressTimer = setInterval(() => {
         sec += 3;
-        if (sec === 3) addLog("info", "⚡ [1/3] Đang gửi yêu cầu xác thực API Gateway GHN Lastmile...");
-        else if (sec === 6) addLog("info", "📦 [2/3] Đang quét dữ liệu 4 kho: Cái Răng, Bình Thủy, Vị Thanh, Ô Môn...");
-        else if (sec === 9) addLog("info", "🧠 [3/3] Tiger AI đang tổng hợp và phân tích chỉ số vận hành...");
+        if (currentWorkflowId === "b2b_looker") {
+          if (sec === 3) addLog("info", "🌐 [1/4] Đang kết nối Chrome CDP (port 9223) vào Looker Studio...");
+          else if (sec === 9) addLog("info", "📍 [2/4] Đang tích chọn bộ lọc 13 tỉnh thành ĐBSCL...");
+          else if (sec === 24) addLog("info", "⏳ [3/4] Đang đợi Looker Studio xuất dữ liệu ra Google Sheets...");
+          else if (sec === 45) addLog("info", "📊 [4/4] Đang dán dữ liệu vào Master Dashboard & kích hoạt Apps Script...");
+        } else {
+          if (sec === 3) addLog("info", "⚡ [1/3] Đang gửi yêu cầu xác thực API Gateway GHN Lastmile...");
+          else if (sec === 6) addLog("info", "📦 [2/3] Đang quét dữ liệu 4 kho: Cái Răng, Bình Thủy, Vị Thanh, Ô Môn...");
+          else if (sec === 9) addLog("info", "🧠 [3/3] Tiger AI đang tổng hợp và phân tích chỉ số vận hành...");
+        }
       }, 3000);
     }
 
@@ -1090,8 +1098,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "TigerAI_GanChuyenSang_09h00": { time: "09:00", order: 5, desc: "Giám sát số chuyến & số đơn xuất bến 4 kho MT01 ca sáng" },
         "TigerAI_DonChuaGan_10h00": { time: "10:00", order: 6, desc: "Soi đơn chưa gán, 10 khung giờ lưu kho & Ngày hẹn SMS khách hàng" },
         "TigerAI_TienDoPDA_12h_15h_19h": { time: "12h/15h/19h", order: 7, desc: "Tiến độ giao hàng 3 mốc (trưa - chiều - tối), soi sâu GTB & Timeline PDA" },
-        "TigerAI_ChotCa_MT01_21h": { time: "21:00", order: 8, desc: "Chốt ca cuối ngày (Lần 1), quét chuyến treo ON_TRIP & Nợ COD" },
-        "TigerAI_ChotCa_MT01_21h30": { time: "21:30", order: 9, desc: "Chốt ca cuối ngày (Lần 2), quét chuyến treo, nợ COD & Tự động tắt máy" }
+        "TigerAI_Auto_B2B_18h00": { time: "18:00", order: 8, desc: "Tự động kết nối Chrome CDP, lọc 13 tỉnh ĐBSCL trên Looker Studio, xuất Google Sheets & đồng bộ Master Dashboard" },
+        "TigerAI_ChotCa_MT01_21h": { time: "21:00", order: 9, desc: "Chốt ca cuối ngày (Lần 1), quét chuyến treo ON_TRIP & Nợ COD" },
+        "TigerAI_ChotCa_MT01_21h30": { time: "21:30", order: 10, desc: "Chốt ca cuối ngày (Lần 2), quét chuyến treo, nợ COD & Tự động tắt máy" }
       };
 
       function formatDateTime(val) {
