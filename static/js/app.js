@@ -1060,14 +1060,17 @@ document.addEventListener("DOMContentLoaded", () => {
       tasks.forEach((t) => {
         const meta = taskMetaMap[t.TaskName] || { time: "-", desc: t.TaskName, order: 99 };
         const isPaused = (t.State === 1 || t.State === "Disabled");
-        const statusText = isPaused ? "TẠM DỪNG" : "SẴN SÀNG";
+        const statusText = isPaused ? "TẮT TRÊN PC" : "SẴN SÀNG";
         const statusClass = isPaused ? "task-status-badge paused" : "task-status-badge";
+        const nextRunDisplay = isPaused
+          ? `<span style="color: #94a3b8; font-size:11.5px; font-weight:600;">⛔ Tắt trên PC</span>`
+          : `<b class="task-next-run">${formatDateTime(t.NextRunTime)}</b>`;
         const row = document.createElement("tr");
         row.innerHTML = `
           <td><b>${meta.time}</b></td>
           <td><span class="task-tag">${t.TaskName}</span></td>
           <td>${meta.desc}</td>
-          <td><b class="task-next-run">${formatDateTime(t.NextRunTime)}</b></td>
+          <td>${nextRunDisplay}</td>
           <td><span class="${statusClass}">${statusText}</span></td>
         `;
         tasksTableBody.appendChild(row);
