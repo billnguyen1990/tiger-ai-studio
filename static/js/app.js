@@ -997,18 +997,18 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="hub-id-badge">ID: ${hid}</span>
           </div>
           <div class="hub-nvxl">NVXL phụ trách: <b>${h.nvxl_name}</b> (${h.telegram_tag})</div>
-          <div class="hub-address" style="font-size:11px; color:var(--text-muted); margin:4px 0 6px; line-height:1.4;">
+          <div class="hub-address" style="font-size:11px; margin:4px 0 6px; line-height:1.4;">
             📍 ${h.address || 'Miền Tây 01'}
-            ${h.map_url ? `<br><a href="${h.map_url}" target="_blank" rel="noopener noreferrer" style="color:#06b6d4; text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:3px; margin-top:2px;">🗺️ Định Vị Google Maps ↗</a>` : ''}
+            ${h.map_url ? `<br><a href="${h.map_url}" target="_blank" rel="noopener noreferrer" class="hub-map-link" style="text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:3px; margin-top:2px;">🗺️ Định Vị Google Maps ↗</a>` : ''}
           </div>
           <div class="hub-metrics-row">
             <div class="hub-metric-box">
               <div class="metric-label">KPI Gộp (Giao + Lấy)</div>
-              <div class="metric-val" style="color: ${h.gtc_rate >= 85 ? '#10b981' : (h.gtc_rate >= 80 ? '#f59e0b' : '#ef4444')}; font-size:12.5px;">${h.gtc_rate || 85.0}% <span style="font-size:9.5px; font-weight:normal; color:var(--text-muted);">(${h.gtc_count || ''})</span></div>
+              <div class="metric-val" style="color: ${h.gtc_rate >= 85 ? '#10b981' : (h.gtc_rate >= 80 ? '#f59e0b' : '#ef4444')}; font-size:12.5px;">${h.gtc_rate || 85.0}% <span class="metric-count" style="font-size:9.5px; font-weight:normal;">(${h.gtc_count || ''})</span></div>
             </div>
             <div class="hub-metric-box">
               <div class="metric-label">Chi Tiết Giao & Lấy</div>
-              <div class="metric-val" style="color: #06b6d4; font-size:10.5px;">${h.detail || `Giao: ${h.gtc_rate}% | Lấy: 100%`}</div>
+              <div class="metric-val metric-detail" style="font-size:10.5px;">${h.detail || `Giao: ${h.gtc_rate}% | Lấy: 100%`}</div>
             </div>
           </div>
           <button class="btn btn-secondary btn-inspect-hub" data-hub-id="${hid}" style="width: 100%; justify-content: center; margin-top: 12px; font-size: 11.5px;">
