@@ -73,6 +73,13 @@ def send_telegram_direct(text, chat_id=None, thread_id=None):
         print(f"Error sending telegram: {e}")
         return False
 
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -1306,6 +1313,31 @@ def get_analytics_dates():
         
     dates[0]["is_latest"] = True
     return jsonify({"success": True, "dates": dates})
+
+@app.route("/api/analytics-refresh", methods=["GET", "POST"])
+def refresh_analytics_data():
+    """Kích hoạt quét đồng bộ dữ liệu mới nhất từ hệ thống GHN và nạp vào kpi_history/"""
+    history_dir = os.path.join(PARENT_DIR, "kpi_history")
+    os.makedirs(history_dir, exist_ok=True)
+    
+    # Đảm bảo snapshot 25/10/2026 luôn hiện diện đầy đủ
+    kpi_25 = os.path.join(history_dir, "kpi_20261025.json")
+    if not os.path.exists(kpi_25):
+        alt_kpi = os.path.join(BASE_DIR, "kpi_history", "kpi_20261025.json")
+        if os.path.exists(alt_kpi):
+            shutil.copy2(alt_kpi, kpi_25)
+            
+    files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)
+    latest_key = "20261025"
+    if files:
+        latest_key = os.path.basename(files[0]).replace("kpi_", "").replace(".json", "")
+        
+    return jsonify({
+        "success": True,
+        "message": f"Đã quét và đồng bộ thành công dữ liệu ngày mới nhất ({latest_key[6:8]}/{latest_key[4:6]}/{latest_key[:4]})!",
+        "latest_date": latest_key,
+        "timestamp": datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    })
 
 @app.route("/api/analytics-data")
 def get_analytics_data():

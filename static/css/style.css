@@ -3572,3 +3572,13 @@ body.theme-light .hub-item-pill {
   border: 1px solid rgba(0, 229, 190, 0.35) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 190, 0.15) !important;
 }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-icon {
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}

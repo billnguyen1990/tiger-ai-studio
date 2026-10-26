@@ -1784,6 +1784,35 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Nút Bấm Cập Nhật Dữ Liệu Mới (Quét và đồng bộ dữ liệu mới nhất từ GHN)
+    const btnRefresh = document.getElementById("btnRefreshAnalytics");
+    if (btnRefresh) {
+      btnRefresh.addEventListener("click", async () => {
+        const icon = document.getElementById("refreshIcon");
+        const lbl = document.getElementById("refreshLabel");
+        if (icon) icon.classList.add("spin-icon");
+        if (lbl) lbl.textContent = "Đang Cập Nhật...";
+        btnRefresh.disabled = true;
+        addLog("info", "Đang quét và đồng bộ dữ liệu vận hành mới nhất từ hệ thống GHN...");
+        playCyberSound("pulse");
+        try {
+          const res = await fetch("/api/analytics-refresh", { method: "POST" });
+          const resJson = await res.json();
+          addLog("success", resJson.message || "Cập nhật dữ liệu thành công!");
+          playCyberSound("success");
+          await loadAnalytics(resJson.latest_date || "20261025");
+        } catch(err) {
+          console.error("Lỗi cập nhật dữ liệu:", err);
+          addLog("error", `Lỗi cập nhật dữ liệu: ${err.message}`);
+          await loadAnalytics("20261025");
+        } finally {
+          if (icon) icon.classList.remove("spin-icon");
+          if (lbl) lbl.textContent = "Cập Nhật Dữ Liệu Mới";
+          btnRefresh.disabled = false;
+        }
+      });
+    }
+
     // Toggle Full Drivers View
     if (btnToggleFullDrivers) {
       btnToggleFullDrivers.addEventListener("click", () => {

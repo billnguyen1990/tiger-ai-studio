@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>GHN Lastmile • Tiger AI Flow Studio MT01</title>
   <meta name="description" content="Hệ thống Điều hành Vòng lặp AI Agent Kéo Thả Node-based chuyên nghiệp cho 4 kho Miền Tây 01 - GHN Lastmile">
   <link rel="icon" type="image/png" href="/static/img/ghn_tiger_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=2.5.2">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.7.0">
 </head>
 <body class="theme-ghn-teal">
 
@@ -346,6 +349,10 @@
                 <option value="20261022">22/10/2026 (Chốt ca)</option>
               </select>
             </div>
+            <button class="btn btn-primary btn-tiny" id="btnRefreshAnalytics" title="Bấm để cào & cập nhật dữ liệu mới nhất từ GHN" style="font-weight: 700; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
+              <span class="btn-icon" id="refreshIcon">🔄</span>
+              <span id="refreshLabel">Cập Nhật Dữ Liệu Mới</span>
+            </button>
             <span class="analytics-live-badge">⚡ GHN LASTMILE CỤM MT01</span>
             <span class="analytics-storage-badge" title="Tất cả dữ liệu từng ngày được lưu snapshot vĩnh viễn trên máy tính">💾 ĐÃ LƯU TRỮ VĨNH VIỄN</span>
             <span class="analytics-refresh-badge" id="analyticsSyncTime">🕒 Đồng bộ: 07:00 26/10/2026</span>
@@ -795,7 +802,7 @@
 
   <div class="tools-backdrop" id="toolsBackdrop"></div>
 
-  <script src="/static/js/canvas.js?v=2.5.2"></script>
-  <script src="/static/js/app.js?v=2.5.2"></script>
+  <script src="/static/js/canvas.js?v=2.7.0"></script>
+  <script src="/static/js/app.js?v=2.7.0"></script>
 </body>
 </html>
