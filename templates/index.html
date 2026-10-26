@@ -340,13 +340,15 @@
             <div class="date-selector-wrapper" title="Chọn ngày trong kho lưu trữ để xem lại">
               <span class="date-selector-label">📅 CHỌN NGÀY LỊCH SỬ:</span>
               <select id="analyticsDateSelect" class="analytics-date-select">
+                <option value="20261025" selected>25/10/2026 (Chốt ca)</option>
+                <option value="20261024">24/10/2026 (Chốt ca)</option>
                 <option value="20261023">23/10/2026 (Chốt ca)</option>
-                <option value="20261022">22/10/2026 (Đã lưu trữ)</option>
+                <option value="20261022">22/10/2026 (Chốt ca)</option>
               </select>
             </div>
             <span class="analytics-live-badge">⚡ GHN LASTMILE CỤM MT01</span>
             <span class="analytics-storage-badge" title="Tất cả dữ liệu từng ngày được lưu snapshot vĩnh viễn trên máy tính">💾 ĐÃ LƯU TRỮ VĨNH VIỄN</span>
-            <span class="analytics-refresh-badge" id="analyticsSyncTime">🕒 Đồng bộ: 07:00</span>
+            <span class="analytics-refresh-badge" id="analyticsSyncTime">🕒 Đồng bộ: 07:00 26/10/2026</span>
           </div>
         </div>
         <div class="modal-actions-right">
@@ -360,23 +362,23 @@
         <div class="analytics-kpi-grid" id="analyticsKpiGrid">
           <div class="kpi-mini-card">
             <div class="kpi-label">Tổng Đơn Gán Giao</div>
-            <div class="kpi-val" id="statAssigned">746</div>
-            <div class="kpi-sub" id="statAssignedSub">Giao 732 + Lấy 14 • Toàn cụm MT01</div>
+            <div class="kpi-val" id="statAssigned">553</div>
+            <div class="kpi-sub" id="statAssignedSub">Giao 547 + Lấy 6 • Toàn cụm MT01</div>
           </div>
           <div class="kpi-mini-card">
             <div class="kpi-label">Giao & Lấy Thành Công</div>
-            <div class="kpi-val" id="statGtc" style="color: #10b981;">639</div>
-            <div class="kpi-sub">Đạt 85.66% (Chuẩn mục tiêu >= 85%)</div>
+            <div class="kpi-val" id="statGtc" style="color: #10b981;">452</div>
+            <div class="kpi-sub">Đạt 81.74% (Cận chuẩn mục tiêu 85.0%)</div>
           </div>
           <div class="kpi-mini-card">
             <div class="kpi-label">Đơn Hẹn Khách SMS</div>
-            <div class="kpi-val" id="statSms" style="color: #8b5cf6;">128</div>
+            <div class="kpi-val" id="statSms" style="color: #8b5cf6;">32</div>
             <div class="kpi-sub">Trích xuất chính xác ngày hẹn</div>
           </div>
           <div class="kpi-mini-card">
             <div class="kpi-label">Nợ COD Thu Hộ</div>
-            <div class="kpi-val" id="statCod" style="color: #06b6d4;">0 VNĐ</div>
-            <div class="kpi-sub">100% tài xế nộp đủ (Quỹ: 322,645,355 đ)</div>
+            <div class="kpi-val" id="statCod" style="color: #06b6d4;">0 đ</div>
+            <div class="kpi-sub" id="statCodSub">100% tài xế nộp đủ (Quỹ: 322,645,355 đ)</div>
           </div>
         </div>
 
@@ -385,7 +387,7 @@
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🎯 Tỉ Lệ GTC 4 Kho vs Mục Tiêu Chuẩn 85.0%</span>
-              <span class="chart-badge" id="chartDateBadge">KPI Ngày 22/10</span>
+              <span class="chart-badge" id="chartDateBadge">KPI Ngày 25/10/2026</span>
             </div>
             <div class="chart-bars-container" id="gtcBarsContainer">
               <!-- Rendered by JS -->

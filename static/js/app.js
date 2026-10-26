@@ -1671,10 +1671,14 @@ document.addEventListener("DOMContentLoaded", () => {
           if (sub) sub.textContent = `Đạt ${data.summary.overall_rate}% (Chuẩn mục tiêu >= 85%)`;
         }
         if (statSms) {
-          statSms.textContent = (data.summary.total_sms_appointment || 128).toLocaleString();
+          statSms.textContent = (data.summary.total_sms_appointment || 32).toLocaleString();
         }
         if (statCod) {
-          statCod.textContent = data.summary.cod_unpaid_amount || "0 VNĐ";
+          statCod.textContent = data.summary.cod_unpaid_amount || "0 đ";
+          const codSub = statCod.nextElementSibling;
+          if (codSub && data.summary.cod_total_amount) {
+            codSub.textContent = `100% tài xế nộp đủ (Quỹ: ${data.summary.cod_total_amount})`;
+          }
         }
       }
 
@@ -1699,7 +1703,7 @@ document.addEventListener("DOMContentLoaded", () => {
       data.hubs_gtc.forEach((h) => {
         const color = h.status === "passed" ? "#10b981" : (h.status === "warning" ? "#f59e0b" : "#ef4444");
         const ltcColor = (h.ltc_rate || 90) >= 85 ? "#06b6d4" : "#f59e0b";
-        const badge = h.status === "passed" ? "GTC & LTC ĐẠT" : (h.status === "warning" ? "CẬN CHUẨN (84.3%)" : "GIẢI TRÌNH (<80%)");
+        const badge = h.status === "passed" ? "GTC & LTC ĐẠT" : (h.status === "warning" ? `CẬN CHUẨN (${h.rate}%)` : "GIẢI TRÌNH (<80%)");
         const row = document.createElement("div");
         row.className = "gtc-bar-row";
         row.innerHTML = `
