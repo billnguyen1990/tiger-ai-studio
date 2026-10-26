@@ -84,9 +84,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (roleDot) roleDot.className = "role-dot admin";
       if (roleLabel) roleLabel.textContent = "👑 Sếp (Quản Trị)";
       if (roleActionHint) roleActionHint.textContent = "🔒 Khóa lại";
-      // Cho phép Sếp thấy tab mở Chi Tiết Node nếu inspector đang đóng
-      if (btnOpenRightTab && nodeInspector && (nodeInspector.classList.contains("hidden-sidebar") || nodeInspector.classList.contains("collapsed"))) {
-        btnOpenRightTab.classList.remove("hidden-tab");
+      // Đảm bảo dù Sếp đăng nhập thì Bảng Chi Tiết Node vẫn giữ trạng thái xếp gọn mặc định cho đến khi Sếp chủ động bấm mở
+      if (nodeInspector && (nodeInspector.classList.contains("hidden-sidebar") || nodeInspector.classList.contains("collapsed"))) {
+        nodeInspector.classList.add("hidden-sidebar");
+        nodeInspector.classList.add("collapsed");
+        if (btnOpenRightTab) {
+          btnOpenRightTab.classList.remove("hidden-tab");
+          btnOpenRightTab.classList.remove("hidden");
+        }
       }
     } else {
       if (adminActionGroup) adminActionGroup.style.display = "none";
@@ -98,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (btnOpenRightTab) {
         btnOpenRightTab.classList.add("hidden-tab");
+        btnOpenRightTab.classList.add("hidden");
       }
       if (btnRoleStatus) {
         btnRoleStatus.className = "btn btn-role-pill";
@@ -196,26 +202,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // MẶC ĐỊNH LUÔN XẾP GỌN CẢ 2 BẢNG (QUY TRÌNH & CHI TIẾT NODE) KHI TẢI TRANG (F5) ĐỂ KHÔNG CHE TẦM NHÌN
-  if (sidebarLeft) {
-    sidebarLeft.classList.add("collapsed");
-  }
-  if (btnOpenLeftTab) {
-    btnOpenLeftTab.classList.remove("hidden-tab");
-    btnOpenLeftTab.classList.remove("hidden");
-  }
+  function enforceSidebarsCollapsed() {
+    if (sidebarLeft) {
+      sidebarLeft.classList.add("collapsed");
+    }
+    if (btnOpenLeftTab) {
+      btnOpenLeftTab.classList.remove("hidden-tab");
+      btnOpenLeftTab.classList.remove("hidden");
+    }
 
-  if (nodeInspector) {
-    nodeInspector.classList.add("hidden-sidebar");
-    nodeInspector.classList.add("collapsed");
-  }
-  if (btnOpenRightTab) {
-    if (isUserAdmin) {
-      btnOpenRightTab.classList.remove("hidden-tab");
-      btnOpenRightTab.classList.remove("hidden");
-    } else {
-      btnOpenRightTab.classList.add("hidden-tab");
+    if (nodeInspector) {
+      nodeInspector.classList.add("hidden-sidebar");
+      nodeInspector.classList.add("collapsed");
+    }
+    if (btnOpenRightTab) {
+      if (isUserAdmin) {
+        btnOpenRightTab.classList.remove("hidden-tab");
+        btnOpenRightTab.classList.remove("hidden");
+      } else {
+        btnOpenRightTab.classList.add("hidden-tab");
+        btnOpenRightTab.classList.add("hidden");
+      }
     }
   }
+  enforceSidebarsCollapsed();
+  window.addEventListener("load", enforceSidebarsCollapsed);
 
   let allWorkflows = {};
   let currentWorkflowId = "kpi_gtc";
@@ -318,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       switchWorkflow(workflowSelect ? (workflowSelect.value || "kpi_gtc") : "kpi_gtc");
+      enforceSidebarsCollapsed();
       loadSystemStatus();
     } catch (err) {
       addLog("error", `Lỗi tải danh mục quy trình: ${err.message}`);

@@ -18,6 +18,9 @@ _cached_tasks = []
 _cached_tasks_time = 0
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+app.jinja_env.auto_reload = True
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..")) if os.path.exists(os.path.join(BASE_DIR, "..", "tiger_gtc_kpi_reporter.py")) else BASE_DIR
