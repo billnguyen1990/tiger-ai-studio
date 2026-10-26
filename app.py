@@ -2974,10 +2974,20 @@ try:
     scheduler = BackgroundScheduler(timezone=vn_tz)
 
     def _job_runner(script_name):
-        print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
+        print(f"[CRON TRIGGER] Bắt đầu chạy: {script_name}...", flush=True)
         script_path = os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
-            subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, creationflags=CREATE_NO_WINDOW)
+            try:
+                res = subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
+                print(f"[CRON RESULT] {script_name} hoàn tất (mã thoát: {res.returncode})", flush=True)
+                if res.stdout:
+                    print(f"[CRON OUTPUT]\n{res.stdout[-400:]}", flush=True)
+                if res.stderr:
+                    print(f"[CRON ERROR LOG]\n{res.stderr[-400:]}", flush=True)
+            except Exception as ex:
+                print(f"[CRON EXCEPTION] Lỗi khi kích hoạt {script_name}: {ex}", flush=True)
+        else:
+            print(f"[CRON ERROR] Không tìm thấy file script: {script_path}", flush=True)
 
     scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
     scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
