@@ -195,10 +195,26 @@ document.addEventListener("DOMContentLoaded", () => {
     btnToggleTerminal.textContent = "▲ Mở Log";
   }
 
-  // Auto-collapse left sidebar on mobile to maximize viewport
-  if (window.innerWidth <= 992) {
-    if (sidebarLeft) sidebarLeft.classList.add("collapsed");
-    if (btnOpenLeftTab) btnOpenLeftTab.classList.remove("hidden");
+  // MẶC ĐỊNH LUÔN XẾP GỌN CẢ 2 BẢNG (QUY TRÌNH & CHI TIẾT NODE) KHI TẢI TRANG (F5) ĐỂ KHÔNG CHE TẦM NHÌN
+  if (sidebarLeft) {
+    sidebarLeft.classList.add("collapsed");
+  }
+  if (btnOpenLeftTab) {
+    btnOpenLeftTab.classList.remove("hidden-tab");
+    btnOpenLeftTab.classList.remove("hidden");
+  }
+
+  if (nodeInspector) {
+    nodeInspector.classList.add("hidden-sidebar");
+    nodeInspector.classList.add("collapsed");
+  }
+  if (btnOpenRightTab) {
+    if (isUserAdmin) {
+      btnOpenRightTab.classList.remove("hidden-tab");
+      btnOpenRightTab.classList.remove("hidden");
+    } else {
+      btnOpenRightTab.classList.add("hidden-tab");
+    }
   }
 
   let allWorkflows = {};
@@ -368,35 +384,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load vào canvas
     canvas.loadWorkflow(wf);
-    if (isUserAdmin && window.innerWidth > 992) {
-      if (wf.nodes && wf.nodes.length > 0) {
-        canvas.selectNode(wf.nodes[0].id);
+    if (wf.nodes && wf.nodes.length > 0) {
+      // Đặt sẵn node đầu tiên làm active trên canvas nhưng KHÔNG tự ý bung bảng Chi Tiết Node
+      canvas.activeNodeId = wf.nodes[0].id;
+      document.querySelectorAll(".flow-node").forEach(el => {
+        el.classList.toggle("active-node", el.id === wf.nodes[0].id);
+      });
+      if (isUserAdmin) {
+        updateInspectorContent(wf.nodes[0]);
       }
-    } else {
-      // Đóng bảng chi tiết đối với NVXL hoặc trên màn hình nhỏ
-      if (nodeInspector) {
-        nodeInspector.classList.add("hidden-sidebar");
-        nodeInspector.classList.add("collapsed");
-      }
-      if (btnOpenRightTab) {
-        if (isUserAdmin) btnOpenRightTab.classList.remove("hidden-tab");
-        else btnOpenRightTab.classList.add("hidden-tab");
+    }
+
+    // Luôn giữ Bảng Chi Tiết Node ở trạng thái xếp gọn mặc định (F5 không bung ra che tầm nhìn)
+    if (nodeInspector) {
+      nodeInspector.classList.add("hidden-sidebar");
+      nodeInspector.classList.add("collapsed");
+    }
+    if (btnOpenRightTab) {
+      if (isUserAdmin) {
+        btnOpenRightTab.classList.remove("hidden-tab");
+        btnOpenRightTab.classList.remove("hidden");
+      } else {
+        btnOpenRightTab.classList.add("hidden-tab");
       }
     }
     addLog("info", `Đã nạp quy trình: [${wf.name}] vào bàn cờ AI.`);
   }
 
-  // 3. Xử lý click chọn Node ➔ Hiện Inspector chi tiết (CHỈ DÀNH CHO ADMIN / SẾP)
-  canvas.onNodeSelected = (node) => {
-    if (!isUserAdmin) {
-      // NVXL không có quyền xem bảng Chi Tiết Node hoặc cấu hình kỹ thuật
-      return;
-    }
-    nodeInspector.classList.remove("hidden-sidebar");
-    nodeInspector.classList.remove("collapsed");
-    if (btnOpenRightTab) btnOpenRightTab.classList.add("hidden-tab");
-    setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
-
+  // Hàm render nội dung chi tiết Node vào Inspector
+  function updateInspectorContent(node) {
+    if (!node || !inspectorContent) return;
     inspectorContent.innerHTML = `
       <div class="inspector-field">
         <div class="field-label">Tên Khối Node</div>
@@ -423,6 +440,27 @@ document.addEventListener("DOMContentLoaded", () => {
       addLog("tip", `Đang kích hoạt riêng Node: [${node.title}]...`);
       runWorkflowExecution(false);
     });
+  }
+
+  // 3. Xử lý click chọn Node ➔ Cập nhật thông tin Inspector nhưng TUYỆT ĐỐI KHÔNG TỰ Ý BUNG BẢNG
+  canvas.onNodeSelected = (node) => {
+    if (!isUserAdmin) {
+      // NVXL không có quyền xem bảng Chi Tiết Node hoặc cấu hình kỹ thuật
+      return;
+    }
+    // Cập nhật thông tin node vào Inspector
+    updateInspectorContent(node);
+
+    // QUY TẮC BẮT BUỘC: KHÔNG TỰ Ý BUNG BẢNG CHI TIẾT NODE KHI BẤM VÀO NODE!
+    // - Nếu Sếp đang mở bảng thì cập nhật nội dung xem liền mạch.
+    // - Nếu bảng đang thu gọn thì tiếp tục xếp gọn, không làm che tầm nhìn bàn vẽ.
+    if (nodeInspector && (nodeInspector.classList.contains("hidden-sidebar") || nodeInspector.classList.contains("collapsed"))) {
+      if (btnOpenRightTab) {
+        btnOpenRightTab.classList.remove("hidden-tab");
+        btnOpenRightTab.classList.remove("hidden");
+      }
+    }
+    setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 50);
   };
 
   // Toggle ẩn/hiện Bảng Phải (Chi Tiết Node - ADMIN ONLY)
@@ -430,7 +468,10 @@ document.addEventListener("DOMContentLoaded", () => {
     btnCloseInspector.addEventListener("click", () => {
       nodeInspector.classList.add("hidden-sidebar");
       nodeInspector.classList.add("collapsed");
-      if (isUserAdmin && btnOpenRightTab) btnOpenRightTab.classList.remove("hidden-tab");
+      if (isUserAdmin && btnOpenRightTab) {
+        btnOpenRightTab.classList.remove("hidden-tab");
+        btnOpenRightTab.classList.remove("hidden");
+      }
       setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
     });
   }
@@ -441,6 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
       nodeInspector.classList.remove("hidden-sidebar");
       nodeInspector.classList.remove("collapsed");
       btnOpenRightTab.classList.add("hidden-tab");
+      btnOpenRightTab.classList.add("hidden");
       setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
     });
   }
@@ -449,7 +491,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnToggleLeft) {
     btnToggleLeft.addEventListener("click", () => {
       sidebarLeft.classList.add("collapsed");
-      if (btnOpenLeftTab) btnOpenLeftTab.classList.remove("hidden-tab");
+      if (btnOpenLeftTab) {
+        btnOpenLeftTab.classList.remove("hidden-tab");
+        btnOpenLeftTab.classList.remove("hidden");
+      }
       setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
     });
   }
@@ -458,6 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnOpenLeftTab.addEventListener("click", () => {
       sidebarLeft.classList.remove("collapsed");
       btnOpenLeftTab.classList.add("hidden-tab");
+      btnOpenLeftTab.classList.add("hidden");
       setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
     });
   }
@@ -808,7 +854,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sidebarLeft && sidebarLeft.classList.contains("collapsed")) {
         sidebarLeft.classList.remove("collapsed");
         if (btnToggleLeft) btnToggleLeft.textContent = "◀ Thu Gọn";
-        if (btnOpenLeftTab) btnOpenLeftTab.classList.add("hidden");
+        if (btnOpenLeftTab) {
+          btnOpenLeftTab.classList.add("hidden-tab");
+          btnOpenLeftTab.classList.add("hidden");
+        }
         setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
       }
       toggleSidebarDropdown(true);

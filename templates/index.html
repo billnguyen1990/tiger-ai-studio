@@ -165,8 +165,8 @@
   <!-- MAIN STUDIO LAYOUT -->
   <main class="studio-container">
     
-    <!-- LEFT SIDEBAR: PALETTE / WORKFLOW INFO -->
-    <aside class="sidebar-left" id="sidebarLeft">
+    <!-- LEFT SIDEBAR: PALETTE / WORKFLOW INFO (MẶC ĐỊNH XẾP GỌN COLLAPSED ĐỂ KHÔNG CHE TẦM NHÌN) -->
+    <aside class="sidebar-left collapsed" id="sidebarLeft">
       <div class="sidebar-header">
         <div class="sidebar-header-lead">
           <span class="sidebar-title">QUY TRÌNH HIỆN TẠI</span>
@@ -222,12 +222,12 @@
       </div>
 
       <!-- FLOATING BUTTON TO RE-OPEN LEFT SIDEBAR -->
-      <button class="floating-sidebar-tab tab-left hidden-tab" id="btnOpenLeftTab" title="Mở lại bảng Quy Trình">
+      <button class="floating-sidebar-tab tab-left" id="btnOpenLeftTab" title="Mở lại bảng Quy Trình">
         <span>☰ Mở Quy Trình</span>
       </button>
 
       <!-- FLOATING BUTTON TO RE-OPEN RIGHT SIDEBAR (ADMIN ONLY) -->
-      <button class="floating-sidebar-tab tab-right admin-only-item locked-hidden hidden-tab" id="btnOpenRightTab" title="Mở lại bảng Chi Tiết Node">
+      <button class="floating-sidebar-tab tab-right admin-only-item locked-hidden" id="btnOpenRightTab" title="Mở lại bảng Chi Tiết Node">
         <span>ℹ Chi Tiết Node ◀</span>
       </button>
 
@@ -250,8 +250,8 @@
       </div>
     </section>
 
-    <!-- RIGHT SIDEBAR: NODE INSPECTOR (ADMIN ONLY - ẨN HOÀN TOÀN VỚI NVXL) -->
-    <aside class="sidebar-right hidden-sidebar admin-only-item locked-hidden" id="nodeInspector">
+    <!-- RIGHT SIDEBAR: NODE INSPECTOR (ADMIN ONLY - MẶC ĐỊNH XẾP GỌN COLLAPSED) -->
+    <aside class="sidebar-right hidden-sidebar collapsed admin-only-item locked-hidden" id="nodeInspector">
       <div class="inspector-header">
         <span class="inspector-title">CHI TIẾT NODE</span>
         <button class="sidebar-toggle-btn" id="btnCloseInspector" title="Thu gọn bảng chi tiết">Thu Gọn ▶</button>
