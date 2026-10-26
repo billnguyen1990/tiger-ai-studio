@@ -4189,6 +4189,35 @@ body.theme-light .analytics-date-badge {
   color: #047857 !important;
   font-weight: 800;
 }
+#btnRefreshAnalytics,
+#btnRefreshAnalytics *,
+#refreshLabel,
+body.theme-light #btnRefreshAnalytics,
+body.theme-light #btnRefreshAnalytics *,
+body.theme-light #refreshLabel {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+#btnRefreshAnalytics {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4) !important;
+  border: none !important;
+}
+#btnRefreshAnalytics:hover {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5) !important;
+}
+body.theme-light #btnRefreshAnalytics {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35) !important;
+}
+body.theme-light #btnRefreshAnalytics:hover {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+}
 body.theme-light #btnExportModalCsv {
   background: #ffffff;
   color: #0f172a;
