@@ -17,7 +17,7 @@ _cached_tasks_time = 0
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PARENT_DIR = BASE_DIR
+PARENT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..")) if os.path.exists(os.path.join(BASE_DIR, "..", "tiger_gtc_kpi_reporter.py")) else BASE_DIR
 
 def get_vietnam_now():
     """Lấy thời gian chuẩn theo múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh)"""
@@ -950,6 +950,8 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
 def get_hub_detail(hub_id):
     """Cung cấp chi tiết toàn diện 6 mắt xích vận hành cho từng kho riêng biệt, hỗ trợ đồng bộ theo ngày lịch sử (?date=YYYYMMDD)"""
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
+    if not os.path.exists(history_dir):
+        history_dir = os.path.join(BASE_DIR, "kpi_history")
     os.makedirs(history_dir, exist_ok=True)
     
     req_date = request.args.get("date", "").strip()
@@ -2439,19 +2441,6 @@ def copilot_ask():
             })
 
     # BƯỚC 3: DÙNG BỘ PHÂN TÍCH QUY TẮC NỘI BỘ (LOCAL SMART ENGINE)
-    if any(k in prompt for k in ["ltc", "lấy thành công", "lay thanh cong", "lấy hàng", "lay hang"]):
-        answer = (
-            "📦 **Báo cáo Đơn Lấy Thành Công (LTC) & Cộng Gộp Toàn Cụm MT01:**\n\n"
-            "• **Toàn cụm MT01**: Gán lấy **14 đơn** ➔ Lấy thành công (LTC) **14/14 đơn** (Đạt **100.0%** tuyệt đối!).\n"
-            "• **Cộng gộp vào KPI tổng:** Toàn cụm gán **746 đơn** ➔ Thành công **639 đơn** (GTC 625 + LTC 14) | Thất bại **107 đơn** (GTB 107 + LTB 0) ➔ **85.66%**.\n"
-            "• **Chi tiết từng kho:**\n"
-            "  1. 🏢 **Bình Thủy**: Gán 2 ➔ LTC **2/2 đơn** (100%) | KPI Gộp: **91.6%** (153/167 đơn - Top 1 cụm)\n"
-            "  2. 🏢 **Cái Răng**: Gán 8 ➔ LTC **8/8 đơn** (100%) | KPI Gộp: **86.5%** (282/326 đơn - Đạt chuẩn)\n"
-            "  3. 🏢 **Vị Thanh**: Gán 2 ➔ LTC **2/2 đơn** (100%) | KPI Gộp: **84.3%** (113/134 đơn - Cận chuẩn)\n"
-            "  4. 🏢 **Ô Môn**: Gán 2 ➔ LTC **2/2 đơn** (100%) | KPI Gộp: **76.5%** (91/119 đơn - Cần giải trình 28 đơn thất bại)"
-        )
-    elif any(k in prompt for k in ["thấp nhất", "yếu nhất", "kém", "giải trình", "ô môn", "o mon", "thap nhat", "yeu nhat", "giai trinh"]):
-        answer = (
     # Tự động nạp snapshot mới nhất
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
     files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)

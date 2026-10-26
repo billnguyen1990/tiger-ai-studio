@@ -910,7 +910,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const bodyEl = document.getElementById("hubDetailBody");
     if (!modal || !bodyEl) return;
 
-    const dateToUse = targetDate || (analyticsDataCache && analyticsDataCache.date_key ? analyticsDataCache.date_key : "");
+    const dateSelectEl = document.getElementById("analyticsDateSelect");
+    const selectedDate = dateSelectEl ? dateSelectEl.value : "";
+    const dateToUse = targetDate || selectedDate || (analyticsDataCache && analyticsDataCache.date_key ? analyticsDataCache.date_key : "20261025");
 
     bodyEl.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);"><span class="terminal-dot green" style="display:inline-block; margin-right:8px;"></span> Đang nạp toàn diện 6 chiều dữ liệu kho từ Tiger AI Data Lake...</div>`;
     modal.classList.add("open");
@@ -1285,13 +1287,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = e.target.closest(".btn-inspect-hub");
     if (btn) {
       const hubId = btn.getAttribute("data-hub-id");
-      const chosenDate = (analyticsDataCache && analyticsDataCache.date_key) ? analyticsDataCache.date_key : "";
+      const dateSelectEl = document.getElementById("analyticsDateSelect");
+      const chosenDate = (dateSelectEl && dateSelectEl.value) ? dateSelectEl.value : ((analyticsDataCache && analyticsDataCache.date_key) ? analyticsDataCache.date_key : "20261025");
       if (hubId) openHubDetail(hubId, chosenDate);
     }
     const btnAnalytics = e.target.closest(".btn-inspect-analytics");
     if (btnAnalytics) {
       const hubId = btnAnalytics.getAttribute("data-hub-id");
-      const chosenDate = (analyticsDataCache && analyticsDataCache.date_key) ? analyticsDataCache.date_key : "";
+      const dateSelectEl = document.getElementById("analyticsDateSelect");
+      const chosenDate = (dateSelectEl && dateSelectEl.value) ? dateSelectEl.value : ((analyticsDataCache && analyticsDataCache.date_key) ? analyticsDataCache.date_key : "20261025");
       if (hubId) openHubDetail(hubId, chosenDate);
     }
   });
