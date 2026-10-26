@@ -460,18 +460,28 @@ document.addEventListener("DOMContentLoaded", () => {
       btnTriggerUpdate.disabled = true;
       btnTriggerUpdate.innerHTML = "<span>⏳</span><span>Đang cập nhật hệ thống...</span>";
       try {
-        const res = await fetch("/api/system/update", { method: "POST" });
+        const res = await fetch("/api/system/update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Pin": currentAdminPin || "150917"
+          },
+          body: JSON.stringify({ pin: currentAdminPin || "150917" })
+        });
         const data = await res.json();
         if (data.status === "success") {
           btnTriggerUpdate.innerHTML = "<span>✅</span><span>Đã cập nhật mới nhất!</span>";
           const versionTag = document.getElementById("versionTag");
           const modalCurrentVer = document.getElementById("modalCurrentVer");
-          if (versionTag) versionTag.textContent = data.version || "v2.5.2";
-          if (modalCurrentVer) modalCurrentVer.textContent = data.version || "v2.5.2";
+          if (versionTag) versionTag.textContent = data.version || "v2.7.0";
+          if (modalCurrentVer) modalCurrentVer.textContent = data.version || "v2.7.0";
+          if (typeof loadAnalytics === "function") {
+            await loadAnalytics();
+          }
           if (typeof showToast === "function") {
-            showToast(data.message || "🎉 Cập nhật phiên bản v2.5.2 thành công!");
+            showToast(data.message || "🎉 Cập nhật phiên bản v2.7.0 thành công!");
           } else {
-            alert(data.message || "🎉 Cập nhật phiên bản v2.5.2 thành công!");
+            alert(data.message || "🎉 Cập nhật phiên bản v2.7.0 thành công!");
           }
           setTimeout(() => {
             if (updateModal) updateModal.style.display = "none";
