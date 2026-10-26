@@ -2778,11 +2778,39 @@ def update_system():
 
 
 # =======================================================
-# APSCHEDULER & CLOUD CRON WEBHOOKS (ĐÃ TẮT TỰ ĐỘNG THEO YÊU CẦU)
+# APSCHEDULER & CLOUD CRON WEBHOOKS (24/7 INDEPENDENT OF PC)
 # =======================================================
-# Toàn bộ hẹn giờ chạy ngầm tự động trên máy tính đã được TẮT 100%.
-# Không tự ý chạy bất kỳ tác vụ nào khi Sếp chưa kích hoạt thủ công.
-print("[SCHEDULER] Toàn bộ tác vụ chạy ngầm tự động đã được TẮT theo yêu cầu của Sếp.", flush=True)
+try:
+    from apscheduler.schedulers.background import BackgroundScheduler
+    try:
+        from zoneinfo import ZoneInfo
+        vn_tz = ZoneInfo("Asia/Ho_Chi_Minh")
+    except Exception:
+        import pytz
+        vn_tz = pytz.timezone("Asia/Ho_Chi_Minh")
+        
+    scheduler = BackgroundScheduler(timezone=vn_tz)
+
+    def _job_runner(script_name):
+        print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
+        script_path = os.path.join(BASE_DIR, script_name)
+        if os.path.exists(script_path):
+            subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, creationflags=CREATE_NO_WINDOW)
+
+    scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
+    scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
+    scheduler.add_job(_job_runner, "cron", hour=7, minute=0, args=["tiger_gtc_kpi_reporter.py"], id="gtc_07h00")
+    scheduler.add_job(_job_runner, "cron", hour=7, minute=35, args=["tiger_checkin_reporter.py"], id="checkin_07h35")
+    scheduler.add_job(_job_runner, "cron", hour=9, minute=0, args=["tiger_morning_assigned_reporter.py"], id="assigned_09h00")
+    scheduler.add_job(_job_runner, "cron", hour=10, minute=0, args=["tiger_unassigned_backlog_reporter.py"], id="unassigned_10h00")
+    for pda_hr in [10, 12, 15, 19]:
+        scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
+    scheduler.start()
+    print("[SCHEDULER] APScheduler started for Vietnam timezone (Asia/Ho_Chi_Minh)", flush=True)
+except Exception as e:
+    print(f"[SCHEDULER ERROR] {e}", flush=True)
 
 @app.route("/api/cron/<task_key>", methods=["GET", "POST"])
 def run_cron_webhook(task_key):
