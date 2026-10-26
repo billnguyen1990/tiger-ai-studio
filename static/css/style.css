@@ -1410,6 +1410,10 @@ body {
   border: none !important;
 }
 .modal-medium { width: 720px; }
+.modal-scheduler-box {
+  width: min(880px, 95vw);
+  max-height: 90vh;
+}
 
 .modal-header {
   padding: 18px 24px;
@@ -1539,7 +1543,7 @@ body {
 }
 
 .tasks-table th, .tasks-table td {
-  padding: 12px 14px;
+  padding: 8px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -1570,6 +1574,35 @@ body {
   border-radius: 6px;
   background: rgba(16, 185, 129, 0.15);
   color: var(--emerald-accent);
+}
+
+.task-status-badge.paused {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.task-next-run {
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+body.theme-light .task-status-badge {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+body.theme-light .task-status-badge.paused {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+body.theme-light .task-tag {
+  color: #0284c7;
+  font-weight: 600;
+}
+
+body.theme-light .task-next-run {
+  color: #1d4ed8;
 }
 
 /* Telegram Bubble */

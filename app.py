@@ -2672,26 +2672,54 @@ def get_system_status():
 
     global _cached_tasks, _cached_tasks_time
     now_ts = time.time()
-    if _cached_tasks and (now_ts - _cached_tasks_time < 120):
+    if _cached_tasks and (now_ts - _cached_tasks_time < 30):
         tasks = _cached_tasks
     else:
         tasks = []
         try:
-            ps_cmd = 'Get-ScheduledTask -TaskName "TigerAI*" | Get-ScheduledTaskInfo | Select-Object TaskName, State, NextRunTime, LastRunTime, LastTaskResult | ConvertTo-Json'
-            res = subprocess.run(
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps_cmd],
+            cmd1 = 'Get-ScheduledTask -TaskName "TigerAI*" | Select-Object TaskName, State | ConvertTo-Json'
+            r1 = subprocess.run(
+                ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd1],
                 capture_output=True,
                 text=True,
-                timeout=10,
+                timeout=8,
                 creationflags=CREATE_NO_WINDOW
             )
-            if res.returncode == 0 and res.stdout.strip():
-                raw = json.loads(res.stdout)
-                tasks = raw if isinstance(raw, list) else [raw]
-                _cached_tasks = tasks
-                _cached_tasks_time = now_ts
+            raw_tasks = []
+            if r1.returncode == 0 and r1.stdout.strip():
+                t_json = json.loads(r1.stdout)
+                raw_tasks = t_json if isinstance(t_json, list) else [t_json]
+
+            cmd2 = 'Get-ScheduledTask -TaskName "TigerAI*" | Get-ScheduledTaskInfo | Select-Object TaskName, NextRunTime, LastRunTime, LastTaskResult | ConvertTo-Json'
+            r2 = subprocess.run(
+                ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd2],
+                capture_output=True,
+                text=True,
+                timeout=8,
+                creationflags=CREATE_NO_WINDOW
+            )
+            info_map = {}
+            if r2.returncode == 0 and r2.stdout.strip():
+                i_json = json.loads(r2.stdout)
+                raw_infos = i_json if isinstance(i_json, list) else [i_json]
+                info_map = {item.get("TaskName"): item for item in raw_infos}
+
+            merged = []
+            for t in raw_tasks:
+                name = t.get("TaskName")
+                inf = info_map.get(name, {})
+                merged.append({
+                    "TaskName": name,
+                    "State": t.get("State", 3),
+                    "NextRunTime": inf.get("NextRunTime"),
+                    "LastRunTime": inf.get("LastRunTime"),
+                    "LastTaskResult": inf.get("LastTaskResult")
+                })
+            tasks = merged
+            _cached_tasks = tasks
+            _cached_tasks_time = now_ts
         except Exception as e:
-            pass
+            print(f"Lỗi đọc Scheduled Tasks: {e}")
 
     return jsonify({
         "nvxl_hubs": nvxl_data,

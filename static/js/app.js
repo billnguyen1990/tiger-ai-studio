@@ -1022,12 +1022,15 @@ document.addEventListener("DOMContentLoaded", () => {
       tasksTableBody.innerHTML = "";
       const tasks = data.tasks || [];
       const taskMetaMap = {
-        "TigerAI_BaoCaoKPI_GTC_07h00": { time: "07:00", desc: "Tổng kết KPI GTC hôm qua (Chuẩn 85%), tag giải trình" },
-        "TigerAI_DiemDanh_MT01_07h35": { time: "07:35", desc: "Điểm danh ca sáng (07:30), bắt đi trễ, đối chiếu Lịch OFF" },
-        "TigerAI_GanChuyenSang_09h00": { time: "09:00", desc: "Giám sát số chuyến & số đơn xuất bến 4 kho" },
-        "TigerAI_DonChuaGan_10h00": { time: "10:00", desc: "Soi đơn chưa gán, 10 khung giờ lưu kho & Ngày hẹn SMS" },
-        "TigerAI_TienDoPDA_12h_15h_19h": { time: "12h/15h/19h", desc: "Tiến độ giao hàng, soi sâu GTB & Timeline PDA tài xế" },
-        "TigerAI_ChotCa_MT01_21h": { time: "21:00", desc: "Chốt ca cuối ngày, quét chuyến treo ON_TRIP & Nợ COD" }
+        "TigerAI_DoiSoatODO_365_02h00": { time: "02:00", order: 1, desc: "Đối soát ODO 365 Xe Tải (21 kho Miền Tây), bắt xe nhảy số ảo & thiếu ảnh" },
+        "TigerAI_Lastmile_ODO_05h00": { time: "05:00", order: 2, desc: "Cào chuyến đi Lastmile 4 kho MT01 (N-1), bóc tách 36 cột chuẩn Google Sheets" },
+        "TigerAI_BaoCaoKPI_GTC_07h00": { time: "07:00", order: 3, desc: "Tổng kết KPI GTC hôm qua (Chuẩn 85%), tag giải trình NVXL dưới chuẩn" },
+        "TigerAI_DiemDanh_MT01_07h35": { time: "07:35", order: 4, desc: "Điểm danh ca sáng (07:30), bắt đi trễ, đối chiếu Lịch OFF" },
+        "TigerAI_GanChuyenSang_09h00": { time: "09:00", order: 5, desc: "Giám sát số chuyến & số đơn xuất bến 4 kho MT01 ca sáng" },
+        "TigerAI_DonChuaGan_10h00": { time: "10:00", order: 6, desc: "Soi đơn chưa gán, 10 khung giờ lưu kho & Ngày hẹn SMS khách hàng" },
+        "TigerAI_TienDoPDA_12h_15h_19h": { time: "12h/15h/19h", order: 7, desc: "Tiến độ giao hàng 3 mốc (trưa - chiều - tối), soi sâu GTB & Timeline PDA" },
+        "TigerAI_ChotCa_MT01_21h": { time: "21:00", order: 8, desc: "Chốt ca cuối ngày (Lần 1), quét chuyến treo ON_TRIP & Nợ COD" },
+        "TigerAI_ChotCa_MT01_21h30": { time: "21:30", order: 9, desc: "Chốt ca cuối ngày (Lần 2), quét chuyến treo, nợ COD & Tự động tắt máy" }
       };
 
       function formatDateTime(val) {
@@ -1047,15 +1050,25 @@ document.addEventListener("DOMContentLoaded", () => {
         return val;
       }
 
+      // Sắp xếp các tác vụ theo thứ tự thời gian trong ngày (02:00 -> 21:30)
+      tasks.sort((a, b) => {
+        const orderA = (taskMetaMap[a.TaskName] && taskMetaMap[a.TaskName].order) || 99;
+        const orderB = (taskMetaMap[b.TaskName] && taskMetaMap[b.TaskName].order) || 99;
+        return orderA - orderB;
+      });
+
       tasks.forEach((t) => {
-        const meta = taskMetaMap[t.TaskName] || { time: "-", desc: t.TaskName };
+        const meta = taskMetaMap[t.TaskName] || { time: "-", desc: t.TaskName, order: 99 };
+        const isPaused = (t.State === 1 || t.State === "Disabled");
+        const statusText = isPaused ? "TẠM DỪNG" : "SẴN SÀNG";
+        const statusClass = isPaused ? "task-status-badge paused" : "task-status-badge";
         const row = document.createElement("tr");
         row.innerHTML = `
           <td><b>${meta.time}</b></td>
           <td><span class="task-tag">${t.TaskName}</span></td>
           <td>${meta.desc}</td>
-          <td><b style="color: #60a5fa;">${formatDateTime(t.NextRunTime)}</b></td>
-          <td><span class="task-status-badge">SẴN SÀNG</span></td>
+          <td><b class="task-next-run">${formatDateTime(t.NextRunTime)}</b></td>
+          <td><span class="${statusClass}">${statusText}</span></td>
         `;
         tasksTableBody.appendChild(row);
       });
