@@ -2806,6 +2806,7 @@ try:
     for pda_hr in [10, 12, 15, 19]:
         scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     # Chế độ Cloud / Server: Chỉ tự động kích hoạt cron ngầm khi có cờ TIGER_ENABLE_BG_CRON=true
     # Trên máy tính cá nhân của Sếp: Mặc định TẮT chạy ngầm trên PC để không ảnh hưởng máy tính
     enable_bg_cron = os.environ.get("TIGER_ENABLE_BG_CRON", "false").lower() in ("true", "1")
