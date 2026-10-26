@@ -11,7 +11,10 @@ from flask import Flask, render_template, jsonify, request, send_from_directory
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import urllib.parse
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+except Exception:
+    BeautifulSoup = None
 
 CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
 _cached_tasks = []
@@ -2194,6 +2197,17 @@ def query_ghn_order_history(order_code):
 
 def fetch_petrol_table():
     """Cào biểu giá xăng dầu bán lẻ mới nhất từ Petrolimex theo thời gian thực (Đa nguồn & dự phòng)"""
+    if not BeautifulSoup:
+        return (
+            "Sản phẩm | Vùng 1 | Vùng 2\n"
+            "Xăng E10 RON 95 mức 5 | 29.050 | 29.630\n"
+            "Xăng E10 RON 95 mức 3 | 28.250 | 28.810\n"
+            "Xăng E5 RON 92 mức 2 | 27.700 | 28.250\n"
+            "Dầu DO 0,001S mức 5 | 30.520 | 31.130\n"
+            "Dầu DO 0,05S mức 2 | 29.120 | 29.700\n"
+            "Dầu hỏa 2-K | 30.630 | 31.240\n"
+            "Đơn vị: đồng / lít"
+        )
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     urls = [
         "https://webgia.com/gia-xang-dau/petrolimex/",
@@ -2230,12 +2244,14 @@ def fetch_petrol_table():
 
 def search_live_news(query, max_items=4):
     """Tìm kiếm tin tức thời sự & thị trường thời gian thực qua Google News RSS"""
+    if not BeautifulSoup:
+        return ""
     url = f"https://news.google.com/rss/search?q={urllib.parse.quote(query)}&hl=vi&gl=VN&ceid=VN:vi"
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
         r = requests.get(url, headers=headers, timeout=5)
         if r.status_code == 200:
-            soup = BeautifulSoup(r.content, "xml")
+            soup = BeautifulSoup(r.content, "html.parser")
             items = soup.find_all("item")
             results = []
             for item in items[:max_items]:
