@@ -197,9 +197,33 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1. Tải danh sách Workflows từ Server
   async function loadWorkflows() {
     try {
-      addLog("info", "Đang kết nối tải danh mục 6 Quy trình Vận hành MT01...");
+      addLog("info", "Đang kết nối tải danh mục 8 Quy trình Vận hành MT01...");
       const res = await fetch("/api/workflows");
       allWorkflows = await res.json();
+
+      if (workflowSelect && Object.keys(allWorkflows).length > 0) {
+        const curVal = workflowSelect.value;
+        const existingValues = Array.from(workflowSelect.options).map(o => o.value);
+        const serverKeys = Object.keys(allWorkflows);
+        const hasMissing = serverKeys.some(k => !existingValues.includes(k));
+        if (hasMissing) {
+          workflowSelect.innerHTML = "";
+          for (const [id, wf] of Object.entries(allWorkflows)) {
+            const opt = document.createElement("option");
+            opt.value = id;
+            const timeTag = wf.schedule ? wf.schedule.split(" ")[0] : "⏰";
+            const icon = id === "truck_odo_365" ? "🚚" : (id === "lastmile_trips" ? "📦" : (id === "kpi_gtc" ? "📊" : (id === "checkin" ? "⏰" : (id === "assigned" ? "🚚" : (id === "unassigned" ? "📦" : (id === "pda" ? "📱" : "🌙"))))));
+            opt.textContent = `${icon} ${timeTag} • ${wf.name}`;
+            workflowSelect.appendChild(opt);
+          }
+          if (curVal && allWorkflows[curVal]) {
+            workflowSelect.value = curVal;
+          } else {
+            workflowSelect.value = "kpi_gtc";
+          }
+        }
+      }
+
       switchWorkflow(workflowSelect.value || "kpi_gtc");
       loadSystemStatus();
     } catch (err) {
