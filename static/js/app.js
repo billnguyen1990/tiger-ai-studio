@@ -20,6 +20,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnOpenLeftTab = document.getElementById("btnOpenLeftTab");
   const btnOpenRightTab = document.getElementById("btnOpenRightTab");
 
+  const btnHeaderWorkflowPill = document.getElementById("btnHeaderWorkflowPill");
+  const headerWfDisplay = document.getElementById("headerWfDisplay");
+  const sidebarWfPicker = document.getElementById("sidebarWfPicker");
+  const sidebarPickerTrigger = document.getElementById("sidebarPickerTrigger");
+  const sidebarPickerIcon = document.getElementById("sidebarPickerIcon");
+  const sidebarPickerName = document.getElementById("sidebarPickerName");
+  const sidebarPickerArrow = document.getElementById("sidebarPickerArrow");
+  const sidebarWfDropdown = document.getElementById("sidebarWfDropdown");
+  const wfMetaCard = document.getElementById("wfMetaCard");
+  const wfCountBadge = document.getElementById("wfCountBadge");
+
   const toolsStackWrapper = document.getElementById("toolsStackWrapper");
   const btnToolsStack = document.getElementById("btnToolsStack");
   const stackItemAnalytics = document.getElementById("stackItemAnalytics");
@@ -194,12 +205,78 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentWorkflowId = "kpi_gtc";
   let isRunning = false;
 
+  function getWorkflowIcon(id) {
+    switch (id) {
+      case "truck_odo_365": return "🚚";
+      case "lastmile_trips": return "📦";
+      case "kpi_gtc": return "📊";
+      case "checkin": return "⏰";
+      case "assigned": return "🚚";
+      case "unassigned": return "📦";
+      case "pda": return "📱";
+      case "evening_cod": return "🌙";
+      default: return "⚡";
+    }
+  }
+
+  function renderSidebarWorkflowDropdown() {
+    if (!sidebarWfDropdown) return;
+    sidebarWfDropdown.innerHTML = "";
+    const entries = Object.entries(allWorkflows);
+    if (wfCountBadge) wfCountBadge.textContent = `${entries.length} Luồng`;
+
+    entries.forEach(([id, wf]) => {
+      const item = document.createElement("div");
+      item.className = `wf-panel-item ${id === currentWorkflowId ? "active" : ""}`;
+      item.setAttribute("data-wf-id", id);
+      const icon = getWorkflowIcon(id);
+      item.innerHTML = `
+        <div class="wf-panel-item-left">
+          <span class="wf-panel-item-icon">${icon}</span>
+          <div class="wf-panel-item-content">
+            <span class="wf-panel-item-name">${wf.name}</span>
+            <span class="wf-panel-item-schedule">⏰ ${wf.schedule}</span>
+          </div>
+        </div>
+        <span class="wf-panel-item-check">✓</span>
+      `;
+      item.addEventListener("click", () => {
+        selectWorkflow(id);
+        toggleSidebarDropdown(false);
+      });
+      sidebarWfDropdown.appendChild(item);
+    });
+  }
+
+  function toggleSidebarDropdown(forceState) {
+    if (!sidebarWfDropdown || !sidebarPickerTrigger) return;
+    const shouldOpen = typeof forceState === "boolean" ? forceState : sidebarWfDropdown.classList.contains("hidden");
+    if (shouldOpen) {
+      sidebarWfDropdown.classList.remove("hidden");
+      sidebarPickerTrigger.classList.add("active");
+      playCyberSound("pop");
+    } else {
+      sidebarWfDropdown.classList.add("hidden");
+      sidebarPickerTrigger.classList.remove("active");
+    }
+  }
+
+  function selectWorkflow(wfId) {
+    if (workflowSelect) {
+      workflowSelect.value = wfId;
+    }
+    switchWorkflow(wfId);
+  }
+
   // 1. Tải danh sách Workflows từ Server
   async function loadWorkflows() {
     try {
       addLog("info", "Đang kết nối tải danh mục 8 Quy trình Vận hành MT01...");
       const res = await fetch("/api/workflows");
       allWorkflows = await res.json();
+
+      // Render danh sách dropdown trong sidebar
+      renderSidebarWorkflowDropdown();
 
       if (workflowSelect && Object.keys(allWorkflows).length > 0) {
         const curVal = workflowSelect.value;
@@ -212,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const opt = document.createElement("option");
             opt.value = id;
             const timeTag = wf.schedule ? wf.schedule.split(" ")[0] : "⏰";
-            const icon = id === "truck_odo_365" ? "🚚" : (id === "lastmile_trips" ? "📦" : (id === "kpi_gtc" ? "📊" : (id === "checkin" ? "⏰" : (id === "assigned" ? "🚚" : (id === "unassigned" ? "📦" : (id === "pda" ? "📱" : "🌙"))))));
+            const icon = getWorkflowIcon(id);
             opt.textContent = `${icon} ${timeTag} • ${wf.name}`;
             workflowSelect.appendChild(opt);
           }
@@ -224,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      switchWorkflow(workflowSelect.value || "kpi_gtc");
+      switchWorkflow(workflowSelect ? (workflowSelect.value || "kpi_gtc") : "kpi_gtc");
       loadSystemStatus();
     } catch (err) {
       addLog("error", `Lỗi tải danh mục quy trình: ${err.message}`);
@@ -237,9 +314,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const wf = allWorkflows[wfId];
     if (!wf) return;
 
+    const icon = getWorkflowIcon(wfId);
+
+    // Cập nhật thẻ hiển thị Quy Trình Hiện Tại
     wfNameEl.textContent = wf.name;
     wfDescEl.textContent = wf.description;
     wfScheduleEl.textContent = `⏰ Lịch chạy tự động: ${wf.schedule}`;
+
+    // Hiệu ứng xổ xuống / trượt sáng làm nổi bật quy trình hiện tại
+    if (wfMetaCard) {
+      wfMetaCard.classList.remove("meta-updated");
+      void wfMetaCard.offsetWidth; // trigger reflow
+      wfMetaCard.classList.add("meta-updated");
+    }
+
+    // Cập nhật Trigger Button trong Sidebar
+    if (sidebarPickerIcon) sidebarPickerIcon.textContent = icon;
+    if (sidebarPickerName) sidebarPickerName.textContent = wf.name;
+
+    // Cập nhật Pill trên Header
+    if (headerWfDisplay) {
+      const shortName = wf.schedule ? `${wf.schedule.split(" ")[0]} • ${wf.name.split("(")[0].trim()}` : wf.name;
+      headerWfDisplay.textContent = shortName;
+    }
+
+    // Cập nhật active trong danh sách xổ xuống
+    if (sidebarWfDropdown) {
+      const items = sidebarWfDropdown.querySelectorAll(".wf-panel-item");
+      items.forEach(el => {
+        if (el.getAttribute("data-wf-id") === wfId) {
+          el.classList.add("active");
+        } else {
+          el.classList.remove("active");
+        }
+      });
+    }
 
     // Render palette
     paletteNodeList.innerHTML = "";
@@ -679,9 +788,38 @@ document.addEventListener("DOMContentLoaded", () => {
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
   }
 
-  // Event Listeners cho buttons
-  workflowSelect.addEventListener("change", (e) => {
-    switchWorkflow(e.target.value);
+  // Event Listeners cho Workflow Picker
+  if (workflowSelect) {
+    workflowSelect.addEventListener("change", (e) => {
+      switchWorkflow(e.target.value);
+    });
+  }
+
+  if (sidebarPickerTrigger) {
+    sidebarPickerTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleSidebarDropdown();
+    });
+  }
+
+  if (btnHeaderWorkflowPill) {
+    btnHeaderWorkflowPill.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (sidebarLeft && sidebarLeft.classList.contains("collapsed")) {
+        sidebarLeft.classList.remove("collapsed");
+        if (btnToggleLeft) btnToggleLeft.textContent = "◀ Thu Gọn";
+        if (btnOpenLeftTab) btnOpenLeftTab.classList.add("hidden");
+        setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
+      }
+      toggleSidebarDropdown(true);
+      if (sidebarLeft) sidebarLeft.scrollTop = 0;
+    });
+  }
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#sidebarWfPicker") && !e.target.closest("#btnHeaderWorkflowPill")) {
+      toggleSidebarDropdown(false);
+    }
   });
 
   btnRunTest.addEventListener("click", () => {

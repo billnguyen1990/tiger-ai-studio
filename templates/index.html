@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=2.7.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.8.0">
 </head>
 <body class="theme-ghn-teal">
 
@@ -29,10 +29,15 @@
       </div>
     </div>
 
-    <!-- WORKFLOW SELECTOR -->
+    <!-- WORKFLOW PILL GỌN GÀNG TRÊN HEADER (BẤM SẼ XỔ THANH QUY TRÌNH HIỆN TẠI) -->
     <div class="workflow-selector-wrapper">
-      <label for="workflowSelect" class="selector-label">Quy Trình:</label>
-      <select id="workflowSelect" class="workflow-dropdown">
+      <button type="button" id="btnHeaderWorkflowPill" class="btn-workflow-pill" title="Bấm để mở danh mục quy trình bên thanh hiện tại">
+        <span class="pill-dot"></span>
+        <span class="pill-label">QUY TRÌNH:</span>
+        <span id="headerWfDisplay" class="pill-val">07:00 • KPI GTC Hôm Qua</span>
+        <span class="pill-arrow">▾</span>
+      </button>
+      <select id="workflowSelect" class="workflow-dropdown-hidden" style="display:none;">
         <option value="truck_odo_365">🚚 02:00 • Quản Lý & Đối Soát ODO Xe Tải 365 (02:00 AM)</option>
         <option value="lastmile_trips">📦 05:00 • Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets</option>
         <option value="kpi_gtc" selected>📊 07:00 • KPI GTC Hôm Qua (Chuẩn 85%)</option>
@@ -163,11 +168,34 @@
     <!-- LEFT SIDEBAR: PALETTE / WORKFLOW INFO -->
     <aside class="sidebar-left" id="sidebarLeft">
       <div class="sidebar-header">
-        <span class="sidebar-title">QUY TRÌNH HIỆN TẠI</span>
+        <div class="sidebar-header-lead">
+          <span class="sidebar-title">QUY TRÌNH HIỆN TẠI</span>
+          <span class="workflow-count-badge" id="wfCountBadge">8 Luồng</span>
+        </div>
         <button class="sidebar-toggle-btn" id="btnToggleLeft" title="Thu gọn bảng quy trình">◀ Thu Gọn</button>
       </div>
+
+      <!-- WORKFLOW SELECTOR TÍCH HỢP TRONG THANH QUY TRÌNH HIỆN TẠI -->
+      <div class="sidebar-workflow-picker" id="sidebarWfPicker">
+        <div class="picker-trigger-btn" id="sidebarPickerTrigger" title="Nhấp vào để đổi sang quy trình khác">
+          <div class="picker-left">
+            <span class="picker-icon" id="sidebarPickerIcon">📊</span>
+            <div class="picker-info">
+              <span class="picker-caption">BẤM ĐỔI QUY TRÌNH</span>
+              <span class="picker-current-name" id="sidebarPickerName">07:00 • KPI GTC Hôm Qua</span>
+            </div>
+          </div>
+          <span class="picker-arrow" id="sidebarPickerArrow">▾</span>
+        </div>
+
+        <!-- DANH SÁCH 8 QUY TRÌNH XỔ XUỐNG KHI BẤM -->
+        <div class="workflow-dropdown-panel hidden" id="sidebarWfDropdown">
+          <!-- Được JS render đầy đủ 8 quy trình -->
+        </div>
+      </div>
       
-      <div class="workflow-meta-card">
+      <!-- NỘI DUNG QUY TRÌNH HIỆN TẠI ĐƯỢC XỔ RA -->
+      <div class="workflow-meta-card" id="wfMetaCard">
         <div class="meta-title" id="wfName">Đang tải quy trình...</div>
         <div class="meta-desc" id="wfDesc">-</div>
         <div class="meta-tag" id="wfSchedule">⏰ Lịch: -</div>
@@ -803,7 +831,7 @@
 
   <div class="tools-backdrop" id="toolsBackdrop"></div>
 
-  <script src="/static/js/canvas.js?v=2.7.0"></script>
-  <script src="/static/js/app.js?v=2.7.0"></script>
+  <script src="/static/js/canvas.js?v=2.8.0"></script>
+  <script src="/static/js/app.js?v=2.8.0"></script>
 </body>
 </html>

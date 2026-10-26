@@ -416,6 +416,286 @@ body {
   letter-spacing: 1px;
 }
 
+/* ==========================================================================
+   INTEGRATED WORKFLOW PICKER IN SIDEBAR (LỒNG TRONG THANH QUY TRÌNH HIỆN TẠI)
+   ========================================================================== */
+.sidebar-header-lead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workflow-count-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--primary-accent);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.sidebar-workflow-picker {
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.5);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.picker-trigger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--bg-card);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.picker-trigger-btn:hover {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: var(--primary-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+}
+
+.picker-trigger-btn.active {
+  border-color: var(--primary-accent);
+  background: rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.picker-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.picker-icon {
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  flex-shrink: 0;
+}
+
+.picker-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.picker-caption {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary-accent);
+  letter-spacing: 0.6px;
+  margin-bottom: 1px;
+}
+
+.picker-current-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker-arrow {
+  font-size: 13px;
+  color: var(--primary-accent);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.picker-trigger-btn.active .picker-arrow {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Panel */
+.workflow-dropdown-panel {
+  margin-top: 8px;
+  background: #0b1329;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65);
+  max-height: 360px;
+  overflow-y: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workflow-dropdown-panel.hidden {
+  display: none !important;
+}
+
+.wf-panel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.wf-panel-item:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+  transform: translateX(4px);
+}
+
+.wf-panel-item.active {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.wf-panel-item-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.wf-panel-item-icon {
+  font-size: 17px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.wf-panel-item-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wf-panel-item-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wf-panel-item-schedule {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.wf-panel-item-check {
+  font-size: 12px;
+  font-weight: 800;
+  color: #10b981;
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+.wf-panel-item.active .wf-panel-item-check {
+  opacity: 1;
+}
+
+/* Header Workflow Pill Button */
+.btn-workflow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.btn-workflow-pill:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: var(--primary-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  display: inline-block;
+}
+
+.pill-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--primary-accent);
+  letter-spacing: 0.5px;
+}
+
+.pill-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pill-arrow {
+  font-size: 11px;
+  color: var(--primary-accent);
+}
+
+/* Flash animation on workflow card switch */
+@keyframes metaSlidePulse {
+  0% {
+    background: rgba(245, 158, 11, 0.28);
+    transform: translateY(-4px);
+    opacity: 0.8;
+  }
+  50% {
+    background: rgba(245, 158, 11, 0.15);
+    opacity: 1;
+  }
+  100% {
+    background: rgba(245, 158, 11, 0.04);
+    transform: translateY(0);
+  }
+}
+
+.meta-updated {
+  animation: metaSlidePulse 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .workflow-meta-card {
   padding: 18px 20px;
   border-bottom: 1px solid var(--border-subtle);

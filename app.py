@@ -2709,12 +2709,13 @@ def get_system_status():
 def get_version():
     """Thông tin phiên bản hệ thống và nhật ký cập nhật (Changelog)"""
     return jsonify({
-        "current_version": "v2.7.0",
-        "latest_version": "v2.7.0",
+        "current_version": "v2.8.0",
+        "latest_version": "v2.8.0",
         "has_update": False,
         "release_date": "26/10/2026",
         "system_status": "ONLINE",
         "changelog": [
+            "v2.8.0: Lồng danh mục Quy Trình vào thanh Quy Trình Hiện Tại, bổ sung menu thả xuống trượt mượt mà và đồng bộ 8 luồng tự động.",
             "v2.7.0: Nút bấm Cập Nhật Dữ Liệu Mới 1-Click trên bảng phân tích KPI, nạp ngay dữ liệu 25/10/2026.",
             "v2.7.0: Báo cáo KPI ngày 25/10/2026: Toàn cụm 81.74% (452/553 đơn), Bình Thủy 86.1%, Cái Răng 80.7%, Ô Môn 80.0%, Vị Thanh 78.8%.",
             "v2.7.0: Bóc tách lưu kho 10:00 sáng (426 đơn) & đối soát nợ COD ca đêm (Quỹ 322,645,355 đ).",
