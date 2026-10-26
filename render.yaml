@@ -3,7 +3,7 @@ services:
     name: tiger-ai-studio
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --workers 2 --timeout 180
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 180
     plan: free
     region: singapore
     envVars:

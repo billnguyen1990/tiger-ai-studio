@@ -457,7 +457,7 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
                     APPS_SCRIPT_URL,
                     json=payload_sheet,
                     headers={"Content-Type": "application/json"},
-                    timeout=25
+                    timeout=60
                 )
                 if resp.status_code == 200:
                     sheet_result = f"Success: Đã ghi thành công {len(sheet_rows)} xe tải vào tab '{SHEET_NAME}'"
@@ -465,6 +465,10 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
                     break
                 else:
                     print(f"  ⚠️ Lần {attempt} phản hồi HTTP {resp.status_code}: {resp.text[:150]}", flush=True)
+            except requests.exceptions.ReadTimeout:
+                sheet_result = f"Warning: Sheets xử lý xong nhưng phản hồi trễ (ReadTimeout > 60s) - Bỏ qua retry để chống trùng lặp"
+                print(f"  ⚠️ {sheet_result}", flush=True)
+                break
             except Exception as e:
                 print(f"  ⚠️ Lần {attempt} Sheets phản hồi chậm: {e}", flush=True)
                 time.sleep(2)
