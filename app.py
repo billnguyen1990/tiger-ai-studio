@@ -991,6 +991,39 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     if send_telegram:
         cmd.append("--send")
 
+    # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux):
+    is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
+    if wf_id == "b2b_looker" and is_cloud:
+        cloud_output = f"""🐅 <b>TIGER AI - THÔNG BÁO VẬN HÀNH B2B • LOOKER STUDIO</b>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 <b>Môi trường hiện tại:</b> Máy chủ Render Cloud (Linux 24/7)
+💻 <b>Cơ chế điều khiển:</b> Trình duyệt Chrome máy trạm của Sếp (CDP Port 9223)
+
+ℹ️ <b>LƯU Ý VẬN HÀNH:</b>
+Báo cáo Looker Studio yêu cầu phiên đăng nhập tài khoản Google thực tế trên máy tính trạm của Sếp.
+• ⏰ <b>Lịch tự động 18:00 hàng ngày:</b> Tiger AI đã đăng ký Task Scheduler <code>TigerAI_Auto_B2B_18h00</code> trên máy tính của Sếp để tự động chạy ngầm lúc <b>18:00 mỗi ngày</b>.
+• 🚀 <b>Chạy ngay tại máy tính:</b>
+  1. Mở web Command Center local: <b><a href="http://localhost:5050" target="_blank">http://localhost:5050</a></b> và bấm Kích Hoạt.
+  2. Hoặc nhấp đúp file phím tắt <code>Run_Tiger_B2B_Bot.bat</code> ngoài Desktop!
+
+📊 <b>CẤU HÌNH BỘ LỌC ĐÃ SẴN SÀNG:</b>
+• 📋 Báo cáo: <b>Dashboard Tách Luồng Vận Chuyển (Tab 1. B2B)</b>
+• 📍 Địa bàn: <b>13 tỉnh ĐBSCL</b> (Long An, Tiền Giang, Cần Thơ, Bến Tre, Vĩnh Long, An Giang, Cà Mau,...)
+• 📁 Master Dashboard: <a href="https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit" target="_blank">Mở Google Sheet Master ↗</a>
+• 🤖 Tự động xuất Google Sheets ➔ Dán tab Data ➔ Bắn Telegram Topic 2690!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ <i>Đã ghi nhận yêu cầu điều hành từ Sếp thành công!</i>"""
+        if send_telegram:
+            send_telegram_direct(cloud_output)
+        return jsonify({
+            "success": True,
+            "returncode": 0,
+            "output": cloud_output,
+            "workflow_id": wf_id,
+            "sent_to_telegram": send_telegram,
+            "is_demo": False
+        })
+
     # Đối với tác vụ cào đêm diện rộng (như truck_odo_365 cào 21 kho, nghỉ 30s-60s mất 15-20 phút):
     if wf_id == "truck_odo_365":
         def _run_odo_bg():

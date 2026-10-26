@@ -1,7 +1,10 @@
 import os
 import sys
 import time
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except Exception:
+    sync_playwright = None
 
 # =============================================================================
 # ⚙️ CẤU HÌNH DỮ LIỆU & ĐƯỜNG DẪN
@@ -580,6 +583,15 @@ def send_telegram_alert(message):
         print(f"  [Telegram Exception] {ex}")
 
 def run_looker_export_pipeline(max_retries=3):
+    if sync_playwright is None:
+        print("=======================================================")
+        print("  ⚠️ [TIGER AI CLOUD NOTIFICATION]")
+        print("  Quy trình B2B Looker Studio yêu cầu Chrome có đăng nhập tài khoản của Sếp.")
+        print("  • Trên máy tính cá nhân của Sếp: Đã thiết lập Task Scheduler chạy ngầm 18:00 hàng ngày!")
+        print("  • Để chạy ngay trên máy: Sếp mở http://localhost:5050 hoặc bấm Run_Tiger_B2B_Bot ngoài Desktop.")
+        print("=======================================================")
+        return
+
     last_error = ""
     for attempt in range(max_retries):
         try:
