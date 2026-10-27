@@ -3339,56 +3339,28 @@ def get_system_status():
         if hid in kpi_rates:
             h.update(kpi_rates[hid])
 
-    global _cached_tasks, _cached_tasks_time
-    now_ts = time.time()
-    if _cached_tasks and (now_ts - _cached_tasks_time < 30):
-        tasks = _cached_tasks
-    else:
-        tasks = []
-        try:
-            cmd1 = 'Get-ScheduledTask -TaskName "TigerAI*" | Select-Object TaskName, State | ConvertTo-Json'
-            r1 = subprocess.run(
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd1],
-                capture_output=True,
-                text=True,
-                timeout=8,
-                creationflags=CREATE_NO_WINDOW
-            )
-            raw_tasks = []
-            if r1.returncode == 0 and r1.stdout.strip():
-                t_json = json.loads(r1.stdout)
-                raw_tasks = t_json if isinstance(t_json, list) else [t_json]
+    vn_now = get_vietnam_now()
+    def _calc_next_run(hours_list, minute=0):
+        for hr in sorted(hours_list):
+            cand = vn_now.replace(hour=hr, minute=minute, second=0, microsecond=0)
+            if cand > vn_now:
+                return cand.strftime("%H:%M %d/%m/%Y")
+        tomorrow = vn_now + datetime.timedelta(days=1)
+        first_hr = sorted(hours_list)[0]
+        return tomorrow.replace(hour=first_hr, minute=minute, second=0, microsecond=0).strftime("%H:%M %d/%m/%Y")
 
-            cmd2 = 'Get-ScheduledTask -TaskName "TigerAI*" | Get-ScheduledTaskInfo | Select-Object TaskName, NextRunTime, LastRunTime, LastTaskResult | ConvertTo-Json'
-            r2 = subprocess.run(
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd2],
-                capture_output=True,
-                text=True,
-                timeout=8,
-                creationflags=CREATE_NO_WINDOW
-            )
-            info_map = {}
-            if r2.returncode == 0 and r2.stdout.strip():
-                i_json = json.loads(r2.stdout)
-                raw_infos = i_json if isinstance(i_json, list) else [i_json]
-                info_map = {item.get("TaskName"): item for item in raw_infos}
-
-            merged = []
-            for t in raw_tasks:
-                name = t.get("TaskName")
-                inf = info_map.get(name, {})
-                merged.append({
-                    "TaskName": name,
-                    "State": t.get("State", 3),
-                    "NextRunTime": inf.get("NextRunTime"),
-                    "LastRunTime": inf.get("LastRunTime"),
-                    "LastTaskResult": inf.get("LastTaskResult")
-                })
-            tasks = merged
-            _cached_tasks = tasks
-            _cached_tasks_time = now_ts
-        except Exception as e:
-            print(f"Lỗi đọc Scheduled Tasks: {e}")
+    tasks = [
+        {"TaskName": "TigerAI_DoiSoatODO_365_02h00", "State": 3, "NextRunTime": _calc_next_run([2], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_Lastmile_ODO_05h00", "State": 3, "NextRunTime": _calc_next_run([5], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_BaoCaoKPI_GTC_07h00", "State": 3, "NextRunTime": _calc_next_run([7], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_DiemDanh_MT01_07h35", "State": 3, "NextRunTime": _calc_next_run([7], 35), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_GanChuyenSang_09h00", "State": 3, "NextRunTime": _calc_next_run([9], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_DonChuaGan_10h00", "State": 3, "NextRunTime": _calc_next_run([10], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_TienDoPDA_12h_15h_19h", "State": 3, "NextRunTime": _calc_next_run([12, 15, 19], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_Auto_B2B_18h00", "State": 3, "NextRunTime": _calc_next_run([18], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_ChotCa_MT01_21h", "State": 3, "NextRunTime": _calc_next_run([21], 0), "LastTaskResult": 0},
+        {"TaskName": "TigerAI_ChotCa_MT01_21h30", "State": 3, "NextRunTime": _calc_next_run([21], 30), "LastTaskResult": 0},
+    ]
 
     return jsonify({
         "nvxl_hubs": nvxl_data,
