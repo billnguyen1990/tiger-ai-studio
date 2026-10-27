@@ -567,7 +567,7 @@ def send_telegram_alert(message):
     """Gửi cảnh báo lỗi khẩn cấp về Telegram Topic 2690 để Sếp và đội ngũ biết ngay lập tức."""
     try:
         import requests
-        url = "https://api.telegram.org/bot8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA/sendMessage"
+        url = "https://api.telegram.org/bot8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk/sendMessage"
         payload = {
             "chat_id": "-1003940889949",
             "message_thread_id": 2690,

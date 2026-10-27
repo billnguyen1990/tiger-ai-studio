@@ -21,7 +21,7 @@ APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFP1ORM09dQxWzDVICZP
 SHEET_NAME = "Team_Leader"
 
 # Telegram Bot Config (Chỉ gửi duy nhất về Room 'The 5 Guardians' theo yêu cầu của Sếp)
-TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"
+TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 TELEGRAM_CHAT_ID = "-5295214199"
 
 # Google Sheet Link (Tab Team_Leader)

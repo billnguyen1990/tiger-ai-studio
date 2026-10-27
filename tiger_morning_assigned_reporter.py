@@ -9,7 +9,7 @@ HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 MAP_FILE = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
 
 # Telegram Config (Group: Miền Tây 01 - Topic: Báo Cáo)
-TELEGRAM_BOT_TOKEN = "8777045986:AAEX1uau8GFdxPAj0aAVUwDNQnpQb1IZOIA"
+TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 TELEGRAM_CHAT_ID = "-1003940889949"
 TELEGRAM_MESSAGE_THREAD_ID = 2690
 
