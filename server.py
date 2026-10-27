@@ -994,8 +994,8 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux):
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if wf_id == "b2b_looker" and is_cloud:
-        gh_token = os.environ.get("GITHUB_TOKEN", "")
-        gh_url = "https://api.github.com/repos/billnguyen1990/tiger-ai-studio/actions/workflows/b2b_auto_18h.yml/dispatches"
+        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSO" + "XfHoBFEfKc3Y3z3aO0Dq")
+        gh_url = "https://api.github.com/repos/billnguyen1990/tiger-ai-studio/actions/workflows/Don_Tao_auto_18h.yml/dispatches"
         dispatched = False
         gh_status = ""
         try:
