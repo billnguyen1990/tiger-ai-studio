@@ -5,6 +5,7 @@
       "assigned": 221,
       "gtc": 178,
       "gtb": 43,
+      "pending": 0,
       "rate": 80.5,
       "reasons": [
         [
@@ -22,6 +23,14 @@
         [
           "Người nhận đổi ý không mua nữa",
           4
+        ],
+        [
+          "Người nhận từ chối nhận do không có tiền",
+          2
+        ],
+        [
+          "Người nhận báo không đặt hàng",
+          1
         ]
       ]
     },
@@ -29,6 +38,7 @@
       "assigned": 2,
       "ltc": 2,
       "ltb": 0,
+      "pending": 0,
       "rate": 100.0,
       "reasons": []
     },
@@ -39,7 +49,12 @@
         "gtb": 7,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:37 (25/10)",
+        "last_scan": "21:57 (25/10)",
+        "trip_code": "26A21088000N9JF19",
+        "driver_phone": "0767927425",
+        "cod_amount": 33934876
       },
       "Trần Vủ Hải": {
         "del_assigned": 10,
@@ -47,7 +62,12 @@
         "gtb": 3,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:35 (25/10)",
+        "last_scan": "10:59 (25/10)",
+        "trip_code": "26A21088000ND7Z18",
+        "driver_phone": "0776757914",
+        "cod_amount": 2868757
       },
       "Nguyễn Tấn Thành": {
         "del_assigned": 12,
@@ -55,7 +75,12 @@
         "gtb": 1,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:35 (25/10)",
+        "last_scan": "16:02 (25/10)",
+        "trip_code": "26A21088000W7PQ17",
+        "driver_phone": "0364153959",
+        "cod_amount": 15687262
       },
       "Nguyễn Chí Linh": {
         "del_assigned": 41,
@@ -63,7 +88,12 @@
         "gtb": 5,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:30 (25/10)",
+        "last_scan": "18:52 (25/10)",
+        "trip_code": "26A21088000DVMF15",
+        "driver_phone": "0777834064",
+        "cod_amount": 38385436
       },
       "Lê Hồng Tú": {
         "del_assigned": 38,
@@ -71,7 +101,12 @@
         "gtb": 6,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:28 (25/10)",
+        "last_scan": "18:10 (25/10)",
+        "trip_code": "26A21088000MP4K14",
+        "driver_phone": "0789184620",
+        "cod_amount": 43115423
       },
       "Nguyễn Quốc Hưng": {
         "del_assigned": 32,
@@ -79,7 +114,12 @@
         "gtb": 11,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:27 (25/10)",
+        "last_scan": "14:18 (25/10)",
+        "trip_code": "26A21088000QPNL13",
+        "driver_phone": "0853779186",
+        "cod_amount": 18938510
       },
       "Nguyễn Hải Đông": {
         "del_assigned": 43,
@@ -87,7 +127,12 @@
         "gtb": 5,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:28 (25/10)",
+        "last_scan": "18:35 (25/10)",
+        "trip_code": "26A21088000G4CH12",
+        "driver_phone": "0938615844",
+        "cod_amount": 43442267
       },
       "Phan Ngọc Hải": {
         "del_assigned": 25,
@@ -95,9 +140,215 @@
         "gtb": 5,
         "pick_assigned": 2,
         "ltc": 2,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:23 (25/10)",
+        "last_scan": "20:55 (25/10)",
+        "trip_code": "26A21088000ERU311",
+        "driver_phone": "0939716809",
+        "cod_amount": 25478482
       }
-    }
+    },
+    "trips_detail": [
+      {
+        "trip_code": "26A21088000N9JF19",
+        "driver": "Ngô Hữu Liêm",
+        "orders": 20,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:37 (25/10)",
+        "end_time": "21:57 (25/10)",
+        "cod_amount": 33934876
+      },
+      {
+        "trip_code": "26A21088000ND7Z18",
+        "driver": "Trần Vủ Hải",
+        "orders": 10,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:35 (25/10)",
+        "end_time": "10:59 (25/10)",
+        "cod_amount": 2868757
+      },
+      {
+        "trip_code": "26A21088000W7PQ17",
+        "driver": "Nguyễn Tấn Thành",
+        "orders": 12,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:35 (25/10)",
+        "end_time": "16:02 (25/10)",
+        "cod_amount": 15687262
+      },
+      {
+        "trip_code": "26A21088000DVMF15",
+        "driver": "Nguyễn Chí Linh",
+        "orders": 41,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:30 (25/10)",
+        "end_time": "18:52 (25/10)",
+        "cod_amount": 38385436
+      },
+      {
+        "trip_code": "26A21088000MP4K14",
+        "driver": "Lê Hồng Tú",
+        "orders": 38,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:28 (25/10)",
+        "end_time": "18:10 (25/10)",
+        "cod_amount": 43115423
+      },
+      {
+        "trip_code": "26A21088000QPNL13",
+        "driver": "Nguyễn Quốc Hưng",
+        "orders": 32,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:27 (25/10)",
+        "end_time": "14:18 (25/10)",
+        "cod_amount": 18938510
+      },
+      {
+        "trip_code": "26A21088000G4CH12",
+        "driver": "Nguyễn Hải Đông",
+        "orders": 43,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:28 (25/10)",
+        "end_time": "18:35 (25/10)",
+        "cod_amount": 43442267
+      },
+      {
+        "trip_code": "26A21088000ERU311",
+        "driver": "Phan Ngọc Hải",
+        "orders": 27,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:23 (25/10)",
+        "end_time": "20:55 (25/10)",
+        "cod_amount": 25478482
+      }
+    ],
+    "sms_orders": [
+      {
+        "code": "GYMBEAAB",
+        "customer": "Phường Hưng Lợi • NV: Lê Hồng Tú",
+        "phone": "*******163",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 13:41) (quần áo 30)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMDRR9V",
+        "customer": "Phường Hưng Lợi • NV: Lê Hồng Tú",
+        "phone": "*******999",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 12:46) (Mypham)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMN3BCX",
+        "customer": "Phường Hưng Lợi • NV: Lê Hồng Tú",
+        "phone": "*******163",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 13:41) (quần áo 30)",
+        "is_sms": true
+      },
+      {
+        "code": "GYM6B3HT",
+        "customer": "Phường Hưng Phú • NV: Trần Vủ Hải",
+        "phone": "*******366",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 09:17) (Mâm 16)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBGGXR",
+        "customer": "Xã Mỹ Khánh • NV: Nguyễn Quốc Hưng",
+        "phone": "*******962",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 14:01) (Smart TV COOCAA 43 Inch FHD 43S3U+ | Game Mod)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMB47C4",
+        "customer": "Phường Ba Láng • NV: Nguyễn Quốc Hưng",
+        "phone": "*******378",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 08:56) (Đèn pha năng lượng mặt trời 400W chống chói D)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBTFA9",
+        "customer": "Phường Cái Vồn • NV: Nguyễn Hải Đông",
+        "phone": "*******808",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 13:53) (cb sofa xám bố +kc ĐV)",
+        "is_sms": true
+      },
+      {
+        "code": "GYM396CQ",
+        "customer": "Phường Lê Bình • NV: Nguyễn Quốc Hưng",
+        "phone": "*******514",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 17:48) (Nguyen Quoc Khanh cọc 500k xe rsx fi lm baga )",
+        "is_sms": true
+      },
+      {
+        "code": "GYMPTXLG",
+        "customer": "Phường Thới Bình • NV: Nguyễn Chí Linh",
+        "phone": "*******938",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 14:17) (Nêm)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMNEYV7",
+        "customer": "Phường Phú Thứ • NV: Ngô Hữu Liêm",
+        "phone": "*******644",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 12:11) (Quạt hút gió vuông 600x600 công nghiệp, khung)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMB3ENH",
+        "customer": "Phường Lê Bình • NV: Nguyễn Quốc Hưng",
+        "phone": "*******607",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 09:02) (Gương Oval Treo Tường LED Cảm Ứng Cao Cấp, Tr)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMP667C",
+        "customer": "Phường Hưng Phú • NV: Ngô Hữu Liêm",
+        "phone": "*******090",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 12:11) (Vỏ thùng loa kéo bass 40 – Thùng Sub karaoke )",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBMWV4",
+        "customer": "Phường Phú Thứ • NV: Ngô Hữu Liêm",
+        "phone": "*******619",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (Mai Vàng)",
+        "is_sms": true
+      },
+      {
+        "code": "VNGH80152270615",
+        "customer": "Phường Phú Thứ • NV: Ngô Hữu Liêm",
+        "phone": "*******241",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (đủ size Nệm cao su non (Nệm ép tổng h)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBAANV",
+        "customer": "Phường An Khánh • NV: Nguyễn Chí Linh",
+        "phone": "*******178",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 14:16) (ZEN Bàn Làm Việc 3 Hộc Tủ Hiện Đại - Mặt Lớn )",
+        "is_sms": true
+      }
+    ],
+    "sms_count": 17,
+    "gtb_total_orders": 43,
+    "total_cod_collected": 221851013,
+    "ongoing_trips_count": 0,
+    "ongoing_trips": []
   },
   "Bình Thủy": {
     "hub_id": "21985000",
@@ -105,6 +356,7 @@
       "assigned": 148,
       "gtc": 128,
       "gtb": 20,
+      "pending": 0,
       "rate": 86.5,
       "reasons": [
         [
@@ -122,6 +374,10 @@
         [
           "Đơn lừa đảo/giả mạo",
           2
+        ],
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          1
         ]
       ]
     },
@@ -129,8 +385,14 @@
       "assigned": 3,
       "ltc": 2,
       "ltb": 1,
+      "pending": 0,
       "rate": 66.7,
-      "reasons": []
+      "reasons": [
+        [
+          "Người gửi hẹn lại ngày lấy hàng",
+          1
+        ]
+      ]
     },
     "drivers": {
       "Nguyễn Hữu Thanh": {
@@ -139,7 +401,12 @@
         "gtb": 3,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "08:26 (25/10)",
+        "last_scan": "19:53 (25/10)",
+        "trip_code": "26A21985000KGPJ23",
+        "driver_phone": "0907069756",
+        "cod_amount": 38746592
       },
       "Nguyễn Anh Bằng": {
         "del_assigned": 32,
@@ -147,7 +414,12 @@
         "gtb": 2,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "08:26 (25/10)",
+        "last_scan": "17:07 (25/10)",
+        "trip_code": "26A21985000BHGG22",
+        "driver_phone": "0705630243",
+        "cod_amount": 15826263
       },
       "Nguyễn Duy Khương": {
         "del_assigned": 42,
@@ -155,7 +427,12 @@
         "gtb": 7,
         "pick_assigned": 1,
         "ltc": 0,
-        "ltb": 1
+        "ltb": 1,
+        "first_scan": "08:26 (25/10)",
+        "last_scan": "19:10 (25/10)",
+        "trip_code": "26A21985000CXQT21",
+        "driver_phone": "0356492569",
+        "cod_amount": 49135681
       },
       "Võ Trung Hiếu": {
         "del_assigned": 46,
@@ -163,9 +440,179 @@
         "gtb": 8,
         "pick_assigned": 2,
         "ltc": 2,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "08:26 (25/10)",
+        "last_scan": "17:55 (25/10)",
+        "trip_code": "26A21985000FFPG20",
+        "driver_phone": "0777620566",
+        "cod_amount": 27721440
       }
-    }
+    },
+    "trips_detail": [
+      {
+        "trip_code": "26A21985000KGPJ23",
+        "driver": "Nguyễn Hữu Thanh",
+        "orders": 28,
+        "status": "Đã hoàn thành chuyến",
+        "time": "08:26 (25/10)",
+        "end_time": "19:53 (25/10)",
+        "cod_amount": 38746592
+      },
+      {
+        "trip_code": "26A21985000BHGG22",
+        "driver": "Nguyễn Anh Bằng",
+        "orders": 32,
+        "status": "Đã hoàn thành chuyến",
+        "time": "08:26 (25/10)",
+        "end_time": "17:07 (25/10)",
+        "cod_amount": 15826263
+      },
+      {
+        "trip_code": "26A21985000CXQT21",
+        "driver": "Nguyễn Duy Khương",
+        "orders": 43,
+        "status": "Đã hoàn thành chuyến",
+        "time": "08:26 (25/10)",
+        "end_time": "19:10 (25/10)",
+        "cod_amount": 49135681
+      },
+      {
+        "trip_code": "26A21985000FFPG20",
+        "driver": "Võ Trung Hiếu",
+        "orders": 48,
+        "status": "Đã hoàn thành chuyến",
+        "time": "08:26 (25/10)",
+        "end_time": "17:55 (25/10)",
+        "cod_amount": 27721440
+      }
+    ],
+    "sms_orders": [
+      {
+        "code": "GYM6BNH8",
+        "customer": "Phường Xuân Khánh • NV: Nguyễn Anh Bằng",
+        "phone": "*******686",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 12:03) (Cốc giữ nhiệt túi đồng hồ)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBFPDA",
+        "customer": "Phường Long Hòa • NV: Nguyễn Duy Khương",
+        "phone": "*******502",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 08:47) (Mỹ phẩm )",
+        "is_sms": true
+      },
+      {
+        "code": "GYMDLXAM",
+        "customer": "Phường An Thới • NV: Nguyễn Duy Khương",
+        "phone": "*******874",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 10:52) (Xe điện mini E-Scooter phiên bản cao cấp dễ d)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBMNC3",
+        "customer": "Phường Long Hòa • NV: Nguyễn Duy Khương",
+        "phone": "*******154",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 13:48) (Bộ chậu giá treo bằng sắt chống rỉ sét cứng c)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBYEDY",
+        "customer": "Phường Trà Nóc • NV: Nguyễn Duy Khương",
+        "phone": "*******458",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 16:54) (Hoa văn gang.cửa cổng,lan can.M33)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMP676B",
+        "customer": "Phường An Hòa • NV: Võ Trung Hiếu",
+        "phone": "*******100",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 16:05) (Nệm Cao su non american êm đàn hồi tốt bảo hà)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBEMCP",
+        "customer": "Phường An Hòa • NV: Võ Trung Hiếu",
+        "phone": "*******065",
+        "date": "29/10/2026",
+        "reason": "Khách hẹn giao lại ngày 29/10/2026 (SMS 16:45) (quần áo 45)",
+        "is_sms": false
+      },
+      {
+        "code": "GYM6GHPA",
+        "customer": "Phường Thới Bình • NV: Nguyễn Hữu Thanh",
+        "phone": "*******074",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (chu uyển trà )",
+        "is_sms": false
+      },
+      {
+        "code": "GYMD8HNU",
+        "customer": "Phường Thới Bình • NV: Võ Trung Hiếu",
+        "phone": "*******737",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (Jean )",
+        "is_sms": false
+      },
+      {
+        "code": "VNGH80989800517",
+        "customer": "Phường Thới Bình • NV: Nguyễn Hữu Thanh",
+        "phone": "*******454",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa ([MINH PHÁT] Ghế Bập Bênh Điều Chỉnh )",
+        "is_sms": false
+      },
+      {
+        "code": "VNGH80547220319",
+        "customer": "Phường Thới Bình • NV: Võ Trung Hiếu",
+        "phone": "*******499",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa ([ QUÀ MISE ] TẶNG TRI ÂN KHÁCH HÀNG  - )",
+        "is_sms": false
+      },
+      {
+        "code": "VNGH80954520514",
+        "customer": "Phường Cái Khế • NV: Võ Trung Hiếu",
+        "phone": "*******610",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (CC1-Giường gấp ngủ trưa Giường gấ)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMVPY8T",
+        "customer": "Phường Bình Thủy • NV: Nguyễn Duy Khương",
+        "phone": "*******366",
+        "date": "25/10/2026",
+        "reason": "Người nhận không nghe máy (Qa)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBTNF3",
+        "customer": "Phường An Hòa • NV: Võ Trung Hiếu",
+        "phone": "*******988",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (( TẢI 6 TÚI ) Cát vệ sinh cho mèo TFOR benton)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBER8C",
+        "customer": "Phường An Hòa • NV: Võ Trung Hiếu",
+        "phone": "*******065",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 16:53) (quần áo 40)",
+        "is_sms": false
+      }
+    ],
+    "sms_count": 6,
+    "gtb_total_orders": 20,
+    "total_cod_collected": 131429976,
+    "ongoing_trips_count": 0,
+    "ongoing_trips": []
   },
   "Vị Thanh": {
     "hub_id": "22862000",
@@ -173,6 +620,7 @@
       "assigned": 103,
       "gtc": 81,
       "gtb": 22,
+      "pending": 0,
       "rate": 78.6,
       "reasons": [
         [
@@ -190,6 +638,10 @@
         [
           "Sai thông tin Địa chỉ người nhận",
           1
+        ],
+        [
+          "Người nhận báo không đặt hàng",
+          1
         ]
       ]
     },
@@ -197,6 +649,7 @@
       "assigned": 1,
       "ltc": 1,
       "ltb": 0,
+      "pending": 0,
       "rate": 100.0,
       "reasons": []
     },
@@ -207,7 +660,12 @@
         "gtb": 0,
         "pick_assigned": 1,
         "ltc": 1,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "15:30 (25/10)",
+        "last_scan": "16:06 (25/10)",
+        "trip_code": "26A22862000BYKJ07",
+        "driver_phone": "0345045662",
+        "cod_amount": 0
       },
       "Nhan Văn Tươi": {
         "del_assigned": 20,
@@ -215,7 +673,12 @@
         "gtb": 1,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:19 (25/10)",
+        "last_scan": "17:44 (25/10)",
+        "trip_code": "26A22862000KQUT06",
+        "driver_phone": "0869392946",
+        "cod_amount": 14872151
       },
       "Nguyễn Thành Độ": {
         "del_assigned": 31,
@@ -223,7 +686,12 @@
         "gtb": 8,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:18 (25/10)",
+        "last_scan": "17:21 (25/10)",
+        "trip_code": "26A22862000N3JJ05",
+        "driver_phone": "0328222967",
+        "cod_amount": 27545486
       },
       "Nguyễn Minh Tiến": {
         "del_assigned": 51,
@@ -231,9 +699,179 @@
         "gtb": 13,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:18 (25/10)",
+        "last_scan": "18:37 (25/10)",
+        "trip_code": "26A22862000UYDN04",
+        "driver_phone": "0397387596",
+        "cod_amount": 67748299
       }
-    }
+    },
+    "trips_detail": [
+      {
+        "trip_code": "26A22862000BYKJ07",
+        "driver": "Huỳnh Diệp Đức Trung",
+        "orders": 2,
+        "status": "Đã hoàn thành chuyến",
+        "time": "15:30 (25/10)",
+        "end_time": "16:06 (25/10)",
+        "cod_amount": 0
+      },
+      {
+        "trip_code": "26A22862000KQUT06",
+        "driver": "Nhan Văn Tươi",
+        "orders": 20,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:19 (25/10)",
+        "end_time": "17:44 (25/10)",
+        "cod_amount": 14872151
+      },
+      {
+        "trip_code": "26A22862000N3JJ05",
+        "driver": "Nguyễn Thành Độ",
+        "orders": 31,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:18 (25/10)",
+        "end_time": "17:21 (25/10)",
+        "cod_amount": 27545486
+      },
+      {
+        "trip_code": "26A22862000UYDN04",
+        "driver": "Nguyễn Minh Tiến",
+        "orders": 51,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:18 (25/10)",
+        "end_time": "18:37 (25/10)",
+        "cod_amount": 67748299
+      }
+    ],
+    "sms_orders": [
+      {
+        "code": "VNGH80419760615",
+        "customer": "Xã Vĩnh Hòa Hưng Nam • NV: Nguyễn Minh Tiến",
+        "phone": "*******910",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (Thang TOMOKO BẢN PRO  màu bạc, tay cầm r)",
+        "is_sms": true
+      },
+      {
+        "code": "GYM3GLU3",
+        "customer": "Xã Định Hòa • NV: Nguyễn Minh Tiến",
+        "phone": "*******703",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 16:39) ([Hoả Tốc] Ghế xoay làm việc văn phòng loại 1 )",
+        "is_sms": true
+      },
+      {
+        "code": "GYMN8G7H",
+        "customer": "Phường IV • NV: Nhan Văn Tươi",
+        "phone": "*******877",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa ([Tặng Nước Lau Sàn] Máy Hút Bụi Lau Nhà Khô Ư)",
+        "is_sms": false
+      },
+      {
+        "code": "VNGH80204120514",
+        "customer": "Thị Trấn Giồng Riềng • NV: Nguyễn Minh Tiến",
+        "phone": "*******344",
+        "date": "25/10/2026",
+        "reason": "Người nhận báo không đặt hàng (MQ 150 xe đồ chơi địa hình cho bé lốp)",
+        "is_sms": false
+      },
+      {
+        "code": "VNGH80119590420",
+        "customer": "Xã Vị Đông • NV: Nguyễn Thành Độ",
+        "phone": "*******229",
+        "date": "22/10/2026",
+        "reason": "Sai thông tin Địa chỉ người nhận (YASAHI Y5600s: 2 BASS  + 2 FULL CỘT | MẠCH)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMDKCDG",
+        "customer": "Thị trấn Rạch Gòi • NV: Nguyễn Thành Độ",
+        "phone": "*******950",
+        "date": "25/10/2026",
+        "reason": "Không liên lạc được người nhận / Chặn số (Cào cào Điện 87 xuất Châu Âu 36V 500W)",
+        "is_sms": false
+      },
+      {
+        "code": "GYM67M8A",
+        "customer": "Xã Định An • NV: Nguyễn Minh Tiến",
+        "phone": "*******865",
+        "date": "25/10/2026",
+        "reason": "Không liên lạc được người nhận / Chặn số (Máy)",
+        "is_sms": false
+      },
+      {
+        "code": "GYM6PKQN",
+        "customer": "Xã Hòa An • NV: Nguyễn Thành Độ",
+        "phone": "*******749",
+        "date": "25/10/2026",
+        "reason": "Không liên lạc được người nhận / Chặn số ([Loại 1- BH 5 Năm] Giường Pallet Gỗ Thông Hìn)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMV6L4R",
+        "customer": "Phường I • NV: Nguyễn Minh Tiến",
+        "phone": "*******459",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (Bạt Dày Xám Trắng 200g/m2  - 1 tấm 7x12m  May)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMD6HWP",
+        "customer": "Xã Vị Thuỷ • NV: Nguyễn Thành Độ",
+        "phone": "*******909",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa ([BÁN SỈ] Thùng 24 Gói Mì SiuKay Vị Bò Cay – H)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBBY7K",
+        "customer": "Xã Định Hòa • NV: Nguyễn Minh Tiến",
+        "phone": "*******220",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa ([TẶNG 2 GỐI NGỦ] Nệm Cao Su Ép Tổng Hợp Đa Tầ)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMB8MEV",
+        "customer": "Xã Vĩnh Hòa Hưng Nam • NV: Nguyễn Minh Tiến",
+        "phone": "*******913",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (Bộ tủ lavabo)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBHEF4",
+        "customer": "Thị trấn Gò Quao • NV: Nguyễn Minh Tiến",
+        "phone": "*******582",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (( KHÔNG KÈM CHÂN) Vách ngăn bình phong in  2 )",
+        "is_sms": false
+      },
+      {
+        "code": "GYMDWFXG",
+        "customer": "Xã Hòa An • NV: Nguyễn Thành Độ",
+        "phone": "*******045",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (Phích đựng nước nóng 2l Việt nhật. Phích đựng)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBPENQ",
+        "customer": "Xã Hoả Tiến • NV: Nguyễn Minh Tiến",
+        "phone": "*******752",
+        "date": "25/10/2026",
+        "reason": "Không liên lạc được người nhận / Chặn số (Nệm cao su non american êm đàn hồi tốt - Nệm )",
+        "is_sms": false
+      }
+    ],
+    "sms_count": 2,
+    "gtb_total_orders": 22,
+    "total_cod_collected": 110165936,
+    "ongoing_trips_count": 0,
+    "ongoing_trips": []
   },
   "Ô Môn": {
     "hub_id": "22917000",
@@ -241,6 +879,7 @@
       "assigned": 75,
       "gtc": 60,
       "gtb": 15,
+      "pending": 0,
       "rate": 80.0,
       "reasons": [
         [
@@ -258,6 +897,10 @@
         [
           "Người nhận từ chối nhận do sai sản phẩm",
           1
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          1
         ]
       ]
     },
@@ -265,7 +908,8 @@
       "assigned": 0,
       "ltc": 0,
       "ltb": 0,
-      "rate": 100.0,
+      "pending": 0,
+      "rate": 0.0,
       "reasons": []
     },
     "drivers": {
@@ -275,7 +919,12 @@
         "gtb": 7,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:40 (25/10)",
+        "last_scan": "17:20 (25/10)",
+        "trip_code": "26A22917000HBU470",
+        "driver_phone": "0906348985",
+        "cod_amount": 51360717
       },
       "Đào Tiến Đạt": {
         "del_assigned": 6,
@@ -283,7 +932,12 @@
         "gtb": 3,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:33 (25/10)",
+        "last_scan": "09:54 (25/10)",
+        "trip_code": "26A22917000BWLK69",
+        "driver_phone": "0783730903",
+        "cod_amount": 2979011
       },
       "Huỳnh Trung Lành": {
         "del_assigned": 25,
@@ -291,8 +945,169 @@
         "gtb": 5,
         "pick_assigned": 0,
         "ltc": 0,
-        "ltb": 0
+        "ltb": 0,
+        "first_scan": "07:30 (25/10)",
+        "last_scan": "18:49 (25/10)",
+        "trip_code": "26A22917000ZF9968",
+        "driver_phone": "0917885871",
+        "cod_amount": 14445532
       }
-    }
+    },
+    "trips_detail": [
+      {
+        "trip_code": "26A22917000HBU470",
+        "driver": "Nguyễn Chí Toàn",
+        "orders": 44,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:40 (25/10)",
+        "end_time": "17:20 (25/10)",
+        "cod_amount": 51360717
+      },
+      {
+        "trip_code": "26A22917000BWLK69",
+        "driver": "Đào Tiến Đạt",
+        "orders": 6,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:33 (25/10)",
+        "end_time": "09:54 (25/10)",
+        "cod_amount": 2979011
+      },
+      {
+        "trip_code": "26A22917000ZF9968",
+        "driver": "Huỳnh Trung Lành",
+        "orders": 25,
+        "status": "Đã hoàn thành chuyến",
+        "time": "07:30 (25/10)",
+        "end_time": "18:49 (25/10)",
+        "cod_amount": 14445532
+      }
+    ],
+    "sms_orders": [
+      {
+        "code": "GYMNRFTA",
+        "customer": "Phường Châu Văn Liêm • NV: Huỳnh Trung Lành",
+        "phone": "NV: 0917885871",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (Vải )",
+        "is_sms": true
+      },
+      {
+        "code": "GYM9UWA7",
+        "customer": "Phường Thạnh Hoà • NV: Nguyễn Chí Toàn",
+        "phone": "*******552",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 08:18) (Vf5)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMBEPHK",
+        "customer": "Phường Tân Hưng • NV: Nguyễn Chí Toàn",
+        "phone": "*******142",
+        "date": "27/10/2026",
+        "reason": "Khách hẹn giao lại ngày 27/10/2026 (SMS 08:18) (Phụ tùng  xe máy/1)",
+        "is_sms": true
+      },
+      {
+        "code": "NVS871597401",
+        "customer": "Phường Phước Thới • NV: Huỳnh Trung Lành",
+        "phone": "*******186",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 18:28) ([1 x Gối Nằm]; [1 x Nệm ép TH Foam 160x200x10)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMPBF3U",
+        "customer": "Phường Thới Long • NV: Đào Tiến Đạt",
+        "phone": "*******",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 08:40) ([BÁN SIÊU CHẠY] Giá Tại Xưởng Bàn Thờ Treo Tư)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMD9V39",
+        "customer": "Phường Thốt Nốt • NV: Nguyễn Chí Toàn",
+        "phone": "*******497",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 12:16) ((Có VAT) Combo 3 Thùng 50L, 60L đựng gạo, đựn)",
+        "is_sms": true
+      },
+      {
+        "code": "GYM9V639",
+        "customer": "Phường Trung Kiên • NV: Nguyễn Chí Toàn",
+        "phone": "*******667",
+        "date": "26/10/2026",
+        "reason": "Khách hẹn giao lại ngày 26/10/2026 (SMS 14:49) (Ghế tập phục hồi chức năng 3in1 cho người tập)",
+        "is_sms": true
+      },
+      {
+        "code": "GYMPAHAW",
+        "customer": "Phường Trung Kiên • NV: Nguyễn Chí Toàn",
+        "phone": "*******309",
+        "date": "25/10/2026",
+        "reason": "Không liên lạc được người nhận / Chặn số (Scrunchies +1)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBVEQU",
+        "customer": "Phường Thuận An • NV: Nguyễn Chí Toàn",
+        "phone": "*******808",
+        "date": "25/10/2026",
+        "reason": "Người nhận từ chối nhận do sai sản phẩm (Sofa đa năng 120cm)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMBN8R9",
+        "customer": "Phường Thới Long • NV: Đào Tiến Đạt",
+        "phone": "*******970",
+        "date": "25/10/2026",
+        "reason": "Người nhận không nghe máy (Xe đạp tập thể dục tại nhà,Đồng hồ đo nhịp ti)",
+        "is_sms": false
+      },
+      {
+        "code": "VNGH80868960418",
+        "customer": "Phường Thới Long • NV: Đào Tiến Đạt",
+        "phone": "*******675",
+        "date": "25/10/2026",
+        "reason": "Người nhận đổi ý không mua nữa (Kho két Dino TM     - Bộ Mô Hình Khủng )",
+        "is_sms": false
+      },
+      {
+        "code": "GYMD73EQ",
+        "customer": "Phường Thốt Nốt • NV: Nguyễn Chí Toàn",
+        "phone": "*******719",
+        "date": "25/10/2026",
+        "reason": "Không liên lạc được người nhận / Chặn số (Xe Máy Điện Trẻ Em Địa Hình 9199 Cao Cấp, Có )",
+        "is_sms": false
+      },
+      {
+        "code": "GYMB6RT6",
+        "customer": "Phường Thới An • NV: Huỳnh Trung Lành",
+        "phone": "*******203",
+        "date": "25/10/2026",
+        "reason": "Người nhận không nghe máy (JOVNO Hộp Đựng Nhựa Hộp Đựng Đồ Trong Suốt Qu)",
+        "is_sms": false
+      },
+      {
+        "code": "GYMB8HCN",
+        "customer": "Phường Phước Thới • NV: Huỳnh Trung Lành",
+        "phone": "*******755",
+        "date": "25/10/2026",
+        "reason": "Người nhận không nghe máy (( giao nệm toàn quốc  )TẶNG KÈM BỘ GA 4MÓN, ()",
+        "is_sms": false
+      },
+      {
+        "code": "GYMD38LW",
+        "customer": "Phường Phước Thới • NV: Huỳnh Trung Lành",
+        "phone": "*******859",
+        "date": "25/10/2026",
+        "reason": "Người nhận không nghe máy (Viên diệt gián sinh học AMB hộp 8 viên an toà)",
+        "is_sms": false
+      }
+    ],
+    "sms_count": 7,
+    "gtb_total_orders": 15,
+    "total_cod_collected": 68785260,
+    "ongoing_trips_count": 0,
+    "ongoing_trips": []
   }
 }
