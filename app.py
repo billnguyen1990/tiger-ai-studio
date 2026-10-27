@@ -3104,11 +3104,31 @@ try:
         
     scheduler = BackgroundScheduler(timezone=vn_tz)
 
-    def _job_runner(script_name):
-        print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
+    def _job_runner(script_name, *extra_args):
+        print(f"[CRON TRIGGER] Running {script_name} with args {list(extra_args)}...", flush=True)
+        
+        # Kiểm tra trước cho mốc 21:30: Nếu mốc 21:00 hôm nay đã sạch 100% thì bỏ qua hoàn toàn
+        if script_name == "tiger_evening_reporter.py" and "--slot" in extra_args:
+            try:
+                slot_idx = extra_args.index("--slot")
+                if slot_idx + 1 < len(extra_args) and extra_args[slot_idx + 1] == "21h30":
+                    cache_file = os.path.join(BASE_DIR, "evening_status_cache.json")
+                    if not os.path.exists(cache_file):
+                        cache_file = os.path.join(PARENT_DIR, "evening_status_cache.json")
+                    if os.path.exists(cache_file):
+                        with open(cache_file, "r", encoding="utf-8") as f:
+                            cdata = json.load(f)
+                            today_str = get_vietnam_today().strftime("%d/%m/%Y")
+                            if cdata.get("date") == today_str and cdata.get("all_clean", False):
+                                print(f"[CRON TRIGGER] 🤫 Mốc 21:00 hôm nay ({today_str}) đã sạch 100%. Bỏ qua không kích hoạt mốc 21:30!", flush=True)
+                                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Lỗi kiểm tra cache 21h30: {e}", flush=True)
+
         script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
-            subprocess.run([sys.executable, script_path, "--send"], cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
+            cmd = [sys.executable, script_path, "--send"] + list(extra_args)
+            subprocess.run(cmd, cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
 
     scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
     scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
@@ -3119,8 +3139,8 @@ try:
     for pda_hr in [10, 12, 15, 19]:
         scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=0, args=["looker_export_temp.py"], id="b2b_18h00")
-    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
-    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py", "--slot", "21h"], id="evening_21h00")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py", "--slot", "21h30"], id="evening_21h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
     # Trên máy tính cá nhân của Sếp (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
@@ -3147,11 +3167,20 @@ def run_cron_webhook(task_key):
         "pda": "tiger_pda_progress_reporter.py",
         "b2b": "looker_export_temp.py",
         "b2b_looker": "looker_export_temp.py",
-        "evening": "tiger_evening_reporter.py"
+        "evening": "tiger_evening_reporter.py",
+        "evening_21h": "tiger_evening_reporter.py",
+        "evening_21h30": "tiger_evening_reporter.py"
     }
     script_name = script_map.get(task_key)
     if not script_name:
         return jsonify({"success": False, "error": f"Unknown cron task '{task_key}'"}), 404
+
+    extra_flags = []
+    if task_key == "evening_21h30" or request.args.get("slot") == "21h30":
+        extra_flags = ["--slot", "21h30"]
+    elif task_key in ["evening", "evening_21h"] or request.args.get("slot") == "21h":
+        extra_flags = ["--slot", "21h"]
+
     script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
     if task_key in ["truck_odo", "odo"]:
         def _bg_cron():
@@ -3166,7 +3195,7 @@ def run_cron_webhook(task_key):
             "timestamp": datetime.datetime.now().isoformat()
         })
 
-    res = subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
+    res = subprocess.run([sys.executable, script_path, "--send"] + extra_flags, cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
     return jsonify({
         "success": (res.returncode == 0),
         "task": task_key,

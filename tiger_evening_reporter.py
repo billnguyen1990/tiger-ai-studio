@@ -304,17 +304,65 @@ def send_telegram_alert(text):
         print(f"❌ Lỗi kết nối Telegram: {e}")
         return False
 
+def trigger_shutdown_ui():
+    """Kích hoạt bảng thông báo tắt máy tự động 5 phút (nếu chạy trên PC)"""
+    print("\n⏳ [TỰ ĐỘNG TẮT NGUỒN] Đang khởi chạy bảng đếm ngược 5 phút tắt máy (Giao diện Card VIP)...")
+    ps1_path = os.path.join(BASE_DIR, "tiger_shutdown_ui.ps1")
+    if os.path.exists(ps1_path):
+        try:
+            import win32process
+            si = win32process.STARTUPINFO()
+            si.lpDesktop = r"WinSta0\Default"
+            cmd = f'powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "{ps1_path}" -Seconds 300'
+            win32process.CreateProcess(None, cmd, None, None, False, 0, None, BASE_DIR, si)
+            print("✅ Đã kích hoạt bảng đếm ngược WPF VIP trên màn hình chính của sếp!")
+        except Exception as e:
+            import subprocess
+            subprocess.Popen(["powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-File", ps1_path, "-Seconds", "300"])
+            print(f"✅ Đã kích hoạt bảng đếm ngược qua subprocess.Popen: {e}")
+
 def main():
     args = sys.argv[1:]
     is_send = "--send" in args
     is_shutdown = "--shutdown" in args
     
-    # Xác định mốc giờ: 21h hoặc 21h30
-    slot = "21h"
+    # 1. Xác định mốc giờ: 21h hoặc 21h30
+    slot = None
     if "--slot" in args:
         idx = args.index("--slot")
         if idx + 1 < len(args):
             slot = args[idx + 1].strip().lower()
+
+    now = get_vietnam_now()
+    if not slot:
+        # Tự động nhận diện mốc giờ dựa vào giờ thực tế Việt Nam nếu không truyền cờ --slot
+        # Nếu đang trong khoảng từ 21:15 trở đi đến trước 22:00 -> Mốc 21h30
+        if now.hour == 21 and now.minute >= 15:
+            slot = "21h30"
+        else:
+            slot = "21h"
+
+    target_date_str = now.strftime("%d/%m/%Y")
+    prev_cache = load_cache_status()
+
+    # 2. KIỂM TRA ĐIỀU KIỆN IM LẶNG LÚC 21H30 TRƯỚC KHI QUÉT DỮ LIỆU:
+    # Nếu mốc 21:00 hôm nay đã sạch 100% (hết chuyến treo & sạch COD):
+    # Dừng ngay lập tức, không quét API và tuyệt đối không gửi Telegram!
+    if slot == "21h30":
+        was_21h_clean = False
+        if prev_cache and prev_cache.get("date") == target_date_str:
+            if prev_cache.get("all_clean", False):
+                was_21h_clean = True
+
+        if was_21h_clean:
+            print("=" * 60)
+            print(f"🤫 [IM LẶNG LÀ VÀNG] MỐC 21:30:")
+            print(f"   Mốc 21:00 hôm nay ({target_date_str}) cả 4 kho đã hoàn tất chốt sổ 100% (Hết chuyến treo & Sạch COD).")
+            print("   🚫 Không gửi lại Telegram lúc 21:30 để tránh làm phiền đội ngũ!")
+            print("=" * 60)
+            if is_shutdown:
+                trigger_shutdown_ui()
+            return
 
     print(f"⏳ Tiger AI đang quét dữ liệu Chuyến đi & Tiền COD 4 kho MT01 (Mốc {slot})...")
     data = run_evening_audit()
@@ -323,16 +371,16 @@ def main():
     total_unpaid_cod = sum(len(h["unpaid_cod"]) for h in data["hubs_data"].values())
     all_clean_now = (total_ongoing == 0 and total_unpaid_cod == 0)
 
-    # Đọc cache mốc 21h
-    prev_cache = load_cache_status()
-
-    # Kiểm tra điều kiện im lặng thông minh lúc 21h30
+    # Kiểm tra lại một lần nữa sau khi quét:
     skip_telegram_send = False
     if slot == "21h30":
-        was_21h_clean = prev_cache.get("all_clean", False) if prev_cache else False
+        was_21h_clean = False
+        if prev_cache and prev_cache.get("date") == target_date_str:
+            was_21h_clean = prev_cache.get("all_clean", False)
+
         if was_21h_clean and all_clean_now:
             skip_telegram_send = True
-            print("🤫 [IM LẶNG LÀ VÀNG]: Cả 4 kho đã sạch 100% từ mốc 21:00. Bỏ qua không gửi Telegram lúc 21:30 để tránh làm phiền đội ngũ!")
+            print("🤫 [IM LẶNG LÀ VÀNG]: Cả 4 kho đã sạch 100% từ mốc 21:00. Bỏ qua không gửi Telegram lúc 21:30!")
 
     # Lưu cache hiện tại
     save_cache_status({
@@ -361,23 +409,8 @@ def main():
     else:
         print("💡 Chế độ Dry-Run (chưa gửi). Để gửi thực tế lên Telegram, thêm cờ --send")
 
-    # Kích hoạt bảng thông báo tắt máy tự động 5 phút (nếu có cờ --shutdown)
     if is_shutdown:
-        print("\n⏳ [TỰ ĐỘNG TẮT NGUỒN] Đang khởi chạy bảng đếm ngược 5 phút tắt máy (Giao diện Card VIP)...")
-        ps1_path = os.path.join(BASE_DIR, "tiger_shutdown_ui.ps1")
-        if os.path.exists(ps1_path):
-            try:
-                import win32process
-                si = win32process.STARTUPINFO()
-                si.lpDesktop = r"WinSta0\Default"
-                cmd = f'powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "{ps1_path}" -Seconds 300'
-                win32process.CreateProcess(None, cmd, None, None, False, 0, None, BASE_DIR, si)
-                print("✅ Đã kích hoạt bảng đếm ngược WPF VIP trên màn hình chính của sếp!")
-            except Exception as e:
-                # Fallback subprocess nếu win32process lỗi
-                import subprocess
-                subprocess.Popen(["powershell.exe", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-File", ps1_path, "-Seconds", "300"])
-                print(f"✅ Đã kích hoạt bảng đếm ngược qua subprocess.Popen: {e}")
+        trigger_shutdown_ui()
 
 if __name__ == "__main__":
     main()
