@@ -1,0 +1,298 @@
+{
+  "Cái Răng": {
+    "hub_id": "21088000",
+    "deliver": {
+      "assigned": 341,
+      "gtc": 242,
+      "gtb": 21,
+      "rate": 71.0,
+      "reasons": [
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          8
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          6
+        ],
+        [
+          "Người nhận hẹn lại ngày giao",
+          3
+        ],
+        [
+          "Người nhận từ chối nhận do không có tiền",
+          3
+        ],
+        [
+          "Người nhận không nghe máy",
+          1
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 4,
+      "ltc": 2,
+      "ltb": 0,
+      "rate": 50.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Quốc Hưng": {
+        "del_assigned": 14,
+        "gtc": 12,
+        "gtb": 2,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Lê Hồng Tú": {
+        "del_assigned": 21,
+        "gtc": 20,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Văn Được Em": {
+        "del_assigned": 44,
+        "gtc": 25,
+        "gtb": 6,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Hải Đông": {
+        "del_assigned": 57,
+        "gtc": 45,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Duy Linh": {
+        "del_assigned": 56,
+        "gtc": 35,
+        "gtb": 3,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Tấn Thành": {
+        "del_assigned": 47,
+        "gtc": 39,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Văn Trường Thọ": {
+        "del_assigned": 65,
+        "gtc": 36,
+        "gtb": 2,
+        "pick_assigned": 2,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Trần Vủ Hải": {
+        "del_assigned": 37,
+        "gtc": 30,
+        "gtb": 5,
+        "pick_assigned": 1,
+        "ltc": 0,
+        "ltb": 0
+      }
+    }
+  },
+  "Bình Thủy": {
+    "hub_id": "21985000",
+    "deliver": {
+      "assigned": 146,
+      "gtc": 104,
+      "gtb": 6,
+      "rate": 71.2,
+      "reasons": [
+        [
+          "Người nhận đổi ý không mua nữa",
+          2
+        ],
+        [
+          "Người nhận hẹn lại ngày giao",
+          2
+        ],
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          2
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 2,
+      "ltc": 0,
+      "ltb": 0,
+      "rate": 0.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Lê Hiếu Lễ": {
+        "del_assigned": 43,
+        "gtc": 27,
+        "gtb": 0,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Võ Trung Hiếu": {
+        "del_assigned": 28,
+        "gtc": 21,
+        "gtb": 0,
+        "pick_assigned": 2,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Anh Bằng": {
+        "del_assigned": 42,
+        "gtc": 35,
+        "gtb": 4,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Thanh Tiền": {
+        "del_assigned": 33,
+        "gtc": 21,
+        "gtb": 2,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      }
+    }
+  },
+  "Vị Thanh": {
+    "hub_id": "22862000",
+    "deliver": {
+      "assigned": 129,
+      "gtc": 58,
+      "gtb": 2,
+      "rate": 45.0,
+      "reasons": [
+        [
+          "Người nhận hẹn lại ngày giao",
+          1
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          1
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 1,
+      "ltc": 1,
+      "ltb": 0,
+      "rate": 100.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Minh Tiến": {
+        "del_assigned": 11,
+        "gtc": 0,
+        "gtb": 0,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn An Khang": {
+        "del_assigned": 51,
+        "gtc": 19,
+        "gtb": 0,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Thành Độ": {
+        "del_assigned": 15,
+        "gtc": 8,
+        "gtb": 0,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Nhan Văn Tươi": {
+        "del_assigned": 45,
+        "gtc": 31,
+        "gtb": 2,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Huỳnh Diệp Đức Trung": {
+        "del_assigned": 7,
+        "gtc": 0,
+        "gtb": 0,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      }
+    }
+  },
+  "Ô Môn": {
+    "hub_id": "22917000",
+    "deliver": {
+      "assigned": 84,
+      "gtc": 51,
+      "gtb": 18,
+      "rate": 60.7,
+      "reasons": [
+        [
+          "Người nhận đổi ý không mua nữa",
+          6
+        ],
+        [
+          "Người nhận hẹn lại ngày giao",
+          4
+        ],
+        [
+          "Người nhận không nghe máy",
+          3
+        ],
+        [
+          "Sai thông tin Địa chỉ người nhận",
+          2
+        ],
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          2
+        ],
+        [
+          "Người nhận báo không đặt hàng",
+          1
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 1,
+      "ltc": 1,
+      "ltb": 0,
+      "rate": 100.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Chí Toàn": {
+        "del_assigned": 41,
+        "gtc": 27,
+        "gtb": 3,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Huỳnh Trung Lành": {
+        "del_assigned": 43,
+        "gtc": 24,
+        "gtb": 15,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      }
+    }
+  }
+}

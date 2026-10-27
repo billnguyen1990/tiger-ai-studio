@@ -1,0 +1,318 @@
+{
+  "Cái Răng": {
+    "hub_id": "21088000",
+    "deliver": {
+      "assigned": 235,
+      "gtc": 206,
+      "gtb": 29,
+      "rate": 87.7,
+      "reasons": [
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          10
+        ],
+        [
+          "Người nhận hẹn lại ngày giao",
+          6
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          5
+        ],
+        [
+          "Người nhận từ chối nhận do không có tiền",
+          4
+        ],
+        [
+          "Người nhận không nghe máy",
+          3
+        ],
+        [
+          "Người nhận báo không đặt hàng",
+          1
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 4,
+      "ltc": 4,
+      "ltb": 0,
+      "rate": 100.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Tấn Thành": {
+        "del_assigned": 11,
+        "gtc": 9,
+        "gtb": 2,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Trần Vủ Hải": {
+        "del_assigned": 8,
+        "gtc": 7,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Chí Linh": {
+        "del_assigned": 42,
+        "gtc": 41,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Hải Đông": {
+        "del_assigned": 41,
+        "gtc": 34,
+        "gtb": 7,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Duy Linh": {
+        "del_assigned": 39,
+        "gtc": 35,
+        "gtb": 4,
+        "pick_assigned": 3,
+        "ltc": 3,
+        "ltb": 0
+      },
+      "Nguyễn Văn Được Em": {
+        "del_assigned": 54,
+        "gtc": 45,
+        "gtb": 9,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Lê Hồng Tú": {
+        "del_assigned": 40,
+        "gtc": 35,
+        "gtb": 5,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      }
+    }
+  },
+  "Bình Thủy": {
+    "hub_id": "21985000",
+    "deliver": {
+      "assigned": 134,
+      "gtc": 121,
+      "gtb": 13,
+      "rate": 90.3,
+      "reasons": [
+        [
+          "Người nhận không nghe máy",
+          4
+        ],
+        [
+          "Người nhận hẹn lại ngày giao",
+          4
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          3
+        ],
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          2
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 10,
+      "ltc": 10,
+      "ltb": 0,
+      "rate": 100.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Hữu Thanh": {
+        "del_assigned": 25,
+        "gtc": 22,
+        "gtb": 3,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Võ Trung Hiếu": {
+        "del_assigned": 24,
+        "gtc": 23,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nguyễn Thanh Tiền": {
+        "del_assigned": 22,
+        "gtc": 19,
+        "gtb": 3,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Nguyễn Anh Bằng": {
+        "del_assigned": 27,
+        "gtc": 24,
+        "gtb": 3,
+        "pick_assigned": 8,
+        "ltc": 8,
+        "ltb": 0
+      },
+      "Lê Hiếu Lễ": {
+        "del_assigned": 36,
+        "gtc": 33,
+        "gtb": 3,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      }
+    }
+  },
+  "Vị Thanh": {
+    "hub_id": "22862000",
+    "deliver": {
+      "assigned": 63,
+      "gtc": 55,
+      "gtb": 8,
+      "rate": 87.3,
+      "reasons": [
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          3
+        ],
+        [
+          "Người nhận hẹn lại ngày giao",
+          1
+        ],
+        [
+          "Người nhận đổi địa chỉ giao hàng",
+          1
+        ],
+        [
+          "Người nhận không nghe máy",
+          1
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          1
+        ],
+        [
+          "Sai thông tin Địa chỉ người nhận",
+          1
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 2,
+      "ltc": 2,
+      "ltb": 0,
+      "rate": 100.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Thành Độ": {
+        "del_assigned": 0,
+        "gtc": 0,
+        "gtb": 0,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Huỳnh Diệp Đức Trung": {
+        "del_assigned": 1,
+        "gtc": 1,
+        "gtb": 0,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Nguyễn Minh Tiến": {
+        "del_assigned": 12,
+        "gtc": 10,
+        "gtb": 2,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Nhan Văn Tươi": {
+        "del_assigned": 50,
+        "gtc": 44,
+        "gtb": 6,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      }
+    }
+  },
+  "Ô Môn": {
+    "hub_id": "22917000",
+    "deliver": {
+      "assigned": 67,
+      "gtc": 48,
+      "gtb": 19,
+      "rate": 71.6,
+      "reasons": [
+        [
+          "Người nhận hẹn lại ngày giao",
+          9
+        ],
+        [
+          "Không liên lạc được người nhận / Chặn số",
+          4
+        ],
+        [
+          "Người nhận đổi ý không mua nữa",
+          3
+        ],
+        [
+          "Người nhận không nghe máy",
+          2
+        ],
+        [
+          "Người nhận từ chối nhận do hàng hư hỏng",
+          1
+        ]
+      ]
+    },
+    "pick": {
+      "assigned": 1,
+      "ltc": 1,
+      "ltb": 0,
+      "rate": 100.0,
+      "reasons": []
+    },
+    "drivers": {
+      "Nguyễn Chí Toàn": {
+        "del_assigned": 36,
+        "gtc": 25,
+        "gtb": 11,
+        "pick_assigned": 1,
+        "ltc": 1,
+        "ltb": 0
+      },
+      "Đào Tiến Đạt": {
+        "del_assigned": 23,
+        "gtc": 16,
+        "gtb": 7,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      },
+      "Huỳnh Trung Lành": {
+        "del_assigned": 8,
+        "gtc": 7,
+        "gtb": 1,
+        "pick_assigned": 0,
+        "ltc": 0,
+        "ltb": 0
+      }
+    }
+  }
+}

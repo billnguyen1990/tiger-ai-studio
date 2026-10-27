@@ -1127,6 +1127,8 @@ def get_hub_detail(hub_id):
     except Exception:
         day_of_week = "Thứ Bảy"
 
+    _ensure_recent_kpi_snapshots(history_dir, force_today=False)
+    today_key_now = get_vietnam_today().strftime("%Y%m%d")
     available_dates = []
     hist_files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)
     for fpath in hist_files:
@@ -1134,9 +1136,10 @@ def get_hub_detail(hub_id):
         d_key = fn.replace("kpi_", "").replace(".json", "")
         if len(d_key) == 8 and d_key.isdigit():
             d_str = f"{d_key[6:8]}/{d_key[4:6]}/{d_key[:4]}"
+            lbl = f"{d_str} (Hôm nay • Trực tiếp)" if d_key == today_key_now else f"{d_str} (Chốt ca)"
             available_dates.append({
                 "date_key": d_key,
-                "label": f"{d_str} (Chốt ca)" if fpath == hist_files[0] else f"{d_str} (Đã lưu trữ)"
+                "label": lbl
             })
 
     kpi_raw = {}
@@ -1423,11 +1426,190 @@ def get_hub_detail(hub_id):
 
     return jsonify({"success": True, "data": hub_payload, **hub_payload})
 
+def _scrape_live_kpi_for_date(target_date_int, history_dir):
+    """Quét trực tiếp API GHN cho 4 kho MT01 theo ngày YYYYMMDD (song song tốc độ cao) và lưu vào kpi_history/"""
+    headers_file = os.path.join(PARENT_DIR, "headers_found.json")
+    if not os.path.exists(headers_file):
+        headers_file = os.path.join(BASE_DIR, "headers_found.json")
+    map_file = os.path.join(PARENT_DIR, "nvxl_telegram_map.json")
+    if not os.path.exists(map_file):
+        map_file = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
+    if not os.path.exists(headers_file) or not os.path.exists(map_file):
+        return False
+
+    try:
+        with open(headers_file, "r", encoding="utf-8") as f:
+            base_headers = json.load(f)
+        with open(map_file, "r", encoding="utf-8") as f:
+            nvxl_map = json.load(f)
+    except Exception as e:
+        print(f"Lỗi đọc config trong _scrape_live_kpi_for_date: {e}")
+        return False
+
+    url_trips = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-list-by-hub"
+    url_items = "https://nhanh-api.ghn.vn/api/lastmile/v2/trip/get-trip-items"
+
+    def scrape_one_hub(hid_info):
+        hid, info = hid_info
+        hname = info["short_name"]
+        h_headers = dict(base_headers)
+        h_headers["x-warehouseid"] = hid
+
+        trips = []
+        seen_codes = set()
+        for st in ["FINISHED", "ON_TRIP", "CLOSED", "NEW", "COMPLETED"]:
+            payload = {"hub_id": hid, "status": st, "is_ready": 0, "offset": 0, "limit": 100}
+            try:
+                res = requests.post(url_trips, headers=h_headers, json=payload, timeout=8)
+                if res.status_code == 200:
+                    for t in res.json().get("data", []) or []:
+                        c_date = t.get("createDateIndex")
+                        s_date = t.get("startDateIndex")
+                        tc = t.get("tripCode")
+                        if (c_date == target_date_int or s_date == target_date_int) and tc not in seen_codes:
+                            seen_codes.add(tc)
+                            trips.append(t)
+            except Exception:
+                pass
+
+        deliver_stats = {"total": 0, "gtc": 0, "gtb": 0, "pending": 0, "reasons": {}}
+        pick_stats = {"total": 0, "ltc": 0, "ltb": 0, "pending": 0, "reasons": {}}
+        drivers_summary = {}
+
+        for t in trips:
+            tc = t.get("tripCode")
+            driver = t.get("driverName") or "Chưa rõ NV"
+            if driver not in drivers_summary:
+                drivers_summary[driver] = {"del_assigned": 0, "gtc": 0, "gtb": 0, "pick_assigned": 0, "ltc": 0, "ltb": 0}
+
+            p_del = {"typeList": ["DELIVER"], "offset": 0, "limit": 500, "TripCode": tc}
+            try:
+                r_del = requests.post(url_items, headers=h_headers, json=p_del, timeout=8)
+                if r_del.status_code == 200:
+                    for it in (r_del.json().get("data", []) or []):
+                        deliver_stats["total"] += 1
+                        drivers_summary[driver]["del_assigned"] += 1
+                        is_up = it.get("isUpdated", False)
+                        is_suc = it.get("isSucceeded", False)
+                        if is_suc:
+                            deliver_stats["gtc"] += 1
+                            drivers_summary[driver]["gtc"] += 1
+                        elif is_up:
+                            deliver_stats["gtb"] += 1
+                            drivers_summary[driver]["gtb"] += 1
+                            rs = it.get("failNote") or it.get("failCode") or "Lý do khác"
+                            deliver_stats["reasons"][rs] = deliver_stats["reasons"].get(rs, 0) + 1
+                        else:
+                            deliver_stats["pending"] += 1
+            except Exception:
+                pass
+
+            p_pick = {"typeList": ["PICK"], "offset": 0, "limit": 500, "TripCode": tc}
+            try:
+                r_pick = requests.post(url_items, headers=h_headers, json=p_pick, timeout=8)
+                if r_pick.status_code == 200:
+                    for it in (r_pick.json().get("data", []) or []):
+                        pick_stats["total"] += 1
+                        drivers_summary[driver]["pick_assigned"] += 1
+                        is_up = it.get("isUpdated", False)
+                        is_suc = it.get("isSucceeded", False)
+                        if is_suc:
+                            pick_stats["ltc"] += 1
+                            drivers_summary[driver]["ltc"] += 1
+                        elif is_up:
+                            pick_stats["ltb"] += 1
+                            drivers_summary[driver]["ltb"] += 1
+                            rs = it.get("failNote") or it.get("failCode") or "Lý do khác"
+                            pick_stats["reasons"][rs] = pick_stats["reasons"].get(rs, 0) + 1
+                        else:
+                            pick_stats["pending"] += 1
+            except Exception:
+                pass
+
+        d_total = deliver_stats["total"]
+        d_gtc = deliver_stats["gtc"]
+        d_gtb = deliver_stats["gtb"]
+        d_rate = round(d_gtc / d_total * 100, 1) if d_total > 0 else 0.0
+
+        p_total = pick_stats["total"]
+        p_ltc = pick_stats["ltc"]
+        p_ltb = pick_stats["ltb"]
+        p_rate = round(p_ltc / p_total * 100, 1) if p_total > 0 else 0.0
+
+        sorted_gtb_reasons = sorted(deliver_stats["reasons"].items(), key=lambda x: x[1], reverse=True)
+        sorted_ltb_reasons = sorted(pick_stats["reasons"].items(), key=lambda x: x[1], reverse=True)
+
+        return hname, {
+            "hub_id": hid,
+            "deliver": {
+                "assigned": d_total,
+                "gtc": d_gtc,
+                "gtb": d_gtb,
+                "rate": d_rate,
+                "reasons": sorted_gtb_reasons
+            },
+            "pick": {
+                "assigned": p_total,
+                "ltc": p_ltc,
+                "ltb": p_ltb,
+                "rate": p_rate,
+                "reasons": sorted_ltb_reasons
+            },
+            "drivers": drivers_summary
+        }
+
+    all_data = {}
+    try:
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            for hname, hdata in ex.map(scrape_one_hub, list(nvxl_map.items())):
+                all_data[hname] = hdata
+        # Chỉ lưu nếu có ít nhất 1 kho có đơn gán
+        total_orders = sum(v.get("deliver", {}).get("assigned", 0) + v.get("pick", {}).get("assigned", 0) for v in all_data.values())
+        if total_orders > 0:
+            os.makedirs(history_dir, exist_ok=True)
+            out_file = os.path.join(history_dir, f"kpi_{target_date_int}.json")
+            with open(out_file, "w", encoding="utf-8") as f:
+                json.dump(all_data, f, ensure_ascii=False, indent=2)
+            # Đồng bộ sang BASE_DIR/kpi_history nếu khác PARENT_DIR
+            alt_dir = os.path.join(BASE_DIR, "kpi_history")
+            if os.path.abspath(alt_dir) != os.path.abspath(history_dir):
+                os.makedirs(alt_dir, exist_ok=True)
+                shutil.copy2(out_file, os.path.join(alt_dir, f"kpi_{target_date_int}.json"))
+            return True
+    except Exception as e:
+        print(f"Lỗi _scrape_live_kpi_for_date({target_date_int}): {e}")
+    return False
+
+def _ensure_recent_kpi_snapshots(history_dir, force_today=False):
+    """Đảm bảo luôn có dữ liệu chốt ca hôm qua (N-1) và dữ liệu trực tiếp hôm nay (N)"""
+    os.makedirs(history_dir, exist_ok=True)
+    vn_today = get_vietnam_today()
+    vn_yday = vn_today - datetime.timedelta(days=1)
+    today_key = vn_today.strftime("%Y%m%d")
+    yday_key = vn_yday.strftime("%Y%m%d")
+
+    yday_file = os.path.join(history_dir, f"kpi_{yday_key}.json")
+    if not os.path.exists(yday_file):
+        _scrape_live_kpi_for_date(int(yday_key), history_dir)
+
+    today_file = os.path.join(history_dir, f"kpi_{today_key}.json")
+    need_today = force_today or (not os.path.exists(today_file))
+    if not need_today and os.path.exists(today_file):
+        try:
+            if time.time() - os.path.getmtime(today_file) > 900:
+                need_today = True
+        except Exception:
+            pass
+    if need_today:
+        _scrape_live_kpi_for_date(int(today_key), history_dir)
+
 @app.route("/api/analytics-dates")
 def get_analytics_dates():
     """Lấy danh sách các ngày đã lưu trữ báo cáo KPI trong thư mục kpi_history/"""
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
     os.makedirs(history_dir, exist_ok=True)
+    _ensure_recent_kpi_snapshots(history_dir, force_today=False)
+    today_key = get_vietnam_today().strftime("%Y%m%d")
     
     dates = []
     files = glob.glob(os.path.join(history_dir, "kpi_*.json"))
@@ -1437,10 +1619,11 @@ def get_analytics_dates():
         if len(parts) == 8 and parts.isdigit():
             y, m, d = parts[:4], parts[4:6], parts[6:8]
             formatted_date = f"{d}/{m}/{y}"
+            lbl = f"{formatted_date} (Hôm nay • Trực tiếp)" if parts == today_key else f"{formatted_date} (Chốt ca)"
             dates.append({
                 "date_key": parts,
                 "date_display": formatted_date,
-                "label": f"{formatted_date} (Chốt ca)",
+                "label": lbl,
                 "filename": basename
             })
             
@@ -1461,23 +1644,19 @@ def refresh_analytics_data():
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
     os.makedirs(history_dir, exist_ok=True)
     
-    # Đảm bảo snapshot 25/10/2026 luôn hiện diện đầy đủ
-    kpi_25 = os.path.join(history_dir, "kpi_20261025.json")
-    if not os.path.exists(kpi_25):
-        alt_kpi = os.path.join(BASE_DIR, "kpi_history", "kpi_20261025.json")
-        if os.path.exists(alt_kpi):
-            shutil.copy2(alt_kpi, kpi_25)
+    _ensure_recent_kpi_snapshots(history_dir, force_today=True)
             
     files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)
-    latest_key = "20261025"
+    latest_key = get_vietnam_today().strftime("%Y%m%d")
     if files:
         latest_key = os.path.basename(files[0]).replace("kpi_", "").replace(".json", "")
         
+    vn_now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
     return jsonify({
         "success": True,
-        "message": f"Đã quét và đồng bộ thành công dữ liệu ngày mới nhất ({latest_key[6:8]}/{latest_key[4:6]}/{latest_key[:4]})!",
+        "message": f"Đã quét trực tiếp từ GHN và đồng bộ dữ liệu ngày mới nhất ({latest_key[6:8]}/{latest_key[4:6]}/{latest_key[:4]}) lúc {vn_now_str}!",
         "latest_date": latest_key,
-        "timestamp": datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+        "timestamp": vn_now_str
     })
 
 @app.route("/api/analytics-data")
@@ -1485,6 +1664,7 @@ def get_analytics_data():
     """Cung cấp dữ liệu thống kê trực quan từ hệ thống thật GHN Lastmile 4 kho MT01 theo từng ngày lịch sử lưu trữ"""
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
     os.makedirs(history_dir, exist_ok=True)
+    _ensure_recent_kpi_snapshots(history_dir, force_today=False)
     
     req_date = request.args.get("date", "").strip()
     target_file = None
@@ -1671,8 +1851,16 @@ def get_analytics_data():
     for i, d in enumerate(all_drivers):
         d["rank"] = i + 1
 
-    # Tính thời điểm chốt ca chuẩn (07:00 sáng ngày hôm sau của ngày KPI)
-    if len(date_key) == 8 and date_key.isdigit():
+    # Tính thời điểm đồng bộ: nếu là ngày hôm nay thì hiển thị giờ cập nhật thực tế, nếu ngày cũ thì 07:00 sáng hôm sau
+    today_str_key = get_vietnam_today().strftime("%Y%m%d")
+    if date_key == today_str_key and target_file and os.path.exists(target_file):
+        try:
+            mtime_utc = datetime.datetime.fromtimestamp(os.path.getmtime(target_file), tz=datetime.timezone.utc)
+            mtime_vn = mtime_utc.astimezone(datetime.timezone(datetime.timedelta(hours=7)))
+            sync_time_str = f"Trực tiếp • {mtime_vn.strftime('%H:%M %d/%m/%Y')}"
+        except Exception:
+            sync_time_str = f"Trực tiếp • {get_vietnam_now().strftime('%H:%M %d/%m/%Y')}"
+    elif len(date_key) == 8 and date_key.isdigit():
         try:
             d_obj = datetime.date(int(date_key[:4]), int(date_key[4:6]), int(date_key[6:8]))
             next_day_obj = d_obj + datetime.timedelta(days=1)
@@ -3049,10 +3237,10 @@ def get_system_status():
 def get_version():
     """Thông tin phiên bản hệ thống và nhật ký cập nhật (Changelog)"""
     return jsonify({
-        "current_version": "v2.9.0",
-        "latest_version": "v2.9.0",
+        "current_version": "v2.9.1",
+        "latest_version": "v2.9.1",
         "has_update": False,
-        "release_date": "26/10/2026",
+        "release_date": "27/10/2026",
         "system_status": "ONLINE",
         "changelog": [
             "v2.9.0: Tích hợp Luồng 9: Tự Động Xuất Đơn B2B • Looker Studio (18:00 hàng ngày) kết nối Chrome CDP, lọc 13 tỉnh ĐBSCL, xuất Google Sheets & đồng bộ Master Dashboard.",
@@ -3082,8 +3270,8 @@ def update_system():
 
         return jsonify({
             "status": "success",
-            "version": "v2.7.0",
-            "message": "🎉 Hệ thống Tiger AI đã cập nhật lên phiên bản v2.7.0 & nạp dữ liệu ngày 25/10/2026 thành công!",
+            "version": "v2.9.1",
+            "message": f"🎉 Hệ thống Tiger AI đã cập nhật lên phiên bản v2.9.1 & đồng bộ dữ liệu KPI trực tiếp ngày {get_vietnam_today().strftime('%d/%m/%Y')} thành công!",
             "updated_at": datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         })
     except Exception as e:

@@ -2086,11 +2086,11 @@ document.addEventListener("DOMContentLoaded", () => {
           const resJson = await res.json();
           addLog("success", resJson.message || "Cập nhật dữ liệu thành công!");
           playCyberSound("success");
-          await loadAnalytics(resJson.latest_date || "20261025");
+          await loadAnalytics(resJson.latest_date || "");
         } catch(err) {
           console.error("Lỗi cập nhật dữ liệu:", err);
           addLog("error", `Lỗi cập nhật dữ liệu: ${err.message}`);
-          await loadAnalytics("20261025");
+          await loadAnalytics("");
         } finally {
           if (icon) icon.classList.remove("spin-icon");
           if (lbl) lbl.textContent = "Cập Nhật Dữ Liệu Mới";
