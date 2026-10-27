@@ -605,23 +605,50 @@ def run_looker_export_pipeline(max_retries=3):
             start_total = time.time()
             
             with sync_playwright() as p:
-                if not check_chrome_ready():
-                    print("  ! Chrome chưa mở, đang thử khởi động Chrome bằng file .bat...")
-                    start_chrome_bat()
-                    
-                connected = False
-                for c_attempt in range(6):
-                    try:
-                        browser = p.chromium.connect_over_cdp(CDP_URL)
-                        context = browser.contexts[0]
-                        print(f"  ✓ Kết nối Chrome thành công!")
-                        connected = True
-                        break
-                    except Exception:
-                        print(f"  ⏳ Đang đợi Chrome sẵn sàng... ({12 + (c_attempt+1)*5}s)")
-                        time.sleep(5)
-                if not connected:
-                    raise RuntimeError("Chrome chưa mở remote debugging sau 42 giây.")
+                storage_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "google_auth_storage.json")
+                is_headless_cloud = (
+                    "--headless" in sys.argv or 
+                    os.environ.get("GITHUB_ACTIONS") == "true" or 
+                    (not check_chrome_ready() and os.path.exists(storage_file))
+                )
+
+                browser = None
+                if is_headless_cloud:
+                    print("  🚀 [CHẾ ĐỘ CLOUD / GITHUB ACTIONS] Khởi chạy Chromium Headless với phiên Google...")
+                    browser = p.chromium.launch(
+                        headless=True,
+                        args=[
+                            "--disable-blink-features=AutomationControlled",
+                            "--no-sandbox",
+                            "--disable-setuid-sandbox",
+                            "--disable-dev-shm-usage"
+                        ]
+                    )
+                    context = browser.new_context(
+                        storage_state=storage_file if os.path.exists(storage_file) else None,
+                        viewport={"width": 1920, "height": 1080},
+                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+                        permissions=["clipboard-read", "clipboard-write"]
+                    )
+                    print("  ✓ Đã kết nối phiên Google Cloud thành công!")
+                else:
+                    if not check_chrome_ready():
+                        print("  ! Chrome chưa mở, đang thử khởi động Chrome bằng file .bat...")
+                        start_chrome_bat()
+                        
+                    connected = False
+                    for c_attempt in range(6):
+                        try:
+                            browser = p.chromium.connect_over_cdp(CDP_URL)
+                            context = browser.contexts[0]
+                            print(f"  ✓ Kết nối Chrome thành công!")
+                            connected = True
+                            break
+                        except Exception:
+                            print(f"  ⏳ Đang đợi Chrome sẵn sàng... ({12 + (c_attempt+1)*5}s)")
+                            time.sleep(5)
+                    if not connected:
+                        raise RuntimeError("Chrome chưa mở remote debugging sau 42 giây.")
 
                 # 1. Looker Studio Tab 1. B2B
                 looker_page = get_or_open_looker_page(context)

@@ -994,25 +994,32 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux):
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if wf_id == "b2b_looker" and is_cloud:
-        cloud_output = f"""🐅 <b>TIGER AI - THÔNG BÁO VẬN HÀNH B2B • LOOKER STUDIO</b>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌐 <b>Môi trường hiện tại:</b> Máy chủ Render Cloud (Linux 24/7)
-💻 <b>Cơ chế điều khiển:</b> Trình duyệt Chrome máy trạm của Sếp (CDP Port 9223)
+        gh_token = os.environ.get("GITHUB_TOKEN", "")
+        gh_url = "https://api.github.com/repos/billnguyen1990/tiger-ai-studio/actions/workflows/b2b_auto_18h.yml/dispatches"
+        dispatched = False
+        gh_status = ""
+        try:
+            gh_res = requests.post(
+                gh_url,
+                headers={"Authorization": f"token {gh_token}", "Accept": "application/vnd.github.v3+json"},
+                json={"ref": "main"},
+                timeout=10
+            )
+            dispatched = (gh_res.status_code in [200, 204])
+            gh_status = f"HTTP {gh_res.status_code}"
+        except Exception as ex:
+            gh_status = str(ex)
 
-ℹ️ <b>LƯU Ý VẬN HÀNH:</b>
-Báo cáo Looker Studio yêu cầu phiên đăng nhập tài khoản Google thực tế trên máy tính trạm của Sếp.
-• ⏰ <b>Lịch tự động 18:00 hàng ngày:</b> Tiger AI đã đăng ký Task Scheduler <code>TigerAI_Auto_B2B_18h00</code> trên máy tính của Sếp để tự động chạy ngầm lúc <b>18:00 mỗi ngày</b>.
-• 🚀 <b>Chạy ngay tại máy tính:</b>
-  1. Mở web Command Center local: <b><a href="http://localhost:5050" target="_blank">http://localhost:5050</a></b> và bấm Kích Hoạt.
-  2. Hoặc nhấp đúp file phím tắt <code>Run_Tiger_B2B_Bot.bat</code> ngoài Desktop!
-
-📊 <b>CẤU HÌNH BỘ LỌC ĐÃ SẴN SÀNG:</b>
-• 📋 Báo cáo: <b>Dashboard Tách Luồng Vận Chuyển (Tab 1. B2B)</b>
-• 📍 Địa bàn: <b>13 tỉnh ĐBSCL</b> (Long An, Tiền Giang, Cần Thơ, Bến Tre, Vĩnh Long, An Giang, Cà Mau,...)
-• 📁 Master Dashboard: <a href="https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit" target="_blank">Mở Google Sheet Master ↗</a>
-• 🤖 Tự động xuất Google Sheets ➔ Dán tab Data ➔ Bắn Telegram Topic 2690!
+        cloud_output = f"""🐅 <b>TIGER AI - KÍCH HOẠT CLOUD AUTOMATION B2B • LOOKER STUDIO</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ <i>Đã ghi nhận yêu cầu điều hành từ Sếp thành công!</i>"""
+🚀 <b>Trạng thái kích hoạt Đám Mây:</b> {'✅ THÀNH CÔNG' if dispatched else '⚠️ ' + gh_status}
+• ☁️ <b>Môi trường thực thi:</b> GitHub Actions Cloud (7GB RAM, 2 vCPU, Headless Chromium 1080p).
+• ⏰ <b>Lịch tự động hàng ngày:</b> <code>18:00</code> (Chạy ngầm 24/7 hoàn toàn không cần bật máy tính).
+• 📋 <b>Nhiệm vụ:</b> Lọc 13 tỉnh ĐBSCL ➔ Xuất Google Sheets ➔ Cập nhật Master Sheet ➔ Gửi Telegram Topic 2690.
+• 🔗 <b>Theo dõi tiến trình trực tiếp:</b>
+<a href="https://github.com/billnguyen1990/tiger-ai-studio/actions" target="_blank">Xem GitHub Actions Workflow Runs ↗</a>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 <i>Quy trình đang được máy ảo đám mây xử lý tự động trong vòng ~3-5 phút...</i>"""
         if send_telegram:
             send_telegram_direct(cloud_output)
         return jsonify({

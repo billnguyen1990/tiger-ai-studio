@@ -7,3 +7,8 @@ env/
 venv/
 .DS_Store
 gemini_config.json
+google_auth_storage.json
+*.png
+*.jpg
+*.log
+debug_dom.html
