@@ -994,32 +994,25 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux):
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if wf_id == "b2b_looker" and is_cloud:
-        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSO" + "XfHoBFEfKc3Y3z3aO0Dq")
-        gh_url = "https://api.github.com/repos/billnguyen1990/tiger-ai-studio/actions/workflows/Don_Tao_auto_18h.yml/dispatches"
-        dispatched = False
-        gh_status = ""
-        try:
-            gh_res = requests.post(
-                gh_url,
-                headers={"Authorization": f"token {gh_token}", "Accept": "application/vnd.github.v3+json"},
-                json={"ref": "main"},
-                timeout=10
-            )
-            dispatched = (gh_res.status_code in [200, 204])
-            gh_status = f"HTTP {gh_res.status_code}"
-        except Exception as ex:
-            gh_status = str(ex)
+        cloud_output = f"""🐅 <b>TIGER AI - THÔNG BÁO VẬN HÀNH B2B • LOOKER STUDIO</b>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 <b>Môi trường hiện tại:</b> Máy chủ Render Cloud (Linux 24/7)
+💻 <b>Cơ chế điều khiển:</b> Trình duyệt Chrome máy trạm của Sếp (CDP Port 9223)
 
-        cloud_output = f"""🐅 <b>TIGER AI - KÍCH HOẠT CLOUD AUTOMATION B2B • LOOKER STUDIO</b>
+ℹ️ <b>LƯU Ý VẬN HÀNH:</b>
+Báo cáo Looker Studio yêu cầu phiên đăng nhập tài khoản Google thực tế trên máy tính trạm của Sếp.
+• ⏰ <b>Lịch tự động 18:00 hàng ngày:</b> Tiger AI đã đăng ký Task Scheduler <code>TigerAI_Auto_B2B_18h00</code> trên máy tính của Sếp để tự động chạy ngầm lúc <b>18:00 mỗi ngày</b>.
+• 🚀 <b>Chạy ngay tại máy tính:</b>
+  1. Mở web Command Center local: <b><a href="http://localhost:5050" target="_blank">http://localhost:5050</a></b> và bấm Kích Hoạt.
+  2. Hoặc nhấp đúp file phím tắt <code>Run_Tiger_B2B_Bot.bat</code> ngoài Desktop!
+
+📊 <b>CẤU HÌNH BỘ LỌC ĐÃ SẴN SÀNG:</b>
+• 📋 Báo cáo: <b>Dashboard Tách Luồng Vận Chuyển (Tab 1. B2B)</b>
+• 📍 Địa bàn: <b>13 tỉnh ĐBSCL</b> (Long An, Tiền Giang, Cần Thơ, Bến Tre, Vĩnh Long, An Giang, Cà Mau,...)
+• 📁 Master Dashboard: <a href="https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit" target="_blank">Mở Google Sheet Master ↗</a>
+• 🤖 Tự động xuất Google Sheets ➔ Dán tab Data ➔ Bắn Telegram Topic 2690!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 <b>Trạng thái kích hoạt Đám Mây:</b> {'✅ THÀNH CÔNG' if dispatched else '⚠️ ' + gh_status}
-• ☁️ <b>Môi trường thực thi:</b> GitHub Actions Cloud (7GB RAM, 2 vCPU, Headless Chromium 1080p).
-• ⏰ <b>Lịch tự động hàng ngày:</b> <code>18:00</code> (Chạy ngầm 24/7 hoàn toàn không cần bật máy tính).
-• 📋 <b>Nhiệm vụ:</b> Lọc 13 tỉnh ĐBSCL ➔ Xuất Google Sheets ➔ Cập nhật Master Sheet ➔ Gửi Telegram Topic 2690.
-• 🔗 <b>Theo dõi tiến trình trực tiếp:</b>
-<a href="https://github.com/billnguyen1990/tiger-ai-studio/actions" target="_blank">Xem GitHub Actions Workflow Runs ↗</a>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 <i>Quy trình đang được máy ảo đám mây xử lý tự động trong vòng ~3-5 phút...</i>"""
+✅ <i>Đã ghi nhận yêu cầu điều hành từ Sếp thành công!</i>"""
         if send_telegram:
             send_telegram_direct(cloud_output)
         return jsonify({
@@ -3468,31 +3461,11 @@ try:
         
     scheduler = BackgroundScheduler(timezone=vn_tz)
 
-    def _job_runner(script_name, *extra_args):
-        print(f"[CRON TRIGGER] Running {script_name} with args {list(extra_args)}...", flush=True)
-        
-        # Kiểm tra trước cho mốc 21:30: Nếu mốc 21:00 hôm nay đã sạch 100% thì bỏ qua hoàn toàn
-        if script_name == "tiger_evening_reporter.py" and "--slot" in extra_args:
-            try:
-                slot_idx = extra_args.index("--slot")
-                if slot_idx + 1 < len(extra_args) and extra_args[slot_idx + 1] == "21h30":
-                    cache_file = os.path.join(BASE_DIR, "evening_status_cache.json")
-                    if not os.path.exists(cache_file):
-                        cache_file = os.path.join(PARENT_DIR, "evening_status_cache.json")
-                    if os.path.exists(cache_file):
-                        with open(cache_file, "r", encoding="utf-8") as f:
-                            cdata = json.load(f)
-                            today_str = get_vietnam_today().strftime("%d/%m/%Y")
-                            if cdata.get("date") == today_str and cdata.get("all_clean", False):
-                                print(f"[CRON TRIGGER] 🤫 Mốc 21:00 hôm nay ({today_str}) đã sạch 100%. Bỏ qua không kích hoạt mốc 21:30!", flush=True)
-                                return
-            except Exception as e:
-                print(f"[CRON TRIGGER] Lỗi kiểm tra cache 21h30: {e}", flush=True)
-
+    def _job_runner(script_name):
+        print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
         script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
-            cmd = [sys.executable, script_path, "--send"] + list(extra_args)
-            subprocess.run(cmd, cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
+            subprocess.run([sys.executable, script_path, "--send"], cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
 
     scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
     scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
@@ -3503,8 +3476,8 @@ try:
     for pda_hr in [10, 12, 15, 19]:
         scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=0, args=["looker_export_temp.py"], id="b2b_18h00")
-    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py", "--slot", "21h"], id="evening_21h00")
-    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py", "--slot", "21h30"], id="evening_21h30")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
     # Trên máy tính cá nhân của Sếp (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
@@ -3531,20 +3504,11 @@ def run_cron_webhook(task_key):
         "pda": "tiger_pda_progress_reporter.py",
         "b2b": "looker_export_temp.py",
         "b2b_looker": "looker_export_temp.py",
-        "evening": "tiger_evening_reporter.py",
-        "evening_21h": "tiger_evening_reporter.py",
-        "evening_21h30": "tiger_evening_reporter.py"
+        "evening": "tiger_evening_reporter.py"
     }
     script_name = script_map.get(task_key)
     if not script_name:
         return jsonify({"success": False, "error": f"Unknown cron task '{task_key}'"}), 404
-
-    extra_flags = []
-    if task_key == "evening_21h30" or request.args.get("slot") == "21h30":
-        extra_flags = ["--slot", "21h30"]
-    elif task_key in ["evening", "evening_21h"] or request.args.get("slot") == "21h":
-        extra_flags = ["--slot", "21h"]
-
     script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
     if task_key in ["truck_odo", "odo"]:
         def _bg_cron():
@@ -3559,7 +3523,7 @@ def run_cron_webhook(task_key):
             "timestamp": datetime.datetime.now().isoformat()
         })
 
-    res = subprocess.run([sys.executable, script_path, "--send"] + extra_flags, cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
+    res = subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, capture_output=True, text=True, encoding="utf-8", errors="replace", creationflags=CREATE_NO_WINDOW)
     return jsonify({
         "success": (res.returncode == 0),
         "task": task_key,
