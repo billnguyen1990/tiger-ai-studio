@@ -3397,37 +3397,102 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
     except Exception as e:
         return {"ok": False, "description": str(e)}
 
+TELEGRAM_AUTO_REPLY_ENABLED = True
+
+@app.route("/api/telegram-bridge/auto-reply", methods=["GET", "POST"])
+def toggle_telegram_auto_reply():
+    global TELEGRAM_AUTO_REPLY_ENABLED
+    if request.method == "POST":
+        data = request.get_json(silent=True, force=True) or {}
+        if "enabled" in data:
+            TELEGRAM_AUTO_REPLY_ENABLED = bool(data["enabled"])
+        else:
+            TELEGRAM_AUTO_REPLY_ENABLED = not TELEGRAM_AUTO_REPLY_ENABLED
+    return jsonify({"success": True, "auto_reply_enabled": TELEGRAM_AUTO_REPLY_ENABLED})
+
+def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user_text):
+    """Gọi Gemini trả lời tự nhiên, ngắn gọn 1-2 câu như quản lý/điều phối viên trong nhóm chat Telegram"""
+    api_key = get_gemini_api_key()
+    sys_instruction = (
+        "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).
+"
+        "QUY TẮC BẮT BUỘC:
+"
+        "1. Trả lời cực kỳ tự nhiên, gần gũi, ngắn gọn (chỉ 1 đến 2 câu), giống như người điều phối đang nói chuyện trực tiếp với anh em kho.
+"
+        "2. TUYỆT ĐỐI KHÔNG dùng các câu máy móc như 'Tiger AI Copilot đã ghi nhận', 'chuyển lên Bảng Điều Hành của Sếp', hay 'Xin chào tôi là trợ lý AI'.
+"
+        "3. Nếu nhân viên báo nghỉ/off ca (ví dụ: 'nay off AI ơi'): hãy hỏi thăm ngắn gọn và hỏi xem hôm nay ở kho đó ai trực thay để nắm thông tin.
+"
+        "4. Nếu nhân viên giải trình lý do rớt đơn / GTB / hẹn giao: hãy phản hồi xác nhận ngắn gọn và nhắc anh em lưu ý xử lý dứt điểm các đơn tồn.
+"
+        "5. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đúng trọng tâm.
+"
+    )
+    context_prompt = ""
+    if reply_to_text:
+        context_prompt += f"Tin nhắn trước đó bạn đã hỏi nhân viên: "{reply_to_text}"
+"
+    context_prompt += f"Nhân viên '{sender_name}' ({hub_badge}) vừa nhắn lại: "{user_text}"
+Hãy viết câu trả lời trực tiếp (1-2 câu ngắn gọn):"
+
+    ans = call_gemini_api(context_prompt, sys_instruction, api_key)
+    if ans:
+        import re
+        ans = re.sub(r'\*\*(.*?)\*\*', r'<b></b>', ans.strip())
+        ans = re.sub(r'`([^`]+)`', r'<code></code>', ans)
+        return ans
+    return ""
+
 def _handle_employee_telegram_auto_reply(msg_obj, entry):
-    """Tự động trả lời nhân viên trên Telegram khi nhân viên gửi mã đơn GYM..., hỏi @AiAgentMT_bot, hoặc giải trình báo cáo"""
+    """Tự động trả lời nhân viên trên Telegram và hiển thị câu trả lời lên khung chat Web"""
+    global TELEGRAM_AUTO_REPLY_ENABLED
+    if not TELEGRAM_AUTO_REPLY_ENABLED:
+        return
+
     text = (entry.get("text") or "").strip()
     if not text:
         return
     lower_text = text.lower()
     msg_id = entry.get("message_id")
     topic_id = entry.get("topic_id") or 0
+    reply_to_text = (entry.get("reply_to_text") or "").strip()
 
     order_codes = extract_ghn_order_codes(text)
-    is_tag_or_cmd = ("@aiagentmt_bot" in lower_text) or lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton"))
+    is_tag_or_cmd = (
+        ("@aiagentmt_bot" in lower_text) or
+        ("ai 🍻" in lower_text) or
+        ("ai ơi" in lower_text) or
+        lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton", "/hoi"))
+    )
     is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
 
+    # 1. Nếu nhân viên gửi mã đơn GHN (VD: GYM...)
     if order_codes and (is_tag_or_cmd or is_reply_to_bot or len(text.split()) <= 12):
         target_codes = order_codes[:10]
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
-        reply_lines = [f"🐯 <b>TIGER AI TRA CỨU NHANH ({len(results)} ĐƠN):</b>"]
+        reply_lines = [f"📦 <b>Kết quả tra cứu nhanh ({len(results)} đơn):</b>"]
         for idx, res in enumerate(results, 1):
             if res.get("found"):
                 reply_lines.append(
-                    f"\n{idx}. 📦 <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>\n"
-                    f"   ├ Vận hành: <code>{res.get('operation_status', '—')}</code>\n"
-                    f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>\n"
-                    f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})\n"
+                    f"
+{idx}. <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>
+"
+                    f"   ├ Vận hành: <code>{res.get('operation_status', '—')}</code>
+"
+                    f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>
+"
+                    f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})
+"
                     f"   └ <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
                 )
             else:
-                reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
-        reply_msg = "\n".join(reply_lines)
+                reply_lines.append(f"
+{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
+        reply_msg = "
+".join(reply_lines)
         sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         if sent.get("ok"):
             res_msg = sent.get("result", {})
@@ -3435,58 +3500,60 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                 "message_id": res_msg.get("message_id", 0),
                 "direction": "outgoing_auto",
-                "sender_name": "Tiger AI Copilot (Auto)",
+                "sender_name": "AI 🍻 (Tự động)",
                 "username": "@AiAgentMT_bot",
-                "hub_badge": "AI Tự Động",
+                "hub_badge": "Auto Tra Đơn",
                 "topic_id": topic_id,
-                "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}"),
-                "text": f"[Tự động trả lời mã đơn {', '.join(target_codes)} cho {entry.get('sender_name')}]",
+                "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                "text": reply_msg,
                 "reply_to_text": text[:120],
                 "is_explanation": False,
                 "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
             })
         return
 
-    if entry.get("is_explanation") and is_reply_to_bot and not is_tag_or_cmd:
-        ack_msg = (
-            f"✅ <b>Tiger AI Copilot</b> đã ghi nhận giải trình của <b>{entry.get('sender_name')}</b> "
-            f"({entry.get('hub_badge') or 'MT01'}) và chuyển trực tiếp lên Bảng Điều Hành của Sếp!"
-        )
-        _send_telegram_group_message(ack_msg, topic_id=topic_id, reply_to_message_id=msg_id)
-        return
-
-    if is_tag_or_cmd or (is_reply_to_bot and "?" in text):
-        clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "")
+    # 2. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
+    if is_reply_to_bot or is_tag_or_cmd:
+        clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
         for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
             if clean_q.lower().startswith(prefix):
                 clean_q = clean_q[len(prefix):].strip()
-        if not clean_q:
-            clean_q = "Báo cáo tổng quan KPI 4 kho MT01 hôm nay"
-        realtime_ctx = fetch_realtime_context(clean_q)
-        sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx)
-        ai_ans = call_gemini_api(clean_q, sys_ctx, get_gemini_api_key())
-        if not ai_ans:
-            ai_ans = "🐯 Tiger AI đang trực tuyến! Anh/chị có thể gửi mã đơn GYM... để tra cứu nhanh hoặc hỏi số liệu KPI 4 kho MT01."
-        import re
-        tg_html = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ai_ans)
-        tg_html = re.sub(r'`([^`]+)`', r'<code>\1</code>', tg_html)
-        sent = _send_telegram_group_message(tg_html[:3800], topic_id=topic_id, reply_to_message_id=msg_id)
-        if sent.get("ok"):
-            res_msg = sent.get("result", {})
-            _append_telegram_bridge_message({
-                "id": f"tg_ai_{res_msg.get('message_id', int(time.time()))}",
-                "message_id": res_msg.get("message_id", 0),
-                "direction": "outgoing_auto",
-                "sender_name": "Tiger AI Copilot (Auto)",
-                "username": "@AiAgentMT_bot",
-                "hub_badge": "AI Trả Lời",
-                "topic_id": topic_id,
-                "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}"),
-                "text": ai_ans[:500],
-                "reply_to_text": text[:120],
-                "is_explanation": False,
-                "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-            })
+
+        # Nếu hỏi về số liệu KPI/tồn kho cụ thể -> dùng dữ liệu hệ thống MT01
+        if any(k in clean_q.lower() for k in ["kpi", "tồn", "gán", "bình thủy", "cái răng", "vị thanh", "ô môn", "cod", "xăng", "thời tiết"]):
+            realtime_ctx = fetch_realtime_context(clean_q)
+            sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx)
+            ai_ans = call_gemini_api(clean_q, sys_ctx, get_gemini_api_key())
+            import re
+            tg_html = re.sub(r'\*\*(.*?)\*\*', r'<b></b>', (ai_ans or "").strip())
+            tg_html = re.sub(r'`([^`]+)`', r'<code></code>', tg_html)
+        else:
+            # Trả lời giao tiếp tự nhiên 1-2 câu theo ngữ cảnh
+            tg_html = _call_gemini_natural_group_reply(
+                entry.get("sender_name", "Anh/chị"),
+                entry.get("hub_badge", "MT01"),
+                reply_to_text,
+                clean_q or text
+            )
+
+        if tg_html:
+            sent = _send_telegram_group_message(tg_html[:3800], topic_id=topic_id, reply_to_message_id=msg_id)
+            if sent.get("ok"):
+                res_msg = sent.get("result", {})
+                _append_telegram_bridge_message({
+                    "id": f"tg_ai_{res_msg.get('message_id', int(time.time()))}",
+                    "message_id": res_msg.get("message_id", 0),
+                    "direction": "outgoing_auto",
+                    "sender_name": "AI 🍻 (Tự động)",
+                    "username": "@AiAgentMT_bot",
+                    "hub_badge": "AI Tự Đáp",
+                    "topic_id": topic_id,
+                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                    "text": tg_html[:800],
+                    "reply_to_text": text[:120],
+                    "is_explanation": False,
+                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                })
 
 def _process_single_telegram_update(upd):
     global _telegram_last_update_id
@@ -3522,11 +3589,11 @@ def _process_single_telegram_update(upd):
     if reply_msg and not reply_msg.get("forum_topic_created"):
         reply_text = (reply_msg.get("text") or reply_msg.get("caption") or "")[:160]
 
+    # Chỉ gắn nhãn Giải trình NVXL khi nội dung thực sự nói về đơn hàng / giải trình KPI
     is_explanation = bool(
-        nvxl_info or
         ("giải trình" in reply_text.lower()) or
         ("yêu cầu: nvxl" in reply_text.lower()) or
-        any(k in text.lower() for k in ["giải trình", "do khách", "hẹn lại", "chặn số", "đổi ý", "không nghe máy"])
+        any(k in text.lower() for k in ["giải trình", "do khách", "hẹn lại", "chặn số", "đổi ý", "không nghe máy", "đơn", "gtb"])
     )
 
     msg_dt = datetime.datetime.fromtimestamp(msg.get("date", int(time.time())), tz=datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=7)))

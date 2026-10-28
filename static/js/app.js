@@ -2536,6 +2536,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const btnToggleTgAutoReply = document.getElementById("btnToggleTgAutoReply");
+  if (btnToggleTgAutoReply) {
+    btnToggleTgAutoReply.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/api/telegram-bridge/auto-reply", { method: "POST" });
+        const d = await res.json();
+        const isOn = d.auto_reply_enabled;
+        btnToggleTgAutoReply.textContent = isOn ? "🤖 Tự đáp: BẬT" : "🔕 Tự đáp: TẮT";
+        btnToggleTgAutoReply.style.color = isOn ? "#10b981" : "#94a3b8";
+        btnToggleTgAutoReply.style.borderColor = isOn ? "rgba(16,185,129,0.4)" : "rgba(148,163,184,0.3)";
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
+
   const btnClearTgBridge = document.getElementById("btnClearTgBridge");
   if (btnClearTgBridge) {
     btnClearTgBridge.addEventListener("click", () => clearAllTgMessages());
