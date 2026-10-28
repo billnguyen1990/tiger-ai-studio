@@ -2533,7 +2533,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const expBadge = m.is_explanation ? `<span class="tg-hub-badge" style="background:rgba(245,158,11,0.25);color:#fbbf24;">📋 Giải trình NVXL</span>` : "";
-        const userTag = m.username ? `<span style="opacity:0.8;">(${m.username})</span>` : "";
+        const userTag = (!isOut && m.username) ? `<span style="opacity:0.8;">(${m.username})</span>` : "";
         const replyBtnHtml = m.message_id > 0
           ? `<button type="button" class="tg-reply-btn" data-msgid="${m.message_id}" data-sender="${m.sender_name}" data-topic="${m.topic_id || 2690}" data-preview="${(m.text || '').slice(0, 60).replace(/"/g, '&quot;')}">↩️ Trả lời</button>`
           : "";
@@ -2541,7 +2541,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.innerHTML = `
           <div class="tg-msg-header">
             <div class="tg-sender-info">
-              <span class="tg-sender-name">${isOut ? "🦁 " : "👤 "}${m.sender_name || "Nhân sự"} ${userTag}</span>
+              <span class="tg-sender-name">${isOut ? "🤖 AI 🍻 (Bạn)" : "👤 " + (m.sender_name || "Nhân sự")} ${userTag}</span>
               <span class="tg-hub-badge">${m.hub_badge || "MT01"}</span>
               ${expBadge}
             </div>

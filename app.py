@@ -2985,9 +2985,9 @@ def copilot_ask():
                 "id": f"tg_out_{r_m.get('message_id', int(time.time()))}",
                 "message_id": r_m.get("message_id", 0),
                 "direction": "outgoing",
-                "sender_name": "Sếp Điền Lộc (Copilot)",
+                "sender_name": "AI 🍻 (Bạn)",
                 "username": "@AiAgentMT_bot",
-                "hub_badge": "Chỉ Đạo Từ Web",
+                "hub_badge": "Đã gửi",
                 "topic_id": 2690,
                 "topic_name": "🔥 Báo Cáo",
                 "text": msg_body,
@@ -3322,24 +3322,49 @@ def _load_telegram_bridge_messages():
             with open(TELEGRAM_BRIDGE_LOG_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 if isinstance(data, list) and len(data) > 0:
-                    return data
+                    cleaned = []
+                    for item in data:
+                        if item.get("id") in ("init_bridge_1", "tg_in_1", "tg_out_3080"):
+                            continue
+                        if "Sếp Điền Lộc" in str(item.get("sender_name", "")):
+                            item["sender_name"] = "AI 🍻 (Bạn)"
+                        if item.get("hub_badge") == "Chỉ Đạo Từ Web":
+                            item["hub_badge"] = "Đã gửi"
+                        cleaned.append(item)
+                    if cleaned:
+                        return cleaned
         except Exception:
             pass
-    now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-    return [{
-        "id": "init_bridge_1",
-        "message_id": 0,
-        "direction": "system",
-        "sender_name": "Tiger AI Bridge",
-        "username": "@AiAgentMT_bot",
-        "hub_badge": "Hệ Thống",
-        "topic_id": 2690,
-        "topic_name": "🔥 Báo Cáo",
-        "text": "📡 Đã kết nối trực tuyến 2 chiều với nhóm Telegram Miền Tây 01! Sếp có thể chọn Topic, bấm Tag tên NVXL và gửi tin nhắn nhắc việc hoặc xem giải trình của nhân viên ngay tại đây.",
-        "reply_to_text": "",
-        "is_explanation": False,
-        "timestamp": now_str
-    }]
+    return [
+        {
+            "id": "tg_out_3081",
+            "message_id": 3081,
+            "direction": "outgoing",
+            "sender_name": "AI 🍻 (Bạn)",
+            "username": "@AiAgentMT_bot",
+            "hub_badge": "Đã gửi",
+            "topic_id": 2690,
+            "topic_name": "🔥 Báo Cáo",
+            "text": "@DUCTRUNG17TUOI nói gì đó",
+            "reply_to_text": "",
+            "is_explanation": False,
+            "timestamp": "07:44:18 28/10/2026"
+        },
+        {
+            "id": "tg_in_3082",
+            "message_id": 3082,
+            "direction": "incoming",
+            "sender_name": "Đức Trung",
+            "username": "@DUCTRUNG17TUOI",
+            "hub_badge": "NVXL Vị Thanh",
+            "topic_id": 2690,
+            "topic_name": "🔥 Báo Cáo",
+            "text": "Test 1234",
+            "reply_to_text": "",
+            "is_explanation": False,
+            "timestamp": "07:44:35 28/10/2026"
+        }
+    ]
 
 def _save_telegram_bridge_messages(msgs):
     try:
@@ -3556,10 +3581,25 @@ def telegram_webhook_receiver():
         _process_single_telegram_update(upd)
     return jsonify({"ok": True})
 
+def _sync_from_cloud_if_local():
+    """Nếu đang mở localhost:5050 thì tự động đồng bộ tin nhắn Webhook từ Render Cloud về"""
+    is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
+    if not is_cloud:
+        try:
+            r = requests.get("https://tiger-ai-studio.onrender.com/api/telegram-bridge/messages?cloud_raw=1", timeout=3)
+            if r.status_code == 200:
+                cdata = r.json()
+                for m in cdata.get("messages", []):
+                    if m.get("message_id", 0) > 0:
+                        _append_telegram_bridge_message(m)
+        except Exception:
+            pass
+
 @app.route("/api/telegram-bridge/messages", methods=["GET"])
 def get_telegram_bridge_messages():
     """Lấy danh sách tin nhắn 2 chiều giữa Web Tiger AI Copilot và Nhóm Telegram Miền Tây 01"""
-    threading.Thread(target=_poll_telegram_updates_once, daemon=True).start()
+    if request.args.get("cloud_raw") != "1":
+        threading.Thread(target=_sync_from_cloud_if_local, daemon=True).start()
     msgs = _load_telegram_bridge_messages()
     explanations_count = sum(1 for m in msgs if m.get("is_explanation") and m.get("direction") == "incoming")
     return jsonify({
@@ -3599,7 +3639,7 @@ def send_telegram_bridge_message():
             "direction": "outgoing",
             "sender_name": sender_title,
             "username": "@AiAgentMT_bot",
-            "hub_badge": "Chỉ Đạo Từ Web",
+            "hub_badge": "Đã gửi",
             "topic_id": topic_id,
             "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}"),
             "text": text,
