@@ -437,7 +437,7 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
         
         time.sleep(1.0)
         if submenu_item.is_visible(timeout=500):
-            submenu_item.click(force=True)
+            sbox = submenu_item.bounding_box(timeout=2000); page.mouse.click(sbox[chr(120)]+sbox[chr(119)+chr(105)+chr(100)+chr(116)+chr(104)]/2, sbox[chr(121)]+sbox[chr(104)+chr(101)+chr(105)+chr(103)+chr(104)+chr(116)]/2) if sbox else submenu_item.click(force=True)
             return True
             
         try:
@@ -446,7 +446,7 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
                 page.mouse.click(box["x"] + box["width"]/2, box["y"] + box["height"]/2)
                 time.sleep(1.0)
                 if submenu_item.is_visible(timeout=500):
-                    submenu_item.click(force=True)
+                    sbox = submenu_item.bounding_box(timeout=2000); page.mouse.click(sbox[chr(120)]+sbox[chr(119)+chr(105)+chr(100)+chr(116)+chr(104)]/2, sbox[chr(121)]+sbox[chr(104)+chr(101)+chr(105)+chr(103)+chr(104)+chr(116)]/2) if sbox else submenu_item.click(force=True)
                     return True
         except Exception:
             pass
@@ -609,7 +609,7 @@ def run_looker_export_pipeline(max_retries=3):
                 is_headless_cloud = (
                     "--headless" in sys.argv or 
                     os.environ.get("GITHUB_ACTIONS") == "true" or 
-                    (not check_chrome_ready() and os.path.exists(storage_file))
+                    False
                 )
 
                 browser = None

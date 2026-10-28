@@ -616,6 +616,37 @@
       </div>
     </div>
 
+    <!-- Chuyển đổi chế độ: Hỏi AI Copilot vs Chat Trực Tiếp Telegram MT01 -->
+    <div class="copilot-mode-tabs">
+      <button type="button" class="copilot-mode-tab active" id="tabCopilotModeAI">
+        🤖 Trợ Lý AI & Tra Đơn
+      </button>
+      <button type="button" class="copilot-mode-tab" id="tabCopilotModeTelegram">
+        📡 Đàm Thoại Telegram MT01 <span class="tg-live-pill" id="tgLiveBadge">LIVE</span>
+      </button>
+    </div>
+
+    <!-- Thanh điều khiển Telegram 2 chiều (chỉ hiện khi chọn tab Telegram) -->
+    <div class="tg-bridge-toolbar" id="tgBridgeToolbar" style="display: none;">
+      <div class="tg-toolbar-row">
+        <span class="tg-toolbar-label">📍 Gửi vào:</span>
+        <select id="tgBridgeTopicSelect" class="tg-topic-select">
+          <option value="2690">🔥 Topic Báo Cáo (2690)</option>
+          <option value="0">💬 # Chat Chung (Miền Tây 01)</option>
+          <option value="506">📅 Topic Đơn Tạo (506)</option>
+          <option value="2692">📓 Topic Quan Trọng (2692)</option>
+        </select>
+        <button type="button" class="btn btn-tiny" id="btnRefreshTgBridge" title="Làm mới tin nhắn từ Telegram">🔄</button>
+      </div>
+      <div class="tg-quick-tags">
+        <span class="tg-tag-chip" data-tag="@DUCTRUNG17TUOI ">🏷️ @Đức Trung (Vị Thanh)</span>
+        <span class="tg-tag-chip" data-tag="@pinca0602 ">🏷️ @Trọng Bằng (Ô Môn)</span>
+        <span class="tg-tag-chip" data-tag="@CONGBANGCAIRANGCANTHO ">🏷️ @Công Bằng (Cái Răng)</span>
+        <span class="tg-tag-chip" data-tag="@Nguyen_Toan ">🏷️ @Bảo Toàn (Bình Thủy)</span>
+        <span class="tg-tag-chip tg-tag-urgent" data-tag="⚠️ Đề nghị NVXL @DUCTRUNG17TUOI @pinca0602 kiểm tra và phản hồi giải trình ngay các đơn GTB ca hôm qua! ">⚡ Nhắc Giải Trình</span>
+      </div>
+    </div>
+
     <!-- Quick prompt chips -->
     <div class="copilot-chips-wrapper">
       <button class="chips-nav-btn left" id="btnScrollChipsLeft" title="Kéo sang trái">‹</button>
@@ -636,12 +667,25 @@
 
     <div class="copilot-chat-body" id="copilotChatBody">
       <div class="chat-msg msg-ai">
-        Xin chào! Em là <b>Tiger AI Copilot</b>. Em có thể giải đáp ngay mọi số liệu vận hành của 4 kho MT01 (KPI, đơn hẹn, tiến độ PDA, nợ COD), <b>tra cứu hành trình nội bộ GHN</b> (dán 1 hoặc nhiều mã đơn), hoặc kết nối <b>Google Gemini AI</b> để trả lời không giới hạn mọi chủ đề!
+        Xin chào! Em là <b>Tiger AI Copilot</b>. Em có thể giải đáp ngay mọi số liệu vận hành của 4 kho MT01 (KPI, đơn hẹn, tiến độ PDA, nợ COD), <b>tra cứu hành trình nội bộ GHN</b> (dán 1 hoặc nhiều mã đơn), kết nối <b>Google Gemini AI</b>, hoặc bấm sang tab <b>📡 Đàm Thoại Telegram MT01</b> để nhắn tin & nhận giải trình trực tiếp từ nhân viên!
       </div>
     </div>
 
+    <!-- Khung chat 2 chiều liên kết trực tiếp Nhóm Telegram Miền Tây 01 -->
+    <div class="copilot-chat-body tg-bridge-chat-body" id="tgBridgeChatBody" style="display: none;">
+      <div class="chat-msg msg-ai">
+        ⏳ Đang đồng bộ tin nhắn trực tiếp từ nhóm Telegram <b>Miền Tây 01</b>...
+      </div>
+    </div>
+
+    <!-- Thanh hiển thị khi Sếp bấm Trả lời (Reply) 1 tin nhắn của nhân viên -->
+    <div class="tg-reply-banner" id="tgReplyBanner" style="display: none;">
+      <span id="tgReplyBannerText">↩️ Đang trả lời nhân viên...</span>
+      <button type="button" id="btnCancelTgReply" title="Hủy trả lời">✕</button>
+    </div>
+
     <div class="copilot-input-bar">
-      <input type="text" id="copilotInput" placeholder="Hỏi số liệu 4 kho hoặc dán mã đơn (GYM...)..." autocomplete="off">
+      <input type="text" id="copilotInput" placeholder="Hỏi số liệu 4 kho, dán mã đơn (GYM...), hoặc gõ /tele để gửi Telegram..." autocomplete="off">
       <button id="btnSendCopilot" class="btn btn-primary btn-tiny">Gửi ➔</button>
     </div>
   </div>

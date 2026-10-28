@@ -2975,6 +2975,32 @@ def copilot_ask():
     if not raw_prompt:
         return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Sếp có thể hỏi em bất kỳ thông tin nào về 4 kho MT01 (KPI GTC, LTC, nợ COD, đơn hẹn), dán mã đơn hàng GHN để tra cứu nội bộ, hoặc kết nối Google Gemini AI để hỏi mọi chủ đề!"})
 
+    # BƯỚC 0: LỆNH GỬI TRỰC TIẾP VÀO NHÓM TELEGRAM MIỀN TÂY 01 (/tele hoặc @...)
+    if prompt.startswith("/tele ") or prompt.startswith("gửi telegram:") or prompt.startswith("nhắn telegram:"):
+        msg_body = raw_prompt.split(" ", 1)[1] if prompt.startswith("/tele ") else raw_prompt.split(":", 1)[1].strip()
+        sent_res = _send_telegram_group_message(f"🦁 <b>[Chỉ Đạo Từ Tiger AI Copilot]</b>\n{msg_body}", topic_id=2690)
+        if sent_res.get("ok"):
+            r_m = sent_res.get("result", {})
+            _append_telegram_bridge_message({
+                "id": f"tg_out_{r_m.get('message_id', int(time.time()))}",
+                "message_id": r_m.get("message_id", 0),
+                "direction": "outgoing",
+                "sender_name": "Sếp Điền Lộc (Copilot)",
+                "username": "@AiAgentMT_bot",
+                "hub_badge": "Chỉ Đạo Từ Web",
+                "topic_id": 2690,
+                "topic_name": "🔥 Báo Cáo",
+                "text": msg_body,
+                "reply_to_text": "",
+                "is_explanation": False,
+                "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+            })
+            return jsonify({
+                "answer": f"✅ **Đã bắn tin nhắn trực tiếp vào nhóm Telegram Miền Tây 01 (Topic 🔥 Báo Cáo):**\n\n> {msg_body}",
+                "time": get_vietnam_now().strftime("%H:%M:%S")
+            })
+
+
     # BƯỚC 1: TỰ ĐỘNG PHÁT HIỆN VÀ TRA CỨU MÃ ĐƠN HÀNG GHN (HỖ TRỢ ĐẾN 50 ĐƠN ĐỒNG THỜI)
     order_codes = extract_ghn_order_codes(raw_prompt)
     if order_codes:
@@ -3264,6 +3290,330 @@ def copilot_ask():
 
     now_vn = datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=7)))
     return jsonify({"answer": answer, "time": now_vn.strftime("%H:%M:%S")})
+
+
+
+# ==============================================================================
+# 📡 TIGER AI <-> TELEGRAM 2-WAY LIVE BRIDGE & EMPLOYEE AUTO-COPILOT
+# ==============================================================================
+TELEGRAM_BRIDGE_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
+TELEGRAM_BRIDGE_CHAT_ID = "-1003940889949"
+TELEGRAM_BRIDGE_LOG_FILE = os.path.join(PARENT_DIR, "telegram_bridge_log.json")
+_telegram_last_update_id = 0
+_telegram_bridge_lock = threading.Lock()
+
+TELEGRAM_TOPICS_MAP = {
+    2690: "🔥 Báo Cáo",
+    506: "📅 Đơn Tạo",
+    2692: "📓 Quan Trọng",
+    0: "💬 # Chat chung"
+}
+
+NVXL_USERNAME_HUB_MAP = {
+    "congbangcairangcantho": {"hub": "Cái Răng", "name": "Công Bằng", "tag": "@CONGBANGCAIRANGCANTHO"},
+    "nguyen_toan": {"hub": "Bình Thủy", "name": "Bảo Toàn", "tag": "@Nguyen_Toan"},
+    "ductrung17tuoi": {"hub": "Vị Thanh", "name": "Đức Trung", "tag": "@DUCTRUNG17TUOI"},
+    "pinca0602": {"hub": "Ô Môn", "name": "Trọng Bằng", "tag": "@pinca0602"}
+}
+
+def _load_telegram_bridge_messages():
+    if os.path.exists(TELEGRAM_BRIDGE_LOG_FILE):
+        try:
+            with open(TELEGRAM_BRIDGE_LOG_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, list) and len(data) > 0:
+                    return data
+        except Exception:
+            pass
+    now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+    return [{
+        "id": "init_bridge_1",
+        "message_id": 0,
+        "direction": "system",
+        "sender_name": "Tiger AI Bridge",
+        "username": "@AiAgentMT_bot",
+        "hub_badge": "Hệ Thống",
+        "topic_id": 2690,
+        "topic_name": "🔥 Báo Cáo",
+        "text": "📡 Đã kết nối trực tuyến 2 chiều với nhóm Telegram Miền Tây 01! Sếp có thể chọn Topic, bấm Tag tên NVXL và gửi tin nhắn nhắc việc hoặc xem giải trình của nhân viên ngay tại đây.",
+        "reply_to_text": "",
+        "is_explanation": False,
+        "timestamp": now_str
+    }]
+
+def _save_telegram_bridge_messages(msgs):
+    try:
+        trimmed = msgs[-150:]
+        with open(TELEGRAM_BRIDGE_LOG_FILE, "w", encoding="utf-8") as f:
+            json.dump(trimmed, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[Telegram Bridge Save Error] {e}")
+
+def _append_telegram_bridge_message(entry):
+    with _telegram_bridge_lock:
+        msgs = _load_telegram_bridge_messages()
+        msg_id = entry.get("message_id")
+        if msg_id:
+            for existing in msgs:
+                if existing.get("message_id") == msg_id and existing.get("direction") == entry.get("direction"):
+                    return False
+        msgs.append(entry)
+        _save_telegram_bridge_messages(msgs)
+        return True
+
+def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
+    url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TELEGRAM_BRIDGE_CHAT_ID,
+        "text": text,
+        "parse_mode": parse_mode
+    }
+    if topic_id and int(topic_id) > 0:
+        payload["message_thread_id"] = int(topic_id)
+    if reply_to_message_id and int(reply_to_message_id) > 0:
+        payload["reply_to_message_id"] = int(reply_to_message_id)
+    try:
+        r = requests.post(url, json=payload, timeout=10)
+        return r.json()
+    except Exception as e:
+        return {"ok": False, "description": str(e)}
+
+def _handle_employee_telegram_auto_reply(msg_obj, entry):
+    """Tự động trả lời nhân viên trên Telegram khi nhân viên gửi mã đơn GYM..., hỏi @AiAgentMT_bot, hoặc giải trình báo cáo"""
+    text = (entry.get("text") or "").strip()
+    if not text:
+        return
+    lower_text = text.lower()
+    msg_id = entry.get("message_id")
+    topic_id = entry.get("topic_id") or 0
+
+    order_codes = extract_ghn_order_codes(text)
+    is_tag_or_cmd = ("@aiagentmt_bot" in lower_text) or lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton"))
+    is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
+
+    if order_codes and (is_tag_or_cmd or is_reply_to_bot or len(text.split()) <= 12):
+        target_codes = order_codes[:10]
+        results = []
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            results = list(executor.map(query_ghn_order_history, target_codes))
+        reply_lines = [f"🐯 <b>TIGER AI TRA CỨU NHANH ({len(results)} ĐƠN):</b>"]
+        for idx, res in enumerate(results, 1):
+            if res.get("found"):
+                reply_lines.append(
+                    f"\n{idx}. 📦 <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>\n"
+                    f"   ├ Vận hành: <code>{res.get('operation_status', '—')}</code>\n"
+                    f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>\n"
+                    f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})\n"
+                    f"   └ <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
+                )
+            else:
+                reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
+        reply_msg = "\n".join(reply_lines)
+        sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
+        if sent.get("ok"):
+            res_msg = sent.get("result", {})
+            _append_telegram_bridge_message({
+                "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                "message_id": res_msg.get("message_id", 0),
+                "direction": "outgoing_auto",
+                "sender_name": "Tiger AI Copilot (Auto)",
+                "username": "@AiAgentMT_bot",
+                "hub_badge": "AI Tự Động",
+                "topic_id": topic_id,
+                "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}"),
+                "text": f"[Tự động trả lời mã đơn {', '.join(target_codes)} cho {entry.get('sender_name')}]",
+                "reply_to_text": text[:120],
+                "is_explanation": False,
+                "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+            })
+        return
+
+    if entry.get("is_explanation") and is_reply_to_bot and not is_tag_or_cmd:
+        ack_msg = (
+            f"✅ <b>Tiger AI Copilot</b> đã ghi nhận giải trình của <b>{entry.get('sender_name')}</b> "
+            f"({entry.get('hub_badge') or 'MT01'}) và chuyển trực tiếp lên Bảng Điều Hành của Sếp!"
+        )
+        _send_telegram_group_message(ack_msg, topic_id=topic_id, reply_to_message_id=msg_id)
+        return
+
+    if is_tag_or_cmd or (is_reply_to_bot and "?" in text):
+        clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "")
+        for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
+            if clean_q.lower().startswith(prefix):
+                clean_q = clean_q[len(prefix):].strip()
+        if not clean_q:
+            clean_q = "Báo cáo tổng quan KPI 4 kho MT01 hôm nay"
+        realtime_ctx = fetch_realtime_context(clean_q)
+        sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx)
+        ai_ans = call_gemini_api(clean_q, sys_ctx, get_gemini_api_key())
+        if not ai_ans:
+            ai_ans = "🐯 Tiger AI đang trực tuyến! Anh/chị có thể gửi mã đơn GYM... để tra cứu nhanh hoặc hỏi số liệu KPI 4 kho MT01."
+        import re
+        tg_html = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ai_ans)
+        tg_html = re.sub(r'`([^`]+)`', r'<code>\1</code>', tg_html)
+        sent = _send_telegram_group_message(tg_html[:3800], topic_id=topic_id, reply_to_message_id=msg_id)
+        if sent.get("ok"):
+            res_msg = sent.get("result", {})
+            _append_telegram_bridge_message({
+                "id": f"tg_ai_{res_msg.get('message_id', int(time.time()))}",
+                "message_id": res_msg.get("message_id", 0),
+                "direction": "outgoing_auto",
+                "sender_name": "Tiger AI Copilot (Auto)",
+                "username": "@AiAgentMT_bot",
+                "hub_badge": "AI Trả Lời",
+                "topic_id": topic_id,
+                "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}"),
+                "text": ai_ans[:500],
+                "reply_to_text": text[:120],
+                "is_explanation": False,
+                "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+            })
+
+def _process_single_telegram_update(upd):
+    global _telegram_last_update_id
+    u_id = upd.get("update_id", 0)
+    if u_id > _telegram_last_update_id:
+        _telegram_last_update_id = u_id
+
+    msg = upd.get("message") or upd.get("edited_message")
+    if not msg:
+        return None
+    from_user = msg.get("from") or {}
+    if from_user.get("is_bot") and from_user.get("id") == 8809500027:
+        return None
+
+    text = (msg.get("text") or msg.get("caption") or "").strip()
+    if not text:
+        return None
+
+    first_name = (from_user.get("first_name") or "").strip()
+    last_name = (from_user.get("last_name") or "").strip()
+    sender_name = f"{first_name} {last_name}".strip() or "Nhân sự MT01"
+    username_raw = (from_user.get("username") or "").strip()
+    username_disp = f"@{username_raw}" if username_raw else ""
+
+    nvxl_info = NVXL_USERNAME_HUB_MAP.get(username_raw.lower())
+    hub_badge = f"NVXL {nvxl_info['hub']}" if nvxl_info else "Nhóm MT01"
+
+    topic_id = msg.get("message_thread_id") or 0
+    topic_name = TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung")
+
+    reply_msg = msg.get("reply_to_message") or {}
+    reply_text = ""
+    if reply_msg and not reply_msg.get("forum_topic_created"):
+        reply_text = (reply_msg.get("text") or reply_msg.get("caption") or "")[:160]
+
+    is_explanation = bool(
+        nvxl_info or
+        ("giải trình" in reply_text.lower()) or
+        ("yêu cầu: nvxl" in reply_text.lower()) or
+        any(k in text.lower() for k in ["giải trình", "do khách", "hẹn lại", "chặn số", "đổi ý", "không nghe máy"])
+    )
+
+    msg_dt = datetime.datetime.fromtimestamp(msg.get("date", int(time.time())), tz=datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=7)))
+    entry = {
+        "id": f"tg_in_{msg.get('message_id')}",
+        "message_id": msg.get("message_id"),
+        "direction": "incoming",
+        "sender_name": sender_name,
+        "username": username_disp,
+        "hub_badge": hub_badge,
+        "topic_id": topic_id,
+        "topic_name": topic_name,
+        "text": text,
+        "reply_to_text": reply_text,
+        "is_explanation": is_explanation,
+        "timestamp": msg_dt.strftime("%H:%M:%S %d/%m/%Y")
+    }
+    added = _append_telegram_bridge_message(entry)
+    if added:
+        threading.Thread(target=_handle_employee_telegram_auto_reply, args=(msg, entry), daemon=True).start()
+    return entry
+
+def _poll_telegram_updates_once():
+    """Đọc getUpdates từ Telegram nếu không dùng webhook"""
+    global _telegram_last_update_id
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/getUpdates"
+        params = {"timeout": 1, "limit": 30}
+        if _telegram_last_update_id > 0:
+            params["offset"] = _telegram_last_update_id + 1
+        r = requests.get(url, params=params, timeout=4)
+        if r.status_code == 200:
+            data = r.json()
+            if data.get("ok"):
+                for upd in data.get("result", []):
+                    _process_single_telegram_update(upd)
+    except Exception:
+        pass
+
+@app.route("/api/telegram-webhook", methods=["POST", "GET"])
+def telegram_webhook_receiver():
+    if request.method == "GET":
+        return jsonify({"status": "active", "bot": "@AiAgentMT_bot", "group": "Miền Tây 01"})
+    upd = request.get_json(silent=True, force=True) or {}
+    if upd:
+        _process_single_telegram_update(upd)
+    return jsonify({"ok": True})
+
+@app.route("/api/telegram-bridge/messages", methods=["GET"])
+def get_telegram_bridge_messages():
+    """Lấy danh sách tin nhắn 2 chiều giữa Web Tiger AI Copilot và Nhóm Telegram Miền Tây 01"""
+    _poll_telegram_updates_once()
+    msgs = _load_telegram_bridge_messages()
+    explanations_count = sum(1 for m in msgs if m.get("is_explanation") and m.get("direction") == "incoming")
+    return jsonify({
+        "success": True,
+        "bot_username": "@AiAgentMT_bot",
+        "group_name": "Miền Tây 01",
+        "chat_id": TELEGRAM_BRIDGE_CHAT_ID,
+        "explanations_count": explanations_count,
+        "messages": msgs[-80:]
+    })
+
+@app.route("/api/telegram-bridge/send", methods=["POST"])
+def send_telegram_bridge_message():
+    """Gửi tin nhắn từ khung chat Tiger AI Copilot trên Web thẳng vào Nhóm Telegram Miền Tây 01"""
+    data = request.get_json(silent=True, force=True) or {}
+    text = (data.get("text") or "").strip()
+    topic_id = int(data.get("topic_id") if data.get("topic_id") is not None else 2690)
+    reply_to_id = data.get("reply_to_message_id")
+    sender_title = (data.get("sender_title") or "Sếp Điền Lộc (Command Center)").strip()
+
+    if not text:
+        return jsonify({"success": False, "message": "Nội dung tin nhắn không được để trống!"}), 400
+
+    formatted_tg = f"🦁 <b>[{sender_title}]</b>\n{text}"
+    res = _send_telegram_group_message(
+        formatted_tg,
+        topic_id=topic_id,
+        reply_to_message_id=reply_to_id,
+        parse_mode="HTML"
+    )
+    if res.get("ok"):
+        res_msg = res.get("result", {})
+        msg_id = res_msg.get("message_id", int(time.time()))
+        entry = {
+            "id": f"tg_out_{msg_id}",
+            "message_id": msg_id,
+            "direction": "outgoing",
+            "sender_name": sender_title,
+            "username": "@AiAgentMT_bot",
+            "hub_badge": "Chỉ Đạo Từ Web",
+            "topic_id": topic_id,
+            "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}"),
+            "text": text,
+            "reply_to_text": data.get("reply_to_preview") or "",
+            "is_explanation": False,
+            "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+        }
+        _append_telegram_bridge_message(entry)
+        return jsonify({"success": True, "entry": entry, "telegram_response": res_msg})
+    else:
+        return jsonify({
+            "success": False,
+            "message": f"Lỗi gửi Telegram: {res.get('description', 'Không xác định')}"
+        }), 500
 
 
 @app.route("/api/system-status")

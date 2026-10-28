@@ -2436,12 +2436,211 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ==========================================================================
+  // TELEGRAM 2-WAY LIVE BRIDGE IN COPILOT DRAWER
+  // ==========================================================================
+  let currentCopilotMode = "ai"; // "ai" | "telegram"
+  let tgReplyToMsgId = null;
+  let tgReplyPreview = "";
+  let lastRenderedTgMsgCount = 0;
+
+  const tabCopilotModeAI = document.getElementById("tabCopilotModeAI");
+  const tabCopilotModeTelegram = document.getElementById("tabCopilotModeTelegram");
+  const tgBridgeToolbar = document.getElementById("tgBridgeToolbar");
+  const tgBridgeChatBody = document.getElementById("tgBridgeChatBody");
+  const tgBridgeTopicSelect = document.getElementById("tgBridgeTopicSelect");
+  const btnRefreshTgBridge = document.getElementById("btnRefreshTgBridge");
+  const tgReplyBanner = document.getElementById("tgReplyBanner");
+  const tgReplyBannerText = document.getElementById("tgReplyBannerText");
+  const btnCancelTgReply = document.getElementById("btnCancelTgReply");
+  const copilotChipsWrapperEl = document.querySelector(".copilot-chips-wrapper");
+
+  function setCopilotMode(mode) {
+    currentCopilotMode = mode;
+    if (mode === "telegram") {
+      if (tabCopilotModeAI) tabCopilotModeAI.classList.remove("active");
+      if (tabCopilotModeTelegram) tabCopilotModeTelegram.classList.add("active");
+      if (copilotChipsWrapperEl) copilotChipsWrapperEl.style.display = "none";
+      if (copilotChatBody) copilotChatBody.style.display = "none";
+      if (tgBridgeToolbar) tgBridgeToolbar.style.display = "flex";
+      if (tgBridgeChatBody) tgBridgeChatBody.style.display = "flex";
+      if (copilotInput) {
+        copilotInput.placeholder = "Nhập tin nhắn bắn thẳng vào Telegram Miền Tây 01 (bấm Tag NVXL ở trên)...";
+        copilotInput.focus();
+      }
+      fetchTelegramBridgeMessages(true);
+    } else {
+      if (tabCopilotModeAI) tabCopilotModeAI.classList.add("active");
+      if (tabCopilotModeTelegram) tabCopilotModeTelegram.classList.remove("active");
+      if (copilotChipsWrapperEl) copilotChipsWrapperEl.style.display = "flex";
+      if (copilotChatBody) copilotChatBody.style.display = "flex";
+      if (tgBridgeToolbar) tgBridgeToolbar.style.display = "none";
+      if (tgBridgeChatBody) tgBridgeChatBody.style.display = "none";
+      if (tgReplyBanner) tgReplyBanner.style.display = "none";
+      tgReplyToMsgId = null;
+      if (copilotInput) {
+        copilotInput.placeholder = "Hỏi số liệu 4 kho, dán mã đơn (GYM...), hoặc gõ /tele để gửi Telegram...";
+        copilotInput.focus();
+      }
+    }
+  }
+
+  if (tabCopilotModeAI) {
+    tabCopilotModeAI.addEventListener("click", () => setCopilotMode("ai"));
+  }
+  if (tabCopilotModeTelegram) {
+    tabCopilotModeTelegram.addEventListener("click", () => setCopilotMode("telegram"));
+  }
+
+  document.querySelectorAll(".tg-tag-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const tagText = chip.getAttribute("data-tag") || "";
+      if (copilotInput) {
+        copilotInput.value = (copilotInput.value ? copilotInput.value + " " : "") + tagText;
+        copilotInput.focus();
+      }
+    });
+  });
+
+  if (btnCancelTgReply) {
+    btnCancelTgReply.addEventListener("click", () => {
+      tgReplyToMsgId = null;
+      tgReplyPreview = "";
+      if (tgReplyBanner) tgReplyBanner.style.display = "none";
+    });
+  }
+
+  async function fetchTelegramBridgeMessages(forceScroll = false) {
+    if (!tgBridgeChatBody) return;
+    try {
+      const res = await fetch("/api/telegram-bridge/messages");
+      const data = await res.json();
+      if (!data.success || !Array.isArray(data.messages)) return;
+
+      const msgs = data.messages;
+      const shouldScroll = forceScroll || (msgs.length !== lastRenderedTgMsgCount);
+      lastRenderedTgMsgCount = msgs.length;
+
+      tgBridgeChatBody.innerHTML = "";
+      msgs.forEach((m) => {
+        const card = document.createElement("div");
+        const isOut = m.direction === "outgoing" || m.direction === "outgoing_auto";
+        card.className = `tg-msg-card ${isOut ? "tg-msg-outgoing" : "tg-msg-incoming"} ${m.is_explanation ? "tg-msg-explanation" : ""}`;
+
+        let quoteHtml = "";
+        if (m.reply_to_text) {
+          quoteHtml = `<div class="tg-reply-quote">↩️ ${m.reply_to_text}</div>`;
+        }
+
+        const expBadge = m.is_explanation ? `<span class="tg-hub-badge" style="background:rgba(245,158,11,0.25);color:#fbbf24;">📋 Giải trình NVXL</span>` : "";
+        const userTag = m.username ? `<span style="opacity:0.8;">(${m.username})</span>` : "";
+        const replyBtnHtml = m.message_id > 0
+          ? `<button type="button" class="tg-reply-btn" data-msgid="${m.message_id}" data-sender="${m.sender_name}" data-topic="${m.topic_id || 2690}" data-preview="${(m.text || '').slice(0, 60).replace(/"/g, '&quot;')}">↩️ Trả lời</button>`
+          : "";
+
+        card.innerHTML = `
+          <div class="tg-msg-header">
+            <div class="tg-sender-info">
+              <span class="tg-sender-name">${isOut ? "🦁 " : "👤 "}${m.sender_name || "Nhân sự"} ${userTag}</span>
+              <span class="tg-hub-badge">${m.hub_badge || "MT01"}</span>
+              ${expBadge}
+            </div>
+            <span class="tg-topic-badge">${m.topic_name || "🔥 Báo Cáo"}</span>
+          </div>
+          ${quoteHtml}
+          <div class="tg-msg-text">${formatMarkdownToHtml(m.text || "")}</div>
+          <div class="tg-msg-footer">
+            <span>🕒 ${m.timestamp || ""}</span>
+            ${replyBtnHtml}
+          </div>
+        `;
+        tgBridgeChatBody.appendChild(card);
+      });
+
+      tgBridgeChatBody.querySelectorAll(".tg-reply-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tgReplyToMsgId = parseInt(btn.getAttribute("data-msgid"), 10);
+          const sender = btn.getAttribute("data-sender") || "Nhân viên";
+          const topic = btn.getAttribute("data-topic") || "2690";
+          tgReplyPreview = btn.getAttribute("data-preview") || "";
+          if (tgBridgeTopicSelect) tgBridgeTopicSelect.value = String(topic);
+          if (tgReplyBanner && tgReplyBannerText) {
+            tgReplyBannerText.textContent = `↩️ Đang trả lời ${sender}: "${tgReplyPreview}..."`;
+            tgReplyBanner.style.display = "flex";
+          }
+          if (copilotInput) copilotInput.focus();
+        });
+      });
+
+      if (shouldScroll) {
+        tgBridgeChatBody.scrollTop = tgBridgeChatBody.scrollHeight;
+      }
+    } catch (e) {
+      console.error("Lỗi đồng bộ Telegram Bridge:", e);
+    }
+  }
+
+  async function sendTelegramBridgeMessage(text) {
+    if (!text || !text.trim()) return;
+    const q = text.trim();
+    const topicId = tgBridgeTopicSelect ? parseInt(tgBridgeTopicSelect.value, 10) : 2690;
+
+    if (copilotInput) copilotInput.value = "";
+    playCyberSound("pulse");
+
+    try {
+      const res = await fetch("/api/telegram-bridge/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: q,
+          topic_id: topicId,
+          reply_to_message_id: tgReplyToMsgId,
+          reply_to_preview: tgReplyPreview
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        tgReplyToMsgId = null;
+        tgReplyPreview = "";
+        if (tgReplyBanner) tgReplyBanner.style.display = "none";
+        playCyberSound("success");
+        await fetchTelegramBridgeMessages(true);
+      } else {
+        alert(data.message || "Không thể gửi tin nhắn sang Telegram!");
+      }
+    } catch (e) {
+      alert(`Lỗi gửi Telegram: ${e.message}`);
+    }
+  }
+
+  if (btnRefreshTgBridge) {
+    btnRefreshTgBridge.addEventListener("click", () => fetchTelegramBridgeMessages(true));
+  }
+
+  // Tự động đồng bộ tin nhắn từ Telegram mỗi 4 giây khi mở khung chat
+  setInterval(() => {
+    if (copilotDrawer && !copilotDrawer.classList.contains("hidden-copilot") && currentCopilotMode === "telegram") {
+      fetchTelegramBridgeMessages(false);
+    }
+  }, 4000);
+
+  function handleCopilotSubmit() {
+    if (!copilotInput) return;
+    const val = copilotInput.value;
+    if (currentCopilotMode === "telegram") {
+      sendTelegramBridgeMessage(val);
+    } else {
+      sendCopilotMessage(val);
+    }
+  }
+
   if (btnSendCopilot) {
-    btnSendCopilot.addEventListener("click", () => sendCopilotMessage(copilotInput.value));
+    btnSendCopilot.addEventListener("click", handleCopilotSubmit);
   }
   if (copilotInput) {
     copilotInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendCopilotMessage(copilotInput.value);
+      if (e.key === "Enter") handleCopilotSubmit();
     });
   }
 
