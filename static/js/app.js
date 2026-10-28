@@ -2510,6 +2510,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  async function deleteSingleTgMessage(entryId, msgId) {
+    try {
+      await fetch("/api/telegram-bridge/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: entryId, message_id: msgId })
+      });
+      await fetchTelegramBridgeMessages(false);
+    } catch (e) {
+      console.error("Lỗi xóa tin nhắn:", e);
+    }
+  }
+
+  async function clearAllTgMessages() {
+    try {
+      await fetch("/api/telegram-bridge/clear", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ also_delete_telegram: true })
+      });
+      await fetchTelegramBridgeMessages(true);
+    } catch (e) {
+      console.error("Lỗi xóa toàn bộ tin nhắn:", e);
+    }
+  }
+
+  const btnClearTgBridge = document.getElementById("btnClearTgBridge");
+  if (btnClearTgBridge) {
+    btnClearTgBridge.addEventListener("click", () => clearAllTgMessages());
+  }
+
+  const btnClearCopilotChat = document.getElementById("btnClearCopilotChat");
+  if (btnClearCopilotChat) {
+    btnClearCopilotChat.addEventListener("click", () => {
+      if (currentCopilotMode === "telegram") {
+        clearAllTgMessages();
+      } else {
+        copilotHistory = [];
+        if (copilotChatBody) {
+          copilotChatBody.innerHTML = `
+            <div class="chat-msg msg-ai">
+              🧹 Đã xóa lịch sử trò chuyện! Sếp có thể hỏi số liệu 4 kho MT01, dán mã đơn GHN, hoặc bấm sang tab <b>📡 Đàm Thoại Telegram MT01</b>.
+            </div>
+          `;
+        }
+      }
+    });
+  }
+
   async function fetchTelegramBridgeMessages(forceScroll = false) {
     if (!tgBridgeChatBody) return;
     try {
@@ -2522,6 +2571,15 @@ document.addEventListener("DOMContentLoaded", () => {
       lastRenderedTgMsgCount = msgs.length;
 
       tgBridgeChatBody.innerHTML = "";
+      if (msgs.length === 0) {
+        tgBridgeChatBody.innerHTML = `
+          <div class="chat-msg msg-ai" style="opacity:0.85;">
+            📡 Khung đàm thoại Telegram <b>Miền Tây 01</b> đang sẵn sàng. Sếp có thể chọn Topic, bấm Tag tên NVXL bên trên để gửi tin nhắn ngay!
+          </div>
+        `;
+        return;
+      }
+
       msgs.forEach((m) => {
         const card = document.createElement("div");
         const isOut = m.direction === "outgoing" || m.direction === "outgoing_auto";
@@ -2537,6 +2595,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const replyBtnHtml = m.message_id > 0
           ? `<button type="button" class="tg-reply-btn" data-msgid="${m.message_id}" data-sender="${m.sender_name}" data-topic="${m.topic_id || 2690}" data-preview="${(m.text || '').slice(0, 60).replace(/"/g, '&quot;')}">↩️ Trả lời</button>`
           : "";
+        const delBtnHtml = `<button type="button" class="tg-del-btn" data-id="${m.id || ''}" data-msgid="${m.message_id || 0}" title="Xóa tin nhắn này (trên Web & Telegram)">🗑️ Xóa</button>`;
 
         card.innerHTML = `
           <div class="tg-msg-header">
@@ -2551,7 +2610,10 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="tg-msg-text">${formatMarkdownToHtml(m.text || "")}</div>
           <div class="tg-msg-footer">
             <span>🕒 ${m.timestamp || ""}</span>
-            ${replyBtnHtml}
+            <div style="display:inline-flex; gap:10px; align-items:center;">
+              ${replyBtnHtml}
+              ${delBtnHtml}
+            </div>
           </div>
         `;
         tgBridgeChatBody.appendChild(card);
@@ -2569,6 +2631,14 @@ document.addEventListener("DOMContentLoaded", () => {
             tgReplyBanner.style.display = "flex";
           }
           if (copilotInput) copilotInput.focus();
+        });
+      });
+
+      tgBridgeChatBody.querySelectorAll(".tg-del-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const entryId = btn.getAttribute("data-id") || "";
+          const msgId = parseInt(btn.getAttribute("data-msgid") || "0", 10);
+          deleteSingleTgMessage(entryId, msgId);
         });
       });
 

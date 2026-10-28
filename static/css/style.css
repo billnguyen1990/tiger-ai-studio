@@ -4845,3 +4845,19 @@ body.theme-light .tg-msg-outgoing {
   color: #064e3b;
   border-color: #6ee7b7;
 }
+
+
+.tg-del-btn {
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+  opacity: 0.85;
+}
+.tg-del-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}

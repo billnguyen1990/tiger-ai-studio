@@ -3316,55 +3316,46 @@ NVXL_USERNAME_HUB_MAP = {
     "pinca0602": {"hub": "Ô Môn", "name": "Trọng Bằng", "tag": "@pinca0602"}
 }
 
+TELEGRAM_DELETED_IDS_FILE = os.path.join(PARENT_DIR, "telegram_deleted_ids.json")
+
+def _load_deleted_tg_ids():
+    if os.path.exists(TELEGRAM_DELETED_IDS_FILE):
+        try:
+            with open(TELEGRAM_DELETED_IDS_FILE, "r", encoding="utf-8") as f:
+                return set(json.load(f))
+        except Exception:
+            pass
+    return set()
+
+def _save_deleted_tg_ids(ids_set):
+    try:
+        with open(TELEGRAM_DELETED_IDS_FILE, "w", encoding="utf-8") as f:
+            json.dump(list(ids_set)[-500:], f)
+    except Exception:
+        pass
+
 def _load_telegram_bridge_messages():
+    deleted_ids = _load_deleted_tg_ids()
     if os.path.exists(TELEGRAM_BRIDGE_LOG_FILE):
         try:
             with open(TELEGRAM_BRIDGE_LOG_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                if isinstance(data, list) and len(data) > 0:
+                if isinstance(data, list):
                     cleaned = []
                     for item in data:
-                        if item.get("id") in ("init_bridge_1", "tg_in_1", "tg_out_3080"):
+                        if str(item.get("id")) in deleted_ids or str(item.get("message_id")) in deleted_ids:
+                            continue
+                        if item.get("id") in ("init_bridge_1", "tg_in_1", "tg_out_3080", "tg_out_3081"):
                             continue
                         if "Sếp Điền Lộc" in str(item.get("sender_name", "")):
                             item["sender_name"] = "AI 🍻 (Bạn)"
                         if item.get("hub_badge") == "Chỉ Đạo Từ Web":
                             item["hub_badge"] = "Đã gửi"
                         cleaned.append(item)
-                    if cleaned:
-                        return cleaned
+                    return cleaned
         except Exception:
             pass
-    return [
-        {
-            "id": "tg_out_3081",
-            "message_id": 3081,
-            "direction": "outgoing",
-            "sender_name": "AI 🍻 (Bạn)",
-            "username": "@AiAgentMT_bot",
-            "hub_badge": "Đã gửi",
-            "topic_id": 2690,
-            "topic_name": "🔥 Báo Cáo",
-            "text": "@DUCTRUNG17TUOI nói gì đó",
-            "reply_to_text": "",
-            "is_explanation": False,
-            "timestamp": "07:44:18 28/10/2026"
-        },
-        {
-            "id": "tg_in_3082",
-            "message_id": 3082,
-            "direction": "incoming",
-            "sender_name": "Đức Trung",
-            "username": "@DUCTRUNG17TUOI",
-            "hub_badge": "NVXL Vị Thanh",
-            "topic_id": 2690,
-            "topic_name": "🔥 Báo Cáo",
-            "text": "Test 1234",
-            "reply_to_text": "",
-            "is_explanation": False,
-            "timestamp": "07:44:35 28/10/2026"
-        }
-    ]
+    return []
 
 def _save_telegram_bridge_messages(msgs):
     try:
@@ -3376,6 +3367,9 @@ def _save_telegram_bridge_messages(msgs):
 
 def _append_telegram_bridge_message(entry):
     with _telegram_bridge_lock:
+        deleted_ids = _load_deleted_tg_ids()
+        if str(entry.get("id")) in deleted_ids or (entry.get("message_id") and str(entry.get("message_id")) in deleted_ids):
+            return False
         msgs = _load_telegram_bridge_messages()
         msg_id = entry.get("message_id")
         if msg_id:
@@ -3654,6 +3648,69 @@ def send_telegram_bridge_message():
             "success": False,
             "message": f"Lỗi gửi Telegram: {res.get('description', 'Không xác định')}"
         }), 500
+
+
+
+@app.route("/api/telegram-bridge/delete", methods=["POST"])
+def delete_telegram_bridge_message():
+    """Xóa 1 tin nhắn khỏi khung chat Web VÀ thu hồi/xóa luôn trên nhóm Telegram Miền Tây 01"""
+    data = request.get_json(silent=True, force=True) or {}
+    msg_id = data.get("message_id")
+    entry_id = str(data.get("id") or "")
+
+    with _telegram_bridge_lock:
+        deleted_ids = _load_deleted_tg_ids()
+        if entry_id:
+            deleted_ids.add(entry_id)
+        if msg_id:
+            deleted_ids.add(str(msg_id))
+        _save_deleted_tg_ids(deleted_ids)
+
+        msgs = _load_telegram_bridge_messages()
+        new_msgs = [
+            m for m in msgs
+            if str(m.get("id")) != entry_id and (not msg_id or str(m.get("message_id")) != str(msg_id))
+        ]
+        _save_telegram_bridge_messages(new_msgs)
+
+    tg_deleted = False
+    if msg_id and int(msg_id) > 0:
+        try:
+            url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/deleteMessage"
+            r = requests.post(url, data={"chat_id": TELEGRAM_BRIDGE_CHAT_ID, "message_id": int(msg_id)}, timeout=5)
+            tg_deleted = r.json().get("ok", False)
+        except Exception:
+            pass
+
+    return jsonify({"success": True, "telegram_deleted": tg_deleted})
+
+@app.route("/api/telegram-bridge/clear", methods=["POST"])
+def clear_telegram_bridge_messages():
+    """Xóa toàn bộ lịch sử tin nhắn trên khung chat Telegram Bridge (và thu hồi tin nhắn bot trên Telegram nếu có)"""
+    data = request.get_json(silent=True, force=True) or {}
+    also_delete_tg = data.get("also_delete_telegram", True)
+
+    with _telegram_bridge_lock:
+        msgs = _load_telegram_bridge_messages()
+        deleted_ids = _load_deleted_tg_ids()
+        for m in msgs:
+            if m.get("id"):
+                deleted_ids.add(str(m.get("id")))
+            if m.get("message_id"):
+                deleted_ids.add(str(m.get("message_id")))
+                if also_delete_tg and int(m.get("message_id", 0)) > 0:
+                    try:
+                        requests.post(
+                            f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/deleteMessage",
+                            data={"chat_id": TELEGRAM_BRIDGE_CHAT_ID, "message_id": int(m.get("message_id"))},
+                            timeout=3
+                        )
+                    except Exception:
+                        pass
+        _save_deleted_tg_ids(deleted_ids)
+        _save_telegram_bridge_messages([])
+
+    return jsonify({"success": True})
 
 
 @app.route("/api/system-status")
