@@ -2805,53 +2805,95 @@ def fetch_realtime_context(prompt):
 
     return "\n\n".join(sections)
 
-def build_mt01_system_context(realtime_context=None):
-    """Xây dựng dữ liệu thời gian thực của 4 kho MT01 & dữ liệu thị trường đưa vào ngữ cảnh Google Gemini"""
-    history_dir = os.path.join(PARENT_DIR, "kpi_history")
-    latest_kpi = {}
+def _get_kpi_history_dir():
+    d1 = os.path.join(PARENT_DIR, "kpi_history")
+    d2 = os.path.join(BASE_DIR, "kpi_history")
+    if os.path.exists(d1) and glob.glob(os.path.join(d1, "kpi_*.json")):
+        return d1
+    if os.path.exists(d2):
+        return d2
+    return d1
+
+def build_mt01_system_context(realtime_context=None, for_telegram=False):
+    """Xây dựng dữ liệu thời gian thực & lịch sử đa ngày của 4 kho MT01 đưa vào ngữ cảnh Google Gemini"""
+    history_dir = _get_kpi_history_dir()
+    all_snapshots = {}
     if os.path.exists(history_dir):
-        files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)
-        if files:
+        for fp in sorted(glob.glob(os.path.join(history_dir, "kpi_*.json"))):
+            bname = os.path.basename(fp)
+            date_key = bname.replace("kpi_", "").replace(".json", "")
             try:
-                with open(files[0], "r", encoding="utf-8") as f:
-                    latest_kpi = json.load(f)
+                with open(fp, "r", encoding="utf-8") as f:
+                    all_snapshots[date_key] = json.load(f)
             except Exception:
                 pass
-    
+
     now_vn = datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=7)))
+    today_key = now_vn.strftime("%Y%m%d")
+    yday_dt = now_vn - datetime.timedelta(days=1)
+    yday_key = yday_dt.strftime("%Y%m%d")
+
+    # Xây dựng bảng lịch sử đa ngày cho từng kho để AI cộng dồn/so sánh chính xác 100%
+    multi_day_lines = ["=== BẢNG LỊCH SỬ KPI TỪNG NGÀY CỦA 4 KHO MT01 (DỮ LIỆU THẬT 100% TRÊN HỆ THỐNG) ==="]
+    for dkey in sorted(all_snapshots.keys()):
+        d_fmt = f"{dkey[6:8]}/{dkey[4:6]}/{dkey[:4]}" if len(dkey) == 8 else dkey
+        tag = " (HÔM NAY - ĐANG ĐI GIAO TRỰC TIẾP TRÊN TUYẾN)" if dkey == today_key else (" (HÔM QUA - ĐÃ CHỐT CA CUỐI NGÀY)" if dkey == yday_key else " (ĐÃ CHỐT CA)")
+        multi_day_lines.append(f"\n📅 Ngày {d_fmt}{tag}:")
+        snap = all_snapshots[dkey]
+        for hname, hval in snap.items():
+            dv = hval.get("deliver", {})
+            pk = hval.get("pick", {})
+            hid = hval.get("hub_id", "")
+            reasons_list = dv.get("reasons", [])
+            top_rs = ", ".join([f"{r[0]} ({r[1]} đơn)" for r in reasons_list[:4]]) if reasons_list else "Không có"
+            cod_amt = hval.get("total_cod_collected", 0)
+            multi_day_lines.append(
+                f"  • Kho {hname} (ID {hid}): Giao thành công (GTC) {dv.get('gtc',0)}/{dv.get('assigned',0)} đơn "
+                f"(Tỷ lệ GTC: {dv.get('rate',0)}%) | Giao thất bại (GTB): {dv.get('gtb',0)} đơn | "
+                f"Đang đi giao (Pending): {dv.get('pending',0)} đơn | Lấy hàng (LTC): {pk.get('ltc',0)}/{pk.get('assigned',0)} đơn ({pk.get('rate',0)}%) | "
+                f"COD thu: {cod_amt:,}đ | Lý do GTB chính: {top_rs}"
+            )
+
+    latest_key = yday_key if yday_key in all_snapshots else (sorted(all_snapshots.keys())[-1] if all_snapshots else None)
+    latest_kpi = all_snapshots.get(latest_key, {}) if latest_key else {}
+    today_kpi = all_snapshots.get(today_key, {})
+
     context = (
         f"Bạn là TIGER AI COPILOT — Trợ lý AI điều hành tác chiến và phân tích vận hành cho Cụm Miền Tây 01 (GHN Lastmile).\n"
         f"Thời gian hệ thống hiện tại: Ngày {now_vn.strftime('%d/%m/%Y')} (Giờ Việt Nam: {now_vn.strftime('%H:%M:%S')}).\n"
-        f"LƯU Ý QUAN TRỌNG: Mốc thời gian '{now_vn.strftime('%d/%m/%Y')}' chính là ngày hôm nay. Dữ liệu bên dưới là dữ liệu thực tế hiện hành vừa được cào về.\n"
-        "Quy tắc xưng hô: Luôn xưng là 'Tiger AI' hoặc 'em', gọi người dùng là 'sếp' hoặc 'anh/chị'.\n"
-        "Quy tắc thuật ngữ BẮT BUỘC: Luôn dùng 'NV' (tuyệt đối KHÔNG dùng 'tài xế'), và 'NVXL' cho nhân viên xử lý kho.\n"
+        f"Hôm nay là {now_vn.strftime('%d/%m/%Y')}, hôm qua là {yday_dt.strftime('%d/%m/%Y')}.\n"
+        "QUY TẮC BẮT BUỘC TUYỆT ĐỐI:\n"
+        "1. Luôn dùng 'NV' (tuyệt đối KHÔNG dùng 'tài xế'), và 'NVXL' cho nhân viên xử lý kho.\n"
+        "2. KHI ĐƯỢC HỎI VỀ SỐ LIỆU KPI, TỶ LỆ GTC/GTB CỦA 1 NGÀY HOẶC NHIỀU NGÀY (VD: từ 23/10 đến 27/10): Bạn ĐÃ CÓ ĐẦY ĐỦ 100% số liệu từng ngày ở bảng bên dưới. Hãy TỰ CỘNG DỒN (Tổng GTC / Tổng đơn gán * 100%) và TRẢ LỜI NGAY LẬP TỨC bằng con số chính xác trong cùng 1 tin nhắn! TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'hệ thống chỉ lưu trữ Snapshot mới nhất', KHÔNG hỏi 'Sếp có muốn em kết nối Data Lake không?', và KHÔNG hứa suông 'em đang tổng hợp gửi liền'!\n"
+        "3. TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'check inbox riêng nha' (Bot chỉ trả lời trực tiếp ngay tại khung chat này).\n"
+        "4. Phân biệt rõ: Số liệu HÔM QUA (27/10/2026) là số liệu ĐÃ CHỐT CA CUỐI NGÀY (Pending = 0), còn số liệu HÔM NAY (28/10/2026) là số liệu ĐANG ĐI TUYẾN TRỰC TIẾP (các NV đang đi giao, chưa kết thúc ngày).\n\n"
         "Thông tin 4 kho trong Cụm Miền Tây 01:\n"
-        "1. Kho Giao Hàng Nặng - Cái Răng - Cần Thơ (ID: 21088000) - NVXL: Công Bằng (@CONGBANGCAIRANGCANTHO) - Đ/c: 531 Võ Nguyên Giáp, Cái Răng, Cần Thơ (Định vị: https://maps.app.goo.gl/P9uhaYrMCpTUT3no6)\n"
-        "2. Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ (ID: 21985000) - NVXL: Bảo Toàn (@Nguyen_Toan) - Đ/c: 531 Võ Nguyên Giáp, Cái Răng, Cần Thơ (Định vị: https://maps.app.goo.gl/P9uhaYrMCpTUT3no6)\n"
-        "3. Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang (ID: 22862000) - NVXL: Đức Trung (@DUCTRUNG17TUOI) - Đ/c: 175 Ba Tháng Hai, Phường 5, Vị Thanh, Hậu Giang (Định vị: https://maps.app.goo.gl/nHbev35odq76Lqm29)\n"
-        "4. Kho Giao Hàng Nặng - Ô Môn - Cần Thơ (ID: 22917000) - NVXL: Trọng Bằng (@pinca0602) - Đ/c: 1962 , Ngã 3 Nông Trường , QL91 , KV Thới Hưng , Phường Long Hưng , TP.Cần Thơ (Định vị: https://maps.app.goo.gl/R6BBvb1tbsLn2cXS6)\n\n"
-        "Cổng tra cứu mã đơn hàng nội bộ GHN: https://tracuunoibo.ghn.vn/internal?order_code={MÃ_ĐƠN}\n\n"
+        "1. Kho Giao Hàng Nặng - Cái Răng - Cần Thơ (ID: 21088000) - NVXL: Công Bằng (@CONGBANGCAIRANGCANTHO)\n"
+        "2. Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ (ID: 21985000) - NVXL: Bảo Toàn (@Nguyen_Toan)\n"
+        "3. Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang (ID: 22862000) - NVXL: Đức Trung (@DUCTRUNG17TUOI)\n"
+        "4. Kho Giao Hàng Nặng - Ô Môn - Cần Thơ (ID: 22917000) - NVXL: Trọng Bằng (@pinca0602)\n\n"
+        + "\n".join(multi_day_lines) + "\n\n"
     )
-    if latest_kpi:
-        context += f"Dữ liệu KPI Snapshot mới nhất: {json.dumps(latest_kpi, ensure_ascii=False)}\n\n"
-    else:
-        context += (
-            "Dữ liệu chuẩn gần nhất: Toàn cụm gán 746 đơn, GTC+LTC 639 đơn (85.66%), Bình Thủy 91.6% (Top 1), "
-            "Cái Răng 86.5%, Vị Thanh 84.3%, Ô Môn 76.5% (Cần giải trình 28 đơn thất bại).\n\n"
-        )
+    if today_kpi:
+        context += f"Chi tiết trực tiếp hôm nay ({now_vn.strftime('%d/%m/%Y')}): {json.dumps(today_kpi, ensure_ascii=False)}\n\n"
+    elif latest_kpi:
+        context += f"Chi tiết chốt ca hôm qua ({yday_dt.strftime('%d/%m/%Y')}): {json.dumps(latest_kpi, ensure_ascii=False)}\n\n"
 
     if realtime_context:
         context += (
             f"=== DỮ LIỆU THỜI GIAN THỰC TIGER AI TỰ ĐỘNG TRA CỨU & CÀO DỮ LIỆU MỚI NHẤT ===\n"
             f"{realtime_context}\n"
-            f"===============================================================================\n"
-            f"QUY TẮC BẮT BUỘC: Bạn ĐÃ ĐƯỢC KẾT NỐI dữ liệu thời gian thực được cào mới nhất ở trên (ngày {now_vn.strftime('%d/%m/%Y')}). "
-            f"Hãy trả lời chi tiết, chính xác các con số từng lít/từng đơn vị, phân tích biến động tăng giảm theo dữ liệu trên, "
-            f"và phân tích tác động tới chi phí vận hành Cụm Miền Tây 01 (Vùng 2). "
-            f"TUYỆT ĐỐI KHÔNG từ chối hoặc nói rằng bạn không có kết nối thời gian thực hay mốc thời gian này ở tương lai!\n\n"
+            f"===============================================================================\n\n"
         )
 
-    context += "Hãy trả lời thông minh, chuyên nghiệp, súc tích, định dạng markdown đẹp mắt với bảng hoặc danh sách gạch đầu dòng, kèm emoji sinh động, hỗ trợ đắc lực cho công tác quản lý điều hành."
+    if for_telegram:
+        context += (
+            "ĐỊNH DẠNG BẮT BUỘC CHO TELEGRAM: Trả lời ngắn gọn, đi thẳng vào trọng tâm câu hỏi và con số thực tế. "
+            "Chỉ dùng thẻ HTML <b>in đậm</b> và <code>mã</code> cùng dấu gạch đầu dòng '• '. "
+            "TUYỆT ĐỐI KHÔNG dùng ký hiệu '###', không dùng '* ' đầu dòng, không dùng '---'!"
+        )
+    else:
+        context += "Hãy trả lời thông minh, chuyên nghiệp, súc tích, định dạng markdown đẹp mắt với bảng hoặc danh sách gạch đầu dòng, kèm emoji sinh động, hỗ trợ đắc lực cho công tác quản lý điều hành."
     return context
 
 def call_gemini_api(prompt, system_context, api_key=None, history=None):
@@ -3421,6 +3463,7 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
         "3. Nếu nhân viên báo nghỉ/off ca (ví dụ: 'nay off AI ơi'): hãy hỏi thăm ngắn gọn và hỏi xem hôm nay ở kho đó ai trực thay để nắm thông tin.\n"
         "4. Nếu nhân viên giải trình lý do rớt đơn / GTB / hẹn giao: hãy phản hồi xác nhận ngắn gọn và nhắc anh em lưu ý xử lý dứt điểm các đơn tồn.\n"
         "5. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đúng trọng tâm.\n"
+        "6. TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'check inbox riêng nha' hoặc hứa gửi số liệu qua inbox riêng (mọi thông tin chỉ trao đổi trực tiếp trong nhóm).\n"
     )
     context_prompt = ""
     if reply_to_text:
@@ -3457,6 +3500,58 @@ def _format_ghn_order_telegram_reply(results):
             reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
     return "\n".join(reply_lines)
 
+def _clean_markdown_to_telegram_html(raw_text):
+    import re
+    s = (raw_text or "").strip()
+    s = re.sub(r'^#{1,4}\s*(.+)$', r'<b>📌 \1</b>', s, flags=re.MULTILINE)
+    s = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', s)
+    s = re.sub(r'`([^`]+)`', r'<code>\1</code>', s)
+    s = re.sub(r'^\s*\*\s+', '• ', s, flags=re.MULTILINE)
+    s = re.sub(r'^---+\s*$', '', s, flags=re.MULTILINE)
+    s = re.sub(r'\n{3,}', '\n\n', s)
+    return s.strip()
+
+def _format_quick_kpi_telegram_report():
+    history_dir = _get_kpi_history_dir()
+    now_vn = get_vietnam_now()
+    today_key = now_vn.strftime("%Y%m%d")
+    yday_dt = now_vn - datetime.timedelta(days=1)
+    yday_key = yday_dt.strftime("%Y%m%d")
+
+    yday_file = os.path.join(history_dir, f"kpi_{yday_key}.json")
+    today_file = os.path.join(history_dir, f"kpi_{today_key}.json")
+
+    lines = [f"📊 <b>BẢNG TỔNG HỢP KPI 4 KHO CỤM MIỀN TÂY 01</b>"]
+    if os.path.exists(yday_file):
+        try:
+            yd = json.load(open(yday_file, "r", encoding="utf-8"))
+            lines.append(f"\n✅ <b>1. Chốt Ca Hôm Qua ({yday_dt.strftime('%d/%m/%Y')} — Đã kết thúc ca):</b>")
+            t_gtc = t_ass = t_gtb = 0
+            for hname, v in yd.items():
+                dv = v.get("deliver", {})
+                pk = v.get("pick", {})
+                gtc, ass, gtb, rate = dv.get("gtc", 0), dv.get("assigned", 0), dv.get("gtb", 0), dv.get("rate", 0)
+                t_gtc += gtc; t_ass += ass; t_gtb += gtb
+                icon = "🟢" if rate >= 85 else ("🟡" if rate >= 78 else "🔴")
+                lines.append(f"  {icon} <b>Kho {hname}</b>: GTC <b>{gtc}/{ass} đơn ({rate}%)</b> | GTB: {gtb} | Lấy: {pk.get('ltc',0)}/{pk.get('assigned',0)}")
+            t_rate = round(t_gtc / t_ass * 100, 1) if t_ass > 0 else 0
+            lines.append(f"  👉 <b>Toàn cụm hôm qua</b>: GTC <b>{t_gtc}/{t_ass} đơn ({t_rate}%)</b> | GTB: {t_gtb} đơn")
+        except Exception:
+            pass
+
+    if os.path.exists(today_file):
+        try:
+            td = json.load(open(today_file, "r", encoding="utf-8"))
+            lines.append(f"\n🚚 <b>2. Tiến Độ Trực Tiếp Hôm Nay ({now_vn.strftime('%d/%m/%Y')} lúc {now_vn.strftime('%H:%M')}):</b>")
+            for hname, v in td.items():
+                dv = v.get("deliver", {})
+                gtc, ass, gtb, pend, rate = dv.get("gtc", 0), dv.get("assigned", 0), dv.get("gtb", 0), dv.get("pending", 0), dv.get("rate", 0)
+                lines.append(f"  • <b>Kho {hname}</b>: Đã giao <b>{gtc}/{ass} đơn ({rate}%)</b> | Đang đi giao: <b>{pend} đơn</b> | GTB: {gtb}")
+        except Exception:
+            pass
+
+    return "\n".join(lines)
+
 def _handle_employee_telegram_auto_reply(msg_obj, entry):
     """Tự động trả lời nhân viên trên Telegram và hiển thị câu trả lời lên khung chat Web"""
     global TELEGRAM_AUTO_REPLY_ENABLED
@@ -3487,7 +3582,6 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
-        # Nếu đang trên Render Cloud (IP Singapore bị GHN chặn) và chưa lấy được dữ liệu, nhường cho Local PC Relay xử lý trong 2s
         if is_cloud and not any(r.get("found") for r in results):
             return
         reply_msg = _format_ghn_order_telegram_reply(results)
@@ -3515,24 +3609,37 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     # 2. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
     if is_reply_to_bot or is_tag_or_cmd:
         clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
+        is_pure_kpi_cmd = clean_q.lower() in ("/kpi", "/ton")
         for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
             if clean_q.lower().startswith(prefix):
                 clean_q = clean_q[len(prefix):].strip()
 
-        if any(k in clean_q.lower() for k in ["kpi", "tồn", "gán", "bình thủy", "cái răng", "vị thanh", "ô môn", "cod", "xăng", "thời tiết"]):
-            realtime_ctx = fetch_realtime_context(clean_q)
-            sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx)
-            ai_ans = call_gemini_api(clean_q, sys_ctx, get_gemini_api_key())
-            import re
-            tg_html = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', (ai_ans or "").strip())
-            tg_html = re.sub(r'`([^`]+)`', r'<code>\1</code>', tg_html)
+        if is_pure_kpi_cmd and not clean_q:
+            tg_html = _format_quick_kpi_telegram_report()
         else:
-            tg_html = _call_gemini_natural_group_reply(
-                entry.get("sender_name", "Anh/chị"),
-                entry.get("hub_badge", "MT01"),
-                reply_to_text,
-                clean_q or text
-            )
+            combined_check = f"{clean_q} {reply_to_text}".lower()
+            kpi_keywords = [
+                "kpi", "tồn", "gán", "bình thủy", "cái răng", "vị thanh", "ô môn",
+                "21088000", "21985000", "22862000", "22917000", "gtc", "gtb", "ltc",
+                "tỉ lệ", "tỷ lệ", "cod", "xăng", "thời tiết", "số liệu", "báo cáo",
+                "hôm qua", "hôm nay", "ngày", "thấp", "cao", "chuyến", "làm đi", "gửi liền"
+            ]
+            if any(k in combined_check for k in kpi_keywords):
+                realtime_ctx = fetch_realtime_context(clean_q or text)
+                sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx, for_telegram=True)
+                full_prompt = ""
+                if reply_to_text:
+                    full_prompt += f"Ngữ cảnh tin nhắn trước đó được Reply: \"{reply_to_text}\"\n"
+                full_prompt += f"Người hỏi ({entry.get('sender_name', '')} - {entry.get('hub_badge', '')}): \"{clean_q or text}\"\nHãy trả lời chính xác 100% theo số liệu thực tế trong bảng lịch sử KPI, đi thẳng vào trọng tâm câu hỏi:"
+                ai_ans = call_gemini_api(full_prompt, sys_ctx, get_gemini_api_key())
+                tg_html = _clean_markdown_to_telegram_html(ai_ans)
+            else:
+                tg_html = _call_gemini_natural_group_reply(
+                    entry.get("sender_name", "Anh/chị"),
+                    entry.get("hub_badge", "MT01"),
+                    reply_to_text,
+                    clean_q or text
+                )
 
         if tg_html:
             sent = _send_telegram_group_message(tg_html[:3800], topic_id=topic_id, reply_to_message_id=msg_id)
@@ -3547,7 +3654,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                     "hub_badge": "AI Tự Đáp",
                     "topic_id": topic_id,
                     "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
-                    "text": tg_html[:800],
+                    "text": tg_html[:1500],
                     "reply_to_text": text[:120],
                     "is_explanation": False,
                     "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
