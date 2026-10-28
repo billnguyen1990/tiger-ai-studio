@@ -3414,33 +3414,24 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
     """Gọi Gemini trả lời tự nhiên, ngắn gọn 1-2 câu như quản lý/điều phối viên trong nhóm chat Telegram"""
     api_key = get_gemini_api_key()
     sys_instruction = (
-        "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).
-"
-        "QUY TẮC BẮT BUỘC:
-"
-        "1. Trả lời cực kỳ tự nhiên, gần gũi, ngắn gọn (chỉ 1 đến 2 câu), giống như người điều phối đang nói chuyện trực tiếp với anh em kho.
-"
-        "2. TUYỆT ĐỐI KHÔNG dùng các câu máy móc như 'Tiger AI Copilot đã ghi nhận', 'chuyển lên Bảng Điều Hành của Sếp', hay 'Xin chào tôi là trợ lý AI'.
-"
-        "3. Nếu nhân viên báo nghỉ/off ca (ví dụ: 'nay off AI ơi'): hãy hỏi thăm ngắn gọn và hỏi xem hôm nay ở kho đó ai trực thay để nắm thông tin.
-"
-        "4. Nếu nhân viên giải trình lý do rớt đơn / GTB / hẹn giao: hãy phản hồi xác nhận ngắn gọn và nhắc anh em lưu ý xử lý dứt điểm các đơn tồn.
-"
-        "5. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đúng trọng tâm.
-"
+        "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).\n"
+        "QUY TẮC BẮT BUỘC:\n"
+        "1. Trả lời cực kỳ tự nhiên, gần gũi, ngắn gọn (chỉ 1 đến 2 câu), giống như người điều phối đang nói chuyện trực tiếp với anh em kho.\n"
+        "2. TUYỆT ĐỐI KHÔNG dùng các câu máy móc như 'Tiger AI Copilot đã ghi nhận', 'chuyển lên Bảng Điều Hành của Sếp', hay 'Xin chào tôi là trợ lý AI'.\n"
+        "3. Nếu nhân viên báo nghỉ/off ca (ví dụ: 'nay off AI ơi'): hãy hỏi thăm ngắn gọn và hỏi xem hôm nay ở kho đó ai trực thay để nắm thông tin.\n"
+        "4. Nếu nhân viên giải trình lý do rớt đơn / GTB / hẹn giao: hãy phản hồi xác nhận ngắn gọn và nhắc anh em lưu ý xử lý dứt điểm các đơn tồn.\n"
+        "5. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đúng trọng tâm.\n"
     )
     context_prompt = ""
     if reply_to_text:
-        context_prompt += f"Tin nhắn trước đó bạn đã hỏi nhân viên: "{reply_to_text}"
-"
-    context_prompt += f"Nhân viên '{sender_name}' ({hub_badge}) vừa nhắn lại: "{user_text}"
-Hãy viết câu trả lời trực tiếp (1-2 câu ngắn gọn):"
+        context_prompt += f'Tin nhắn trước đó bạn đã hỏi nhân viên: "{reply_to_text}"\n'
+    context_prompt += f'Nhân viên "{sender_name}" ({hub_badge}) vừa nhắn lại: "{user_text}"\nHãy viết câu trả lời trực tiếp (1-2 câu ngắn gọn):'
 
     ans = call_gemini_api(context_prompt, sys_instruction, api_key)
     if ans:
         import re
-        ans = re.sub(r'\*\*(.*?)\*\*', r'<b></b>', ans.strip())
-        ans = re.sub(r'`([^`]+)`', r'<code></code>', ans)
+        ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
+        ans = re.sub(r'`([^`]+)`', r'<code>\1</code>', ans)
         return ans
     return ""
 
@@ -3477,22 +3468,15 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         for idx, res in enumerate(results, 1):
             if res.get("found"):
                 reply_lines.append(
-                    f"
-{idx}. <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>
-"
-                    f"   ├ Vận hành: <code>{res.get('operation_status', '—')}</code>
-"
-                    f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>
-"
-                    f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})
-"
+                    f"\n{idx}. <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>\n"
+                    f"   ├ Vận hành: <code>{res.get('operation_status', '—')}</code>\n"
+                    f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>\n"
+                    f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})\n"
                     f"   └ <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
                 )
             else:
-                reply_lines.append(f"
-{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
-        reply_msg = "
-".join(reply_lines)
+                reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
+        reply_msg = "\n".join(reply_lines)
         sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         if sent.get("ok"):
             res_msg = sent.get("result", {})
@@ -3519,16 +3503,14 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             if clean_q.lower().startswith(prefix):
                 clean_q = clean_q[len(prefix):].strip()
 
-        # Nếu hỏi về số liệu KPI/tồn kho cụ thể -> dùng dữ liệu hệ thống MT01
         if any(k in clean_q.lower() for k in ["kpi", "tồn", "gán", "bình thủy", "cái răng", "vị thanh", "ô môn", "cod", "xăng", "thời tiết"]):
             realtime_ctx = fetch_realtime_context(clean_q)
             sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx)
             ai_ans = call_gemini_api(clean_q, sys_ctx, get_gemini_api_key())
             import re
-            tg_html = re.sub(r'\*\*(.*?)\*\*', r'<b></b>', (ai_ans or "").strip())
-            tg_html = re.sub(r'`([^`]+)`', r'<code></code>', tg_html)
+            tg_html = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', (ai_ans or "").strip())
+            tg_html = re.sub(r'`([^`]+)`', r'<code>\1</code>', tg_html)
         else:
-            # Trả lời giao tiếp tự nhiên 1-2 câu theo ngữ cảnh
             tg_html = _call_gemini_natural_group_reply(
                 entry.get("sender_name", "Anh/chị"),
                 entry.get("hub_badge", "MT01"),
@@ -3589,7 +3571,6 @@ def _process_single_telegram_update(upd):
     if reply_msg and not reply_msg.get("forum_topic_created"):
         reply_text = (reply_msg.get("text") or reply_msg.get("caption") or "")[:160]
 
-    # Chỉ gắn nhãn Giải trình NVXL khi nội dung thực sự nói về đơn hàng / giải trình KPI
     is_explanation = bool(
         ("giải trình" in reply_text.lower()) or
         ("yêu cầu: nvxl" in reply_text.lower()) or
