@@ -3559,7 +3559,7 @@ def telegram_webhook_receiver():
 @app.route("/api/telegram-bridge/messages", methods=["GET"])
 def get_telegram_bridge_messages():
     """Lấy danh sách tin nhắn 2 chiều giữa Web Tiger AI Copilot và Nhóm Telegram Miền Tây 01"""
-    _poll_telegram_updates_once()
+    threading.Thread(target=_poll_telegram_updates_once, daemon=True).start()
     msgs = _load_telegram_bridge_messages()
     explanations_count = sum(1 for m in msgs if m.get("is_explanation") and m.get("direction") == "incoming")
     return jsonify({

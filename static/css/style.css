@@ -4675,9 +4675,7 @@ body.theme-light [style*="color: var(--text-dim)"] {
 .tg-quick-tags {
   display: flex;
   gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: none;
+  flex-wrap: wrap;
 }
 .tg-quick-tags::-webkit-scrollbar {
   display: none;
