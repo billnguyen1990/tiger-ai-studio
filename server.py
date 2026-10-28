@@ -3435,6 +3435,28 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
         return ans
     return ""
 
+def _format_ghn_order_telegram_reply(results):
+    reply_lines = [f"📦 <b>KẾT QUẢ TRA CỨU ĐƠN HÀNG GHN ({len(results)} đơn):</b>"]
+    for idx, res in enumerate(results, 1):
+        if res.get("found"):
+            ms = "\n".join([f"   • {m}" for m in (res.get("milestones") or [])[:3]])
+            block = (
+                f"\n{idx}. 🔹 Mã đơn: <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>\n"
+                f"   ├ Trạng thái VH: <code>{res.get('operation_status', '—')}</code> ({res.get('transit_status', '—')})\n"
+                f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>\n"
+                f"   ├ Kho giao: <b>{res.get('deliver_hub', '—')}</b>\n"
+                f"   ├ Kiện hàng: <b>{res.get('weight_kg', 0)} kg</b> | Giá trị: <b>{res.get('order_value_str', '0 đ')}</b> ({res.get('items_count', 1)} kiện)\n"
+                f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})\n"
+                f"   ├ Mã chuyến: <code>{res.get('trip_code', '—')}</code>\n"
+            )
+            if ms:
+                block += f"   ├ <b>Lịch sử tác động:</b>\n{ms}\n"
+            block += f"   └ 🔗 <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
+            reply_lines.append(block)
+        else:
+            reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
+    return "\n".join(reply_lines)
+
 def _handle_employee_telegram_auto_reply(msg_obj, entry):
     """Tự động trả lời nhân viên trên Telegram và hiển thị câu trả lời lên khung chat Web"""
     global TELEGRAM_AUTO_REPLY_ENABLED
@@ -3459,28 +3481,20 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
 
     # 1. Nếu nhân viên gửi mã đơn GHN (VD: GYM...)
-    if order_codes and (is_tag_or_cmd or is_reply_to_bot or len(text.split()) <= 12):
+    if order_codes:
+        is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
         target_codes = order_codes[:10]
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
-        reply_lines = [f"📦 <b>Kết quả tra cứu nhanh ({len(results)} đơn):</b>"]
-        for idx, res in enumerate(results, 1):
-            if res.get("found"):
-                reply_lines.append(
-                    f"\n{idx}. <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>\n"
-                    f"   ├ Vận hành: <code>{res.get('operation_status', '—')}</code>\n"
-                    f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>\n"
-                    f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})\n"
-                    f"   └ <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
-                )
-            else:
-                reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
-        reply_msg = "\n".join(reply_lines)
+        # Nếu đang trên Render Cloud (IP Singapore bị GHN chặn) và chưa lấy được dữ liệu, nhường cho Local PC Relay xử lý trong 2s
+        if is_cloud and not any(r.get("found") for r in results):
+            return
+        reply_msg = _format_ghn_order_telegram_reply(results)
         sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         if sent.get("ok"):
             res_msg = sent.get("result", {})
-            _append_telegram_bridge_message({
+            auto_entry = {
                 "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                 "message_id": res_msg.get("message_id", 0),
                 "direction": "outgoing_auto",
@@ -3491,9 +3505,11 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
                 "text": reply_msg,
                 "reply_to_text": text[:120],
+                "replied_to_msg_id": msg_id,
                 "is_explanation": False,
                 "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-            })
+            }
+            _append_telegram_bridge_message(auto_entry)
         return
 
     # 2. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
@@ -3623,19 +3639,84 @@ def telegram_webhook_receiver():
         _process_single_telegram_update(upd)
     return jsonify({"ok": True})
 
+@app.route("/api/telegram-bridge/append", methods=["POST"])
+def append_telegram_bridge_external():
+    """Nhận bản ghi đồng bộ từ Local PC Relay đẩy lên Cloud"""
+    data = request.get_json(silent=True, force=True) or {}
+    entries = data.get("entries") or ([data.get("entry")] if data.get("entry") else [])
+    added_count = 0
+    for e in entries:
+        if isinstance(e, dict) and e.get("id"):
+            if _append_telegram_bridge_message(e):
+                added_count += 1
+    return jsonify({"success": True, "added": added_count})
+
+_processed_local_order_msg_ids = set()
+
 def _sync_from_cloud_if_local():
-    """Nếu đang mở localhost:5050 thì tự động đồng bộ tin nhắn Webhook từ Render Cloud về"""
+    """Nếu đang chạy trên PC cá nhân (IP Việt Nam), tự động đồng bộ tin nhắn từ Render Cloud và xử lý Auto Tra Đơn GHN"""
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if not is_cloud:
         try:
-            r = requests.get("https://tiger-ai-studio.onrender.com/api/telegram-bridge/messages?cloud_raw=1", timeout=3)
+            r = requests.get("https://tiger-ai-studio.onrender.com/api/telegram-bridge/messages?cloud_raw=1", timeout=4)
             if r.status_code == 200:
                 cdata = r.json()
-                for m in cdata.get("messages", []):
+                cloud_msgs = cdata.get("messages", [])
+                answered_texts = set()
+                for m in cloud_msgs:
                     if m.get("message_id", 0) > 0:
                         _append_telegram_bridge_message(m)
+                    if m.get("hub_badge") == "Auto Tra Đơn":
+                        for c in extract_ghn_order_codes(m.get("text", "")):
+                            answered_texts.add(c)
+                # Kiểm tra nếu có tin nhắn chứa mã đơn GHN chưa được Auto Tra Đơn trả lời
+                for m in cloud_msgs[-15:]:
+                    mid = m.get("message_id", 0)
+                    if mid in _processed_local_order_msg_ids:
+                        continue
+                    codes = extract_ghn_order_codes(m.get("text", ""))
+                    unanswered = [c for c in codes if c not in answered_texts]
+                    if unanswered and m.get("hub_badge") != "Auto Tra Đơn":
+                        _processed_local_order_msg_ids.add(mid)
+                        results = [query_ghn_order_history(c) for c in unanswered[:10]]
+                        if any(res.get("found") for res in results):
+                            reply_html = _format_ghn_order_telegram_reply(results)
+                            topic_id = m.get("topic_id") or 0
+                            sent = _send_telegram_group_message(reply_html, topic_id=topic_id, reply_to_message_id=mid)
+                            if sent.get("ok"):
+                                res_msg = sent.get("result", {})
+                                auto_entry = {
+                                    "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                                    "message_id": res_msg.get("message_id", 0),
+                                    "direction": "outgoing_auto",
+                                    "sender_name": "AI 🍻 (Tự động)",
+                                    "username": "@AiAgentMT_bot",
+                                    "hub_badge": "Auto Tra Đơn",
+                                    "topic_id": topic_id,
+                                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                                    "text": reply_html,
+                                    "reply_to_text": (m.get("text") or "")[:120],
+                                    "is_explanation": False,
+                                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                                }
+                                _append_telegram_bridge_message(auto_entry)
+                                try:
+                                    requests.post("https://tiger-ai-studio.onrender.com/api/telegram-bridge/append", json={"entry": auto_entry}, timeout=5)
+                                except Exception:
+                                    pass
         except Exception:
             pass
+
+def _start_local_order_relay_daemon():
+    is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
+    if not is_cloud:
+        def _loop():
+            while True:
+                time.sleep(3)
+                _sync_from_cloud_if_local()
+        threading.Thread(target=_loop, daemon=True).start()
+
+_start_local_order_relay_daemon()
 
 @app.route("/api/telegram-bridge/messages", methods=["GET"])
 def get_telegram_bridge_messages():
@@ -3690,6 +3771,9 @@ def send_telegram_bridge_message():
             "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
         }
         _append_telegram_bridge_message(entry)
+        # Nếu tin nhắn gửi đi có chứa mã đơn GHN, tự động kích hoạt tra cứu đơn luôn
+        if extract_ghn_order_codes(text):
+            threading.Thread(target=_handle_employee_telegram_auto_reply, args=({"message_id": msg_id}, entry), daemon=True).start()
         return jsonify({"success": True, "entry": entry, "telegram_response": res_msg})
     else:
         return jsonify({
