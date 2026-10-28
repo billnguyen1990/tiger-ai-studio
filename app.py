@@ -2978,7 +2978,7 @@ def copilot_ask():
     # BƯỚC 0: LỆNH GỬI TRỰC TIẾP VÀO NHÓM TELEGRAM MIỀN TÂY 01 (/tele hoặc @...)
     if prompt.startswith("/tele ") or prompt.startswith("gửi telegram:") or prompt.startswith("nhắn telegram:"):
         msg_body = raw_prompt.split(" ", 1)[1] if prompt.startswith("/tele ") else raw_prompt.split(":", 1)[1].strip()
-        sent_res = _send_telegram_group_message(f"🦁 <b>[Chỉ Đạo Từ Tiger AI Copilot]</b>\n{msg_body}", topic_id=2690)
+        sent_res = _send_telegram_group_message(msg_body, topic_id=2690)
         if sent_res.get("ok"):
             r_m = sent_res.get("result", {})
             _append_telegram_bridge_message({
@@ -3349,7 +3349,7 @@ def _load_telegram_bridge_messages():
                             continue
                         if "Sếp Điền Lộc" in str(item.get("sender_name", "")):
                             item["sender_name"] = "AI 🍻 (Bạn)"
-                        if item.get("hub_badge") == "Chỉ Đạo Từ Web":
+                        if item.get("hub_badge") == "Đã gửi":
                             item["hub_badge"] = "Đã gửi"
                         cleaned.append(item)
                     return cleaned
@@ -3612,12 +3612,12 @@ def send_telegram_bridge_message():
     text = (data.get("text") or "").strip()
     topic_id = int(data.get("topic_id") if data.get("topic_id") is not None else 2690)
     reply_to_id = data.get("reply_to_message_id")
-    sender_title = (data.get("sender_title") or "Sếp Điền Lộc (Command Center)").strip()
+    sender_title = (data.get("sender_title") or "AI 🍻 (Bạn)").strip()
 
     if not text:
         return jsonify({"success": False, "message": "Nội dung tin nhắn không được để trống!"}), 400
 
-    formatted_tg = f"🦁 <b>[{sender_title}]</b>\n{text}"
+    formatted_tg = text
     res = _send_telegram_group_message(
         formatted_tg,
         topic_id=topic_id,
