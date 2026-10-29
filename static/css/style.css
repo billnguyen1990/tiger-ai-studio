@@ -805,34 +805,37 @@ body {
 }
 
 /* ==========================================================================
-   CANVAS VIEWPORT - 3D TACTICAL CYBER-BLUEPRINT & AURORA COMMAND DECK
+   CANVAS VIEWPORT - ULTRA-PREMIUM CYBERNETIC BLUEPRINT & COMMAND DECK
    ========================================================================== */
 
 .canvas-viewport {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background-color: #060b16;
+  background-color: #060913;
   background-image:
-    radial-gradient(circle at 14% 48%, rgba(249, 115, 22, 0.14) 0%, transparent 38%),
-    radial-gradient(circle at 42% 35%, rgba(6, 182, 212, 0.16) 0%, transparent 42%),
-    radial-gradient(circle at 68% 52%, rgba(245, 158, 11, 0.14) 0%, transparent 40%),
-    radial-gradient(circle at 90% 48%, rgba(16, 185, 129, 0.15) 0%, transparent 38%),
-    linear-gradient(180deg, #050a14 0%, #091326 50%, #050912 100%);
+    radial-gradient(circle at 18% 40%, rgba(249, 115, 22, 0.13) 0%, transparent 38%),
+    radial-gradient(circle at 38% 30%, rgba(14, 165, 233, 0.15) 0%, transparent 42%),
+    radial-gradient(circle at 62% 48%, rgba(168, 85, 247, 0.13) 0%, transparent 40%),
+    radial-gradient(circle at 86% 40%, rgba(16, 185, 129, 0.14) 0%, transparent 38%),
+    radial-gradient(ellipse at 50% 50%, #0c1527 0%, #060a15 65%, #020409 100%);
   cursor: grab;
-  box-shadow: inset 0 0 85px rgba(0, 0, 0, 0.78);
+  box-shadow: inset 0 0 130px rgba(0, 0, 0, 0.92);
 }
 
+/* Precision Architectural Grid Lines */
 .canvas-viewport::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
+    /* Major 100px architectural grid */
     linear-gradient(90deg, rgba(56, 189, 248, 0.075) 1px, transparent 1px),
     linear-gradient(0deg, rgba(56, 189, 248, 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
-  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+    /* Minor 20px precision mesh */
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
   pointer-events: none;
   z-index: 1;
 }
@@ -841,15 +844,15 @@ body {
   cursor: grabbing;
 }
 
+/* Subtle Laser Intersection Points at 100px */
 .canvas-grid-bg {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgba(56, 189, 248, 0.45) 1.4px, transparent 1.6px),
-    radial-gradient(circle, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
-  background-size: 120px 120px, 24px 24px;
-  background-position: 0 0, 0 0;
-  opacity: 0.88;
+    radial-gradient(circle, rgba(56, 189, 248, 0.75) 1.5px, transparent 2.2px);
+  background-size: 100px 100px;
+  background-position: 0 0;
+  opacity: 0.85;
   pointer-events: none;
   z-index: 2;
 }
@@ -874,249 +877,196 @@ body {
 }
 
 /* ==========================================================================
-   3D CYBER-HARDWARE NODE PODS (EXTRUDED CHASSIS, 3D SPINE & SVG TELEMETRY)
+   FUTURISTIC AERO-CYBER GLASS NODES (REFINED LUXURY & NEON PRECISION)
    ========================================================================== */
 
 .flow-node {
   position: absolute;
-  width: 284px;
-  background: linear-gradient(160deg, rgba(20, 32, 56, 0.97) 0%, rgba(9, 15, 29, 0.99) 100%);
-  backdrop-filter: blur(22px);
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  border-radius: 18px;
+  width: 326px;
+  background: linear-gradient(150deg, rgba(16, 26, 48, 0.93) 0%, rgba(9, 14, 28, 0.98) 100%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 17px;
   box-shadow:
-    0 8px 0 #040811,
-    0 9px 0 rgba(255, 255, 255, 0.15),
-    0 22px 44px -6px rgba(0, 0, 0, 0.9),
+    0 20px 44px -8px rgba(0, 0, 0, 0.82),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  cursor: move;
+  cursor: grab;
   transform: translateY(0);
   -webkit-font-smoothing: antialiased;
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
   user-select: none;
   z-index: 10;
+  overflow: visible;
 }
 
-/* 3D Left Power Spine Bar */
-.node-3d-spine {
-  position: absolute;
-  left: 0;
-  top: 14px;
-  bottom: 14px;
-  width: 4.5px;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  background: linear-gradient(180deg, #fde047, #f59e0b);
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
-  z-index: 5;
-}
-.node-trigger .node-3d-spine {
-  background: linear-gradient(180deg, #fde047, #f97316, #ea580c);
-  box-shadow: 0 0 14px rgba(249, 115, 22, 0.85);
-}
-.node-api .node-3d-spine {
-  background: linear-gradient(180deg, #67e8f9, #0ea5e9, #2563eb);
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.85);
-}
-.node-brain .node-3d-spine {
-  background: linear-gradient(180deg, #fef08a, #f59e0b, #a855f7);
-  box-shadow: 0 0 16px rgba(251, 191, 36, 0.9);
-}
-.node-output .node-3d-spine {
-  background: linear-gradient(180deg, #6ee7b7, #10b981, #059669);
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.85);
-}
+/* Hide clunky extruded elements */
+.node-3d-spine { display: none; }
+.node-3d-bottom-lip { display: none; }
 
-/* 3D Category-Specific Extruded Chassis & Top Neon Bars */
+/* Category Themed Neon Glows & Borders */
 .flow-node.node-trigger {
-  background:
-    radial-gradient(circle at 18% 18%, rgba(249, 115, 22, 0.24) 0%, transparent 55%),
-    linear-gradient(165deg, rgba(36, 22, 18, 0.97) 0%, rgba(12, 14, 26, 0.99) 78%);
-  border-color: rgba(251, 146, 60, 0.5);
+  border-color: rgba(249, 115, 22, 0.48);
   box-shadow:
-    0 8px 0 #1f0e06,
-    0 9.5px 0 rgba(251, 146, 60, 0.55),
-    0 24px 46px -6px rgba(0, 0, 0, 0.92),
-    0 0 26px rgba(249, 115, 22, 0.18),
-    inset 0 1px 1px rgba(254, 215, 170, 0.3);
+    0 20px 44px -8px rgba(0, 0, 0, 0.84),
+    0 0 0 1px rgba(249, 115, 22, 0.35),
+    0 0 28px -4px rgba(249, 115, 22, 0.24),
+    inset 0 1px 1px rgba(253, 186, 116, 0.3);
 }
 
 .flow-node.node-api {
-  background:
-    radial-gradient(circle at 18% 18%, rgba(14, 165, 233, 0.24) 0%, transparent 55%),
-    linear-gradient(165deg, rgba(13, 33, 54, 0.97) 0%, rgba(10, 17, 32, 0.99) 78%);
-  border-color: rgba(56, 189, 248, 0.5);
+  border-color: rgba(56, 189, 248, 0.48);
   box-shadow:
-    0 8px 0 #061829,
-    0 9.5px 0 rgba(56, 189, 248, 0.55),
-    0 24px 46px -6px rgba(0, 0, 0, 0.92),
-    0 0 26px rgba(6, 182, 212, 0.18),
+    0 20px 44px -8px rgba(0, 0, 0, 0.84),
+    0 0 0 1px rgba(56, 189, 248, 0.35),
+    0 0 28px -4px rgba(56, 189, 248, 0.24),
     inset 0 1px 1px rgba(186, 230, 253, 0.3);
 }
 
 .flow-node.node-brain {
-  background:
-    radial-gradient(circle at 20% 18%, rgba(245, 158, 11, 0.26) 0%, rgba(168, 85, 247, 0.12) 45%, transparent 70%),
-    linear-gradient(165deg, rgba(38, 26, 16, 0.97) 0%, rgba(15, 14, 30, 0.99) 78%);
-  border-color: rgba(251, 191, 36, 0.55);
+  border-color: rgba(251, 191, 36, 0.48);
   box-shadow:
-    0 8px 0 #241605,
-    0 9.5px 0 rgba(251, 191, 36, 0.6),
-    0 24px 48px -6px rgba(0, 0, 0, 0.94),
-    0 0 30px rgba(245, 158, 11, 0.24),
+    0 20px 44px -8px rgba(0, 0, 0, 0.86),
+    0 0 0 1px rgba(251, 191, 36, 0.38),
+    0 0 32px -4px rgba(251, 191, 36, 0.28),
     inset 0 1px 1px rgba(254, 240, 138, 0.35);
 }
 
 .flow-node.node-output {
-  background:
-    radial-gradient(circle at 18% 18%, rgba(16, 185, 129, 0.24) 0%, transparent 55%),
-    linear-gradient(165deg, rgba(11, 38, 31, 0.97) 0%, rgba(10, 18, 30, 0.99) 78%);
-  border-color: rgba(52, 211, 153, 0.5);
+  border-color: rgba(52, 211, 153, 0.48);
   box-shadow:
-    0 8px 0 #051f16,
-    0 9.5px 0 rgba(52, 211, 153, 0.55),
-    0 24px 46px -6px rgba(0, 0, 0, 0.92),
-    0 0 26px rgba(16, 185, 129, 0.2),
+    0 20px 44px -8px rgba(0, 0, 0, 0.84),
+    0 0 0 1px rgba(52, 211, 153, 0.35),
+    0 0 28px -4px rgba(16, 185, 129, 0.25),
     inset 0 1px 1px rgba(167, 243, 208, 0.3);
 }
 
-/* Top 3D Neon Light Strip */
+/* Luminous Top Neon Laser Bar */
 .node-3d-top-glow {
-  height: 4px;
-  width: 78%;
-  margin: 0 auto;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
-  box-shadow: 0 2px 14px rgba(251, 191, 36, 0.8);
+  height: 2.5px;
+  width: 100%;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  background: linear-gradient(90deg, transparent 4%, #38bdf8 50%, transparent 96%);
+  opacity: 0.95;
 }
 .node-trigger .node-3d-top-glow {
-  background: linear-gradient(90deg, transparent, #fde047, #f97316, transparent);
-  box-shadow: 0 2px 16px rgba(249, 115, 22, 0.9);
+  background: linear-gradient(90deg, transparent 4%, #f97316 50%, transparent 96%);
 }
 .node-api .node-3d-top-glow {
-  background: linear-gradient(90deg, transparent, #67e8f9, #0ea5e9, transparent);
-  box-shadow: 0 2px 16px rgba(56, 189, 248, 0.9);
+  background: linear-gradient(90deg, transparent 4%, #38bdf8 50%, transparent 96%);
 }
 .node-brain .node-3d-top-glow {
-  background: linear-gradient(90deg, transparent, #fef08a, #f59e0b, #c084fc, transparent);
-  box-shadow: 0 2px 18px rgba(245, 158, 11, 0.95);
+  background: linear-gradient(90deg, transparent 4%, #fbbf24 35%, #a855f7 65%, transparent 96%);
 }
 .node-output .node-3d-top-glow {
-  background: linear-gradient(90deg, transparent, #6ee7b7, #10b981, transparent);
-  box-shadow: 0 2px 16px rgba(16, 185, 129, 0.9);
+  background: linear-gradient(90deg, transparent 4%, #10b981 50%, transparent 96%);
 }
 
 .flow-node:hover {
-  transform: translateY(-6px);
-  border-color: rgba(251, 191, 36, 0.9);
-  box-shadow:
-    0 12px 0 #070d19,
-    0 13.5px 0 rgba(251, 191, 36, 0.65),
-    0 30px 54px -8px rgba(0, 0, 0, 0.95),
-    0 0 36px rgba(245, 158, 11, 0.38),
-    inset 0 1px 1px rgba(255, 255, 255, 0.4);
-  z-index: 25;
+  transform: translateY(-4px) scale(1.015);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.flow-node.node-trigger:hover {
+  box-shadow: 0 26px 52px -8px rgba(0, 0, 0, 0.9), 0 0 0 1.5px rgba(249, 115, 22, 0.65), 0 0 38px rgba(249, 115, 22, 0.38);
+}
+.flow-node.node-api:hover {
+  box-shadow: 0 26px 52px -8px rgba(0, 0, 0, 0.9), 0 0 0 1.5px rgba(56, 189, 248, 0.65), 0 0 38px rgba(56, 189, 248, 0.38);
+}
+.flow-node.node-brain:hover {
+  box-shadow: 0 26px 52px -8px rgba(0, 0, 0, 0.92), 0 0 0 1.5px rgba(251, 191, 36, 0.7), 0 0 44px rgba(251, 191, 36, 0.42);
+}
+.flow-node.node-output:hover {
+  box-shadow: 0 26px 52px -8px rgba(0, 0, 0, 0.9), 0 0 0 1.5px rgba(52, 211, 153, 0.65), 0 0 38px rgba(16, 185, 129, 0.38);
 }
 
 .flow-node.active-node {
-  transform: translateY(-5px);
-  border-color: #fbbf24;
-  box-shadow:
-    0 10px 0 #291805,
-    0 11.5px 0 #fbbf24,
-    0 26px 50px -6px rgba(0, 0, 0, 0.95),
-    0 0 38px rgba(245, 158, 11, 0.48),
-    inset 0 0 16px rgba(245, 158, 11, 0.16);
-  z-index: 22;
+  transform: translateY(-5px) scale(1.02);
+  border-color: #fde047 !important;
+  box-shadow: 0 26px 56px -6px rgba(0, 0, 0, 0.92), 0 0 0 2px #fde047, 0 0 42px rgba(253, 224, 71, 0.48) !important;
+  z-index: 25;
 }
 
 .flow-node.running-node {
-  border-color: #22d3ee;
-  box-shadow:
-    0 9px 0 #062836,
-    0 10.5px 0 #22d3ee,
-    0 0 42px rgba(6, 182, 212, 0.75),
-    inset 0 0 18px rgba(6, 182, 212, 0.25);
-  animation: pulsingNode3D 1.4s infinite ease-in-out;
+  animation: cyberPulseNode 1.6s infinite ease-in-out;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 22px 52px -6px rgba(0, 0, 0, 0.92), 0 0 0 2px #38bdf8, 0 0 42px rgba(56, 189, 248, 0.65) !important;
   z-index: 30;
 }
 
-.flow-node.success-node {
-  border-color: #34d399;
-  box-shadow:
-    0 8px 0 #05261b,
-    0 9.5px 0 #34d399,
-    0 0 34px rgba(16, 185, 129, 0.55),
-    inset 0 0 14px rgba(16, 185, 129, 0.18);
+@keyframes cyberPulseNode {
+  0%, 100% { transform: translateY(-3px) scale(1.01); filter: brightness(1); }
+  50% { transform: translateY(-5px) scale(1.025); filter: brightness(1.15); }
 }
 
-@keyframes pulsingNode3D {
-  0%, 100% { transform: translateY(-3px); }
-  50% { transform: translateY(-8px); }
+.flow-node.success-node {
+  border-color: rgba(52, 211, 153, 0.7);
+  box-shadow: 0 20px 44px -8px rgba(0, 0, 0, 0.82), 0 0 0 1px #34d399, 0 0 32px rgba(52, 211, 153, 0.38);
 }
+
+/* ==========================================================================
+   NODE HEADER, ICON POD & MODERN BADGES
+   ========================================================================== */
 
 .node-header {
+  padding: 13px 15px 11px 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px 10px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+  gap: 12px;
 }
 
 .node-title-group {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
   min-width: 0;
+  flex: 1;
 }
 
-/* 3D Extruded Squircle Pedestal for SVG Icon */
+/* Frosted High-Tech Icon Pod */
 .node-icon-box {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: linear-gradient(145deg, rgba(245, 158, 11, 0.28), rgba(180, 83, 9, 0.18));
-  border: 1.5px solid rgba(251, 191, 36, 0.55);
-  box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.7),
-    0 6px 12px rgba(0, 0, 0, 0.55),
-    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.38);
   overflow: hidden;
 }
 .node-trigger .node-icon-box {
-  background: radial-gradient(circle at 30% 30%, rgba(251, 146, 60, 0.38), rgba(124, 45, 18, 0.35));
-  border-color: rgba(251, 146, 60, 0.75);
-  box-shadow: 0 4px 0 #361507, 0 0 16px rgba(249, 115, 22, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  background: radial-gradient(circle at 35% 35%, rgba(251, 146, 60, 0.35), rgba(124, 45, 18, 0.25));
+  border-color: rgba(251, 146, 60, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.48), 0 0 18px rgba(249, 115, 22, 0.32);
 }
 .node-api .node-icon-box {
-  background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.38), rgba(12, 74, 110, 0.38));
-  border-color: rgba(56, 189, 248, 0.75);
-  box-shadow: 0 4px 0 #072638, 0 0 16px rgba(56, 189, 248, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  background: radial-gradient(circle at 35% 35%, rgba(56, 189, 248, 0.35), rgba(12, 74, 110, 0.25));
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.48), 0 0 18px rgba(56, 189, 248, 0.32);
 }
 .node-brain .node-icon-box {
-  background: radial-gradient(circle at 30% 30%, rgba(250, 204, 21, 0.4), rgba(107, 33, 168, 0.38));
-  border-color: rgba(253, 224, 71, 0.8);
-  box-shadow: 0 4px 0 #2e1d06, 0 0 18px rgba(251, 191, 36, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.55);
+  background: radial-gradient(circle at 35% 35%, rgba(250, 204, 21, 0.35), rgba(107, 33, 168, 0.25));
+  border-color: rgba(253, 224, 71, 0.65);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.48), 0 0 20px rgba(251, 191, 36, 0.38);
 }
 .node-output .node-icon-box {
-  background: radial-gradient(circle at 30% 30%, rgba(52, 211, 153, 0.38), rgba(6, 78, 59, 0.38));
-  border-color: rgba(52, 211, 153, 0.75);
-  box-shadow: 0 4px 0 #05291d, 0 0 16px rgba(16, 185, 129, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  background: radial-gradient(circle at 35% 35%, rgba(52, 211, 153, 0.35), rgba(6, 78, 59, 0.25));
+  border-color: rgba(52, 211, 153, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.48), 0 0 18px rgba(16, 185, 129, 0.32);
 }
 
 .svg-icon-3d {
-  width: 26px;
-  height: 26px;
+  width: 25px;
+  height: 25px;
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
 }
 
 .icon-3d-glare {
@@ -1135,24 +1085,25 @@ body {
   flex-direction: column;
   gap: 3px;
   min-width: 0;
+  flex: 1;
 }
 
 .node-step-meta {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .node-step-tag {
   font-family: var(--font-mono);
   font-size: 8.5px;
   font-weight: 800;
-  letter-spacing: 0.6px;
-  color: #cbd5e1;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 1.5px 5.5px;
+  letter-spacing: 0.7px;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1.5px 6px;
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .node-wf-chip {
@@ -1160,53 +1111,62 @@ body {
   font-size: 8.5px;
   font-weight: 800;
   color: #fde047;
-  background: rgba(245, 158, 11, 0.16);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  padding: 1.5px 5.5px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  padding: 1.5px 6px;
   border-radius: 4px;
 }
 
 .node-title-text {
-  font-size: 13.2px;
-  font-weight: 800;
-  color: #f8fafc;
-  line-height: 1.24;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  font-size: 13.5px;
+  font-weight: 750;
+  color: #ffffff;
+  letter-spacing: -0.15px;
+  line-height: 1.3;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .node-badge-cat {
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 800;
   text-transform: uppercase;
-  padding: 3.5px 7.5px;
+  padding: 4px 8.5px;
   border-radius: 6px;
-  letter-spacing: 0.4px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  letter-spacing: 0.5px;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-.cat-trigger { background: linear-gradient(180deg, rgba(249, 115, 22, 0.36), rgba(194, 65, 12, 0.3)); color: #fdba74; border: 1px solid rgba(251, 146, 60, 0.55); }
-.cat-api { background: linear-gradient(180deg, rgba(6, 182, 212, 0.36), rgba(3, 105, 161, 0.3)); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.55); }
-.cat-brain { background: linear-gradient(180deg, rgba(245, 158, 11, 0.38), rgba(161, 98, 7, 0.3)); color: #fde047; border: 1px solid rgba(251, 191, 36, 0.6); }
-.cat-output { background: linear-gradient(180deg, rgba(16, 185, 129, 0.36), rgba(4, 120, 87, 0.3)); color: #6ee7b7; border: 1px solid rgba(52, 211, 153, 0.55); }
+.cat-trigger { background: linear-gradient(180deg, rgba(249, 115, 22, 0.32), rgba(194, 65, 12, 0.25)); color: #fdba74; border: 1px solid rgba(251, 146, 60, 0.55); }
+.cat-api { background: linear-gradient(180deg, rgba(6, 182, 212, 0.32), rgba(3, 105, 161, 0.25)); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.55); }
+.cat-brain { background: linear-gradient(180deg, rgba(245, 158, 11, 0.34), rgba(161, 98, 7, 0.25)); color: #fde047; border: 1px solid rgba(251, 191, 36, 0.6); }
+.cat-output { background: linear-gradient(180deg, rgba(16, 185, 129, 0.32), rgba(4, 120, 87, 0.25)); color: #6ee7b7; border: 1px solid rgba(52, 211, 153, 0.55); }
+
+/* ==========================================================================
+   NODE BODY, TELEMETRY MODULE & SPECS
+   ========================================================================== */
 
 .node-body {
-  padding: 10px 14px 11px 16px;
+  padding: 8px 15px 12px 15px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* 3D Process Telemetry Module inside Node Body */
 .node-3d-telemetry {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  background: rgba(4, 9, 19, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.75), 0 1px 0 rgba(255, 255, 255, 0.06);
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 11px;
+  background: rgba(5, 10, 21, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 .node-3d-spec {
@@ -1220,19 +1180,19 @@ body {
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 800;
-  padding: 2px 6px;
+  padding: 2px 6.5px;
   border-radius: 4px;
   flex-shrink: 0;
   letter-spacing: 0.3px;
 }
-.pill-trigger { background: rgba(249, 115, 22, 0.28); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.5); }
-.pill-api { background: rgba(6, 182, 212, 0.28); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); }
-.pill-brain { background: rgba(245, 158, 11, 0.28); color: #fde047; border: 1px solid rgba(251, 191, 36, 0.5); }
-.pill-output { background: rgba(16, 185, 129, 0.28); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.5); }
+.pill-trigger { background: rgba(249, 115, 22, 0.26); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.48); }
+.pill-api { background: rgba(6, 182, 212, 0.26); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.48); }
+.pill-brain { background: rgba(245, 158, 11, 0.26); color: #fde047; border: 1px solid rgba(251, 191, 36, 0.48); }
+.pill-output { background: rgba(16, 185, 129, 0.26); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.48); }
 
 .spec-code {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 10.2px;
   font-weight: 700;
   color: #f1f5f9;
   white-space: nowrap;
@@ -1241,7 +1201,7 @@ body {
 }
 
 .spec-text {
-  font-size: 10px;
+  font-size: 10.2px;
   font-weight: 700;
   color: #fef08a;
   white-space: nowrap;
@@ -1253,8 +1213,8 @@ body {
 .node-mini-subbar {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding-top: 4px;
+  gap: 6px;
+  padding-top: 5px;
   border-top: 1px dashed rgba(255, 255, 255, 0.08);
   font-family: var(--font-mono);
   font-size: 8.5px;
@@ -1264,9 +1224,9 @@ body {
 .hub-led-tag {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 1px 4.5px;
-  border-radius: 3px;
+  gap: 3.5px;
+  padding: 1.5px 5px;
+  border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
   color: #e2e8f0;
   font-weight: 700;
@@ -1281,8 +1241,8 @@ body {
 
 .api-stream-pill,
 .out-tag-pill {
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 1.5px 6px;
+  border-radius: 4px;
   background: rgba(56, 189, 248, 0.14);
   color: #bae6fd;
   font-weight: 700;
@@ -1326,12 +1286,12 @@ body {
   font-family: var(--font-mono);
   font-size: 8px;
   font-weight: 800;
-  padding: 1.5px 3px;
+  padding: 2px 4px;
   border-radius: 3px;
 }
-.tier-seg.seg-pass { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
-.tier-seg.seg-warn { background: rgba(245, 158, 11, 0.22); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.4); }
-.tier-seg.seg-fail { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+.tier-seg.seg-pass { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.38); }
+.tier-seg.seg-warn { background: rgba(245, 158, 11, 0.22); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.38); }
+.tier-seg.seg-fail { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.38); }
 
 .spec-wave {
   margin-left: auto;
@@ -1358,71 +1318,95 @@ body {
 }
 
 .node-desc {
-  font-size: 11.4px;
-  color: #e2e8f0;
-  line-height: 1.44;
-  font-weight: 500;
+  font-size: 11.8px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  font-weight: 450;
+  padding-top: 2px;
 }
 
+/* ==========================================================================
+   NODE FOOTER & TERMINAL STATUS
+   ========================================================================== */
+
 .node-footer {
-  padding: 7px 14px 8px 16px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.48) 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  border-bottom-left-radius: 17px;
-  border-bottom-right-radius: 17px;
+  padding: 8.5px 15px;
+  background: rgba(3, 7, 16, 0.48);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10.5px;
 }
 
 .node-status-text {
   font-family: var(--font-mono);
   font-size: 9.5px;
-  font-weight: 800;
+  font-weight: 750;
   color: #34d399;
-  text-shadow: 0 0 8px rgba(52, 211, 153, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.48);
 }
 
 .node-wf-signature {
   font-size: 9.5px;
-  font-weight: 700;
-  color: #94a3b8;
-  letter-spacing: 0.2px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.25px;
 }
 
-/* 3D Metallic Socket Ports on nodes */
+/* ==========================================================================
+   CYBER-MAGNETIC ORBITAL SOCKET PORTS
+   ========================================================================== */
+
 .node-port {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fde047, #d97706);
-  border: 2.5px solid #0b1120;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.85), 0 0 12px var(--tiger-gold);
+  background: #090e1a;
+  border: 2px solid #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.75), inset 0 0 4px rgba(56, 189, 248, 0.6);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 15;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.node-port:hover {
+  transform: translateY(-50%) scale(1.35);
+  box-shadow: 0 0 18px #38bdf8;
 }
 
 .node-port .port-core {
-  width: 5.5px;
-  height: 5.5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: #ffffff;
   box-shadow: 0 0 6px #ffffff;
 }
 
 .node-port.port-in {
-  left: -8px;
-  background: radial-gradient(circle at 35% 35%, #67e8f9, #0284c7);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.85), 0 0 12px var(--cyan-accent);
+  left: -7px;
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
 }
+
 .node-port.port-out {
-  right: -8px;
+  right: -7px;
+  border-color: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.85);
+}
+
+.node-output .node-port.port-out {
+  border-color: #34d399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.85);
 }
 
 /* 3D SVG ENERGY CABLES WITH METALLIC CASING, PULSE & PHOTON ORBS */
