@@ -1,6 +1,9 @@
 import os
 import sys
 import time
+import socket
+import subprocess
+
 try:
     from playwright.sync_api import sync_playwright
 except Exception:
@@ -37,11 +40,15 @@ def get_or_open_looker_page(context):
         try:
             url = page.url.lower()
             title = page.title().lower()
-            # Phải đúng là dashboard Tách Luồng, không phải trang Home
             if "24e3b6f7" in url or "tách luồng" in title:
                 page.bring_to_front()
                 page.set_viewport_size({"width": 1920, "height": 1080})
-                print(f"  -> Đã tìm thấy tab Dashboard, đang truy cập lại đường dẫn gốc để đảm bảo tải đúng trang...")
+                
+                if "p_m3rsgqzjgd" in url:
+                    print("  -> Đã tìm thấy tab Dashboard Tab 1. B2B đang mở sẵn.")
+                    return page
+
+                print("  -> Đã tìm thấy tab Dashboard, đang chuyển hướng sang Tab 1. B2B...")
                 try:
                     page.goto(LOOKER_URL, wait_until="domcontentloaded", timeout=60000)
                 except Exception as e:
@@ -58,91 +65,123 @@ def get_or_open_looker_page(context):
         page.goto(LOOKER_URL, wait_until="domcontentloaded", timeout=60000)
     except Exception as e:
         print(f"  [Lưu ý] page.goto báo lỗi: {e}. Vẫn tiếp tục đợi...")
-    time.sleep(20)
+    time.sleep(15)
     return page
 
 
 def ensure_b2b_tab(page):
     """Đảm bảo đang ở tab 1. B2B."""
-    print(f"  -> Đang đợi Dashboard tải hoàn tất và chọn tab {LOOKER_TAB_NAME}...")
+    print(f"  -> Đang kiểm tra trạng thái tab {LOOKER_TAB_NAME}...")
     page.keyboard.press("Escape")
+    time.sleep(0.5)
     
+    is_already_active = page.evaluate("""() => {
+        const activeTab = document.querySelector('button.tab-button.active-tab, .tab-button.active-tab');
+        if (activeTab && activeTab.innerText && activeTab.innerText.includes('B2B')) return true;
+        if (document.title && document.title.includes('B2B')) return true;
+        return false;
+    }""")
+    if is_already_active:
+        print("  ✓ Tab 1. B2B đã được kích hoạt sẵn!")
+        return
+
     start_time = time.time()
     clicked = False
-    while time.time() - start_time < 45:
-        clicked = page.evaluate("""
-            (tabName) => {
-                const btns = Array.from(document.querySelectorAll('button, a, div, span'));
-                for (const b of btns) {
-                    if (b.innerText && b.innerText.trim() === tabName && b.children.length === 0) {
-                        b.click();
-                        return true;
-                    }
+    while time.time() - start_time < 30:
+        clicked = page.evaluate("""(tabName) => {
+            const btns = Array.from(document.querySelectorAll('button.tab-button, button, a, div, span'));
+            for (const b of btns) {
+                if (b.innerText && b.innerText.trim().includes(tabName)) {
+                    b.click();
+                    return true;
                 }
-                return false;
             }
-        """, LOOKER_TAB_NAME)
+            return false;
+        }""", LOOKER_TAB_NAME)
         if clicked:
-            print("  -> Đã kích hoạt tab B2B.")
+            print("  -> Đã click kích hoạt tab B2B.")
             break
         time.sleep(1)
         
     if not clicked:
-        print(f"  [Cảnh báo] Không thể click tab {LOOKER_TAB_NAME} sau 45s. Có thể trang web chưa load hoặc tên tab bị sai.")
+        print(f"  [Lưu ý] Không cần click thêm tab {LOOKER_TAB_NAME}.")
     time.sleep(3)
 
 
 def filter_provinces_fast(page, provinces):
-    """Lọc 13 tỉnh thành siêu tốc bằng TỌA ĐỘ BẰNG CHỮ (DOM) thay vì tọa độ số."""
-    print(f"\n[Bước 1] Lọc nhanh {len(provinces)} tỉnh ĐBSCL (Bằng thuật toán tự tìm chữ)...")
+    """Lọc 13 tỉnh thành ĐBSCL thông minh, hỗ trợ cả khi bộ lọc đã có giá trị sẵn."""
+    print(f"\n[Bước 1] Lọc nhanh {len(provinces)} tỉnh ĐBSCL...")
     
     try:
-        # Bấm ESC 2 lần để tắt bất kỳ popup nào đang mở
         page.keyboard.press("Escape")
         time.sleep(0.5)
         page.keyboard.press("Escape")
-        time.sleep(1.0)
-        
-        print(f"[{time.strftime('%X')}]   -> Mở bộ lọc 'đến tỉnh'...")
-        # Đợi nút hiển thị (Looker có thể mất thời gian tải widget)
-        print("  -> Đang đợi nút filter xuất hiện trên màn hình...")
-        filter_btn = page.locator("button.lego-control, .lego-control").filter(has_text="đến tỉnh").first
-        filter_btn.wait_for(state="visible", timeout=120000)
-        
-        url_now = page.url
-        print(f"  ! Đã tìm thấy nút filter. URL lúc này là: {url_now}")
-        with open("debug_dom.html", "w", encoding="utf-8") as html_f:
-            html_f.write(page.content())
-        page.screenshot(path="debug_when_found_filter.png")
-        # Dọn sạch backdrop thừa nếu có trước khi click
+        time.sleep(0.5)
+
+        if "accounts.google.com" in page.url:
+            raise RuntimeError("Trình duyệt Chrome chưa đăng nhập tài khoản Google. Vui lòng chạy file Dang_Nhap_Chrome_Bot.bat trên Desktop để đăng nhập trước.")
+
+        print("  -> Đang đợi các thanh điều khiển (Controls) của Looker Studio hiển thị...")
         try:
-            page.evaluate("""() => {
-                document.querySelectorAll('.popup-backdrop').forEach(el => el.remove());
-            }""")
+            page.locator("button.lego-control, control-layout-wrapper button").first.wait_for(state="visible", timeout=45000)
+        except Exception:
+            print("  ! Thử đợi thêm 10s cho Looker load...")
+            time.sleep(10)
+
+        filter_btn = None
+        btn_by_text = page.locator("button.lego-control, .lego-control").filter(has_text="đến tỉnh").first
+        if btn_by_text.count() > 0 and btn_by_text.is_visible():
+            filter_btn = btn_by_text
+            print("  ✓ Đã tìm thấy nút 'đến tỉnh' theo text.")
+        else:
+            all_lego_btns = page.locator("button.lego-control, control-layout-wrapper button")
+            total_btns = all_lego_btns.count()
+            print(f"  -> Số lượng control tìm thấy: {total_btns}")
+            if total_btns >= 2:
+                filter_btn = all_lego_btns.nth(1)
+                btn_txt = filter_btn.inner_text().strip()
+                print(f"  ✓ Đã chọn control thứ 2 (Text hiện tại: '{btn_txt[:30]}...').")
+            elif total_btns == 1:
+                filter_btn = all_lego_btns.first
+
+        if not filter_btn:
+            raise RuntimeError("Không tìm thấy nút bộ lọc 'đến tỉnh' trên giao diện Looker Studio!")
+
+        try:
+            page.evaluate("() => { document.querySelectorAll('.popup-backdrop').forEach(el => el.remove()); }")
         except Exception:
             pass
 
+        print(f"[{time.strftime('%X')}]   -> Mở menu bộ lọc 'đến tỉnh'...")
         try:
             filter_btn.evaluate("node => node.click()")
         except Exception:
             filter_btn.click(timeout=5000, force=True)
         time.sleep(2.0)
-        
+
+        already_fully_selected = page.evaluate("""(provs) => {
+            const checkedBoxes = Array.from(document.querySelectorAll('.cdk-overlay-container div[aria-checked="true"], .cdk-overlay-container md-checkbox.md-checked, .cdk-overlay-container mat-checkbox.mat-mdc-checkbox-checked'));
+            const texts = checkedBoxes.map(el => el.innerText.trim());
+            const matchCount = provs.filter(p => texts.some(t => t.toLowerCase().includes(p.toLowerCase()))).length;
+            return matchCount >= provs.length;
+        }""", provinces)
+
+        if already_fully_selected:
+            print("  ✓ Cả 13 tỉnh ĐBSCL đã được lọc chuẩn xác từ trước! Đóng menu...")
+            page.keyboard.press("Escape")
+            time.sleep(1.0)
+            return
+
         print(f"[{time.strftime('%X')}]   -> Click bỏ chọn 'Tất cả'...")
-        
-        # Dùng locator gom tất cả checkbox hiển thị
         chks = page.locator("div[role='checkbox'], md-checkbox, mat-checkbox, .lego-checkbox")
-        
-        # Click checkbox đầu tiên (Select All / Deselect All)
         try:
             chks.nth(0).evaluate("node => node.click()")
         except Exception:
             chks.nth(0).click(timeout=5000, force=True)
         time.sleep(1.0)
-        
-        # Tìm ô tìm kiếm
+
         search_box = page.locator("input[type='text']").last
-        
+
         for prov in provinces:
             print(f"  -> Đang tìm và click: {prov}")
             try:
@@ -151,11 +190,10 @@ def filter_provinces_fast(page, provinces):
                 search_box.fill(prov, force=True, timeout=2000)
             except Exception:
                 search_box.evaluate(f"node => {{ node.value = '{prov}'; node.dispatchEvent(new Event('input', {{ bubbles: true }})); }}")
-            
-            # Đợi kết quả render và click checkbox của tỉnh
+
             clicked_prov = False
-            for _ in range(10): # Chờ tối đa 5 giây
-                time.sleep(0.5)
+            for _ in range(8):
+                time.sleep(0.4)
                 clicked_prov = page.evaluate(f"""(pName) => {{
                     const labels = Array.from(document.querySelectorAll('.cdk-overlay-container span, .lego-control-body span, div[role="checkbox"], md-checkbox'));
                     const match = labels.find(el => el.innerText && el.innerText.trim().toLowerCase().includes(pName.toLowerCase()));
@@ -169,24 +207,22 @@ def filter_provinces_fast(page, provinces):
                 if clicked_prov:
                     print(f"     ✓ Đã click chọn: {prov}")
                     break
-                    
+
             if not clicked_prov:
-                # Fallback click checkbox thứ 2
                 try:
                     c_list = page.locator("div[role='checkbox'], md-checkbox, mat-checkbox, .lego-checkbox")
                     if c_list.count() > 1:
                         c_list.nth(1).evaluate("node => node.click()")
                         print(f"     ✓ Fallback JS click checkbox 1 cho: {prov}")
-                        clicked_prov = True
                 except Exception as ex:
-                    print(f"     ! Tỉnh {prov} chưa chọn được (có thể do đã tick sẵn): {ex}")
+                    print(f"     ! Tỉnh {prov} chưa chọn được: {ex}")
             time.sleep(0.3)
-            
+
         print(f"[{time.strftime('%X')}]   -> Bấm ESC để đóng bộ lọc...")
         page.keyboard.press("Escape")
-        time.sleep(1)
+        time.sleep(0.8)
         page.keyboard.press("Escape")
-        
+
         print("  ⏳ Đã chọn xong 13 tỉnh! Đợi 10 giây để Looker tải dữ liệu...")
         time.sleep(10.0)
         print("  ✓ Dữ liệu mới đã sẵn sàng!")
@@ -194,18 +230,14 @@ def filter_provinces_fast(page, provinces):
         print("Lỗi trong quá trình lọc:", e)
         raise e
 
+
 def export_b2b_fast(page, context):
-    """Xuất Google Sheets:
-    1. Đóng tất cả tab Google Sheets cũ (trừ master sheet) để tránh nhầm lẫn
-    2. JS click 3 chấm -> hover Xuất biểu đồ -> click Xuất dữ liệu -> Google Trang tính -> Xuất
-    3. Detect tab mới theo URL hoặc tab bất kỳ nếu Looker reuse
-    """
+    """Xuất Google Sheets từ Looker Studio."""
     print("\n[Bước 2] Xuất dữ liệu B2B ra Google Sheets...")
     
     page.keyboard.press("Escape")
     time.sleep(1.0)
     
-    # Đóng tất cả tab Google Sheets CŨ (trừ master sheet) để detect chính xác tab mới
     MASTER_ID = "1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI"
     closed = 0
     for pg in list(context.pages):
@@ -213,22 +245,17 @@ def export_b2b_fast(page, context):
             try:
                 pg.close()
                 closed += 1
-            except:
+            except Exception:
                 pass
     if closed:
         print(f"  -> Đã đóng {closed} tab Google Sheets cũ")
     time.sleep(0.5)
-    
-    # Step 1: Hover vào bảng
+
     print(f"[{time.strftime('%X')}]   -> Hover vào bảng để kích hoạt nút 3 chấm...")
-    print(f"  ? URL hiện tại trước khi hover là: {page.url}")
     page.mouse.move(1705, 335)
     time.sleep(1.5)
-    page.screenshot(path="debug_after_hover.png")
-    
-    # Step 2: JS click 3 chấm (không di chuột ra ngoài chart zone)
+
     print(f"[{time.strftime('%X')}]   -> JS click 'Hiển thị trình đơn biểu đồ'...")
-    # Bấm trực tiếp tọa độ (1726, 330) như script cũ nếu không tìm thấy DOM
     clicked = page.evaluate("""() => {
         const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
         for (const btn of btns) {
@@ -245,102 +272,94 @@ def export_b2b_fast(page, context):
         page.mouse.click(1726, 330)
         clicked = "Fallback Tọa độ"
 
-    if not clicked:
-        raise RuntimeError("Không tìm thấy nút 3 chấm!")
     print(f"  => Đã click: {clicked}")
     time.sleep(2.0)
-    
-    # Step 3: Hover Xuất biểu đồ (để hiện submenu)
+
     print(f"[{time.strftime('%X')}]   -> Hover 'Xuất biểu đồ...' để hiện submenu...")
     page.get_by_text("Xuất biểu đồ", exact=False).first.hover(timeout=5000)
     time.sleep(2.0)
-    
-    # Step 4: Click Xuất dữ liệu
+
     print(f"[{time.strftime('%X')}]   -> Click 'Xuất dữ liệu'...")
     page.get_by_text("Xuất dữ liệu", exact=False).first.click(timeout=5000)
     time.sleep(2.0)
-    
-    # Step 5: Click Google Trang tính
+
     print(f"[{time.strftime('%X')}]   -> Click 'Google Trang tính'...")
     page.get_by_text("Google Trang tính", exact=False).first.click(timeout=5000)
     time.sleep(3.0)
-    
-    # Step 6: Click nút Xuất cuối cùng trong dialog
+
     print(f"[{time.strftime('%X')}]   -> Click nút 'Xuất' trong dialog...")
     page.get_by_role("button", name="Xuất").last.click(timeout=5000)
     time.sleep(3.0)
-    
-    print(f"[{time.strftime('%X')}] [Bước 3] Đang chờ tab Google Sheets xuất hiện (Dữ liệu >200k dòng có thể mất tới 5 phút)...")
-    
+
+    print(f"[{time.strftime('%X')}] [Bước 3] Đang chờ tab Google Sheets xuất hiện (Dữ liệu >200k dòng có thể mất tới 3-5 phút)...")
+
     export_page = None
-    # Chờ 360 vòng * 2.5s = 900s (15 phút) - Đảm bảo đủ thời gian cho 200k+ dòng
-    for i in range(360):
+    for i in range(240):
         time.sleep(2.5)
-        
-        # Thỉnh thoảng in ra trạng thái của snackbar để theo dõi
         if i % 10 == 0:
             try:
                 snack = page.evaluate("() => { const s = document.querySelector('.mdc-snackbar__label'); return s ? s.textContent.trim() : ''; }")
                 if snack:
                     print(f"  ... Looker báo: '{snack}'")
-            except:
+            except Exception:
                 pass
-                
+
         for pg in context.pages:
             if "spreadsheets/d/" in pg.url and MASTER_ID not in pg.url:
                 export_page = pg
                 break
         if export_page:
             break
-            
+
     if not export_page:
-        raise TimeoutError("Không tìm thấy tab Google Sheets nào sau 5 phút. Quá trình xuất có thể bị lỗi từ máy chủ Google.")
-        
+        raise TimeoutError("Không tìm thấy tab Google Sheets mới sau khi bấm Xuất. Quá trình xuất có thể bị lỗi từ máy chủ Google.")
+
     print(f"[{time.strftime('%X')}]  🎯 Đã bắt được tab Google Sheets: " + export_page.url)
-    
+
     try:
-        # Chờ tối đa 2 phút để tab load hoàn toàn
         export_page.wait_for_load_state("domcontentloaded", timeout=120000)
         print("  ✓ Tab đã load DOM: " + export_page.url)
         time.sleep(5.0)
-        
-        # Xử lý popup trong lúc chờ lưới dữ liệu render (25 giây)
     except Exception:
         print("  ! Bỏ qua lỗi load DOM...")
-        
-    print("  ⏳ Đang chờ Google Sheets render lưới dữ liệu thực tế (chờ 25 giây) và theo dõi popup...")
-    for _ in range(25):
+
+    print("  ⏳ Đang chờ Google Sheets render lưới dữ liệu thực tế (chờ 20 giây)...")
+    for _ in range(20):
         time.sleep(1.0)
         try:
-            # Dùng JS click cho chắc chắn, quét cả 'Đăng nhập' và 'Tải lại'
-            clicked = export_page.evaluate("""() => {
-                const btns = Array.from(document.querySelectorAll('div[role="button"], button, span'));
-                const target = btns.find(b => b.innerText && (b.innerText.trim() === 'Đăng nhập' || b.innerText.trim() === 'Tải lại'));
-                if(target && target.offsetHeight > 0) { 
-                    target.click(); 
-                    return target.innerText.trim(); 
+            clicked_reload = export_page.evaluate("""() => {
+                const dialog = document.querySelector('.modal-dialog, div[role="dialog"]');
+                if (dialog) {
+                    const btn = Array.from(dialog.querySelectorAll('button, div[role="button"]')).find(b => b.innerText && (b.innerText.trim() === 'Tải lại' || b.innerText.trim() === 'Reload'));
+                    if (btn && btn.offsetHeight > 0) {
+                        btn.click();
+                        return btn.innerText.trim();
+                    }
                 }
                 return null;
             }""")
-            if clicked:
-                print(f"  ! Bị lỗi '{clicked}', đã dùng JS click để tải lại...")
-                time.sleep(15.0) # Chờ tải lại
+            if clicked_reload:
+                print(f"  ! Đã bấm '{clicked_reload}' trên popup Google Sheets để khôi phục...")
+                time.sleep(15.0)
+                break
         except Exception:
             pass
+
     return export_page
 
+
 def copy_export_and_paste_to_master(context, export_page):
-    """Copy toàn bộ dữ liệu, xóa sạch tab Data và dán vào A1."""
-    print("\\n[Bước 4] Copy dữ liệu sang Master Dashboard...")
-    
+    """Copy toàn bộ dữ liệu từ sheet xuất sang sheet Master Tab 'Data'."""
+    print("\n[Bước 4] Copy dữ liệu sang Master Dashboard...")
     export_page.bring_to_front()
-    time.sleep(1.5)
+    time.sleep(1.0)
+
     export_page.mouse.click(200, 250)
-    time.sleep(0.2)
-    export_page.keyboard.press("Control+A")
-    time.sleep(0.2)
+    time.sleep(0.3)
     export_page.keyboard.press("Control+A")
     time.sleep(0.3)
+    export_page.keyboard.press("Control+A")
+    time.sleep(0.4)
     export_page.keyboard.press("Control+C")
     time.sleep(3.0)
     print("  ✓ Đã Ctrl+C toàn bộ dữ liệu")
@@ -356,49 +375,40 @@ def copy_export_and_paste_to_master(context, export_page):
         master_page.goto(MASTER_SHEET_URL, wait_until="domcontentloaded", timeout=60000)
 
     master_page.bring_to_front()
-    
-    # Theo dõi popup trên Master Sheet trong 5 giây
-    print("  ⏳ Đang kiểm tra trạng thái Master Sheet...")
-    for _ in range(5):
-        time.sleep(1.0)
-        try:
-            clicked = master_page.evaluate("""() => {
-                const btns = Array.from(document.querySelectorAll('div[role="button"], button, span'));
-                const target = btns.find(b => b.innerText && (b.innerText.trim() === 'Đăng nhập' || b.innerText.trim() === 'Tải lại'));
-                if(target && target.offsetHeight > 0) { 
-                    target.click(); 
-                    return target.innerText.trim(); 
-                }
-                return null;
-            }""")
-            if clicked:
-                print(f"  ! Bị lỗi '{clicked}' ở Master Sheet, đã dùng JS click để tải lại...")
-                time.sleep(15.0) # Chờ tải lại
-                break
-        except Exception:
-            pass
+    time.sleep(2.0)
+
+    try:
+        master_page.evaluate("""() => {
+            const dialog = document.querySelector('.modal-dialog, div[role="dialog"]');
+            if (dialog) {
+                const btn = Array.from(dialog.querySelectorAll('button, div[role="button"]')).find(b => b.innerText && (b.innerText.trim() === 'Tải lại' || b.innerText.trim() === 'Reload'));
+                if (btn && btn.offsetHeight > 0) btn.click();
+            }
+        }""")
+    except Exception:
+        pass
 
     try:
         data_tab = master_page.locator("[id*='sheet-tab']:has-text('Data'), .docs-sheet-tab:has-text('Data')").first
-        if not data_tab.is_visible(timeout=1500):
+        if not data_tab.is_visible(timeout=2000):
             data_tab = master_page.locator("text='Data'").first
         data_tab.click()
-        time.sleep(0.8)
+        time.sleep(1.0)
     except Exception:
         pass
 
     master_page.mouse.click(200, 250)
-    time.sleep(0.2)
+    time.sleep(0.3)
     master_page.keyboard.press("Control+A")
-    time.sleep(0.2)
+    time.sleep(0.3)
     master_page.keyboard.press("Control+A")
     time.sleep(0.3)
     master_page.keyboard.press("Delete")
-    time.sleep(0.8)
+    time.sleep(1.0)
     print("  ✓ Đã xóa sạch dữ liệu cũ trong tab Data")
 
     master_page.keyboard.press("Control+Home")
-    time.sleep(0.3)
+    time.sleep(0.5)
     master_page.keyboard.press("Control+V")
     print("  ⏳ Đang đợi 15 giây để Google Sheets upload và lưu toàn bộ 200,000+ dòng dữ liệu lên máy chủ...")
     time.sleep(15.0)
@@ -408,61 +418,83 @@ def copy_export_and_paste_to_master(context, export_page):
 
 
 def click_google_sheets_menu(page, menu_name, submenu_name):
-    """Hàm helper để mở menu custom của Google Sheets một cách ổn định nhất."""
-    print(f"  ⏳ Đang đợi menu '{menu_name}' xuất hiện (Apps Script cần vài giây để load)...")
-    menu_loc = page.locator(f"#docs-menubar div.goog-control:has-text('{menu_name}'), #docs-menubar span:has-text('{menu_name}')").first
+    """Mở menu custom Apps Script của Google Sheets siêu tốc và ổn định 100% bằng DOM JS."""
+    print(f"  ⏳ Đang đợi menu '{menu_name}' xuất hiện (Apps Script đang tải)...")
     
-    menu_loaded = False
-    for _ in range(30):
-        if menu_loc.is_visible(timeout=500):
-            menu_loaded = True
+    menu_found = False
+    for attempt in range(40):
+        menu_found = page.evaluate("""(mName) => {
+            const menubar = document.querySelector('#docs-menubar') || document;
+            const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
+            return items.some(el => el.innerText && el.innerText.trim() === mName);
+        }""", menu_name)
+        if menu_found:
             break
-        alt_loc = page.get_by_text(menu_name, exact=True).first
-        if alt_loc.is_visible(timeout=500):
-            menu_loc = alt_loc
-            menu_loaded = True
-            break
-        time.sleep(2)
-
-    if not menu_loaded:
-        raise RuntimeError(f"Không tìm thấy menu {menu_name} sau 60 giây chờ đợi!")
-
-    submenu_item = page.get_by_text(submenu_name).first
-    
-    for attempt in range(5):
-        try:
-            menu_loc.evaluate("node => { node.dispatchEvent(new MouseEvent('mousedown', {bubbles: true})); node.dispatchEvent(new MouseEvent('mouseup', {bubbles: true})); node.click(); }", timeout=2000)
-        except Exception:
-            pass
-        
         time.sleep(1.0)
-        if submenu_item.is_visible(timeout=500):
-            sbox = submenu_item.bounding_box(timeout=2000); page.mouse.click(sbox[chr(120)]+sbox[chr(119)+chr(105)+chr(100)+chr(116)+chr(104)]/2, sbox[chr(121)]+sbox[chr(104)+chr(101)+chr(105)+chr(103)+chr(104)+chr(116)]/2) if sbox else submenu_item.click(force=True)
-            return True
-            
+        
+    if not menu_found:
+        print(f"  ! Sau 40s chưa thấy menu '{menu_name}', đang thử reload lại trang master sheet...")
         try:
-            box = menu_loc.bounding_box(timeout=2000)
-            if box:
-                page.mouse.click(box["x"] + box["width"]/2, box["y"] + box["height"]/2)
-                time.sleep(1.0)
-                if submenu_item.is_visible(timeout=500):
-                    sbox = submenu_item.bounding_box(timeout=2000); page.mouse.click(sbox[chr(120)]+sbox[chr(119)+chr(105)+chr(100)+chr(116)+chr(104)]/2, sbox[chr(121)]+sbox[chr(104)+chr(101)+chr(105)+chr(103)+chr(104)+chr(116)]/2) if sbox else submenu_item.click(force=True)
-                    return True
+            page.reload(wait_until="domcontentloaded", timeout=30000)
         except Exception:
             pass
-                
-        print(f"  ! Submenu '{submenu_name}' chưa hiện, thử click lại menu (lần {attempt+1})...")
+        time.sleep(10)
+        for _ in range(25):
+            menu_found = page.evaluate("""(mName) => {
+                const menubar = document.querySelector('#docs-menubar') || document;
+                const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
+                return items.some(el => el.innerText && el.innerText.trim() === mName);
+            }""", menu_name)
+            if menu_found:
+                break
+            time.sleep(1.0)
+
+    if not menu_found:
+        raise RuntimeError(f"Không tìm thấy menu {menu_name} trên Google Sheets sau thời gian chờ đợi!")
+
+    for attempt in range(5):
+        # 1. Click menu cha
+        page.evaluate("""(mName) => {
+            const menubar = document.querySelector('#docs-menubar') || document;
+            const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
+            const target = items.find(el => el.innerText && el.innerText.trim() === mName);
+            if (target) {
+                target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                target.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                target.click();
+            }
+        }""", menu_name)
+        time.sleep(1.5)
+
+        # 2. Click submenu con
+        clicked_sub = page.evaluate("""(sName) => {
+            const subitems = Array.from(document.querySelectorAll('.goog-menuitem, div[role="menuitem"], span'));
+            const target = subitems.find(el => el.innerText && el.innerText.trim().includes(sName));
+            if (target) {
+                target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                target.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                target.click();
+                return true;
+            }
+            return false;
+        }""", submenu_name)
+
+        if clicked_sub:
+            print(f"  ✓ Đã kích hoạt menu '{menu_name}' -> '{submenu_name}' thành công!")
+            return True
+
+        print(f"  ! Chưa click được submenu '{submenu_name}', thử lại lần {attempt + 1}...")
         page.keyboard.press("Escape")
-        time.sleep(0.5)
+        time.sleep(1.0)
 
     raise RuntimeError(f"Không thể mở menu {menu_name} -> {submenu_name}")
 
 
 def run_filter_to_ketqua(master_page):
-    """Bước 6: Bấm Lọc dữ liệu -> Chạy lọc -> Ketqua và đợi popup 'Hoàn tất!'."""
-    print("\\n[Bước 5] Bấm 'Lọc dữ liệu' -> 'Chạy lọc -> Ketqua'...")
+    """Bước 5: Bấm Lọc dữ liệu -> Chạy lọc -> Ketqua và đợi thông báo Hoàn tất."""
+    print("\n[Bước 5] Bấm 'Lọc dữ liệu' -> 'Chạy lọc -> Ketqua'...")
     master_page.bring_to_front()
-    time.sleep(0.8)
+    time.sleep(1.0)
 
     click_google_sheets_menu(master_page, "Lọc dữ liệu", "Chạy lọc -> Ketqua")
     
@@ -472,12 +504,10 @@ def run_filter_to_ketqua(master_page):
     found_done = False
     while time.time() - start_time < 90:
         time.sleep(0.5)
-        toast_text = master_page.evaluate("""
-            () => {
-                const toast = document.querySelector('.docs-butterbar-message, .docs-butterbar-wrap');
-                return toast ? toast.innerText : '';
-            }
-        """)
+        toast_text = master_page.evaluate("""() => {
+            const toast = document.querySelector('.docs-butterbar-message, .docs-butterbar-wrap');
+            return toast ? toast.innerText : '';
+        }""")
         if "Hoàn tất" in toast_text or "Đã kết thúc tập lệnh" in toast_text or "Finished script" in toast_text:
             print("  ✓ Đã thấy thông báo Hoàn tất!")
             found_done = True
@@ -486,34 +516,31 @@ def run_filter_to_ketqua(master_page):
     if not found_done:
         print("  ℹ Đã hết thời gian chờ toast, tiếp tục bước tiếp theo...")
         
-    print("  ⏳ Đang chờ 90 giây để Google Sheets tính toán lại toàn bộ công thức và cập nhật bảng thống kê (rất quan trọng)...")
-    time.sleep(90)
+    print("  ⏳ Đang chờ 60 giây để Google Sheets tính toán lại toàn bộ công thức và cập nhật bảng thống kê...")
+    time.sleep(60)
     print("  ✓ Đã chờ xong, chuẩn bị chạy ThongKe!")
 
 
 def run_thongke_and_wait_telegram_modal(master_page):
-    """Bước 7: Bấm Lọc dữ liệu -> Tạo bảng thống kê -> ThongKe và đợi Telegram modal load xong và tự tắt."""
-    print("\\n[Bước 6] Bấm 'Lọc dữ liệu' -> 'Tạo bảng thống kê -> ThongKe'...")
+    """Bước 6: Bấm Lọc dữ liệu -> Tạo bảng thống kê -> ThongKe và đợi Telegram modal load xong & tự tắt."""
+    print("\n[Bước 6] Bấm 'Lọc dữ liệu' -> 'Tạo bảng thống kê -> ThongKe'...")
     master_page.bring_to_front()
-    time.sleep(0.8)
+    time.sleep(1.0)
 
     click_google_sheets_menu(master_page, "Lọc dữ liệu", "Tạo bảng thống kê -> ThongKe")
     
     print("  ⏳ Đã kích hoạt tạo bảng thống kê...")
-
     print("  ⏳ Đang đợi bảng 'Đang gửi ảnh sang Telegram...' xuất hiện...")
     start_time = time.time()
     modal_appeared = False
     while time.time() - start_time < 45:
         time.sleep(0.4)
-        is_visible = master_page.evaluate("""
-            () => {
-                const text = document.body.innerText || '';
-                return text.includes('Đang gửi ảnh sang Telegram') || 
-                       text.includes('Đang gửi ảnh') || 
-                       text.includes('Đóng hộp thoại');
-            }
-        """)
+        is_visible = master_page.evaluate("""() => {
+            const text = document.body.innerText || '';
+            return text.includes('Đang gửi ảnh sang Telegram') || 
+                   text.includes('Đang gửi ảnh') || 
+                   text.includes('Đóng hộp thoại');
+        }""")
         if is_visible:
             print(f"  📸 BẢNG PREVIEW 'Đang gửi ảnh sang Telegram...' ĐÃ XUẤT HIỆN! ({round(time.time()-start_time, 1)}s)")
             modal_appeared = True
@@ -524,18 +551,16 @@ def run_thongke_and_wait_telegram_modal(master_page):
         start_time_close = time.time()
         while time.time() - start_time_close < 60:
             time.sleep(0.5)
-            is_still_open = master_page.evaluate("""
-                () => {
-                    const text = document.body.innerText || '';
-                    return text.includes('Đang gửi ảnh sang Telegram') || 
-                           text.includes('Đang gửi ảnh...');
-                }
-            """)
+            is_still_open = master_page.evaluate("""() => {
+                const text = document.body.innerText || '';
+                return text.includes('Đang gửi ảnh sang Telegram') || 
+                       text.includes('Đang gửi ảnh...');
+            }""")
             if not is_still_open:
                 print(f"  🎉 HỘP THOẠI ĐÃ TỰ ĐỘNG ĐÓNG HOÀN TẤT! ({round(time.time()-start_time_close, 1)}s)")
                 break
 
-    time.sleep(1)
+    time.sleep(1.0)
 
 
 # =============================================================================
@@ -543,28 +568,39 @@ def run_thongke_and_wait_telegram_modal(master_page):
 # =============================================================================
 
 def check_chrome_ready():
-    """Kiểm tra xem Chrome đã mở remote debugging ở port 9222 chưa."""
-    import socket
+    """Kiểm tra xem Chrome đã mở remote debugging ở port 9223 chưa."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(1.0)
     result = sock.connect_ex(('127.0.0.1', 9223))
     sock.close()
     return result == 0
 
 def start_chrome_bat():
-    """Gọi file Dang_Nhap_Chrome_Bot.bat để mở Chrome với chế độ debug."""
-    import subprocess
-    bat_desktop = os.path.expandvars(r"%USERPROFILE%\\Desktop\\Dang_Nhap_Chrome_Bot.bat")
-    bat_local = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Dang_Nhap_Chrome_Bot.bat")
+    """Mở Chrome bot với cổng debug 9223."""
+    bat_desktop = os.path.expandvars(r"%USERPROFILE%\Desktop\Dang_Nhap_Chrome_Bot.bat")
+    bat_scratch = r"c:\Users\nguye\.gemini\antigravity\scratch\Dang_Nhap_Chrome_Bot.bat"
     
     if os.path.exists(bat_desktop):
         subprocess.Popen([bat_desktop], shell=True)
-    elif os.path.exists(bat_local):
-        subprocess.Popen([bat_local], shell=True)
+    elif os.path.exists(bat_scratch):
+        subprocess.Popen([bat_scratch], shell=True)
     else:
-        print(f"  ⚠ Không tìm thấy file Dang_Nhap_Chrome_Bot.bat ở Desktop hay thư mục hiện tại!")
+        chrome_exe = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+        if not os.path.exists(chrome_exe):
+            chrome_exe = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+        profile_dir = os.path.expandvars(r"%USERPROFILE%\ChromeBotProfile")
+        subprocess.Popen([
+            chrome_exe,
+            "--remote-debugging-port=9223",
+            "--remote-allow-origins=*",
+            f"--user-data-dir={profile_dir}",
+            "--no-first-run",
+            "--no-default-browser-check",
+            LOOKER_URL
+        ])
 
 def send_telegram_alert(message):
-    """Gửi cảnh báo lỗi khẩn cấp về Telegram Topic 2690 để Sếp và đội ngũ biết ngay lập tức."""
+    """Gửi cảnh báo lỗi khẩn cấp về Telegram Topic 2690."""
     try:
         import requests
         url = "https://api.telegram.org/bot8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk/sendMessage"
@@ -585,10 +621,8 @@ def send_telegram_alert(message):
 def run_looker_export_pipeline(max_retries=3):
     if sync_playwright is None:
         print("=======================================================")
-        print("  ⚠️ [TIGER AI CLOUD NOTIFICATION]")
-        print("  Quy trình B2B Looker Studio yêu cầu Chrome có đăng nhập tài khoản của Sếp.")
-        print("  • Trên máy tính cá nhân của Sếp: Đã thiết lập Task Scheduler chạy ngầm 18:00 hàng ngày!")
-        print("  • Để chạy ngay trên máy: Sếp mở http://localhost:5050 hoặc bấm Run_Tiger_B2B_Bot ngoài Desktop.")
+        print("  ⚠️ [TIGER AI NOTIFICATION]")
+        print("  Quy trình B2B Looker Studio yêu cầu Playwright và Chrome bot.")
         print("=======================================================")
         return
 
@@ -609,7 +643,7 @@ def run_looker_export_pipeline(max_retries=3):
                 is_headless_cloud = (
                     "--headless" in sys.argv or 
                     os.environ.get("GITHUB_ACTIONS") == "true" or 
-                    False
+                    (not check_chrome_ready() and os.path.exists(storage_file) and sys.platform != "win32")
                 )
 
                 browser = None
@@ -633,22 +667,22 @@ def run_looker_export_pipeline(max_retries=3):
                     print("  ✓ Đã kết nối phiên Google Cloud thành công!")
                 else:
                     if not check_chrome_ready():
-                        print("  ! Chrome chưa mở, đang thử khởi động Chrome bằng file .bat...")
+                        print("  ! Chrome bot chưa mở, đang tự động khởi động Chrome (Port 9223)...")
                         start_chrome_bat()
                         
                     connected = False
-                    for c_attempt in range(6):
+                    for c_attempt in range(8):
                         try:
                             browser = p.chromium.connect_over_cdp(CDP_URL)
                             context = browser.contexts[0]
-                            print(f"  ✓ Kết nối Chrome thành công!")
+                            print("  ✓ Kết nối Chrome thành công!")
                             connected = True
                             break
                         except Exception:
-                            print(f"  ⏳ Đang đợi Chrome sẵn sàng... ({12 + (c_attempt+1)*5}s)")
-                            time.sleep(5)
+                            print(f"  ⏳ Đang đợi Chrome sẵn sàng... ({(c_attempt+1)*3}s)")
+                            time.sleep(3)
                     if not connected:
-                        raise RuntimeError("Chrome chưa mở remote debugging sau 42 giây.")
+                        raise RuntimeError("Không thể kết nối Chrome debugging port 9223.")
 
                 # 1. Looker Studio Tab 1. B2B
                 looker_page = get_or_open_looker_page(context)
@@ -676,7 +710,7 @@ def run_looker_export_pipeline(max_retries=3):
                 print("\n=======================================================")
                 print(f"  🎉 HOÀN TẤT TOÀN BỘ QUY TRÌNH TRONG: {total_elapsed}s! ")
                 print("  🤖 Apps Script đã gửi báo cáo lên Telegram thành công!")
-                print("=======================================================\\n")
+                print("=======================================================\n")
                 
                 return
 
@@ -684,7 +718,6 @@ def run_looker_export_pipeline(max_retries=3):
             last_error = str(e)
             print(f"\n❌ LỖI Ở LẦN CHẠY THỨ {attempt + 1}: {last_error}")
             
-            # Chụp ảnh màn hình để lưu lại vết lỗi cho Sếp
             try:
                 if 'looker_page' in locals() and looker_page:
                     looker_page.screenshot(path=f"error_b2b_attempt_{attempt + 1}.png")
@@ -693,8 +726,8 @@ def run_looker_export_pipeline(max_retries=3):
                 pass
 
             if attempt < max_retries - 1:
-                print("⏳ Đang chuẩn bị dọn dẹp và thử lại sau 15 giây...\n")
-                time.sleep(15)
+                print("⏳ Đang chuẩn bị dọn dẹp và thử lại sau 10 giây...\n")
+                time.sleep(10)
             else:
                 print("🚨 ĐÃ THỬ LẠI HẾT 3 LẦN NHƯNG VẪN THẤT BẠI!")
                 now_str = time.strftime("%H:%M:%S %d/%m/%Y")
