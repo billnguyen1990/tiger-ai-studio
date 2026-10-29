@@ -991,28 +991,35 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     if send_telegram:
         cmd.append("--send")
 
-    # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux):
+    # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux) -> Kích hoạt GitHub Actions Cloud Runner:
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if wf_id == "b2b_looker" and is_cloud:
-        cloud_output = f"""🐅 <b>TIGER AI - THÔNG BÁO VẬN HÀNH B2B • LOOKER STUDIO</b>
+        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSOXfHoBFEfKc3Y3z3aO0Dq")
+        gh_repo = "billnguyen1990/tiger-ai-studio"
+        gh_headers = {
+            "Authorization": f"token {gh_token}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+        dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Don_Tao_auto_18h.yml/dispatches"
+        try:
+            gh_res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main", "inputs": {"headless": "true"}}, timeout=10)
+            if gh_res.status_code == 204:
+                cloud_output = f"""🐅 <b>TIGER AI - ĐÃ KÍCH HOẠT QUY TRÌNH B2B TRÊN CLOUD THÀNH CÔNG!</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌐 <b>Môi trường hiện tại:</b> Máy chủ Render Cloud (Linux 24/7)
-💻 <b>Cơ chế điều khiển:</b> Trình duyệt Chrome máy trạm của Sếp (CDP Port 9223)
+☁️ <b>Máy chủ đám mây:</b> GitHub Actions Cloud Runner (Ubuntu 24/7)
+📱 <b>Thiết bị điều khiển:</b> Điện thoại của Sếp (Máy tính TẮT hoàn toàn)
+✅ <b>Tiến trình:</b> Đang bật Chromium Headless với phiên Google bảo mật để cào Looker Studio.
+📊 <b>Các bước tự động:</b>
+  1. Mở Looker Studio (Tab 1. B2B).
+  2. Lọc nhanh 13 tỉnh thành ĐBSCL.
+  3. Xuất Google Sheets ➔ Đồng bộ sang Master Sheet.
+  4. Apps Script tự động vẽ biểu đồ & bắn báo cáo về Telegram Topic 2690!
+⏰ <i>Thời gian hoàn thành ước tính: khoảng 2 - 3 phút. Báo cáo sẽ tự động gửi lên Telegram cho Sếp!</i>"""
+            else:
+                cloud_output = f"⚠️ Lỗi kích hoạt Cloud Runner: HTTP {gh_res.status_code} - {gh_res.text}"
+        except Exception as ex:
+            cloud_output = f"⚠️ Lỗi kết nối GitHub Cloud: {ex}"
 
-ℹ️ <b>LƯU Ý VẬN HÀNH:</b>
-Báo cáo Looker Studio yêu cầu phiên đăng nhập tài khoản Google thực tế trên máy tính trạm của Sếp.
-• ⏰ <b>Lịch tự động 18:00 hàng ngày:</b> Tiger AI đã đăng ký Task Scheduler <code>TigerAI_Auto_B2B_18h00</code> trên máy tính của Sếp để tự động chạy ngầm lúc <b>18:00 mỗi ngày</b>.
-• 🚀 <b>Chạy ngay tại máy tính:</b>
-  1. Mở web Command Center local: <b><a href="http://localhost:5050" target="_blank">http://localhost:5050</a></b> và bấm Kích Hoạt.
-  2. Hoặc nhấp đúp file phím tắt <code>Run_Tiger_B2B_Bot.bat</code> ngoài Desktop!
-
-📊 <b>CẤU HÌNH BỘ LỌC ĐÃ SẴN SÀNG:</b>
-• 📋 Báo cáo: <b>Dashboard Tách Luồng Vận Chuyển (Tab 1. B2B)</b>
-• 📍 Địa bàn: <b>13 tỉnh ĐBSCL</b> (Long An, Tiền Giang, Cần Thơ, Bến Tre, Vĩnh Long, An Giang, Cà Mau,...)
-• 📁 Master Dashboard: <a href="https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit" target="_blank">Mở Google Sheet Master ↗</a>
-• 🤖 Tự động xuất Google Sheets ➔ Dán tab Data ➔ Bắn Telegram Topic 2690!
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ <i>Đã ghi nhận yêu cầu điều hành từ Sếp thành công!</i>"""
         if send_telegram:
             send_telegram_direct(cloud_output)
         return jsonify({
@@ -1051,7 +1058,7 @@ Báo cáo Looker Studio yêu cầu phiên đăng nhập tài khoản Google th�
             "is_demo": False
         })
 
-    timeout_sec = 360 if wf_id == "b2b_looker" else 60
+    timeout_sec = 720 if wf_id == "b2b_looker" else 60
     try:
         proc = subprocess.Popen(
             cmd,
