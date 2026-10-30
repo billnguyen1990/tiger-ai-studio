@@ -1,3 +1,4 @@
+import html
 import os
 import sys
 import json
@@ -2442,7 +2443,8 @@ def extract_ghn_order_codes(text):
         "CHIASE", "CANTHO", "HAUGIANG", "SUCCESS", "DELIVER", 
         "NOTFOUND", "STATUS", "QUESTION", "RESPONSED", "REPORTER", 
         "PROMPT", "GEMINI", "BINHTHUY", "CAIRANG", "VITHANH", "BINHMINH",
-        "WAREHOUSE", "TRACKING", "HISTORY", "LOCATION", "ORDERCODE"
+        "WAREHOUSE", "TRACKING", "HISTORY", "LOCATION", "ORDERCODE",
+        "AIAGENTMT", "AIAGENTMTBOT", "AIAGENTMT_BOT", "AIAGENT", "AIBOT", "AIAGENTMT01"
     }
     results = []
     for t in tokens:
@@ -3355,6 +3357,7 @@ TELEGRAM_TOPICS_MAP = {
     2690: "🔥 Báo Cáo",
     506: "📅 Đơn Tạo",
     2692: "📓 Quan Trọng",
+    1: "💬 # Chat",
     0: "💬 # Chat chung"
 }
 
@@ -3442,7 +3445,27 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
         payload["reply_to_message_id"] = int(reply_to_message_id)
     try:
         r = requests.post(url, json=payload, timeout=10)
-        return r.json()
+        res = r.json()
+        if not res.get("ok"):
+            # Nếu lỗi do tin nhắn reply_to không tìm thấy, gửi lại trực tiếp vào nhóm/topic
+            if reply_to_message_id:
+                p2 = payload.copy()
+                p2.pop("reply_to_message_id", None)
+                r2 = requests.post(url, json=p2, timeout=10)
+                res2 = r2.json()
+                if res2.get("ok"):
+                    return res2
+            # Nếu lỗi parse HTML, bỏ parse_mode và gửi dạng văn bản thuần
+            if parse_mode == "HTML":
+                import re
+                p3 = payload.copy()
+                p3.pop("parse_mode", None)
+                p3["text"] = re.sub(r'<[^>]+>', '', text)
+                r3 = requests.post(url, json=p3, timeout=10)
+                res3 = r3.json()
+                if res3.get("ok"):
+                    return res3
+        return res
     except Exception as e:
         return {"ok": False, "description": str(e)}
 
@@ -3489,22 +3512,31 @@ def _format_ghn_order_telegram_reply(results):
     reply_lines = [f"📦 <b>KẾT QUẢ TRA CỨU ĐƠN HÀNG GHN ({len(results)} đơn):</b>"]
     for idx, res in enumerate(results, 1):
         if res.get("found"):
-            ms = "\n".join([f"   • {m}" for m in (res.get("milestones") or [])[:3]])
+            ms = "\n".join([f"   • {html.escape(str(m))}" for m in (res.get("milestones") or [])[:3]])
+            c_stat = html.escape(str(res.get("customer_status", "—")))
+            op_stat = html.escape(str(res.get("operation_status", "—")))
+            tr_stat = html.escape(str(res.get("transit_status", "—")))
+            c_hub = html.escape(str(res.get("current_hub", "—")))
+            d_hub = html.escape(str(res.get("deliver_hub", "—")))
+            actor = html.escape(str(res.get("actor", "—")))
+            time_str = html.escape(str(res.get("time", "—")))
+            trip = html.escape(str(res.get("trip_code", "—")))
             block = (
-                f"\n{idx}. 🔹 Mã đơn: <b><code>{res['order_code']}</code></b> — <b>{res.get('customer_status', '—')}</b>\n"
-                f"   ├ Trạng thái VH: <code>{res.get('operation_status', '—')}</code> ({res.get('transit_status', '—')})\n"
-                f"   ├ Kho hiện tại: <b>{res.get('current_hub', '—')}</b>\n"
-                f"   ├ Kho giao: <b>{res.get('deliver_hub', '—')}</b>\n"
+                f"\n{idx}. 🔹 Mã đơn: <b><code>{res['order_code']}</code></b> — <b>{c_stat}</b>\n"
+                f"   ├ Trạng thái VH: <code>{op_stat}</code> ({tr_stat})\n"
+                f"   ├ Kho hiện tại: <b>{c_hub}</b>\n"
+                f"   ├ Kho giao: <b>{d_hub}</b>\n"
                 f"   ├ Kiện hàng: <b>{res.get('weight_kg', 0)} kg</b> | Giá trị: <b>{res.get('order_value_str', '0 đ')}</b> ({res.get('items_count', 1)} kiện)\n"
-                f"   ├ NV xử lý: <b>{res.get('actor', '—')}</b> ({res.get('time', '—')})\n"
-                f"   ├ Mã chuyến: <code>{res.get('trip_code', '—')}</code>\n"
+                f"   ├ NV xử lý: <b>{actor}</b> ({time_str})\n"
+                f"   ├ Mã chuyến: <code>{trip}</code>\n"
             )
             if ms:
                 block += f"   ├ <b>Lịch sử tác động:</b>\n{ms}\n"
             block += f"   └ 🔗 <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
             reply_lines.append(block)
         else:
-            reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {res.get('status_text', 'Không tìm thấy')}")
+            st = html.escape(str(res.get("status_text", "Không tìm thấy")))
+            reply_lines.append(f"\n{idx}. ⚠️ <code>{res['order_code']}</code>: {st}")
     return "\n".join(reply_lines)
 
 def _clean_markdown_to_telegram_html(raw_text):
@@ -3589,8 +3621,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
-        if is_cloud and not any(r.get("found") for r in results):
-            return
+        # Render Cloud tra cứu GHN thành công 100%, gửi ngay kết quả tra cứu về nhóm Telegram
         reply_msg = _format_ghn_order_telegram_reply(results)
         sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         if sent.get("ok"):
@@ -3750,7 +3781,10 @@ def telegram_webhook_receiver():
         return jsonify({"status": "active", "bot": "@AiAgentMT_bot", "group": "Miền Tây 01"})
     upd = request.get_json(silent=True, force=True) or {}
     if upd:
-        _process_single_telegram_update(upd)
+        try:
+            _process_single_telegram_update(upd)
+        except Exception as e:
+            print(f"[Telegram Webhook Error] {e}")
     return jsonify({"ok": True})
 
 @app.route("/api/telegram-bridge/append", methods=["POST"])
