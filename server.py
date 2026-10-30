@@ -2431,6 +2431,110 @@ def save_gemini_api_key(key):
         print(f"Error saving Gemini API key: {e}")
         return False
 
+# ==============================================================================
+# HỆ THỐNG TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA SẾP LỘC)
+# ==============================================================================
+WINMART_STORES_CACHE = []
+
+def _load_winmart_stores():
+    global WINMART_STORES_CACHE
+    if WINMART_STORES_CACHE:
+        return WINMART_STORES_CACHE
+    for path in [
+        os.path.join(BASE_DIR, "winmart_stores.json"),
+        os.path.join(PARENT_DIR, "winmart_stores.json"),
+        os.path.join(os.getcwd(), "winmart_stores.json"),
+        "winmart_stores.json"
+    ]:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    WINMART_STORES_CACHE = json.load(f)
+                    return WINMART_STORES_CACHE
+            except Exception:
+                pass
+    return []
+
+def _remove_accents_vn(input_str):
+    if not input_str:
+        return ""
+    import unicodedata
+    nfkd = unicodedata.normalize("NFKD", input_str)
+    return "".join([c for c in nfkd if not unicodedata.combining(c)]).replace("đ", "d").replace("Đ", "D")
+
+def _normalize_store_query(text):
+    import re
+    text = _remove_accents_vn(text).lower()
+    text = re.sub(r'\b(winmart|vinmart|wm\+|vm\+|wm|vm)\b', 'wm', text)
+    return re.sub(r'[^a-z0-9/ ]', ' ', text)
+
+def search_winmart_store(query):
+    stores = _load_winmart_stores()
+    if not stores:
+        return []
+    import re
+    raw_q = query.lower().strip()
+    clean_q = _normalize_store_query(raw_q)
+    for prefix in ["dinh vi", "vi tri", "tim", "kho", "cua hang", "cho xin vi tri", "o dau", "chi duong", "cho hoi", "o cho nao"]:
+        clean_q = clean_q.replace(prefix, "").strip()
+    
+    tokens = [t for t in clean_q.split() if len(t) >= 2 and t != "wm"]
+    if not tokens:
+        return []
+    
+    scored = []
+    for s in stores:
+        score = 0
+        s_norm_name = _normalize_store_query(s["name"])
+        s_norm_addr = _normalize_store_query(s["address"])
+        
+        # Check phrase match
+        for token_phrase in [clean_q, " ".join(tokens)]:
+            if token_phrase and token_phrase in s_norm_name:
+                score += 120
+            elif token_phrase and token_phrase in s_norm_addr:
+                score += 90
+        
+        # Check token matches
+        matches = 0
+        for t in tokens:
+            if t in s_norm_name:
+                score += 25
+                matches += 1
+            elif t in s_norm_addr:
+                score += 15
+                matches += 1
+        
+        if score > 0:
+            scored.append((score + matches * 5, s))
+            
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [s for score, s in scored[:3]]
+
+def format_store_telegram_reply(results, query=""):
+    if not results:
+        return f"🏪 <b>TRA CỨU CỬA HÀNG WINMART:</b>\n\nKhông tìm thấy cửa hàng khớp với từ khóa: <code>{html.escape(query)}</code>.\nSếp và anh em vui lòng kiểm tra lại tên đường hoặc số nhà nhé!"
+    
+    best = results[0]
+    reply_lines = [
+        f"🏪 <b>ĐỊNH VỊ ĐIỂM GIAO: {best['name']}</b>",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"📍 <b>Địa chỉ:</b> {best['address']}",
+        f"🏢 <b>Kho phụ trách:</b> <b>{best['hub_name']}</b>",
+        f"👤 <b>NVXL / Đầu mối:</b> {best['nvxl']}",
+        f"🛣️ <b>Tuyến điều phối:</b> {best['route_name']}",
+        f"⏰ <b>Khung giờ nhận hàng:</b> 07:00 – 11:00 | 13:00 – 17:00",
+        f"🚛 <b>Lưu ý xe tải:</b> {best['truck_note']}",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        f"🗺️ 👉 <a href='{best['maps_url']}'><b>BẤM VÀO ĐÂY ĐỂ MỞ GOOGLE MAPS DẪN ĐƯỜNG ↗</b></a>"
+    ]
+    if len(results) > 1:
+        reply_lines.append("\n🔍 <i>Các điểm lân cận tương tự:</i>")
+        for other in results[1:3]:
+            reply_lines.append(f"• <b>{other['name']}</b>: {other['address']} (👉 <a href='{other['maps_url']}'>Bản đồ ↗</a>)")
+            
+    return "\n".join(reply_lines)
+
 def extract_ghn_order_codes(text):
     """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, VNGH hoặc mã có chữ và số)"""
     if not text:
@@ -3706,6 +3810,35 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     ]
     if other_user_tags and not is_tag_or_cmd:
         return
+
+    # KIỂM TRA TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA SẾP LỘC)
+    is_store_query = any(k in lower_text for k in [
+        "winmart", "vinmart", "wm+", "vm+", "/store", "/dinhvi", "/vitri", "định vị", "vị trí", "chỉ đường"
+    ])
+    if is_store_query:
+        store_res = search_winmart_store(text)
+        if store_res:
+            store_reply = format_store_telegram_reply(store_res, query=text)
+            sent = _send_telegram_group_message(store_reply, topic_id=topic_id, reply_to_message_id=msg_id)
+            if sent.get("ok"):
+                res_msg = sent.get("result", {})
+                auto_entry = {
+                    "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                    "message_id": res_msg.get("message_id", 0),
+                    "direction": "outgoing_auto",
+                    "sender_name": "AI 🍻 (Tự động)",
+                    "username": "@AiAgentMT_bot",
+                    "hub_badge": "Định Vị Điểm Giao",
+                    "topic_id": topic_id,
+                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                    "text": store_reply,
+                    "reply_to_text": text[:120],
+                    "replied_to_msg_id": msg_id,
+                    "is_explanation": False,
+                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                }
+                _append_telegram_bridge_message(auto_entry)
+            return
 
     # Phân biệt tin nhắn thực sự muốn tra cứu đơn:
     # - Gọi đích danh bot (@AiAgentMT_bot, /check, /tra, "tra đơn", "check đơn")
