@@ -658,11 +658,25 @@ def run_looker_export_pipeline(max_retries=3):
                             "--disable-dev-shm-usage"
                         ]
                     )
+                    storage_state_arg = None
+                    if os.path.exists(storage_file):
+                        try:
+                            with open(storage_file, 'r', encoding='utf-8') as sf:
+                                sdata = json.load(sf)
+                            if isinstance(sdata, dict) and 'cookies' in sdata:
+                                for ck in sdata['cookies']:
+                                    if 'partitionKey' in ck and not isinstance(ck['partitionKey'], str):
+                                        del ck['partitionKey']
+                            storage_state_arg = sdata
+                        except Exception as ex:
+                            print(f'  [Luu y] Loi doc sanitize storage file: {ex}')
+                            storage_state_arg = storage_file
+
                     context = browser.new_context(
-                        storage_state=storage_file if os.path.exists(storage_file) else None,
-                        viewport={"width": 1920, "height": 1080},
-                        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-                        permissions=["clipboard-read", "clipboard-write"]
+                        storage_state=storage_state_arg,
+                        viewport={'width': 1920, 'height': 1080},
+                        user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+                        permissions=['clipboard-read', 'clipboard-write']
                     )
                     print("  ✓ Đã kết nối phiên Google Cloud thành công!")
                 else:
