@@ -8,7 +8,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Ninh%20Ki%E1%BB%81u%2C%20S%E1%BB%91%2042%20%C4%90%C6%B0%E1%BB%9Dng%2030/4%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Ph%C3%BA%2C%20Qu%E1%BA%ADn%20Ninh%20ki%E1%BB%81u%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%E1%BA%A7n%20Th%C6%A1"
+    "maps_url": "https://maps.google.com/?q=VinMart+Ninh+Ki%E1%BB%81u%2C+S%E1%BB%91+42+%C4%90%C6%B0%E1%BB%9Dng+30%2F4%2C+Ph%C6%B0%E1%BB%9Dng+An+Ph%C3%BA%2C+Qu%E1%BA%ADn+Ninh+ki%E1%BB%81u%2C+Th%C3%A0nh+ph%E1%BB%91+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_002",
@@ -19,7 +19,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Can%20Tho%2C%20S%E1%BB%91%202%20H%C3%B9ng%20V%C6%B0%C6%A1ng%2C%20P.%20Th%E1%BB%9Bi%20B%C3%ACnh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=VinMart+Can+Tho%2C+S%E1%BB%91+2+H%C3%B9ng+V%C6%B0%C6%A1ng%2C+P.+Th%E1%BB%9Bi+B%C3%ACnh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_003",
@@ -30,7 +30,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Xuan%20Khanh%2C%20B1-06%2C%20Tang%201%2C%20So%20209%20Duong%2030/4%2C%20Phuong%20Xuan%20Khanh%2C%20Quan%20Ninh%20Kieu%2C%20Thanh%20pho%20Can%20Tho"
+    "maps_url": "https://maps.google.com/?q=VinMart+Xuan+Khanh%2C+B1-06%2C+Tang+1%2C+So+209+Duong+30%2F4%2C+Phuong+Xuan+Khanh%2C+Quan+Ninh+Kieu%2C+Thanh+pho+Can+Tho"
   },
   {
     "id": "STORE_004",
@@ -41,7 +41,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "🏢 Khu vực TTTM/Hầm hạ hàng: Cần liên hệ bảo vệ/ban quản lý trước khi xuống hàng, kiểm tra chiều cao xe.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20V%C4%A9nh%20Long%2C%20TTTM%20Vincom%20Plaza%20V%C4%A9nh%20Long%2C%20T%E1%BB%95%209%2C%20Kh%C3%B3m%203%2C%20Ph%C6%B0%E1%BB%9Dng%204%2C%20Th%C3%A0nh%20ph%E1%BB%91%20V%C4%A9nh%20Long%2C%20T%E1%BB%89nh%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=VinMart+V%C4%A9nh+Long%2C+TTTM+Vincom+Plaza+V%C4%A9nh+Long%2C+T%E1%BB%95+9%2C+Kh%C3%B3m+3%2C+Ph%C6%B0%E1%BB%9Dng+4%2C+Th%C3%A0nh+ph%E1%BB%91+V%C4%A9nh+Long%2C+T%E1%BB%89nh+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_005",
@@ -52,7 +52,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "🏢 Khu vực TTTM/Hầm hạ hàng: Cần liên hệ bảo vệ/ban quản lý trước khi xuống hàng, kiểm tra chiều cao xe.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Ki%C3%AAn%20Giang%2C%20TTTM%20Vincom%20Plaza%20Ki%C3%AAn%20Giang%2C%20L%C3%B4%20A12%2C%20Khu%20ph%E1%BB%91%201%2C%20Ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20B%E1%BA%A3o%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1%2C%20T%E1%BB%89nh%20Ki%C3%AAn%20Giang"
+    "maps_url": "https://maps.google.com/?q=VinMart+Ki%C3%AAn+Giang%2C+TTTM+Vincom+Plaza+Ki%C3%AAn+Giang%2C+L%C3%B4+A12%2C+Khu+ph%E1%BB%91+1%2C+Ph%C6%B0%E1%BB%9Dng+V%C4%A9nh+B%E1%BA%A3o%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1%2C+T%E1%BB%89nh+Ki%C3%AAn+Giang"
   },
   {
     "id": "STORE_006",
@@ -63,7 +63,7 @@
     "nvxl": "Huỳnh Diệp Đức Trung (@DUCTRUNG17TUOI)",
     "route_name": "Tuyến Vị Thanh - Hậu Giang",
     "truck_note": "🏢 Khu vực TTTM/Hầm hạ hàng: Cần liên hệ bảo vệ/ban quản lý trước khi xuống hàng, kiểm tra chiều cao xe.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20H%E1%BA%ADu%20Giang%2C%20TTTM%20Vincom%20Plaza%20V%E1%BB%8B%20Thanh%2C%20Khu%20v%E1%BB%B1c%203%2C%20Ph%C6%B0%E1%BB%9Dng%205%2C%20Th%C3%A0nh%20Ph%E1%BB%91%20V%E1%BB%8B%20Thanh%2C%20T%E1%BB%89nh%20H%E1%BA%ADu%20Giang"
+    "maps_url": "https://maps.google.com/?q=VinMart+H%E1%BA%ADu+Giang%2C+TTTM+Vincom+Plaza+V%E1%BB%8B+Thanh%2C+Khu+v%E1%BB%B1c+3%2C+Ph%C6%B0%E1%BB%9Dng+5%2C+Th%C3%A0nh+Ph%E1%BB%91+V%E1%BB%8B+Thanh%2C+T%E1%BB%89nh+H%E1%BA%ADu+Giang"
   },
   {
     "id": "STORE_007",
@@ -74,7 +74,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20404/12%20Nguy%E1%BB%85n%20V%C4%83n%20Linh%2C%20404/12%20Nguy%E1%BB%85n%20V%C4%83n%20Linh%2C%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+404%2F12+Nguy%E1%BB%85n+V%C4%83n+Linh%2C+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_008",
@@ -85,7 +85,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%201B%20Tr%E1%BA%A7n%20Quang%20Kh%E1%BA%A3i%2C%201B%20Tr%E1%BA%A7n%20Quang%20Kh%E1%BA%A3i%2C%20Ph%C6%B0%E1%BB%9Dng%20C%C3%A1i%20Kh%E1%BA%BF%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+1B+Tr%E1%BA%A7n+Quang+Kh%E1%BA%A3i%2C+Ph%C6%B0%E1%BB%9Dng+C%C3%A1i+Kh%E1%BA%BF%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_009",
@@ -96,7 +96,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2053/64%20Nguy%E1%BB%85n%20Vi%E1%BB%87t%20D%C5%A9ng%2C%2053/64/%20Nguy%E1%BB%85n%20Vi%E1%BB%87t%20D%C5%A9ng%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Th%E1%BB%9Bi%2C%20Qu%E1%BA%ADn%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+53%2F64+Nguy%E1%BB%85n+Vi%E1%BB%87t+D%C5%A9ng%2C+53%2F64%2F+Nguy%E1%BB%85n+Vi%E1%BB%87t+D%C5%A9ng%2C+Ph%C6%B0%E1%BB%9Dng+An+Th%E1%BB%9Bi%2C+Qu%E1%BA%ADn+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_010",
@@ -107,7 +107,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%201B%20%C4%90inh%20Ti%C3%AAn%20Ho%C3%A0ng%2C%201B%20%C4%90inh%20Ti%C3%AAn%20Ho%C3%A0ng%2C%20Ph%C6%B0%E1%BB%9Dng%20Th%E1%BB%9Bi%20B%C3%ACnh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+1B+%C4%90inh+Ti%C3%AAn+Ho%C3%A0ng%2C+Ph%C6%B0%E1%BB%9Dng+Th%E1%BB%9Bi+B%C3%ACnh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_011",
@@ -118,7 +118,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2029-31%20%C4%90%C6%B0%E1%BB%9Dng%20A3%2C%2029-31%20%C4%90%C6%B0%E1%BB%9Dng%20A3%20KDC%20H%C6%B0ng%20Ph%C3%BA%2C%20Ph%C6%B0%E1%BB%9Dng%20H%C6%B0ng%20Ph%C3%BA%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+29-31+%C4%90%C6%B0%E1%BB%9Dng+A3+KDC+H%C6%B0ng+Ph%C3%BA%2C+Ph%C6%B0%E1%BB%9Dng+H%C6%B0ng+Ph%C3%BA%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_012",
@@ -129,7 +129,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2038%20V%C3%B5%20V%C4%83n%20Ki%E1%BB%87t%2C%2038%20V%C3%B5%20V%C4%83n%20Ki%E1%BB%87t%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20H%C3%B2a%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+38+V%C3%B5+V%C4%83n+Ki%E1%BB%87t%2C+Ph%C6%B0%E1%BB%9Dng+An+H%C3%B2a%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_013",
@@ -140,7 +140,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20216%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20216%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20Ph%C6%B0%E1%BB%9Dng%20H%C6%B0ng%20L%E1%BB%A3i%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+216+%C4%90%C6%B0%E1%BB%9Dng+3%2F2%2C+Ph%C6%B0%E1%BB%9Dng+H%C6%B0ng+L%E1%BB%A3i%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_014",
@@ -151,7 +151,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2021-22%20V%C3%B5%20Nguy%C3%AAn%20Gi%C3%A1p%2C%20Di%E1%BB%87u%2C%2021-22%20V%C3%B5%20Nguy%C3%AAn%20Gi%C3%A1p%2C%20Khu%20D%C3%A2n%20C%C6%B0%20Di%E1%BB%87u%20Hi%E1%BB%81n%2C%20Khu%20V%E1%BB%B1c%20Th%E1%BA%A1nh%20L%E1%BB%A3i%2C%20Ph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20Th%E1%BB%A9%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+21-22+V%C3%B5+Nguy%C3%AAn+Gi%C3%A1p%2C+Di%E1%BB%87u%2C+21-22+V%C3%B5+Nguy%C3%AAn+Gi%C3%A1p%2C+Khu+D%C3%A2n+C%C6%B0+Di%E1%BB%87u+Hi%E1%BB%81n%2C+Khu+V%E1%BB%B1c+Th%E1%BA%A1nh+L%E1%BB%A3i%2C+Ph%C6%B0%E1%BB%9Dng+Ph%C3%BA+Th%E1%BB%A9%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_015",
@@ -162,7 +162,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20S%E1%BB%91%202%20Tr%E1%BA%A7n%20Ho%C3%A0ng%20Na%2C%20S%E1%BB%91%202%20Tr%E1%BA%A7n%20Ho%C3%A0ng%20Na%2C%20Ph%C6%B0%E1%BB%9Dng%20H%C6%B0ng%20Th%E1%BA%A1nh%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng%2C%20Th%C3%A0nh%20Ph%E1%BB%91%20C%E1%BA%A7n%20Th%C6%A1%20%28%C4%90C%20c%C5%A9%3A%20KDC%20L%C3%B4%2C%20S%E1%BB%91%206%2C%20Khu%20%C4%90%C3%B4%20Th%E1%BB%8B%20M%E1%BB%9Bi%20Nam%20S%C3%B4ng%20C%E1%BA%A7n%20Th%C6%A1%29"
+    "maps_url": "https://maps.google.com/?q=WinMart+S%E1%BB%91+2+Tr%E1%BA%A7n+Ho%C3%A0ng+Na%2C+Ph%C6%B0%E1%BB%9Dng+H%C6%B0ng+Th%E1%BA%A1nh%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+Th%C3%A0nh+Ph%E1%BB%91+C%E1%BA%A7n+Th%C6%A1+%28%C4%90C+c%C5%A9%3A+KDC+L%C3%B4%2C+S%E1%BB%91+6%2C+Khu+%C4%90%C3%B4+Th%E1%BB%8B+M%E1%BB%9Bi+Nam+S%C3%B4ng+C%E1%BA%A7n+Th%C6%A1%29%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_016",
@@ -173,7 +173,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20370%20Khu%20v%E1%BB%B1c%20Y%C3%AAn%20Trung%2C%20370%20Khu%20V%E1%BB%B1c%20Y%C3%AAn%20Trung%2C%20Ph%C6%B0%E1%BB%9Dng%20L%C3%AA%20B%C3%ACnh%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+370+Khu+V%E1%BB%B1c+Y%C3%AAn+Trung%2C+Ph%C6%B0%E1%BB%9Dng+L%C3%AA+B%C3%ACnh%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_017",
@@ -184,7 +184,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20Th%E1%BB%ADa%2012%20Y%C3%AAn%20Ho%C3%A0%2C%20Th%E1%BB%ADa%2012%20Y%C3%AAn%20Ho%C3%A0%2C%20Ph%C6%B0%E1%BB%9Dng%20L%C3%AA%20B%C3%ACnh%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+Th%E1%BB%ADa+12+Y%C3%AAn+Ho%C3%A0%2C+Ph%C6%B0%E1%BB%9Dng+L%C3%AA+B%C3%ACnh%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_018",
@@ -195,7 +195,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20CTO%20390Z%20Nguyen%20Van%20Cu%2C%20390Z%20Nguyen%20Van%20Cu%2C%20phuong%20An%20Khanh%2C%20quan%20Ninh%20Kieu%2C%20thanh%20pho%20Can%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+390Z+Nguyen+Van+Cu%2C+phuong+An+Khanh%2C+quan+Ninh+Kieu%2C+thanh+pho+Can+Tho"
   },
   {
     "id": "STORE_019",
@@ -206,7 +206,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20CTO%20160%20Tran%20Quang%20Dieu%2C%20160%20Tran%20Quang%20Dieu%2C%20phuong%20An%20Thoi%2C%20quan%20Binh%20Thuy%2C%20thanh%20pho%20Can%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+160+Tran+Quang+Dieu%2C+phuong+An+Thoi%2C+quan+Binh+Thuy%2C+thanh+pho+Can+Tho"
   },
   {
     "id": "STORE_020",
@@ -217,7 +217,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2045/9%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%2045/9%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%20P.%20B%C3%ACnh%20Th%E1%BB%A7y%2C%20Qu%E1%BA%ADn%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+45%2F9+L%C3%AA+H%E1%BB%93ng+Phong%2C+P.+B%C3%ACnh+Th%E1%BB%A7y%2C+Qu%E1%BA%ADn+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_021",
@@ -228,7 +228,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20163H-163H/7%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20163H-163H/7%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%20n%E1%BB%91i%20d%C3%A0i%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+163H-163H%2F7+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB+n%E1%BB%91i+d%C3%A0i%2C+Ph%C6%B0%E1%BB%9Dng+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_022",
@@ -239,7 +239,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20CTO%20184%20Tran%20Hung%20Dao%2C%20184%20Tran%20Hung%20Dao%2C%20P.%20An%20Nghiep%2C%20Q.Ninh%20Kieu"
+    "maps_url": "https://maps.google.com/?q=WinMart+184+Tran+Hung+Dao%2C+P.+An+Nghiep%2C+Q.Ninh+Kieu%2C+TP+Can+Tho"
   },
   {
     "id": "STORE_023",
@@ -250,7 +250,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2090A2-92A2%20KDC%20H%C6%B0ng%20Ph%C3%BA%201%2C%2090A2-92A2%20KDC%20H%C6%B0ng%20Ph%C3%BA%201%2C%20P.%20H%C6%B0ng%20Ph%C3%BA%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+90A2-92A2+KDC+H%C6%B0ng+Ph%C3%BA+1%2C+P.+H%C6%B0ng+Ph%C3%BA%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_024",
@@ -261,7 +261,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2083-85%20Nguy%E1%BB%85n%20Hi%E1%BB%81n%2C%2083-85%20Nguy%E1%BB%85n%20Hi%E1%BB%81n%2C%20P.%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+83-85+Nguy%E1%BB%85n+Hi%E1%BB%81n%2C+P.+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_025",
@@ -272,7 +272,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20155%20L%C3%BD%20T%E1%BB%B1%20Tr%E1%BB%8Dng%2C%20155%20L%C3%BD%20T%E1%BB%B1%20Tr%E1%BB%8Dng%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Ph%C3%BA%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+155+L%C3%BD+T%E1%BB%B1+Tr%E1%BB%8Dng%2C+Ph%C6%B0%E1%BB%9Dng+An+Ph%C3%BA%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_026",
@@ -283,7 +283,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2086A%20M%E1%BA%ADu%20Th%C3%A2n%2C%2086%20A%20M%E1%BA%ADu%20Th%C3%A2n%2C%20P.%20An%20H%C3%B2a%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+86A+M%E1%BA%ADu+Th%C3%A2n%2C+86+A+M%E1%BA%ADu+Th%C3%A2n%2C+P.+An+H%C3%B2a%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_027",
@@ -294,7 +294,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2018%20%C4%91%C6%B0%E1%BB%9Dng%20A1%2C%2018%20%C4%91%C6%B0%E1%BB%9Dng%20A1%20KDC%20H%C6%B0ng%20Ph%C3%BA%201%2C%20KV9%2C%20P.%20H%C6%B0ng%20Ph%C3%BA%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+18+%C4%91%C6%B0%E1%BB%9Dng+A1+KDC+H%C6%B0ng+Ph%C3%BA+1%2C+KV9%2C+P.+H%C6%B0ng+Ph%C3%BA%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_028",
@@ -305,7 +305,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20151/19%20Tr%E1%BA%A7n%20Ho%C3%A0ng%20Na%2C%20151/19%20Tr%E1%BA%A7n%20Ho%C3%A0ng%20Na%2C%20Ph%C6%B0%E1%BB%9Dng%20H%C6%B0ng%20L%E1%BB%A3i%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+151%2F19+Tr%E1%BA%A7n+Ho%C3%A0ng+Na%2C+Ph%C6%B0%E1%BB%9Dng+H%C6%B0ng+L%E1%BB%A3i%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_029",
@@ -316,7 +316,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO13-15%20Xu%C3%A2n%20Th%E1%BB%A7y%2C%2013-15%20Xu%C3%A2n%20Th%E1%BB%A7y%2C%20KDC%20C%C3%A1i%20S%C6%A1n-%20H%C3%A0ng%20B%C3%A0ng%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20B%C3%ACnh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+WM%2B+CTO13-15+Xu%C3%A2n+Th%E1%BB%A7y%2C+13-15+Xu%C3%A2n+Th%E1%BB%A7y%2C+KDC+C%C3%A1i+S%C6%A1n-+H%C3%A0ng+B%C3%A0ng%2C+Ph%C6%B0%E1%BB%9Dng+An+B%C3%ACnh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_030",
@@ -327,7 +327,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2044-46%20B%C3%B9i%20Quang%20Trinh%2C%2044-46%20B%C3%B9i%20Quang%20Trinh%2C%20khu%20d%C3%A2n%20c%C6%B0%20586%2C%20Ph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20Th%E1%BB%A9%2C%20Qu%E1%BA%ADn%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+44-46+B%C3%B9i+Quang+Trinh%2C+khu+d%C3%A2n+c%C6%B0+586%2C+Ph%C6%B0%E1%BB%9Dng+Ph%C3%BA+Th%E1%BB%A9%2C+Qu%E1%BA%ADn+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_031",
@@ -338,7 +338,7 @@
     "nvxl": "Trần Trọng Bằng (@Nguyen_Toan)",
     "route_name": "Tuyến Ô Môn",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2028%20%C4%91%C6%B0%E1%BB%9Dng%203/2%2C%2028%20%C4%91%C6%B0%E1%BB%9Dng%203/2%2C%20Ph%C6%B0%E1%BB%9Dng%20Ch%C3%A2u%20V%C4%83n%20Li%C3%AAm%2C%20Qu%E1%BA%ADn%20%C3%94%20M%C3%B4n"
+    "maps_url": "https://maps.google.com/?q=WinMart+28+%C4%91%C6%B0%E1%BB%9Dng+3%2F2%2C+Ph%C6%B0%E1%BB%9Dng+Ch%C3%A2u+V%C4%83n+Li%C3%AAm%2C+Qu%E1%BA%ADn+%C3%94+M%C3%B4n%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_032",
@@ -349,7 +349,7 @@
     "nvxl": "Trần Trọng Bằng (@Nguyen_Toan)",
     "route_name": "Tuyến Ô Môn",
     "truck_note": "🚚 Trục Quốc lộ: Xe tải lớn lưu thông bình thường, chú ý đỗ xe an toàn bên lề đường.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%201056%20qu%E1%BB%91c%20l%E1%BB%99%2091%2C%201056%20Qu%E1%BB%91c%20l%E1%BB%99%2091%2C%20Ph%C6%B0%E1%BB%9Dng%20Ch%C3%A2u%20V%C4%83n%20Li%C3%AAm%2C%20Qu%E1%BA%ADn%20%C3%94%20M%C3%B4n"
+    "maps_url": "https://maps.google.com/?q=WinMart+1056+Qu%E1%BB%91c+l%E1%BB%99+91%2C+Ph%C6%B0%E1%BB%9Dng+Ch%C3%A2u+V%C4%83n+Li%C3%AAm%2C+Qu%E1%BA%ADn+%C3%94+M%C3%B4n%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_033",
@@ -360,7 +360,7 @@
     "nvxl": "Trần Trọng Bằng (@Nguyen_Toan)",
     "route_name": "Tuyến Ô Môn",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2051%20%C4%91%C6%B0%E1%BB%9Dng%2026/3%2C%2051%20%C4%91%C6%B0%E1%BB%9Dng%2026/3%2C%20p%2C%20Ph%C6%B0%E1%BB%9Dng%20Ch%C3%A2u%20V%C4%83n%20Li%C3%AAm%2C%20Qu%E1%BA%ADn%20%C3%94%20M%C3%B4n"
+    "maps_url": "https://maps.google.com/?q=WinMart+51+%C4%91%C6%B0%E1%BB%9Dng+26%2F3%2C+p%2C+Ph%C6%B0%E1%BB%9Dng+Ch%C3%A2u+V%C4%83n+Li%C3%AAm%2C+Qu%E1%BA%ADn+%C3%94+M%C3%B4n%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_034",
@@ -371,7 +371,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20140B/1%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20140B/1%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20P.%20An%20H%C3%B2a%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+140B%2F1+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB%2C+P.+An+H%C3%B2a%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_035",
@@ -382,7 +382,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2035%20Nguy%E1%BB%85n%20Ch%C3%AD%20Thanh%2C%2035%20Nguy%E1%BB%85n%20Ch%C3%AD%20Thanh%2C%20Ph%C6%B0%E1%BB%9Dng%20Tr%C3%A0%20N%C3%B3c%2C%20Qu%E1%BA%ADn%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+35+Nguy%E1%BB%85n+Ch%C3%AD+Thanh%2C+Ph%C6%B0%E1%BB%9Dng+Tr%C3%A0+N%C3%B3c%2C+Qu%E1%BA%ADn+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_036",
@@ -393,7 +393,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2BVLG%2068%20duong%202%20thang%209%2C%2068%20Duong%202%20Thang%209%20Phuong%201%2C%20Thanh%20Pho%20Vinh%20Long%2C%20Tinh%20Vinh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+VM%2BVLG+68+duong+2+thang+9%2C+68+Duong+2+Thang+9+Phuong+1%2C+Thanh+Pho+Vinh+Long%2C+Tinh+Vinh+Long"
   },
   {
     "id": "STORE_037",
@@ -404,7 +404,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2BVLG%2033/15D%20Ph%E1%BA%A1m%20Th%C3%A1i%20B%C6%B0%E1%BB%9Dng%2C%2033/15D%20Ph%E1%BA%A1m%20Th%C3%A1i%20B%C6%B0%E1%BB%9Dng%2CPh%C6%B0%E1%BB%9Dng%204%2C%20Th%C3%A0nh%20ph%E1%BB%91%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+WM%2BVLG+33%2F15D+Ph%E1%BA%A1m+Th%C3%A1i+B%C6%B0%E1%BB%9Dng%2C+33%2F15D+Ph%E1%BA%A1m+Th%C3%A1i+B%C6%B0%E1%BB%9Dng%2CPh%C6%B0%E1%BB%9Dng+4%2C+Th%C3%A0nh+ph%E1%BB%91+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_038",
@@ -415,7 +415,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2001%20M%E1%BA%ADu%20Th%C3%A2n%2C%2001%20M%E1%BA%ADu%20Th%C3%A2n%2C%20Ph%C6%B0%E1%BB%9Dng%203%2C%20Th%C3%A0nh%20ph%E1%BB%91%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+01+M%E1%BA%ADu+Th%C3%A2n%2C+Ph%C6%B0%E1%BB%9Dng+3%2C+Th%C3%A0nh+ph%E1%BB%91+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_039",
@@ -426,7 +426,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20KGG%20Lo%20so%20F14-30%2C%20duong%203/2%2C%20Lo%20so%20F14-30%2C%20duong%203/2%2C%20thuoc%20du%20an%20lan%20bien%20xay%20dung%20khu%20do%20thi%20moi%2C%20TP%20Rach%20Gia%2C%20Kien%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+Lo+so+F14-30%2C+duong+3%2F2%2C+thuoc+du+an+lan+bien+xay+dung+khu+do+thi+moi%2C+TP+Rach+Gia%2C+Kien+Giang"
   },
   {
     "id": "STORE_040",
@@ -437,7 +437,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2007-07A%20Nguy%E1%BB%85n%20B%E1%BB%89nh%20Khi%C3%AAm%2C%2007%20%E2%80%93%2007A%20Nguy%E1%BB%85n%20B%E1%BB%89nh%20Khi%C3%AAm%2C%20P.%20V%C4%A9nh%20Thanh%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+07-07A+Nguy%E1%BB%85n+B%E1%BB%89nh+Khi%C3%AAm%2C+07+%E2%80%93+07A+Nguy%E1%BB%85n+B%E1%BB%89nh+Khi%C3%AAm%2C+P.+V%C4%A9nh+Thanh%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_041",
@@ -448,7 +448,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20L%C3%B4%20s%E1%BB%91%20D4-25%2C%20%C4%91%C6%B0%E1%BB%9Dng%203/2%2C%20L%C3%B4%20s%E1%BB%91%20D4-25%2C%20%C4%91%C6%B0%E1%BB%9Dng%203/2%2C%20Ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20L%E1%BA%A1c%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+L%C3%B4+s%E1%BB%91+D4-25%2C+%C4%91%C6%B0%E1%BB%9Dng+3%2F2%2C+Ph%C6%B0%E1%BB%9Dng+V%C4%A9nh+L%E1%BA%A1c%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_042",
@@ -459,7 +459,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2021%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%2021%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20KP%201%2C%20P%20An%20H%C3%B2a%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+21+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB%2C+KP+1%2C+P+An+H%C3%B2a%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_043",
@@ -470,7 +470,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2014%20Tr%E1%BA%A7n%20Quang%20Kh%E1%BA%A3i%2C%2014%20Tr%E1%BA%A7n%20Quang%20Kh%E1%BA%A3i%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20H%C3%B2a%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+14+Tr%E1%BA%A7n+Quang+Kh%E1%BA%A3i%2C+Ph%C6%B0%E1%BB%9Dng+An+H%C3%B2a%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_044",
@@ -481,7 +481,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2BVLG%2027A%20L%C3%AA%20V%C4%83n%20T%C3%A1m%2C%2027A%20L%C3%AA%20V%C4%83n%20T%C3%A1m%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20Th%C3%A0nh%20ph%E1%BB%91%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+WM%2BVLG+27A+L%C3%AA+V%C4%83n+T%C3%A1m%2C+27A+L%C3%AA+V%C4%83n+T%C3%A1m%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+Th%C3%A0nh+ph%E1%BB%91+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_045",
@@ -492,7 +492,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2037%20%C4%91%C6%B0%E1%BB%9Dng%203/2%2C%2037%20%C4%91%C6%B0%E1%BB%9Dng%203/2%2C%20Ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20Thanh%20V%C3%A2n%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+37+%C4%91%C6%B0%E1%BB%9Dng+3%2F2%2C+Ph%C6%B0%E1%BB%9Dng+V%C4%A9nh+Thanh+V%C3%A2n%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_046",
@@ -503,7 +503,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2079%20Quang%20Trung%2C%2079%20Quang%20Trung%2C%20Ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20Quang%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+79+Quang+Trung%2C+Ph%C6%B0%E1%BB%9Dng+V%C4%A9nh+Quang%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_047",
@@ -514,7 +514,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20KGG%20208%20Nguyen%20Binh%20Khiem%2C%20208%20duong%20Nguyen%20Binh%20Khiem%2C%20KP%20Dong%20Khoi%2C%20Phuong%20Vinh%20Quang%2C%20TX%20Rach%20Gia%2C%20Tinh%20Kien%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+208+Nguyen+Binh+Khiem%2C+208+duong+Nguyen+Binh+Khiem%2C+KP+Dong+Khoi%2C+Phuong+Vinh+Quang%2C+TX+Rach+Gia%2C+Tinh+Kien+Giang"
   },
   {
     "id": "STORE_048",
@@ -525,7 +525,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20Th%E1%BB%ADa%201717%2C%20TB%C4%90%207%20V%C5%A9%20%C4%90%C3%ACnh%20Li%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%201717%2C%20TB%C4%90%20s%E1%BB%91%207%2C%20%C4%90%C6%B0%E1%BB%9Dng%20V%C5%A9%2C%20%C4%90%C3%ACnh%20Li%E1%BB%87u%2C%20KDC%20L%C3%B4%20S%E1%BB%91%208B%2C%20KDT%20Nam%2C%20C%E1%BA%A7n%20Th%C6%A1%2C%20P.%20H%C6%B0ng%20Th%E1%BA%A1nh%2C%20Q.%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+Th%E1%BB%ADa+1717%2C+TB%C4%90+7+V%C5%A9+%C4%90%C3%ACnh+Li%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+1717%2C+TB%C4%90+s%E1%BB%91+7%2C+%C4%90%C6%B0%E1%BB%9Dng+V%C5%A9%2C+%C4%90%C3%ACnh+Li%E1%BB%87u%2C+KDC+L%C3%B4+S%E1%BB%91+8B%2C+KDT+Nam%2C+C%E1%BA%A7n+Th%C6%A1%2C+P.+H%C6%B0ng+Th%E1%BA%A1nh%2C+Q.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_049",
@@ -536,7 +536,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20L%C3%B4%20L7%20%E2%80%93%206%20Hu%E1%BB%B3nh%20Th%C3%BAc%20Kh%C3%A1ng%2C%20L%C3%B4%20L7%20%E2%80%93%206%20Hu%E1%BB%B3nh%20Th%C3%BAc%20Kh%C3%A1ng%2C%20P.%20V%C4%A9nh%20Quang%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+L%C3%B4+L7+%E2%80%93+6+Hu%E1%BB%B3nh+Th%C3%BAc+Kh%C3%A1ng%2C+P.+V%C4%A9nh+Quang%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_050",
@@ -547,7 +547,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20KGG%206%20Mai%20Thi%20Hong%20Hanh%2C%206%20Mai%20Thi%20Hong%20Hanh%2C%20KP%201%2C%20P%20Rach%20Soi%2C%20TP%20Rach%20Gia%2C%20Tinh%20Kien%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+6+Mai+Thi+Hong+Hanh%2C+KP+1%2C+P+Rach+Soi%2C+TP+Rach+Gia%2C+Tinh+Kien+Giang"
   },
   {
     "id": "STORE_051",
@@ -558,7 +558,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20303%20Nguy%E1%BB%85n%20V%C4%83n%20Linh%2C%20303%20Nguy%E1%BB%85n%20V%C4%83n%20Linh%2C%20KV%204%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+303+Nguy%E1%BB%85n+V%C4%83n+Linh%2C+KV+4%2C+Ph%C6%B0%E1%BB%9Dng+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_052",
@@ -569,7 +569,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20158%20%C4%91%C6%B0%E1%BB%9Dng%2030/4%2C%20158%20%C4%91%C6%B0%E1%BB%9Dng%2030/4%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Ph%C3%BA%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+158+%C4%91%C6%B0%E1%BB%9Dng+30%2F4%2C+Ph%C6%B0%E1%BB%9Dng+An+Ph%C3%BA%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_053",
@@ -580,7 +580,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20399%20Nguy%E1%BB%85n%20%C4%90%E1%BB%87%2C%20399%20Nguy%E1%BB%85n%20%C4%90%E1%BB%87%2C%20P.%20An%20H%C3%B2a%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+399+Nguy%E1%BB%85n+%C4%90%E1%BB%87%2C+P.+An+H%C3%B2a%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_054",
@@ -591,7 +591,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20365/14%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20365/14%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+365%2F14+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB%2C+Ph%C6%B0%E1%BB%9Dng+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_055",
@@ -602,7 +602,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20100-%20102%20Nguy%E1%BB%85n%20Tri%20Ph%C6%B0%C6%A1ng%2C%20100-%20102%20Nguy%E1%BB%85n%20Tri%20Ph%C6%B0%C6%A1ng%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+100-+102+Nguy%E1%BB%85n+Tri+Ph%C6%B0%C6%A1ng%2C+Ph%C6%B0%E1%BB%9Dng+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_056",
@@ -613,7 +613,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20186%20-188%20Nguy%E1%BB%85n%20H%C3%B9ng%20S%C6%A1n%2C%20186%20-188%20Nguy%E1%BB%85n%20H%C3%B9ng%20S%C6%A1n%2C%20KP%202%2C%20P.%20V%C4%A9nh%20Thanh%20V%C3%A2n%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+186+-188+Nguy%E1%BB%85n+H%C3%B9ng+S%C6%A1n%2C+KP+2%2C+P.+V%C4%A9nh+Thanh+V%C3%A2n%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_057",
@@ -624,7 +624,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20327%20Nguy%E1%BB%85n%20Trung%20Tr%E1%BB%B1c%2C%20327%20%C4%91%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Trung%20Tr%E1%BB%B1c%2C%20Ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20L%E1%BA%A1c%2C%20Th%C3%A0nh%20ph%E1%BB%91%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+327+Nguy%E1%BB%85n+Trung+Tr%E1%BB%B1c%2C+327+%C4%91%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+Trung+Tr%E1%BB%B1c%2C+Ph%C6%B0%E1%BB%9Dng+V%C4%A9nh+L%E1%BA%A1c%2C+Th%C3%A0nh+ph%E1%BB%91+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_058",
@@ -635,7 +635,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2086%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%2086%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20Ph%C6%B0%E1%BB%9Dng%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+86+Nguy%E1%BB%85n+Hu%E1%BB%87%2C+Ph%C6%B0%E1%BB%9Dng+2%2C+Th%C3%A0nh+ph%E1%BB%91+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_059",
@@ -646,7 +646,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2043-45%20V%C3%B5%20Tr%C6%B0%E1%BB%9Dng%20To%E1%BA%A3n%2C%2043-45%20V%C3%B5%20Tr%C6%B0%E1%BB%9Dng%20To%E1%BA%A3n%2C%20P.%20An%20H%C3%B2a%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+43-45+V%C3%B5+Tr%C6%B0%E1%BB%9Dng+To%E1%BA%A3n%2C+P.+An+H%C3%B2a%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_060",
@@ -657,7 +657,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20131%20-%20133%20%C4%90%E1%BB%93ng%20V%C4%83n%20C%E1%BB%91ng%2C%20131%20%E2%80%93%20133%20%C4%90%E1%BB%93ng%20V%C4%83n%20C%E1%BB%91ng%2C%20P.%20An%20Th%E1%BB%9Bi%2C%20Q.%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+131+-+133+%C4%90%E1%BB%93ng+V%C4%83n+C%E1%BB%91ng%2C+131+%E2%80%93+133+%C4%90%E1%BB%93ng+V%C4%83n+C%E1%BB%91ng%2C+P.+An+Th%E1%BB%9Bi%2C+Q.+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_061",
@@ -668,7 +668,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2080%20Nguy%E1%BB%85n%20V%C4%83n%20Th%E1%BA%A3nh%2C%2080%20Nguy%E1%BB%85n%20V%C4%83n%20Th%E1%BA%A3nh%2C%20Kh%C3%B3m%205%2C%20P.%20C%C3%A1i%20V%E1%BB%93n%2C%20Th%E1%BB%8B%20x%C3%A3%20B%C3%ACnh%20Minh"
+    "maps_url": "https://maps.google.com/?q=WinMart+80+Nguy%E1%BB%85n+V%C4%83n+Th%E1%BA%A3nh%2C+Kh%C3%B3m+5%2C+P.+C%C3%A1i+V%E1%BB%93n%2C+Th%E1%BB%8B+x%C3%A3+B%C3%ACnh+Minh"
   },
   {
     "id": "STORE_062",
@@ -679,7 +679,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2081B/2%20%C4%91%C6%B0%E1%BB%9Dng%20M%E1%BA%A1c%20Thi%C3%AAn%20T%C3%ADch%2C%2081B/2%2C%20M%E1%BA%A1c%20Thi%C3%AAn%20T%C3%ADch%2C%20P.%20Xu%C3%A2n%20Kh%C3%A1nh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+81B%2F2+%C4%91%C6%B0%E1%BB%9Dng+M%E1%BA%A1c+Thi%C3%AAn+T%C3%ADch%2C+81B%2F2%2C+M%E1%BA%A1c+Thi%C3%AAn+T%C3%ADch%2C+P.+Xu%C3%A2n+Kh%C3%A1nh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_063",
@@ -690,7 +690,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20841%20Nguy%E1%BB%85n%20Trung%20Tr%E1%BB%B1c%2C%20841%20Nguy%E1%BB%85n%20Trung%20Tr%E1%BB%B1c%2C%20KP%205%2C%20P.%20An%20B%C3%ACnh%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+841+Nguy%E1%BB%85n+Trung+Tr%E1%BB%B1c%2C+KP+5%2C+P.+An+B%C3%ACnh%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_064",
@@ -701,7 +701,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20L%C3%B4%20P2%20%E2%80%93%2036%20%2B%2037%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20L%C3%B4%20P2%20%E2%80%93%2036%20%2B%2037%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20P.%20An%20H%C3%B2a%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+L%C3%B4+P2+%E2%80%93+36+%2B+37+%C4%90%C6%B0%E1%BB%9Dng+3%2F2%2C+P.+An+H%C3%B2a%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_065",
@@ -712,7 +712,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2056%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%2056%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20Khu%20v%E1%BB%B1c%203%20S%C3%B4ng%20H%E1%BA%ADu%2C%20P.%20C%C3%A1i%20Kh%E1%BA%BF%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+56+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB%2C+Khu+v%E1%BB%B1c+3+S%C3%B4ng+H%E1%BA%ADu%2C+P.+C%C3%A1i+Kh%E1%BA%BF%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_066",
@@ -723,7 +723,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2079/9%20Ph%C3%B3%20C%C6%A1%20%C4%90i%E1%BB%81u%2C%2079/9B%20Ph%C3%B3%20C%C6%A1%20%C4%90i%E1%BB%81u%2C%20P.%203%2C%20TP.%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+79%2F9+Ph%C3%B3+C%C6%A1+%C4%90i%E1%BB%81u%2C+79%2F9B+Ph%C3%B3+C%C6%A1+%C4%90i%E1%BB%81u%2C+P.+3%2C+TP.+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_067",
@@ -734,7 +734,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2095/31%20Nguy%E1%BB%85n%20Th%C3%B4ng%2C%2095%20Nguy%E1%BB%85n%20Th%C3%B4ng%2C%20P.%20An%20Th%E1%BB%9Bi%2C%20Q.%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+95%2F31+Nguy%E1%BB%85n+Th%C3%B4ng%2C+95+Nguy%E1%BB%85n+Th%C3%B4ng%2C+P.+An+Th%E1%BB%9Bi%2C+Q.+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_068",
@@ -745,7 +745,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20369/14%20KDC%20B%C3%ACnh%20Nh%E1%BB%B1t%2C%20369/14%20KDC%20B%C3%ACnh%20Nh%E1%BB%B1t%2C%20P.%20Long%20H%C3%B2a%2C%20Q.%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+369%2F14+KDC+B%C3%ACnh+Nh%E1%BB%B1t%2C+P.+Long+H%C3%B2a%2C+Q.+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_069",
@@ -756,7 +756,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2024A%20H%E1%BB%93%20Trung%20Th%C3%A0nh%2C%2024A%20%C4%90%C6%B0%E1%BB%9Dng%20H%E1%BB%93%20Trung%20Th%C3%A0nh%2C%20KV3%20%2C%20Tr%C3%A0%20An%2C%20Q.%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+24A+H%E1%BB%93+Trung+Th%C3%A0nh%2C+24A+%C4%90%C6%B0%E1%BB%9Dng+H%E1%BB%93+Trung+Th%C3%A0nh%2C+KV3+%2C+Tr%C3%A0+An%2C+Q.+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_070",
@@ -767,7 +767,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20212%20Ng%C3%B4%20Quy%E1%BB%81n%2C%20212%20Ng%C3%B4%20Quy%E1%BB%81n%2C%20P.%20V%C4%A9nh%20B%E1%BA%A3o%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+212+Ng%C3%B4+Quy%E1%BB%81n%2C+P.+V%C4%A9nh+B%E1%BA%A3o%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_071",
@@ -778,7 +778,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20686%20M%E1%BA%A1c%20C%E1%BB%ADu%2C%20686%20M%E1%BA%A1c%20C%E1%BB%ADu%2C%20P.%20V%C4%A9nh%20Quang%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+686+M%E1%BA%A1c+C%E1%BB%ADu%2C+P.+V%C4%A9nh+Quang%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_072",
@@ -789,7 +789,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2051D1%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%2051D1%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20Ph%C6%B0%E1%BB%9Dng%20Xu%C3%A2n%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+51D1+%C4%90%C6%B0%E1%BB%9Dng+3%2F2%2C+Ph%C6%B0%E1%BB%9Dng+Xu%C3%A2n+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_073",
@@ -800,7 +800,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2091%20Tr%E1%BA%A7n%20V%C4%83n%20Long%2C%2091%20Tr%E1%BA%A7n%20V%C4%83n%20Long%2C%20KV1%2C%20Khu%20T%C4%90C%20Th%E1%BB%9Bi%20Nh%E1%BB%B1t%202%2C%20P.%20An%20Kh%C3%A1nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+91+Tr%E1%BA%A7n+V%C4%83n+Long%2C+KV1%2C+Khu+T%C4%90C+Th%E1%BB%9Bi+Nh%E1%BB%B1t+2%2C+P.+An+Kh%C3%A1nh%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_074",
@@ -811,7 +811,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Phong Điền",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2031-33%20%E1%BA%A4p%20Th%E1%BB%8B%20T%E1%BB%A9%2C%2031-33%20%E1%BA%A4p%20Th%E1%BB%8B%20T%E1%BB%A9%2C%20TT.%20Phong%20%C4%90i%E1%BB%81n"
+    "maps_url": "https://maps.google.com/?q=WinMart+31-33+%E1%BA%A4p+Th%E1%BB%8B+T%E1%BB%A9%2C+TT.+Phong+%C4%90i%E1%BB%81n%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_075",
@@ -822,7 +822,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20250%20L%C3%A2m%20Quang%20Ky%2C%20250%20L%C3%A2m%20Quang%20Ky%2C%20Khu%20Ph%E1%BB%91%205%2C%20Ph%C6%B0%E1%BB%9Dng%20V%C4%A9nh%20B%E1%BA%A3o%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+250+L%C3%A2m+Quang+Ky%2C+Khu+Ph%E1%BB%91+5%2C+Ph%C6%B0%E1%BB%9Dng+V%C4%A9nh+B%E1%BA%A3o%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_076",
@@ -833,7 +833,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2046C%20%C4%90inh%20Ti%C3%AAn%20Ho%C3%A0ng%2C%2046C%20%C4%90inh%20Ti%C3%AAn%20Ho%C3%A0ng%2C%20P.%208%2C%20TP.%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+46C+%C4%90inh+Ti%C3%AAn+Ho%C3%A0ng%2C+P.+8%2C+TP.+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_077",
@@ -844,7 +844,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "🚚 Trục Quốc lộ: Xe tải lớn lưu thông bình thường, chú ý đỗ xe an toàn bên lề đường.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20Qu%E1%BB%91c%20l%E1%BB%99%2063%20T%E1%BA%AFc%20C%E1%BA%ADu%2C%20T%C4%90%202001%2C%20TB%C4%90%2003%2C%20Qu%E1%BB%91c%20l%E1%BB%99%2063%20T%E1%BA%AFc%20C%E1%BA%ADu%2C%20%E1%BA%A4p%20An%20B%C3%ACnh%2C%20X.%20B%C3%ACnh%20An%2C%20H.%20Ch%C3%A2u%20Th%C3%A0nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90+2001%2C+TB%C4%90+03%2C+Qu%E1%BB%91c+l%E1%BB%99+63+T%E1%BA%AFc+C%E1%BA%ADu%2C+%E1%BA%A4p+An+B%C3%ACnh%2C+X.+B%C3%ACnh+An%2C+H.+Ch%C3%A2u+Th%C3%A0nh"
   },
   {
     "id": "STORE_078",
@@ -855,7 +855,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20162/1%20Ph%E1%BA%A1m%20Ng%C5%A9%20L%C3%A3o%2C%20162/1%20Ph%E1%BA%A1m%20Ng%C5%A9%20L%C3%A3o%2C%20P.%20An%20H%C3%B2a%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+162%2F1+Ph%E1%BA%A1m+Ng%C5%A9+L%C3%A3o%2C+P.+An+H%C3%B2a%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_079",
@@ -866,7 +866,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20106%20%E2%80%93%20108%20Tr%E1%BA%A7n%20B%E1%BA%A1ch%20%C4%90%E1%BA%B1ng%2C%20106%20-%20108%20Tr%E1%BA%A7n%20B%E1%BA%A1ch%20%C4%90%E1%BA%B1ng%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20Kh%C3%A1nh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+106+%E2%80%93+108+Tr%E1%BA%A7n+B%E1%BA%A1ch+%C4%90%E1%BA%B1ng%2C+106+-+108+Tr%E1%BA%A7n+B%E1%BA%A1ch+%C4%90%E1%BA%B1ng%2C+Ph%C6%B0%E1%BB%9Dng+An+Kh%C3%A1nh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_080",
@@ -877,7 +877,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2024%20M%E1%BA%A1c%20C%E1%BB%ADu%2C%2024%20M%E1%BA%A1c%20C%E1%BB%ADu%2C%20KP.%20C%C6%B0%20X%C3%A1%20M%E1%BB%9Bi%2C%20TT.%20Ki%C3%AAn%20L%C6%B0%C6%A1ng%2C%20H.%20Ki%C3%AAn%20L%C6%B0%C6%A1ng%2C%20T."
+    "maps_url": "https://maps.google.com/?q=WinMart+24+M%E1%BA%A1c+C%E1%BB%ADu%2C+KP.+C%C6%B0+X%C3%A1+M%E1%BB%9Bi%2C+TT.+Ki%C3%AAn+L%C6%B0%C6%A1ng%2C+H.+Ki%C3%AAn+L%C6%B0%C6%A1ng%2C+T."
   },
   {
     "id": "STORE_081",
@@ -888,7 +888,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "🚚 Trục Quốc lộ: Xe tải lớn lưu thông bình thường, chú ý đỗ xe an toàn bên lề đường.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20537%20Qu%E1%BB%91c%20l%E1%BB%99%2080%2C%20537%20Qu%E1%BB%91c%20l%E1%BB%99%2080%2C%20%E1%BA%A4p%20Thu%E1%BA%ADn%20H%C3%B2a%2C%20X.%20B%C3%ACnh%20S%C6%A1n%2C%20H.%20H%C3%B2n%20%C4%90%E1%BA%A5t%2C%20T.%20Ki"
+    "maps_url": "https://maps.google.com/?q=WinMart+537+Qu%E1%BB%91c+l%E1%BB%99+80%2C+%E1%BA%A4p+Thu%E1%BA%ADn+H%C3%B2a%2C+X.+B%C3%ACnh+S%C6%A1n%2C+H.+H%C3%B2n+%C4%90%E1%BA%A5t%2C+T.+Ki"
   },
   {
     "id": "STORE_082",
@@ -899,7 +899,7 @@
     "nvxl": "Trần Trọng Bằng (@Nguyen_Toan)",
     "route_name": "Tuyến Thốt Nốt (Thuộc cụm Ô Môn)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20695%20L%C3%AA%20Th%E1%BB%8B%20T%E1%BA%A1o%2C%20695%20L%C3%AA%20Th%E1%BB%8B%20T%E1%BA%A1o%2C%20P%2C%20Th%E1%BB%91t%20N%E1%BB%91t%2C%20Q%2C%20Th%E1%BB%91t%20N%E1%BB%91t"
+    "maps_url": "https://maps.google.com/?q=WinMart+695+L%C3%AA+Th%E1%BB%8B+T%E1%BA%A1o%2C+P%2C+Th%E1%BB%91t+N%E1%BB%91t%2C+Q%2C+Th%E1%BB%91t+N%E1%BB%91t%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_083",
@@ -910,7 +910,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2039%20M%E1%BA%A1c%20C%E1%BB%ADu%2C%2039%20M%E1%BA%A1c%20C%E1%BB%ADu%2C%20P.%20V%C4%A9nh%20Thanh%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+39+M%E1%BA%A1c+C%E1%BB%ADu%2C+P.+V%C4%A9nh+Thanh%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_084",
@@ -921,7 +921,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2009%20Tr%E1%BA%A7n%20V%C4%A9nh%20Ki%E1%BA%BFt%2C%2009%20Tr%E1%BA%A7n%20V%C4%A9nh%20Ki%E1%BA%BFt%2C%20P.%20An%20B%C3%ACnh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+09+Tr%E1%BA%A7n+V%C4%A9nh+Ki%E1%BA%BFt%2C+P.+An+B%C3%ACnh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_085",
@@ -932,7 +932,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20232%20%C4%90T%20971%2C%20232%20%C4%90T%20971%2C%20t%E1%BB%95%2013%2C%20KP.%20Ki%C3%AAn%20T%C3%A2n%2C%20TT.%20Ki%C3%AAn%20L%C6%B0%C6%A1ng%2C%20H.%20Ki%C3%AAn%20L%C6%B0%C6%A1ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+232+%C4%90T+971%2C+t%E1%BB%95+13%2C+KP.+Ki%C3%AAn+T%C3%A2n%2C+TT.+Ki%C3%AAn+L%C6%B0%C6%A1ng%2C+H.+Ki%C3%AAn+L%C6%B0%C6%A1ng"
   },
   {
     "id": "STORE_086",
@@ -943,7 +943,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20118%20%C4%90%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%20N%E1%BB%91i%20D%C3%A0i%2C%20116%20%C4%90%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%20N%E1%BB%91i%20D%C3%A0i%2C%20P.%20An%20B%C3%ACnh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+118+%C4%90%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB+N%E1%BB%91i+D%C3%A0i%2C+116+%C4%90%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB+N%E1%BB%91i+D%C3%A0i%2C+P.+An+B%C3%ACnh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_087",
@@ -954,7 +954,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20154%20Tr%E1%BA%A7n%20Vi%E1%BB%87t%20Ch%C3%A2u%2C%20154%20Tr%E1%BA%A7n%20Vi%E1%BB%87t%20Ch%C3%A2u%2C%20P.%20An%20H%C3%B2a%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+154+Tr%E1%BA%A7n+Vi%E1%BB%87t+Ch%C3%A2u%2C+P.+An+H%C3%B2a%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_088",
@@ -965,7 +965,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%2037%20%C4%90%E1%BB%91ng%20%C4%90a%2C%2037%20%C4%90%E1%BB%91ng%20%C4%90a%2C%20P.%20V%C4%A9nh%20L%E1%BA%A1c%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+37+%C4%90%E1%BB%91ng+%C4%90a%2C+P.+V%C4%A9nh+L%E1%BA%A1c%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_089",
@@ -976,7 +976,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20119-121%20%C4%90%E1%BB%81%20Th%C3%A1m%2C%20119-121%20%C4%90%E1%BB%81%20Th%C3%A1m%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20C%C6%B0%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+119-121+%C4%90%E1%BB%81+Th%C3%A1m%2C+Ph%C6%B0%E1%BB%9Dng+An+C%C6%B0%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_090",
@@ -987,7 +987,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20108A/3%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20Khu%20v%E1%BB%B1c%201%2C%20Qu%E1%BB%91c%20l%E1%BB%99%201%20%28108A/3%20%C4%90%C6%B0%E1%BB%9Dng%203/2%20c%C5%A9%29%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20B%C3%ACnh%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+Khu+v%E1%BB%B1c+1%2C+Qu%E1%BB%91c+l%E1%BB%99+1+%28108A%2F3+%C4%90%C6%B0%E1%BB%9Dng+3%2F2+c%C5%A9%29%2C+Ph%C6%B0%E1%BB%9Dng+An+B%C3%ACnh%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_091",
@@ -998,7 +998,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20134A%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20134A%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20Ph%C6%B0%E1%BB%9Dng%20H%C6%B0ng%20L%E1%BB%A3i%2C%20Qu%E1%BA%ADn%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+134A+%C4%90%C6%B0%E1%BB%9Dng+3%2F2%2C+Ph%C6%B0%E1%BB%9Dng+H%C6%B0ng+L%E1%BB%A3i%2C+Qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_092",
@@ -1009,7 +1009,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2098%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20Minh%20Khai%2C%2098%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20Minh%20Khai%2C%20P.%20T%C3%A2n%20An%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+98+Nguy%E1%BB%85n+Th%E1%BB%8B+Minh+Khai%2C+P.+T%C3%A2n+An%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_093",
@@ -1020,7 +1020,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2028%20B%C3%B9i%20H%E1%BB%AFu%20Ngh%C4%A9a%2C%2028%20B%C3%B9i%20H%E1%BB%AFu%20Ngh%C4%A9a%2C%20P.%20B%C3%ACnh%20Th%E1%BB%A7y%2C%20Q.%20B%C3%ACnh%20Th%E1%BB%A7y"
+    "maps_url": "https://maps.google.com/?q=WinMart+28+B%C3%B9i+H%E1%BB%AFu+Ngh%C4%A9a%2C+P.+B%C3%ACnh+Th%E1%BB%A7y%2C+Q.+B%C3%ACnh+Th%E1%BB%A7y%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_094",
@@ -1031,7 +1031,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2075A2-77A2%20B%C3%B9i%20Quang%20Trinh%2C%2075A2-77A2%20B%C3%B9i%20Quang%20Trinh%2C%20Khu%20T%C4%90C%20Ph%C3%BA%20An%2C%20P.%20Ph%C3%BA%20Th%E1%BB%A9%2C%20Q.%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+75A2-77A2+B%C3%B9i+Quang+Trinh%2C+Khu+T%C4%90C+Ph%C3%BA+An%2C+P.+Ph%C3%BA+Th%E1%BB%A9%2C+Q.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_095",
@@ -1042,7 +1042,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20380H1%20Tr%E1%BA%A7n%20Nam%20Ph%C3%BA%2C%20380H1%20Tr%E1%BA%A7n%20Nam%20Ph%C3%BA%2C%20P.%20An%20Kh%C3%A1nh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+380H1+Tr%E1%BA%A7n+Nam+Ph%C3%BA%2C+P.+An+Kh%C3%A1nh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_096",
@@ -1053,7 +1053,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "⚠️ Đường trục chính nội ô Cần Thơ: Cấm xe tải giờ cao điểm (06:00-08:00 & 16:30-18:30). Khuyến nghị xe < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20132%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20132%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20P.%20H%C6%B0ng%20L%E1%BB%A3i%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+132+%C4%90%C6%B0%E1%BB%9Dng+3%2F2%2C+P.+H%C6%B0ng+L%E1%BB%A3i%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_097",
@@ -1064,7 +1064,7 @@
     "nvxl": "Điều Phối Tuyến Kiên Giang",
     "route_name": "Tuyến Kiên Giang",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20KGG%20L%C3%B4%20A7.08-A7.09%20%C4%90%C6%B0%E1%BB%9Dng%20s%E1%BB%91%2027%2C%20L%C3%B4%20A7-08%20v%C3%A0%20A7-09%20%C4%90%C6%B0%E1%BB%9Dng%20s%E1%BB%91%2027%2C%20Khu%20%C4%91%C3%B4%20th%E1%BB%8B%20m%E1%BB%9Bi%20T%C3%A2y%20B%E1%BA%AFc%2C%20P.%20V%C4%A9nh%20Thanh%2C%20TP.%20R%E1%BA%A1ch%20Gi%C3%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+L%C3%B4+A7.08-A7.09+%C4%90%C6%B0%E1%BB%9Dng+s%E1%BB%91+27%2C+L%C3%B4+A7-08+v%C3%A0+A7-09+%C4%90%C6%B0%E1%BB%9Dng+s%E1%BB%91+27%2C+Khu+%C4%91%C3%B4+th%E1%BB%8B+m%E1%BB%9Bi+T%C3%A2y+B%E1%BA%AFc%2C+P.+V%C4%A9nh+Thanh%2C+TP.+R%E1%BA%A1ch+Gi%C3%A1"
   },
   {
     "id": "STORE_098",
@@ -1075,7 +1075,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20T1-6%20CC%20T%C3%A2y%20Nguy%C3%AAn%20Plaza%2C%20T1-6%20t%E1%BA%A7ng%20tr%E1%BB%87t%2C%20CC%20T%C3%A2y%20Nguy%C3%AAn%20Plaza%2C%20KDC%20l%C3%B4%2011D%2C%20P.%20Ph%C3%BA%20Th%E1%BB%A9%2C%20Q.%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+T1-6+CC+T%C3%A2y+Nguy%C3%AAn+Plaza%2C+T1-6+t%E1%BA%A7ng+tr%E1%BB%87t%2C+CC+T%C3%A2y+Nguy%C3%AAn+Plaza%2C+KDC+l%C3%B4+11D%2C+P.+Ph%C3%BA+Th%E1%BB%A9%2C+Q.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_099",
@@ -1086,7 +1086,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%208B%20%C4%90%C6%B0%E1%BB%9Dng%20s%E1%BB%91%203%2C%208B%20%C4%90%C6%B0%E1%BB%9Dng%20s%E1%BB%91%203%2C%20KDC%20C%C3%A1i%20S%C6%A1n%20H%C3%A0ng%20B%C3%A0ng%2C%20P.%20An%20B%C3%ACnh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+8B+%C4%90%C6%B0%E1%BB%9Dng+s%E1%BB%91+3%2C+KDC+C%C3%A1i+S%C6%A1n+H%C3%A0ng+B%C3%A0ng%2C+P.+An+B%C3%ACnh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_100",
@@ -1097,7 +1097,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2092%20X%C3%B4%20Vi%E1%BA%BFt%20Ngh%E1%BB%87%20T%C4%A9nh%2C%2092%20X%C3%B4%20Vi%E1%BA%BFt%20Ngh%E1%BB%87%20T%C4%A9nh%2C%20P.%20T%C3%A2n%20An%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+92+X%C3%B4+Vi%E1%BA%BFt+Ngh%E1%BB%87+T%C4%A9nh%2C+P.+T%C3%A2n+An%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_101",
@@ -1108,7 +1108,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20110%20Nguy%E1%BB%85n%20Vi%E1%BB%87t%20H%E1%BB%93ng%2C%20110%20Nguy%E1%BB%85n%20Vi%E1%BB%87t%20H%E1%BB%93ng%2C%20P.%20An%20Ph%C3%BA%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+110+Nguy%E1%BB%85n+Vi%E1%BB%87t+H%E1%BB%93ng%2C+P.+An+Ph%C3%BA%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_102",
@@ -1119,7 +1119,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%208C/1%20%C4%90%C6%B0%E1%BB%9Dng%201B%2C%208C/1%20%C4%90%C6%B0%E1%BB%9Dng%201B%2C%20Khu%20v%E1%BB%B1c%203%2C%20P.%20H%C6%B0ng%20Th%E1%BA%A1nh%2C%20Q.%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+8C%2F1+%C4%90%C6%B0%E1%BB%9Dng+1B%2C+Khu+v%E1%BB%B1c+3%2C+P.+H%C6%B0ng+Th%E1%BA%A1nh%2C+Q.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_103",
@@ -1130,7 +1130,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2057-59%20Nguy%E1%BB%85n%20Tri%20Ph%C6%B0%C6%A1ng%2C%2057-59%20Nguy%E1%BB%85n%20Tri%20Ph%C6%B0%C6%A1ng%2C%20P.%20An%20Kh%C3%A1nh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+57-59+Nguy%E1%BB%85n+Tri+Ph%C6%B0%C6%A1ng%2C+P.+An+Kh%C3%A1nh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_104",
@@ -1141,7 +1141,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Bình Thủy",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20563C%20Tr%E1%BA%A7n%20Quang%20Di%E1%BB%87u%2C%20563C%20Tr%E1%BA%A7n%20Quang%20Di%E1%BB%87u%2C%20P.%20An%20Th%E1%BB%9Bi%2C%20Q.%20B%C3%ACnh%20Thu%E1%BB%B7"
+    "maps_url": "https://maps.google.com/?q=WinMart+563C+Tr%E1%BA%A7n+Quang+Di%E1%BB%87u%2C+P.+An+Th%E1%BB%9Bi%2C+Q.+B%C3%ACnh+Thu%E1%BB%B7%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_105",
@@ -1152,7 +1152,7 @@
     "nvxl": "Nguyễn Phước Bảo Toàn (@pinca0602)",
     "route_name": "Tuyến Ninh Kiều Bắc (Bình Thủy điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20114B-114C%20C%C3%A1ch%20M%E1%BA%A1ng%20Th%C3%A1ng%208%2C%20114B-114C%20C%C3%A1ch%20M%E1%BA%A1ng%20Th%C3%A1ng%208%2C%20P.%20C%C3%A1i%20Kh%E1%BA%BF%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+114B-114C+C%C3%A1ch+M%E1%BA%A1ng+Th%C3%A1ng+8%2C+P.+C%C3%A1i+Kh%E1%BA%BF%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_106",
@@ -1163,7 +1163,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%2027%20Tr%E1%BA%A7n%20Ho%C3%A0ng%20Na%2C%20%C4%90%C6%B0%E1%BB%9Dng%20Tr%E1%BA%A7n%20Ho%C3%A0ng%20Na%2C%20P.%20H%C6%B0ng%20L%E1%BB%A3i%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+27+Tr%E1%BA%A7n+Ho%C3%A0ng+Na%2C+%C4%90%C6%B0%E1%BB%9Dng+Tr%E1%BA%A7n+Ho%C3%A0ng+Na%2C+P.+H%C6%B0ng+L%E1%BB%A3i%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_107",
@@ -1174,7 +1174,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Ninh Kiều Nam (Cái Răng điều phối)",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20%C4%90%C6%B0%E1%BB%9Dng%20V%C3%B2ng%20Cung%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%2043%2C%20t%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%2081%2C%20Khu%20v%E1%BB%B1c%205%2C%20%C4%91%C6%B0%E1%BB%9Dng%20V%C3%B2ng%20Cung%2C%20P.%20An%20B%C3%ACnh%2C%20Q.%20Ninh%20Ki%E1%BB%81u"
+    "maps_url": "https://maps.google.com/?q=WinMart+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+43%2C+t%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+81%2C+Khu+v%E1%BB%B1c+5%2C+%C4%91%C6%B0%E1%BB%9Dng+V%C3%B2ng+Cung%2C+P.+An+B%C3%ACnh%2C+Q.+Ninh+Ki%E1%BB%81u%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_108",
@@ -1185,7 +1185,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2054/7%20M%E1%BA%ADu%20Th%C3%A2n%2C%20Kh%C3%B3m%203%2C%20P.%203%2C%20TP.%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+54%2F7+M%E1%BA%ADu+Th%C3%A2n%2C+Kh%C3%B3m+3%2C+P.+3%2C+TP.+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_109",
@@ -1196,7 +1196,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%2060G%20Ph%E1%BA%A1m%20H%C3%B9ng%2C%2060G%2C%20%C4%90%C6%B0%E1%BB%9Dng%20Ph%E1%BA%A1m%20H%C3%B9ng%2C%20P.%209%2C%20TP.%20V%C4%A9nh%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+60G+Ph%E1%BA%A1m+H%C3%B9ng%2C+60G%2C+%C4%90%C6%B0%E1%BB%9Dng+Ph%E1%BA%A1m+H%C3%B9ng%2C+P.+9%2C+TP.+V%C4%A9nh+Long"
   },
   {
     "id": "STORE_110",
@@ -1207,7 +1207,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%20T%C4%90S%20533%2C%20TB%C4%90%2016%2C%20Tr%E1%BA%A7n%20Ph%C3%BA%2C%2064/4A%20Tr%E1%BA%A7n%20Ph%C3%BA%2C%20P.%20Ph%C6%B0%E1%BB%9Bc%20H%E1%BA%ADu"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90S+533%2C+TB%C4%90+16%2C+Tr%E1%BA%A7n+Ph%C3%BA%2C+64%2F4A+Tr%E1%BA%A7n+Ph%C3%BA%2C+P.+Ph%C6%B0%E1%BB%9Bc+H%E1%BA%ADu"
   },
   {
     "id": "STORE_111",
@@ -1218,7 +1218,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20%C4%90%C6%B0%E1%BB%9Dng%20N3%2C%20KDC%20Nam%20Long%202%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%201410-1411%2C%20TB%C4%90%20s%E1%BB%91%2056%2C%20KDC%20Nam%20Long%202%2C%20L%C3%B4%209A%2C%20K%C4%90T%20Nam%20C%E1%BA%A7n%20Th%C6%A1%2C%20P.%20H%C6%B0ng%20Th%E1%BA%A1nh%2C%20Q.%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+%C4%90%C6%B0%E1%BB%9Dng+N3%2C+KDC+Nam+Long+2%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+1410-1411%2C+TB%C4%90+s%E1%BB%91+56%2C+KDC+Nam+Long+2%2C+L%C3%B4+9A%2C+K%C4%90T+Nam+C%E1%BA%A7n+Th%C6%A1%2C+P.+H%C6%B0ng+Th%E1%BA%A1nh%2C+Q.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_112",
@@ -1229,7 +1229,7 @@
     "nvxl": "Điều Phối Tuyến Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%20%C4%90%C6%B0%E1%BB%9Dng%202/9%2C%20Duy%C3%AAn%20H%E1%BA%A3i%2C%20%C4%90%C6%B0%E1%BB%9Dng%202%20th%C3%A1ng%209%2C%20TX.%20Duy%C3%AAn%20H%E1%BA%A3i%2C%20T.%20Tr%C3%A0%20vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+%C4%90%C6%B0%E1%BB%9Dng+2%2F9%2C+Duy%C3%AAn+H%E1%BA%A3i%2C+%C4%90%C6%B0%E1%BB%9Dng+2+th%C3%A1ng+9%2C+TX.+Duy%C3%AAn+H%E1%BA%A3i%2C+T.+Tr%C3%A0+vinh"
   },
   {
     "id": "STORE_113",
@@ -1240,7 +1240,7 @@
     "nvxl": "Điều Phối Tuyến Vĩnh Long",
     "route_name": "Tuyến Vĩnh Long",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20VLG%20267%20%C4%90i%E1%BB%87n%20Bi%C3%AAn%20Ph%E1%BB%A7%2C%20Tr%C3%A0%20Vinh%2C%20267%20%C4%90%C6%B0%E1%BB%9Dng%20%C4%90i%E1%BB%87n%20Bi%C3%AAn%20Ph%E1%BB%A7%2C%20Kh%C3%B3m%209%2C%20P.%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+267+%C4%90i%E1%BB%87n+Bi%C3%AAn+Ph%E1%BB%A7%2C+Tr%C3%A0+Vinh%2C+267+%C4%90%C6%B0%E1%BB%9Dng+%C4%90i%E1%BB%87n+Bi%C3%AAn+Ph%E1%BB%A7%2C+Kh%C3%B3m+9%2C+P.+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_114",
@@ -1251,7 +1251,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Trung Tâm Cần Thơ",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20%E1%BA%A4p%20Ch%C3%A2u%20Th%C3%A0nh%2C%20M%E1%BB%B9%20Xuy%C3%AAn%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%2065%2C%20t%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%2022%2C%20%E1%BA%A4p%20Ch%C3%A2u%20Th%C3%A0nh%2C%20P.%20M%E1%BB%B9%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+%E1%BA%A4p+Ch%C3%A2u+Th%C3%A0nh%2C+M%E1%BB%B9+Xuy%C3%AAn%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+65%2C+t%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+22%2C+%E1%BA%A4p+Ch%C3%A2u+Th%C3%A0nh%2C+P.+M%E1%BB%B9+Xuy%C3%AAn%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_115",
@@ -1262,7 +1262,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "Xe tải giao hàng bình thường, tuân thủ biển báo cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20A2-04%2C%20A2-05%20V%C5%A9%20%C4%90%C3%ACnh%20Li%E1%BB%87u%2C%20A2-04%2C%20A2-05%20%C4%90%C6%B0%E1%BB%9Dng%20V%C5%A9%20%C4%90%C3%ACnh%20Li%E1%BB%87u%2C%20P.%20C%C3%A1i%20R%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+A2-04%2C+A2-05+V%C5%A9+%C4%90%C3%ACnh+Li%E1%BB%87u%2C+A2-04%2C+A2-05+%C4%90%C6%B0%E1%BB%9Dng+V%C5%A9+%C4%90%C3%ACnh+Li%E1%BB%87u%2C+P.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_116",
@@ -1273,7 +1273,7 @@
     "nvxl": "Công Bằng (@CONGBANGCAIRANGCANTHO)",
     "route_name": "Tuyến Cái Răng",
     "truck_note": "🏡 Khu dân cư / Khu đô thị: Đường nội bộ rộng rãi, xe tải 1.9T - 5T ra vào thuận tiện.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CTO%20KDC%20Th%C6%B0%E1%BB%9Dng%20Th%E1%BA%A1nh%20-Tr%C6%B0%E1%BB%9Dng%20%C4%90%E1%BA%A1i%20H%E1%BB%8Dc%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%204444%2C%20TB%C4%90%20s%E1%BB%91%2063%2C%20L%C3%B4%20A17-39-40%2C%20Tr%C6%B0%C6%A1ng%20V%C4%A9nh%20Nguy%C3%AAn%2C%20KDC%20Th%C6%B0%E1%BB%9Dng%20Th%E1%BA%A1nh%20v%C3%A0%20Tr%C6%B0%E1%BB%9Dng%20%C4%90%E1%BA%A1i%20h%E1%BB%8Dc%2C%20P.%20C%C3%A1i%20R%C4%83ng%2C%20TP.%20%20C%E1%BA%A7n%20Th%C6%A1"
+    "maps_url": "https://maps.google.com/?q=WinMart+KDC+Th%C6%B0%E1%BB%9Dng+Th%E1%BA%A1nh+-Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+H%E1%BB%8Dc%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+4444%2C+TB%C4%90+s%E1%BB%91+63%2C+L%C3%B4+A17-39-40%2C+Tr%C6%B0%C6%A1ng+V%C4%A9nh+Nguy%C3%AAn%2C+KDC+Th%C6%B0%E1%BB%9Dng+Th%E1%BA%A1nh+v%C3%A0+Tr%C6%B0%E1%BB%9Dng+%C4%90%E1%BA%A1i+h%E1%BB%8Dc%2C+P.+C%C3%A1i+R%C4%83ng%2C+TP.+C%E1%BA%A7n+Th%C6%A1"
   },
   {
     "id": "STORE_117",
@@ -1285,7 +1285,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20An%20Giang%2C%20TTTM%20Vincom%20Long%20Xuy%C3%AAn%2C%20S%E1%BB%91%201242%20%C4%90%C6%B0%E1%BB%9Dng%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20B%C3%ACnh%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn%2C%20T%E1%BB%89nh%20An%20Giang"
+    "maps_url": "https://maps.google.com/?q=VinMart+An+Giang%2C+TTTM+Vincom+Long+Xuy%C3%AAn%2C+S%E1%BB%91+1242+%C4%90%C6%B0%E1%BB%9Dng+Tr%E1%BA%A7n+H%C6%B0ng+%C4%90%E1%BA%A1o%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+B%C3%ACnh%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn%2C+T%E1%BB%89nh+An+Giang"
   },
   {
     "id": "STORE_118",
@@ -1297,7 +1297,7 @@
     "nvxl": "Đầu Mối Điều Phối Bạc Liêu",
     "route_name": "Tuyến Bạc Liêu",
     "truck_note": "🏢 TTTM / Vincom: Xuống hàng tại khu vực hầm bốc dỡ / cửa sau. Cần liên hệ bảo vệ trước.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20B%E1%BA%A1c%20Li%C3%AAu%2C%20TTTM%20Vincom%20B%E1%BA%A1c%20Li%C3%AAu%2C%20S%E1%BB%91%2015%20%C4%90%C6%B0%E1%BB%9Dng%20Tr%E1%BA%A7n%20Ph%C3%BA%2C%20Ph%C6%B0%E1%BB%9Dng%203%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%A1c%20Li%C3%AAu%2C%20T%E1%BB%89nh%20B%E1%BA%A1c%20Li%C3%AAu"
+    "maps_url": "https://maps.google.com/?q=VinMart+B%E1%BA%A1c+Li%C3%AAu%2C+TTTM+Vincom+B%E1%BA%A1c+Li%C3%AAu%2C+S%E1%BB%91+15+%C4%90%C6%B0%E1%BB%9Dng+Tr%E1%BA%A7n+Ph%C3%BA%2C+Ph%C6%B0%E1%BB%9Dng+3%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%A1c+Li%C3%AAu%2C+T%E1%BB%89nh+B%E1%BA%A1c+Li%C3%AAu"
   },
   {
     "id": "STORE_119",
@@ -1309,7 +1309,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏢 TTTM / Vincom: Xuống hàng tại khu vực hầm bốc dỡ / cửa sau. Cần liên hệ bảo vệ trước.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Tr%C3%A0%20Vinh%2C%20TTTM%20Vincom%20Plaza%20Tr%C3%A0%20Vinh%2C%20S%E1%BB%91%2024%20%C4%90%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20Minh%20Khai%2C%20Ph%C6%B0%E1%BB%9Dng%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh%2C%20T%E1%BB%89nh%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=VinMart+Tr%C3%A0+Vinh%2C+TTTM+Vincom+Plaza+Tr%C3%A0+Vinh%2C+S%E1%BB%91+24+%C4%90%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+Th%E1%BB%8B+Minh+Khai%2C+Ph%C6%B0%E1%BB%9Dng+2%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh%2C+T%E1%BB%89nh+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_120",
@@ -1321,7 +1321,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Long%20An%2C%20G%C3%B3c%20%C4%91%C6%B0%E1%BB%9Dng%20H%C3%B9ng%20V%C6%B0%C6%A1ng%20v%C3%A0%20%C4%90%C6%B0%E1%BB%9Dng%20Mai%20Th%E1%BB%8B%20T%E1%BB%91t%2C%20Ph%C6%B0%E1%BB%9Dng%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20T%C3%A2n%20An%2C%20T%E1%BB%89nh%20Long%20An"
+    "maps_url": "https://maps.google.com/?q=VinMart+Long+An%2C+G%C3%B3c+%C4%91%C6%B0%E1%BB%9Dng+H%C3%B9ng+V%C6%B0%C6%A1ng+v%C3%A0+%C4%90%C6%B0%E1%BB%9Dng+Mai+Th%E1%BB%8B+T%E1%BB%91t%2C+Ph%C6%B0%E1%BB%9Dng+2%2C+Th%C3%A0nh+ph%E1%BB%91+T%C3%A2n+An%2C+T%E1%BB%89nh+Long+An"
   },
   {
     "id": "STORE_121",
@@ -1333,7 +1333,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "🏢 TTTM / Vincom: Xuống hàng tại khu vực hầm bốc dỡ / cửa sau. Cần liên hệ bảo vệ trước.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20%C4%90%E1%BB%93ng%20Th%C3%A1p%2C%20TTTM%20Vincom%2B%20Sa%20%C4%90%C3%A9c%2C%20%C4%90%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20T%E1%BA%A5t%20Th%C3%A0nh%20%2C%20kh%C3%B3m%204%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Sa%20%C4%90%C3%A9c%2C%20T%E1%BB%89nh%20%C4%90%E1%BB%93ng%20Th%C3%A1p."
+    "maps_url": "https://maps.google.com/?q=VinMart+%C4%90%E1%BB%93ng+Th%C3%A1p%2C+TTTM+Vincom%2B+Sa+%C4%90%C3%A9c%2C+%C4%90%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+T%E1%BA%A5t+Th%C3%A0nh+%2C+kh%C3%B3m+4%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+Th%C3%A0nh+ph%E1%BB%91+Sa+%C4%90%C3%A9c%2C+T%E1%BB%89nh+%C4%90%E1%BB%93ng+Th%C3%A1p."
   },
   {
     "id": "STORE_122",
@@ -1345,7 +1345,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Cao%20Lanh%2C%20Trung%20tam%20thuong%20mai%20v%C3%A0%20Shophouse%20Cao%20Lanh%20-%20Dong%20Thap%2C%20Phuong%201%2C%20Thanh%20pho%20Cao%20Lanh%2C%20tinh%20Dong%20Thap"
+    "maps_url": "https://maps.google.com/?q=VinMart+Cao+Lanh%2C+Trung+tam+thuong+mai+v%C3%A0+Shophouse+Cao+Lanh+-+Dong+Thap%2C+Phuong+1%2C+Thanh+pho+Cao+Lanh%2C+tinh+Dong+Thap"
   },
   {
     "id": "STORE_123",
@@ -1357,7 +1357,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20Soc%20Trang%2C%20Thua%20dat%20so%20310%2C%20to%20ban%20do%20so%2048%2C%20duong%20Tran%20Hung%20Dao%2C%20Phuong%202%2C%20Thanh%20pho%20Soc%20Trang%2C%20Tinh%20Soc%20Trang"
+    "maps_url": "https://maps.google.com/?q=VinMart+Soc+Trang%2C+Thua+dat+so+310%2C+to+ban+do+so+48%2C+duong+Tran+Hung+Dao%2C+Phuong+2%2C+Thanh+pho+Soc+Trang%2C+Tinh+Soc+Trang"
   },
   {
     "id": "STORE_124",
@@ -1369,7 +1369,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏢 TTTM / Vincom: Xuống hàng tại khu vực hầm bốc dỡ / cửa sau. Cần liên hệ bảo vệ trước.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VinMart%20C%C3%A0%20Mau%2C%20TTTM%20Vincom%20C%C3%A0%20Mau%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau%2C%20T%E1%BB%89nh%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=VinMart+C%C3%A0+Mau%2C+TTTM+Vincom+C%C3%A0+Mau%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau%2C+T%E1%BB%89nh+C%C3%A0+Mau"
   },
   {
     "id": "STORE_125",
@@ -1381,7 +1381,7 @@
     "nvxl": "Đầu Mối Điều Phối Bạc Liêu",
     "route_name": "Tuyến Bạc Liêu",
     "truck_note": "🏢 TTTM / Vincom: Xuống hàng tại khu vực hầm bốc dỡ / cửa sau. Cần liên hệ bảo vệ trước.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%20VCP%20BLU%20B%E1%BA%A1c%20Li%C3%AAu%2C%20Gian%20h%C3%A0ng%20L2-01%20TTTM%20Vincom%20Plaza%20Tr%E1%BA%A7n%20Hu%E1%BB%B3nh%2C%20B%E1%BA%A1c%20Li%C3%AAu%2C%20s%E1%BB%91%20109%20Tr%E1%BA%A7n%20Hu%E1%BB%B3nh%2C%20P7"
+    "maps_url": "https://maps.google.com/?q=WinMart+BLU+B%E1%BA%A1c+Li%C3%AAu%2C+Gian+h%C3%A0ng+L2-01+TTTM+Vincom+Plaza+Tr%E1%BA%A7n+Hu%E1%BB%B3nh%2C+B%E1%BA%A1c+Li%C3%AAu%2C+s%E1%BB%91+109+Tr%E1%BA%A7n+Hu%E1%BB%B3nh%2C+P7"
   },
   {
     "id": "STORE_126",
@@ -1393,7 +1393,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%20VCP%20TGG%20M%E1%BB%B9%20Tho%2C%201A%20H%C3%B9ng%20V%C6%B0%C6%A1ng%2C%20P1%2C%20th%C3%A0nh%20Ph%E1%BB%91%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+TGG+M%E1%BB%B9+Tho%2C+1A+H%C3%B9ng+V%C6%B0%C6%A1ng%2C+P1%2C+th%C3%A0nh+Ph%E1%BB%91+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_127",
@@ -1405,7 +1405,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20TGG%20152%20Ly%20Thuong%20Kiet%2C%20152%20Ly%20Thuong%20Kiet%2C%20Phuong%206%2C%20TP.%20My%20Tho%2C%20Tinh%20Tien%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+152+Ly+Thuong+Kiet%2C+Phuong+6%2C+TP.+My+Tho%2C+Tinh+Tien+Giang"
   },
   {
     "id": "STORE_128",
@@ -1417,7 +1417,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20AGG%20268/4%20va%20268/5%20Hung%20Vuong%2C%20268/4%20va%20268/5%20Duong%20Hung%20Vuong%2C%20phuong%20My%20Long%2C%20Thanh%20pho%20Long%20Xuyen%2C%20Tinh%20An%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+268%2F4+va+268%2F5+Hung+Vuong%2C+268%2F4+va+268%2F5+Duong+Hung+Vuong%2C+phuong+My+Long%2C+Thanh+pho+Long+Xuyen%2C+Tinh+An+Giang"
   },
   {
     "id": "STORE_129",
@@ -1429,7 +1429,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%2054A%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%2054A%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20B%C3%ACnh%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+54A+L%C3%BD+Th%C6%B0%E1%BB%9Dng+Ki%E1%BB%87t%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+B%C3%ACnh%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_130",
@@ -1441,7 +1441,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20203%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20203%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C6%B0%E1%BB%9Dng%205%2C%20Th%C3%A0nh%20Ph%E1%BB%91%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+203+L%C3%BD+Th%C6%B0%E1%BB%9Dng+Ki%E1%BB%87t%2C+Ph%C6%B0%E1%BB%9Dng+5%2C+Th%C3%A0nh+Ph%E1%BB%91+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_131",
@@ -1453,7 +1453,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2BAGG%204Bis%20L%C3%AA%20Minh%20Ng%C6%B0%C6%A1n%2C%204Bis%20L%C3%AA%20Minh%20Ng%C6%B0%C6%A1n%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20Long%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+WM%2BAGG+4Bis+L%C3%AA+Minh+Ng%C6%B0%C6%A1n%2C+4Bis+L%C3%AA+Minh+Ng%C6%B0%C6%A1n%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+Long%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_132",
@@ -1465,7 +1465,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2BTGG%20200%20Nam%20K%C3%AC%20Kh%E1%BB%9Fi%20Ngh%C4%A9a%2C%20200%20Nam%20K%E1%BB%B3%20Kh%E1%BB%9Fi%20Ngh%C4%A9a%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20Th%C3%A0nh%20ph%E1%BB%91%20M%E1%BB%B9%20Tho%2C%20T%E1%BB%89nh%20Ti%E1%BB%81n%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+VM%2BTGG+200+Nam+K%C3%AC+Kh%E1%BB%9Fi+Ngh%C4%A9a%2C+200+Nam+K%E1%BB%B3+Kh%E1%BB%9Fi+Ngh%C4%A9a%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+Th%C3%A0nh+ph%E1%BB%91+M%E1%BB%B9+Tho%2C+T%E1%BB%89nh+Ti%E1%BB%81n+Giang"
   },
   {
     "id": "STORE_133",
@@ -1477,7 +1477,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20AGG%20244-245%20Ham%20Nghi%2C%20VM%2B%20AGG%20%20244-245%20duong%20Ham%20Nghi%2C%20Phuong%20Binh%20Khanh%2C%20Thanh%20pho%20Long%20Xuyen%2C%20Tinh%20An%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+244-245+Ham+Nghi%2C+VM%2B+AGG+244-245+duong+Ham+Nghi%2C+Phuong+Binh+Khanh%2C+Thanh+pho+Long+Xuyen%2C+Tinh+An+Giang"
   },
   {
     "id": "STORE_134",
@@ -1489,7 +1489,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%2077%20Ung%20V%C4%83n%20Khi%C3%AAm%2C%2077%20Ung%20V%C4%83n%20Khi%C3%AAm%2C%20t%E1%BB%95%206%2C%20Kh%C3%B3m%20%C4%90%C3%B4ng%20Th%C3%A0nh%2C%20Ph%C6%B0%E1%BB%9Dng%20%C4%90%C3%B4ng%20Xuy%C3%AAn%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+77+Ung+V%C4%83n+Khi%C3%AAm%2C+t%E1%BB%95+6%2C+Kh%C3%B3m+%C4%90%C3%B4ng+Th%C3%A0nh%2C+Ph%C6%B0%E1%BB%9Dng+%C4%90%C3%B4ng+Xuy%C3%AAn%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_135",
@@ -1501,7 +1501,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20535A%20V%C3%B5%20Th%E1%BB%8B%20S%C3%A1u%2C%20535A%20V%C3%B5%20Th%E1%BB%8B%20S%C3%A1u%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20Xuy%C3%AAn%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+535A+V%C3%B5+Th%E1%BB%8B+S%C3%A1u%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+Xuy%C3%AAn%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_136",
@@ -1513,7 +1513,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20AGG%2001%20Thai%20Phien%2C%20Thua%20dat%20so%2001%2C%20to%20ban%20do%20so%20048%2C%20Binh%20Khanh%2C%20thanh%20pho%20Long%20Xuyen%2C%20tinh%20An%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+01+Thai+Phien%2C+Thua+dat+so+01%2C+to+ban+do+so+048%2C+Binh+Khanh%2C+thanh+pho+Long+Xuyen%2C+tinh+An+Giang"
   },
   {
     "id": "STORE_137",
@@ -1525,7 +1525,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20915B%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20915B%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20Ph%C6%B0%E1%BB%9Dng%205%2C%20Th%C3%A0nh%20Ph%E1%BB%91%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+915B+Tr%E1%BA%A7n+H%C6%B0ng+%C4%90%E1%BA%A1o%2C+Ph%C6%B0%E1%BB%9Dng+5%2C+Th%C3%A0nh+Ph%E1%BB%91+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_138",
@@ -1537,7 +1537,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20104%20%C4%91%C6%B0%E1%BB%9Dng%20Tr%E1%BA%A7n%20Quang%20Kh%E1%BA%A3i%2C%20104%20%C4%91%C6%B0%E1%BB%9Dng%20Tr%E1%BA%A7n%20Quang%20Kh%E1%BA%A3i%2C%20t%E1%BB%95%2036%2C%20Kh%C3%B3m%20Trung%20An%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20Th%E1%BB%9Bi%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+104+%C4%91%C6%B0%E1%BB%9Dng+Tr%E1%BA%A7n+Quang+Kh%E1%BA%A3i%2C+t%E1%BB%95+36%2C+Kh%C3%B3m+Trung+An%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+Th%E1%BB%9Bi%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_139",
@@ -1549,7 +1549,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20DTP%20163%20T%C3%B4n%20%C4%90%E1%BB%A9c%20Th%E1%BA%AFng%2C%20163%20T%C3%B4n%20%C4%90%E1%BB%A9c%20Th%E1%BA%AFng%2C%20t%E1%BB%95%2034%2C%20kh%C3%B3m%203%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Cao%20L%C3%A3nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+163+T%C3%B4n+%C4%90%E1%BB%A9c+Th%E1%BA%AFng%2C+t%E1%BB%95+34%2C+kh%C3%B3m+3%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+Th%C3%A0nh+ph%E1%BB%91+Cao+L%C3%A3nh"
   },
   {
     "id": "STORE_140",
@@ -1561,7 +1561,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%20468%20Nguy%E1%BB%85n%20%C4%90%C3%ACnh%20Chi%E1%BB%83u%2C%20468%20Nguy%E1%BB%85n%20%C4%90%C3%ACnh%20Chi%E1%BB%83u%2C%20P.%203%2C%20Tp%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+468+Nguy%E1%BB%85n+%C4%90%C3%ACnh+Chi%E1%BB%83u%2C+P.+3%2C+Tp+T%C3%A2n+An"
   },
   {
     "id": "STORE_141",
@@ -1573,7 +1573,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%2069%20H%C3%B9ng%20V%C6%B0%C6%A1ng%2C%2069%20H%C3%B9ng%20V%C6%B0%C6%A1ng%2C%20P.%202%2C%20Tp%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+69+H%C3%B9ng+V%C6%B0%C6%A1ng%2C+P.+2%2C+Tp+T%C3%A2n+An"
   },
   {
     "id": "STORE_142",
@@ -1585,7 +1585,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20T%C4%90S%2047%2C%20TB%C4%90%20001%20Ung%20V%C4%83n%20Khi%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%2047%2C%20t%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%20001%20t%E1%BA%A1i%20%C4%91%E1%BB%8Ba%20ch%E1%BB%89%2C%20Ung%20V%C4%83n%20Khi%C3%AAm%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20Ph%C6%B0%E1%BB%9Bc%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90S+47%2C+TB%C4%90+001+Ung+V%C4%83n+Khi%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+47%2C+t%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+001+t%E1%BA%A1i+%C4%91%E1%BB%8Ba+ch%E1%BB%89%2C+Ung+V%C4%83n+Khi%C3%AAm%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+Ph%C6%B0%E1%BB%9Bc%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_143",
@@ -1597,7 +1597,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20DTP%20669-671%20Ph%E1%BA%A1m%20H%E1%BB%AFu%20L%E1%BA%A7u%2C%20669-671%20t%E1%BB%95%2011%2C%20kh%C3%B3m%202%2C%20%C4%91%C6%B0%E1%BB%9Dng%20Ph%E1%BA%A1m%20H%E1%BB%AFu%20L%E1%BA%A7u%2C%20Ph%C6%B0%E1%BB%9Dng%206%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Cao%20L%C3%A3nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+669-671+Ph%E1%BA%A1m+H%E1%BB%AFu+L%E1%BA%A7u%2C+669-671+t%E1%BB%95+11%2C+kh%C3%B3m+2%2C+%C4%91%C6%B0%E1%BB%9Dng+Ph%E1%BA%A1m+H%E1%BB%AFu+L%E1%BA%A7u%2C+Ph%C6%B0%E1%BB%9Dng+6%2C+Th%C3%A0nh+ph%E1%BB%91+Cao+L%C3%A3nh"
   },
   {
     "id": "STORE_144",
@@ -1609,7 +1609,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20DTP%2074%20Ph%E1%BA%A1m%20H%E1%BB%AFu%20L%E1%BA%A7u%2C%2074%20Ph%E1%BA%A1m%20H%E1%BB%AFu%20L%E1%BA%A7u%2C%20kh%C3%B3m%202%2C%20Ph%C6%B0%E1%BB%9Dng%204%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Cao%20L%C3%A3nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+74+Ph%E1%BA%A1m+H%E1%BB%AFu+L%E1%BA%A7u%2C+kh%C3%B3m+2%2C+Ph%C6%B0%E1%BB%9Dng+4%2C+Th%C3%A0nh+ph%E1%BB%91+Cao+L%C3%A3nh"
   },
   {
     "id": "STORE_145",
@@ -1621,7 +1621,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20493/26%20Qu%E1%BA%A3n%20C%C6%A1%20Th%C3%A0nh%2C%20493/26%20Qu%E1%BA%A3n%20C%C6%A1%20Th%C3%A0nh%2C%20Ph%C6%B0%E1%BB%9Dng%20B%C3%ACnh%20Kh%C3%A1nh%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+493%2F26+Qu%E1%BA%A3n+C%C6%A1+Th%C3%A0nh%2C+Ph%C6%B0%E1%BB%9Dng+B%C3%ACnh+Kh%C3%A1nh%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_146",
@@ -1633,7 +1633,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20DTP%20106-108%20Ton%20Duc%20Thang%2C%20106%2C%20108%20Ton%20Duc%20Thang%2C%20Phuong%20My%20Phu%2C%20Cao%20Lanh%2C%20Dong%20Thap"
+    "maps_url": "https://maps.google.com/?q=WinMart+106-108+Ton+Duc+Thang%2C+106%2C+108+Ton+Duc+Thang%2C+Phuong+My+Phu%2C+Cao+Lanh%2C+Dong+Thap"
   },
   {
     "id": "STORE_147",
@@ -1645,7 +1645,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20Th%E1%BB%ADa%2075%20v%C3%A0%2074%2C%20TB%C4%90%20017%2C%20Th%E1%BB%ADa%2075%20v%C3%A0%2074%2C%20t%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%20017%20t%E1%BA%A1i%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20Xuy%C3%AAn%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+Th%E1%BB%ADa+75+v%C3%A0+74%2C+TB%C4%90+017%2C+Th%E1%BB%ADa+75+v%C3%A0+74%2C+t%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+017+t%E1%BA%A1i%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+Xuy%C3%AAn%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_148",
@@ -1657,7 +1657,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20Th%E1%BB%ADa%20173%2C%20TB%C4%90%206%2C%20Th%E1%BB%ADa%20173%2C%20TB%C4%90%206%2C%20M%E1%BB%B9%20Ph%C6%B0%E1%BB%9Bc%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+Th%E1%BB%ADa+173%2C+TB%C4%90+6%2C+M%E1%BB%B9+Ph%C6%B0%E1%BB%9Bc%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_149",
@@ -1669,7 +1669,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20STG%2080%20Ton%20Duc%20Thang%2C%2080%20Ton%20Duc%20Thang%2C%20Phuong%208%2C%20TP%20Soc%20Trang%2C%20tinh%20Soc%20Trang"
+    "maps_url": "https://maps.google.com/?q=WinMart+80+Ton+Duc+Thang%2C+Phuong+8%2C+TP+Soc+Trang%2C+tinh+Soc+Trang"
   },
   {
     "id": "STORE_150",
@@ -1681,7 +1681,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%2062%20%C4%91%C6%B0%E1%BB%9Dng%2030%20th%C3%A1ng%204%2C%2062%20%C4%91%C6%B0%E1%BB%9Dng%2030%20th%C3%A1ng%204%2C%20Ph%C6%B0%E1%BB%9Dng%203%2C%20Th%C3%A0nh%20ph%E1%BB%91%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+62+%C4%91%C6%B0%E1%BB%9Dng+30+th%C3%A1ng+4%2C+Ph%C6%B0%E1%BB%9Dng+3%2C+Th%C3%A0nh+ph%E1%BB%91+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_151",
@@ -1693,7 +1693,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%2010-11-12%20Tr%C6%B0%C6%A1ng%20%C4%90%E1%BB%8Bnh%2C%2010-11-12%20Tr%C6%B0%C6%A1ng%20%C4%90%E1%BB%8Bnh%2C%20P%201%2C%20Tp%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+10-11-12+Tr%C6%B0%C6%A1ng+%C4%90%E1%BB%8Bnh%2C+P+1%2C+Tp+T%C3%A2n+An"
   },
   {
     "id": "STORE_152",
@@ -1705,7 +1705,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20DTP%20335-337%20Duong%2030/4%2C%20335-337%20duong%2030/4%2C%20phuong%201%2C%20thanh%20pho%20Cao%20Lanh%2C%20Dong%20Thap"
+    "maps_url": "https://maps.google.com/?q=WinMart+335-337+duong+30%2F4%2C+phuong+1%2C+thanh+pho+Cao+Lanh%2C+Dong+Thap"
   },
   {
     "id": "STORE_153",
@@ -1717,7 +1717,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20128%20h%E1%BA%BBm%20B%C3%AA%20T%C3%B4ng%2C%20Nguy%E1%BB%85n%20Tr%C3%A3%2C%20128%20h%E1%BA%BBm%20B%C3%AA%20T%C3%B4ng%2C%20Nguy%E1%BB%85n%20Tr%C3%A3i%2C%20Ph%C6%B0%E1%BB%9Dng%209%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+128+h%E1%BA%BBm+B%C3%AA+T%C3%B4ng%2C+Nguy%E1%BB%85n+Tr%C3%A3i%2C+Ph%C6%B0%E1%BB%9Dng+9%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_154",
@@ -1729,7 +1729,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20CMU%2081%20Hung%20Vuong%2C%2081%20duong%20Hung%20Vuong%2C%20khom%204%2C%20phuong%205%2C%20TP%20Ca%20Mau%2C%20tinh%20Ca%20Mau."
+    "maps_url": "https://maps.google.com/?q=WinMart+81+Hung+Vuong%2C+81+duong+Hung+Vuong%2C+khom+4%2C+phuong+5%2C+TP+Ca+Mau%2C+tinh+Ca+Mau."
   },
   {
     "id": "STORE_155",
@@ -1741,7 +1741,7 @@
     "nvxl": "Đầu Mối Điều Phối Đồng Tháp",
     "route_name": "Tuyến Đồng Tháp",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20DTP%2098%20L%C3%AA%20L%E1%BB%A3i%2C%2098%20L%C3%AA%20L%E1%BB%A3i%2C%20Ph%C6%B0%E1%BB%9Dng%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Cao%20L%C3%A3nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+98+L%C3%AA+L%E1%BB%A3i%2C+Ph%C6%B0%E1%BB%9Dng+2%2C+Th%C3%A0nh+ph%E1%BB%91+Cao+L%C3%A3nh"
   },
   {
     "id": "STORE_156",
@@ -1753,7 +1753,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20418%20Tr%E1%BA%A7n%20V%C4%83n%20Th%E1%BB%9Di%2C%20418%20Tr%E1%BA%A7n%20V%C4%83n%20Th%E1%BB%9Di%2C%20Kh%C3%B3m%203%2C%20Ph%C6%B0%E1%BB%9Dng%206%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+418+Tr%E1%BA%A7n+V%C4%83n+Th%E1%BB%9Di%2C+Kh%C3%B3m+3%2C+Ph%C6%B0%E1%BB%9Dng+6%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_157",
@@ -1765,7 +1765,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20517%20Nguy%E1%BB%85n%20T%E1%BA%A5t%20Th%C3%A0nh%2C%20517%20Nguy%E1%BB%85n%20T%E1%BA%A5t%20Th%C3%A0nh%2C%20X%C3%A3%20L%C3%BD%20V%C4%83n%2C%20L%C3%A2m%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+517+Nguy%E1%BB%85n+T%E1%BA%A5t+Th%C3%A0nh%2C+X%C3%A3+L%C3%BD+V%C4%83n%2C+L%C3%A2m%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_158",
@@ -1777,7 +1777,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%2080%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%2080%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20Ph%C6%B0%E1%BB%9Dng%20An%20H%E1%BB%99i%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%BFn%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+80+Nguy%E1%BB%85n+Hu%E1%BB%87%2C+Ph%C6%B0%E1%BB%9Dng+An+H%E1%BB%99i%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%BFn+Tre"
   },
   {
     "id": "STORE_159",
@@ -1789,7 +1789,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%20218/2%20%E1%BA%A4p%20X%C3%B3m%20C%E1%BB%91ng%2C%20218/2%20%E1%BA%A4p%20X%C3%B3m%20C%E1%BB%91ng%2C%20Th%E1%BB%8B%20tr%E1%BA%A5n%20B%E1%BA%BFn%20L%E1%BB%A9c%2C%20Huy%E1%BB%87n%20B%E1%BA%BFn%20L%E1%BB%A9c"
+    "maps_url": "https://maps.google.com/?q=WinMart+218%2F2+%E1%BA%A4p+X%C3%B3m+C%E1%BB%91ng%2C+Th%E1%BB%8B+tr%E1%BA%A5n+B%E1%BA%BFn+L%E1%BB%A9c%2C+Huy%E1%BB%87n+B%E1%BA%BFn+L%E1%BB%A9c"
   },
   {
     "id": "STORE_160",
@@ -1801,7 +1801,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%20298F%20Khu%20ph%E1%BB%91%202%2C%20298F%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20khu%20ph%E1%BB%91%202%2C%20Ph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20Kh%C6%B0%C6%A1ng%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%BFn%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+298F+Khu+ph%E1%BB%91+2%2C+298F+Nguy%E1%BB%85n+Hu%E1%BB%87%2C+khu+ph%E1%BB%91+2%2C+Ph%C6%B0%E1%BB%9Dng+Ph%C3%BA+Kh%C6%B0%C6%A1ng%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%BFn+Tre"
   },
   {
     "id": "STORE_161",
@@ -1813,7 +1813,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%20401B%20Nguy%E1%BB%85n%20%C4%90%C3%ACnh%20Chi%E1%BB%83u%2C%20401B%20Nguy%E1%BB%85n%20%C4%90%C3%ACnh%20Chi%E1%BB%83u%2C%20Ph%C6%B0%E1%BB%9Dng%208%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%BFn%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+401B+Nguy%E1%BB%85n+%C4%90%C3%ACnh+Chi%E1%BB%83u%2C+Ph%C6%B0%E1%BB%9Dng+8%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%BFn+Tre"
   },
   {
     "id": "STORE_162",
@@ -1825,7 +1825,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%20261K%20%C4%90%C6%B0%E1%BB%9Dng%20S%E1%BB%91%201%2C%20261K%20%C4%90%C6%B0%E1%BB%9Dng%20s%E1%BB%91%201%2C%20Khu%20ph%E1%BB%91%20III%2C%20Ph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20T%C3%A2n%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%BFn%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+261K+%C4%90%C6%B0%E1%BB%9Dng+s%E1%BB%91+1%2C+Khu+ph%E1%BB%91+III%2C+Ph%C6%B0%E1%BB%9Dng+Ph%C3%BA+T%C3%A2n%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%BFn+Tre"
   },
   {
     "id": "STORE_163",
@@ -1837,7 +1837,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%2063/2%20Phan%20%C4%90%C3%ACnh%20Ph%C3%B9ng%2C%2063/2%20Phan%20%C4%90%C3%ACnh%20Ph%C3%B9ng%2C%20Ph%C6%B0%E1%BB%9Dng%204%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%BFn%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+63%2F2+Phan+%C4%90%C3%ACnh+Ph%C3%B9ng%2C+Ph%C6%B0%E1%BB%9Dng+4%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%BFn+Tre"
   },
   {
     "id": "STORE_164",
@@ -1849,7 +1849,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%2028-29%20H%C3%B9ng%20V%C6%B0%C6%A1ng%2C%2028-29%20H%C3%B9ng%20V%C6%B0%C6%A1ng%2C%20kh%C3%B3m%202%2C%20Ph%C6%B0%E1%BB%9Dng%205%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+28-29+H%C3%B9ng+V%C6%B0%C6%A1ng%2C+kh%C3%B3m+2%2C+Ph%C6%B0%E1%BB%9Dng+5%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_165",
@@ -1861,7 +1861,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20TVH%20142A%20Nguyen%20Dang%2C%20142A%20Nguyen%20Dang%2C%20khom%208%2C%20phuong%206%2C%20TP%20Tra%20Vinh%2C%20tinh%20Tra%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+142A+Nguyen+Dang%2C+khom+8%2C+phuong+6%2C+TP+Tra+Vinh%2C+tinh+Tra+Vinh"
   },
   {
     "id": "STORE_166",
@@ -1873,7 +1873,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%20491%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20Minh%20Khai%2C%20491%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20Minh%20Khai%2C%20kh%C3%B3m%207%2C%20Ph%C6%B0%E1%BB%9Dng%207%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+491+Nguy%E1%BB%85n+Th%E1%BB%8B+Minh+Khai%2C+kh%C3%B3m+7%2C+Ph%C6%B0%E1%BB%9Dng+7%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_167",
@@ -1885,7 +1885,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20BTE%20116A1%20Truong%20Dinh%2C%20116A1%20Truong%20Dinh%2C%20khu%20pho%20Binh%20Khoi%2C%20Phuong%206%2C%20Thanh%20pho%20Ben%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+116A1+Truong+Dinh%2C+khu+pho+Binh+Khoi%2C+Phuong+6%2C+Thanh+pho+Ben+Tre"
   },
   {
     "id": "STORE_168",
@@ -1897,7 +1897,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20168%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20168%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20Ph%C6%B0%E1%BB%9Dng%206%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+168+L%C3%BD+Th%C6%B0%E1%BB%9Dng+Ki%E1%BB%87t%2C+Ph%C6%B0%E1%BB%9Dng+6%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_169",
@@ -1909,7 +1909,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%20363%20kh%C3%B3m%208%2C%20363%2C%20kh%C3%B3m%208%2C%20Ph%C6%B0%E1%BB%9Dng%207%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+363+kh%C3%B3m+8%2C+363%2C+kh%C3%B3m+8%2C+Ph%C6%B0%E1%BB%9Dng+7%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_170",
@@ -1921,7 +1921,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%20214%20L%C3%AA%20L%E1%BB%A3i%2C%20214%20%C4%91%C6%B0%E1%BB%9Dng%20L%C3%AA%20L%E1%BB%A3i%2C%20kh%C3%B3m%201%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+214+L%C3%AA+L%E1%BB%A3i%2C+214+%C4%91%C6%B0%E1%BB%9Dng+L%C3%AA+L%E1%BB%A3i%2C+kh%C3%B3m+1%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_171",
@@ -1933,7 +1933,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%2042/4%20Nguy%E1%BB%85n%20Hu%E1%BB%B3nh%20%C4%90%E1%BB%A9c%2C%2042/4%20Nguy%E1%BB%85n%20Hu%E1%BB%B3nh%20%C4%90%E1%BB%A9c%2C%20Ph%C6%B0%E1%BB%9Dng%208%2C%20Th%C3%A0nh%20Ph%E1%BB%91%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+42%2F4+Nguy%E1%BB%85n+Hu%E1%BB%B3nh+%C4%90%E1%BB%A9c%2C+Ph%C6%B0%E1%BB%9Dng+8%2C+Th%C3%A0nh+Ph%E1%BB%91+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_172",
@@ -1945,7 +1945,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%20177%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20177%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20kh%C3%B3m%203%2C%20Ph%C6%B0%E1%BB%9Dng%201%2C%20TX.%20S%C3%B3c%20Tr%C4%83ng%2C%20Th%C3%A0nh%20ph%E1%BB%91%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+177+Nguy%E1%BB%85n+Hu%E1%BB%87%2C+kh%C3%B3m+3%2C+Ph%C6%B0%E1%BB%9Dng+1%2C+TX.+S%C3%B3c+Tr%C4%83ng%2C+Th%C3%A0nh+ph%E1%BB%91+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_173",
@@ -1957,7 +1957,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%2057%20%C4%90%E1%BB%93ng%20Kh%E1%BB%9Fi%2C%2057%20%C4%91%C6%B0%E1%BB%9Dng%20%C4%90%E1%BB%93ng%20Kh%E1%BB%9Fi%2C%20kh%C3%B3m%209%2C%20Ph%C6%B0%E1%BB%9Dng%206%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+57+%C4%90%E1%BB%93ng+Kh%E1%BB%9Fi%2C+57+%C4%91%C6%B0%E1%BB%9Dng+%C4%90%E1%BB%93ng+Kh%E1%BB%9Fi%2C+kh%C3%B3m+9%2C+Ph%C6%B0%E1%BB%9Dng+6%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_174",
@@ -1969,7 +1969,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%20600B1%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20%C4%90%E1%BB%8Bnh%2C%20600B1%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20%C4%90%E1%BB%8Bnh%2C%20Ph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20Kh%C6%B0%C6%A1ng%2C%20Th%C3%A0nh%20ph%E1%BB%91%20B%E1%BA%BFn%20Tre"
+    "maps_url": "https://maps.google.com/?q=WinMart+600B1+Nguy%E1%BB%85n+Th%E1%BB%8B+%C4%90%E1%BB%8Bnh%2C+Ph%C6%B0%E1%BB%9Dng+Ph%C3%BA+Kh%C6%B0%C6%A1ng%2C+Th%C3%A0nh+ph%E1%BB%91+B%E1%BA%BFn+Tre"
   },
   {
     "id": "STORE_175",
@@ -1981,7 +1981,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%20491%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%20491%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%20kh%C3%B3m%205%2C%20Ph%C6%B0%E1%BB%9Dng%203%2C%20Th%C3%A0nh%20ph%E1%BB%91%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+491+L%C3%AA+H%E1%BB%93ng+Phong%2C+kh%C3%B3m+5%2C+Ph%C6%B0%E1%BB%9Dng+3%2C+Th%C3%A0nh+ph%E1%BB%91+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_176",
@@ -1993,7 +1993,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%20176%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%20176%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%20kh%C3%B3m%204%2C%20Ph%C6%B0%E1%BB%9Dng%203%2C%20Th%C3%A0nh%20ph%E1%BB%91%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+176+L%C3%AA+H%E1%BB%93ng+Phong%2C+kh%C3%B3m+4%2C+Ph%C6%B0%E1%BB%9Dng+3%2C+Th%C3%A0nh+ph%E1%BB%91+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_177",
@@ -2005,7 +2005,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%2013%20%C4%90o%C3%A0n%20Th%E1%BB%8B%20%C4%90i%E1%BB%83m%2C%2013%20%C4%90o%C3%A0n%20Th%E1%BB%8B%20%C4%90i%E1%BB%83m%2C%20Ph%C6%B0%E1%BB%9Dng%207%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+13+%C4%90o%C3%A0n+Th%E1%BB%8B+%C4%90i%E1%BB%83m%2C+Ph%C6%B0%E1%BB%9Dng+7%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_178",
@@ -2017,7 +2017,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20127%20Nguy%E1%BB%85n%20C%C3%B4ng%20Tr%E1%BB%A9%2C%20127%20Nguy%E1%BB%85n%20C%C3%B4ng%20Tr%E1%BB%A9%2C%20Ph%C6%B0%E1%BB%9Dng%208%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+127+Nguy%E1%BB%85n+C%C3%B4ng+Tr%E1%BB%A9%2C+Ph%C6%B0%E1%BB%9Dng+8%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_179",
@@ -2029,7 +2029,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%2069%20Ph%E1%BA%A1m%20H%E1%BB%93ng%20Th%C3%A1m%2C%2069%20Ph%E1%BA%A1m%20H%E1%BB%93ng%20Th%C3%A1m%2C%20Ph%C6%B0%E1%BB%9Dng%204%2C%20Th%C3%A0nh%20ph%E1%BB%91%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+69+Ph%E1%BA%A1m+H%E1%BB%93ng+Th%C3%A1m%2C+Ph%C6%B0%E1%BB%9Dng+4%2C+Th%C3%A0nh+ph%E1%BB%91+C%C3%A0+Mau"
   },
   {
     "id": "STORE_180",
@@ -2041,7 +2041,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%20120%20Tr%E1%BA%A7n%20Qu%E1%BB%91c%20Tu%E1%BA%A5n%2C%20120%20Tr%E1%BA%A7n%20Qu%E1%BB%91c%20Tu%E1%BA%A5n%2C%20Ph%C6%B0%E1%BB%9Dng%202%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+120+Tr%E1%BA%A7n+Qu%E1%BB%91c+Tu%E1%BA%A5n%2C+Ph%C6%B0%E1%BB%9Dng+2%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_181",
@@ -2053,7 +2053,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20141/5%20Nguy%E1%BB%85n%20Th%C3%A1i%20H%E1%BB%8Dc%2C%20141/5%20Nguy%E1%BB%85n%20Th%C3%A1i%20H%E1%BB%8Dc%2C%20Ph%C6%B0%E1%BB%9Dng%20M%E1%BB%B9%20B%C3%ACnh%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+141%2F5+Nguy%E1%BB%85n+Th%C3%A1i+H%E1%BB%8Dc%2C+Ph%C6%B0%E1%BB%9Dng+M%E1%BB%B9+B%C3%ACnh%2C+Th%C3%A0nh+ph%E1%BB%91+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_182",
@@ -2065,7 +2065,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%2010%20Ph%E1%BA%A1m%20H%E1%BB%93ng%20Th%C3%A1i%2C%2010%20Ph%E1%BA%A1m%20H%E1%BB%93ng%20Th%C3%A1i%2C%20kh%C3%B3m%203%2C%20Ph%C6%B0%E1%BB%9Dng%203%2C%20Th%C3%A0nh%20ph%E1%BB%91%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+10+Ph%E1%BA%A1m+H%E1%BB%93ng+Th%C3%A1i%2C+kh%C3%B3m+3%2C+Ph%C6%B0%E1%BB%9Dng+3%2C+Th%C3%A0nh+ph%E1%BB%91+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_183",
@@ -2077,7 +2077,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20LAN%20320%20Quoc%20lo%2062%2C%20320%20Quoc%20lo%2062%2C%20Phuong%206%2C%20Thanh%20pho%20Tan%20An%2C%20Tinh%20Long%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+320+Quoc+lo+62%2C+Phuong+6%2C+Thanh+pho+Tan+An%2C+Tinh+Long+An"
   },
   {
     "id": "STORE_184",
@@ -2089,7 +2089,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%2078%20M%E1%BA%A1c%20%C4%90%E1%BB%89nh%20Chi%2C%2078%20M%E1%BA%A1c%20%C4%90%E1%BB%89nh%20Chi%2C%20kh%C3%B3m%203%2C%20Ph%C6%B0%E1%BB%9Dng%209%2C%20Th%C3%A0nh%20ph%E1%BB%91%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+78+M%E1%BA%A1c+%C4%90%E1%BB%89nh+Chi%2C+kh%C3%B3m+3%2C+Ph%C6%B0%E1%BB%9Dng+9%2C+Th%C3%A0nh+ph%E1%BB%91+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_185",
@@ -2101,7 +2101,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20225%20Tho%E1%BA%A1i%20Ng%E1%BB%8Dc%20H%E1%BA%A7u%2C%20225%2C%20%C4%91%C6%B0%E1%BB%9Dng%20Tho%E1%BA%A1i%20Ng%E1%BB%8Dc%20H%E1%BA%A7u%2C%20kh%C3%B3m%20%C4%90%C3%B4ng%20Th%E1%BB%8Bnh%203%2C%20P.%20M%E1%BB%B9%20Ph%C6%B0%E1%BB%9Bc%2C%20TP.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+225+Tho%E1%BA%A1i+Ng%E1%BB%8Dc+H%E1%BA%A7u%2C+225%2C+%C4%91%C6%B0%E1%BB%9Dng+Tho%E1%BA%A1i+Ng%E1%BB%8Dc+H%E1%BA%A7u%2C+kh%C3%B3m+%C4%90%C3%B4ng+Th%E1%BB%8Bnh+3%2C+P.+M%E1%BB%B9+Ph%C6%B0%E1%BB%9Bc%2C+TP.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_186",
@@ -2113,7 +2113,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%201B%20Tr%E1%BA%A7n%20Phong%20S%E1%BA%AFc%2C%201B%20Tr%E1%BA%A7n%20Phong%20S%E1%BA%AFc%2C%20Ph%C6%B0%E1%BB%9Dng%204%2C%20TP%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+1B+Tr%E1%BA%A7n+Phong+S%E1%BA%AFc%2C+Ph%C6%B0%E1%BB%9Dng+4%2C+TP+T%C3%A2n+An"
   },
   {
     "id": "STORE_187",
@@ -2125,7 +2125,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%20236A%20%E2%80%93%20238%20Ch%C3%A2u%20Th%E1%BB%8B%20Kim%2C%20236A%20%E2%80%93%20238%20Ch%C3%A2u%20Th%E1%BB%8B%20Kim%2C%20KP%20B%C3%ACnh%20An%202%2C%20Ph%C6%B0%E1%BB%9Dng%207%2C%20TP%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+236A+%E2%80%93+238+Ch%C3%A2u+Th%E1%BB%8B+Kim%2C+KP+B%C3%ACnh+An+2%2C+Ph%C6%B0%E1%BB%9Dng+7%2C+TP+T%C3%A2n+An"
   },
   {
     "id": "STORE_188",
@@ -2137,7 +2137,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%2078%20Nguy%E1%BB%85n%20C%E1%BB%ADu%20V%C3%A2n%2C%2078%20Nguy%E1%BB%85n%20C%E1%BB%ADu%20V%C3%A2n%2C%20Ph%C6%B0%E1%BB%9Dng%204%2C%20Th%C3%A0nh%20ph%E1%BB%91%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+78+Nguy%E1%BB%85n+C%E1%BB%ADu+V%C3%A2n%2C+Ph%C6%B0%E1%BB%9Dng+4%2C+Th%C3%A0nh+ph%E1%BB%91+T%C3%A2n+An"
   },
   {
     "id": "STORE_189",
@@ -2149,7 +2149,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20758%20%C4%91%C6%B0%E1%BB%9Dng%20Ng%C3%B4%20Quy%E1%BB%81n%2C%20758%2C%20%C4%91%C6%B0%E1%BB%9Dng%20Ng%C3%B4%20Quy%E1%BB%81n%2C%20P.%201%2C%20TP.%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+758+%C4%91%C6%B0%E1%BB%9Dng+Ng%C3%B4+Quy%E1%BB%81n%2C+758%2C+%C4%91%C6%B0%E1%BB%9Dng+Ng%C3%B4+Quy%E1%BB%81n%2C+P.+1%2C+TP.+C%C3%A0+Mau"
   },
   {
     "id": "STORE_190",
@@ -2161,7 +2161,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%201%20Nguy%E1%BB%85n%20Tr%C6%B0%E1%BB%9Dng%20T%E1%BB%99%2C%201%20Nguy%E1%BB%85n%20Tr%C6%B0%E1%BB%9Dng%20T%E1%BB%99%2C%20P.%20B%C3%ACnh%20Kh%C3%A1nh%2C%20TP.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+1+Nguy%E1%BB%85n+Tr%C6%B0%E1%BB%9Dng+T%E1%BB%99%2C+P.+B%C3%ACnh+Kh%C3%A1nh%2C+TP.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_191",
@@ -2173,7 +2173,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%206A%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%206A%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20KP.%201%2C%20P.%202%2C%20TX.%20G%C3%B2%20C%C3%B4ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+6A+Nguy%E1%BB%85n+Hu%E1%BB%87%2C+KP.+1%2C+P.+2%2C+TX.+G%C3%B2+C%C3%B4ng"
   },
   {
     "id": "STORE_192",
@@ -2185,7 +2185,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%202%20%C4%91%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Tr%C3%A3i%2C%202%20%C4%91%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Tr%C3%A3i%2C%20KP.%202%2C%20P.%202%2C%20TX.%20G%C3%B2%20C%C3%B4ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+2+%C4%91%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+Tr%C3%A3i%2C+KP.+2%2C+P.+2%2C+TX.+G%C3%B2+C%C3%B4ng"
   },
   {
     "id": "STORE_193",
@@ -2197,7 +2197,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%20320A%20Ph%E1%BA%A1m%20Ng%C5%A9%20L%C3%A3o%2C%20320A%20Ph%E1%BA%A1m%20Ng%C5%A9%20L%C3%A3o%2C%20Kh%C3%B3m%203%2C%20P.%201%2C%20TP%20Tr%C3%A0%20Vinh"
+    "maps_url": "https://maps.google.com/?q=WinMart+320A+Ph%E1%BA%A1m+Ng%C5%A9+L%C3%A3o%2C+Kh%C3%B3m+3%2C+P.+1%2C+TP+Tr%C3%A0+Vinh"
   },
   {
     "id": "STORE_194",
@@ -2209,7 +2209,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=VM%2B%20STG%20106%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20106%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20Kh%C3%B3m%202%2C%20P.%202%2C%20TP.%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+106+Tr%E1%BA%A7n+H%C6%B0ng+%C4%90%E1%BA%A1o%2C+Kh%C3%B3m+2%2C+P.+2%2C+TP.+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_195",
@@ -2221,7 +2221,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20210%20Th%E1%BB%A5c%20Ph%C3%A1n%2C%20210%20%C4%91%C6%B0%E1%BB%9Dng%20Th%E1%BB%A5c%20Ph%C3%A1n%20%E2%80%93%20K%C4%90T%20Sao%20Mai%20B%C3%ACnh%20Kh%C3%A1nh%203%20%2C%20K.%20B%C3%ACnh%20Kh%C3%A1nh%207%2C%20P.%20B%C3%ACnh%20Kh%C3%A1nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+210+Th%E1%BB%A5c+Ph%C3%A1n%2C+210+%C4%91%C6%B0%E1%BB%9Dng+Th%E1%BB%A5c+Ph%C3%A1n+%E2%80%93+K%C4%90T+Sao+Mai+B%C3%ACnh+Kh%C3%A1nh+3+%2C+K.+B%C3%ACnh+Kh%C3%A1nh+7%2C+P.+B%C3%ACnh+Kh%C3%A1nh"
   },
   {
     "id": "STORE_196",
@@ -2233,7 +2233,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%2010%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%2010%20L%C3%AA%20H%E1%BB%93ng%20Phong%2C%20P.%208%2C%20TP.%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+10+L%C3%AA+H%E1%BB%93ng+Phong%2C+P.+8%2C+TP.+C%C3%A0+Mau"
   },
   {
     "id": "STORE_197",
@@ -2245,7 +2245,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20339%20Qu%E1%BB%91c%20L%E1%BB%99%2050%2C%20S%E1%BB%91%20339%20Qu%E1%BB%91c%20L%E1%BB%99%2050%2C%20Ph%C6%B0%E1%BB%9Dng%209%2C%20Th%C3%A0nh%20Ph%E1%BB%91%20M%E1%BB%B9%20Tho%2C%20T%E1%BB%89nh%20Ti%E1%BB%81n%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+S%E1%BB%91+339+Qu%E1%BB%91c+L%E1%BB%99+50%2C+Ph%C6%B0%E1%BB%9Dng+9%2C+Th%C3%A0nh+Ph%E1%BB%91+M%E1%BB%B9+Tho%2C+T%E1%BB%89nh+Ti%E1%BB%81n+Giang"
   },
   {
     "id": "STORE_198",
@@ -2257,7 +2257,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%2048%20%C4%90%C6%B0%E1%BB%9Dng%2030/4%2C%2048%20%C4%91%C6%B0%E1%BB%9Dng%2030%20th%C3%A1ng%204%2C%20TT.%20Cai%20L%E1%BA%ADy%2C%20TX.%20Cai%20L%E1%BA%ADy"
+    "maps_url": "https://maps.google.com/?q=WinMart+48+%C4%90%C6%B0%E1%BB%9Dng+30%2F4%2C+48+%C4%91%C6%B0%E1%BB%9Dng+30+th%C3%A1ng+4%2C+TT.+Cai+L%E1%BA%ADy%2C+TX.+Cai+L%E1%BA%ADy"
   },
   {
     "id": "STORE_199",
@@ -2269,7 +2269,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%20%2B%20AGG%20Th%E1%BB%ADa%204082%20%E2%80%93%204122%20%C4%91%C6%B0%E1%BB%9Dng%20Ung%2C%20Th%E1%BB%ADa%204082%20%E2%80%93%204122%20%C4%91%2C%20Ung%20V%C4%83n%20Khi%C3%AAm%2C%20TP.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+WM+%2B+AGG+Th%E1%BB%ADa+4082+%E2%80%93+4122+%C4%91%C6%B0%E1%BB%9Dng+Ung%2C+Th%E1%BB%ADa+4082+%E2%80%93+4122+%C4%91%2C+Ung+V%C4%83n+Khi%C3%AAm%2C+TP.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_200",
@@ -2281,7 +2281,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%20128E-F%20Khu%20I%2C%20128E%20-%20F%2C%20Khu%20I%2C%20%E1%BA%A4p%20Ch%E1%BB%A3%2C%20X.%20Ph%C6%B0%E1%BB%9Bc%20L%E1%BB%A3i%2C%20H.%20B%E1%BA%BFn%20L%E1%BB%A9c"
+    "maps_url": "https://maps.google.com/?q=WinMart+128E-F+Khu+I%2C+128E+-+F%2C+Khu+I%2C+%E1%BA%A4p+Ch%E1%BB%A3%2C+X.+Ph%C6%B0%E1%BB%9Bc+L%E1%BB%A3i%2C+H.+B%E1%BA%BFn+L%E1%BB%A9c"
   },
   {
     "id": "STORE_201",
@@ -2293,7 +2293,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%2074%20%C4%90%C6%B0%E1%BB%9Dng%20t%E1%BB%89nh%20832%2C%2074%20%C4%90%C6%B0%E1%BB%9Dng%20t%E1%BB%89nh%20832%2C%20%E1%BA%A4p%201%2C%20X.%20Nh%E1%BB%B1t%20Ch%C3%A1nh%2C%20H.%20B%E1%BA%BFn%20L%E1%BB%A9c%2C%20T.%20Long"
+    "maps_url": "https://maps.google.com/?q=WinMart+74+%C4%90%C6%B0%E1%BB%9Dng+t%E1%BB%89nh+832%2C+%E1%BA%A4p+1%2C+X.+Nh%E1%BB%B1t+Ch%C3%A1nh%2C+H.+B%E1%BA%BFn+L%E1%BB%A9c%2C+T.+Long"
   },
   {
     "id": "STORE_202",
@@ -2305,7 +2305,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20T%C4%90%20140%2B142%2C%20TB%C4%90%20S%E1%BB%91%205%2C%20%C4%90%C6%B0%E1%BB%9Dng%2C%20T%C4%90%20140%20%2B142%2C%20TB%C4%90%20s%E1%BB%91%205%2C%20%C4%90%C6%B0%E1%BB%9Dng%20H%E1%BB%AFu%20Ngh%E1%BB%8B%2C%20TT.%20T%E1%BB%8Bnh%20Bi%C3%AAn%2C%20H.%20T%E1%BB%8Bnh%20Bi%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90+140%2B142%2C+TB%C4%90+S%E1%BB%91+5%2C+%C4%90%C6%B0%E1%BB%9Dng%2C+T%C4%90+140+%2B142%2C+TB%C4%90+s%E1%BB%91+5%2C+%C4%90%C6%B0%E1%BB%9Dng+H%E1%BB%AFu+Ngh%E1%BB%8B%2C+TT.+T%E1%BB%8Bnh+Bi%C3%AAn%2C+H.+T%E1%BB%8Bnh+Bi%C3%AAn"
   },
   {
     "id": "STORE_203",
@@ -2317,7 +2317,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20107%20Nguy%E1%BB%85n%20Tri%20Ph%C6%B0%C6%A1ng%2C%20107%20Nguy%E1%BB%85n%20Tri%20Ph%C6%B0%C6%A1ng%2C%20P.%20Long%20Th%E1%BA%A1nh%2C%20TX.%20T%C3%A2n%20Ch%C3%A2u"
+    "maps_url": "https://maps.google.com/?q=WinMart+107+Nguy%E1%BB%85n+Tri+Ph%C6%B0%C6%A1ng%2C+P.+Long+Th%E1%BA%A1nh%2C+TX.+T%C3%A2n+Ch%C3%A2u"
   },
   {
     "id": "STORE_204",
@@ -2329,7 +2329,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20582%20%C4%91%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20582%20%C4%90%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Hu%E1%BB%87%2C%20TT.%20N%C3%BAi%20S%E1%BA%ADp%2C%20H.%20Tho%E1%BA%A1i%20S%C6%A1n"
+    "maps_url": "https://maps.google.com/?q=WinMart+582+%C4%90%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+Hu%E1%BB%87%2C+TT.+N%C3%BAi+S%E1%BA%ADp%2C+H.+Tho%E1%BA%A1i+S%C6%A1n"
   },
   {
     "id": "STORE_205",
@@ -2341,7 +2341,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%201%20V%C3%B5%20Thanh%20T%C3%A2m%2C%201%20V%C3%B5%20Thanh%20T%C3%A2m%2C%20KP1%2C%20P.%204%2C%20TX.%20Cai%20L%E1%BA%ADy%2C%20%20T.%20B%C3%ACnh%20D%C6%B0%C6%A1ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+1+V%C3%B5+Thanh+T%C3%A2m%2C+KP1%2C+P.+4%2C+TX.+Cai+L%E1%BA%ADy%2C+T.+B%C3%ACnh+D%C6%B0%C6%A1ng"
   },
   {
     "id": "STORE_206",
@@ -2353,7 +2353,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%2016%20Nguy%E1%BB%85n%20V%C4%83n%20Ti%E1%BA%BFp%2C%2016%20Nguy%E1%BB%85n%20V%C4%83n%20Ti%E1%BA%BFp%2C%20P.5%2C%20TP.%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+16+Nguy%E1%BB%85n+V%C4%83n+Ti%E1%BA%BFp%2C+P.5%2C+TP.+T%C3%A2n+An"
   },
   {
     "id": "STORE_207",
@@ -2365,7 +2365,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%2074/7%20L%C3%AA%20Th%E1%BB%8B%20H%E1%BB%93ng%20G%E1%BA%A5m%2C%2074/7%20L%C3%AA%20Th%E1%BB%8B%20H%E1%BB%93ng%20G%E1%BA%A5m%2C%20KP.4%2C%20P.6%2C%20TP.%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+74%2F7+L%C3%AA+Th%E1%BB%8B+H%E1%BB%93ng+G%E1%BA%A5m%2C+KP.4%2C+P.6%2C+TP.+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_208",
@@ -2377,7 +2377,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20581%20%C4%90%C6%B0%E1%BB%9Dng%20V%C3%B2ng%20N%C3%BAi%20Sam%2C%20581%20%C4%90%C6%B0%E1%BB%9Dng%20V%C3%B2ng%20N%C3%BAi%20Sam%2C%20P.%20N%C3%BAi%20Sam%2C%20TP.%20Ch%C3%A2u%20%C4%90%E1%BB%91c%2C%20T.%20An%20Gian"
+    "maps_url": "https://maps.google.com/?q=WinMart+581+%C4%90%C6%B0%E1%BB%9Dng+V%C3%B2ng+N%C3%BAi+Sam%2C+P.+N%C3%BAi+Sam%2C+TP.+Ch%C3%A2u+%C4%90%E1%BB%91c%2C+T.+An+Gian"
   },
   {
     "id": "STORE_209",
@@ -2389,7 +2389,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20378%20L%C3%AA%20Th%E1%BB%8B%20H%E1%BB%93ng%20G%E1%BA%A5m%2C%20378%20L%C3%AA%20Th%E1%BB%8B%20H%E1%BB%93ng%20G%E1%BA%A5m%2C%20P.%206%2C%20TP.%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+378+L%C3%AA+Th%E1%BB%8B+H%E1%BB%93ng+G%E1%BA%A5m%2C+P.+6%2C+TP.+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_210",
@@ -2401,7 +2401,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20108%20Tr%C6%B0ng%20N%E1%BB%AF%20V%C6%B0%C6%A1ng%2C%20108%20Tr%C6%B0ng%20N%E1%BB%AF%20V%C6%B0%C6%A1ng%2C%20P.%20Ch%C3%A2u%20Ph%C3%BA%20B%2C%20TP.%20Ch%C3%A2u%20%C4%90%E1%BB%91c"
+    "maps_url": "https://maps.google.com/?q=WinMart+108+Tr%C6%B0ng+N%E1%BB%AF+V%C6%B0%C6%A1ng%2C+P.+Ch%C3%A2u+Ph%C3%BA+B%2C+TP.+Ch%C3%A2u+%C4%90%E1%BB%91c"
   },
   {
     "id": "STORE_211",
@@ -2413,7 +2413,7 @@
     "nvxl": "Đầu Mối Điều Phối Long An",
     "route_name": "Tuyến Long An",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20LAN%2078%20Hu%E1%BB%B3nh%20Vi%E1%BB%87t%20Thanh%2C%2078%20Hu%E1%BB%B3nh%20Vi%E1%BB%87t%20Thanh%2C%20P.%202%2C%20TP.%20T%C3%A2n%20An"
+    "maps_url": "https://maps.google.com/?q=WinMart+78+Hu%E1%BB%B3nh+Vi%E1%BB%87t+Thanh%2C+P.+2%2C+TP.+T%C3%A2n+An"
   },
   {
     "id": "STORE_212",
@@ -2425,7 +2425,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20191%20Th%E1%BB%A7%20Khoa%20Ngh%C4%A9a%2C%20191%20Th%E1%BB%A7%20Khoa%20Ngh%C4%A9a%2C%20P.%20Ch%C3%A2u%20Ph%C3%BA%20A%2C%20TP.%20Ch%C3%A2u%20%C4%90%E1%BB%91c"
+    "maps_url": "https://maps.google.com/?q=WinMart+191+Th%E1%BB%A7+Khoa+Ngh%C4%A9a%2C+P.+Ch%C3%A2u+Ph%C3%BA+A%2C+TP.+Ch%C3%A2u+%C4%90%E1%BB%91c"
   },
   {
     "id": "STORE_213",
@@ -2437,7 +2437,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%2054-56%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%2054-56%20Nguy%E1%BB%85n%20V%C4%83n%20C%E1%BB%AB%2C%20TT.%20An%20Ch%C3%A2u%2C%20H.%20Ch%C3%A2u%20Th%C3%A0nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+54-56+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB%2C+TT.+An+Ch%C3%A2u%2C+H.+Ch%C3%A2u+Th%C3%A0nh"
   },
   {
     "id": "STORE_214",
@@ -2449,7 +2449,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20342%20Qu%E1%BB%91c%20l%E1%BB%99%2091%2C%20342%20Qu%E1%BB%91c%20l%E1%BB%99%2091%2C%20TT.%20C%C3%A1i%20D%E1%BA%A7u%2C%20H.%20Ch%C3%A2u%20Ph%C3%BA"
+    "maps_url": "https://maps.google.com/?q=WinMart+342+Qu%E1%BB%91c+l%E1%BB%99+91%2C+TT.+C%C3%A1i+D%E1%BA%A7u%2C+H.+Ch%C3%A2u+Ph%C3%BA"
   },
   {
     "id": "STORE_215",
@@ -2461,7 +2461,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%2093%20V%C3%B5%20Duy%20Linh%2C%2093%20V%C3%B5%20Duy%20Linh%2C%20KP.%20H%C3%B2a%20Th%C6%A1m%201%2C%20TT.%20T%C3%A2n%20H%C3%B2a%2C%20H.%20G%C3%B2%20C%C3%B4ng%20%C4%90%C3%B4ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+93+V%C3%B5+Duy+Linh%2C+KP.+H%C3%B2a+Th%C6%A1m+1%2C+TT.+T%C3%A2n+H%C3%B2a%2C+H.+G%C3%B2+C%C3%B4ng+%C4%90%C3%B4ng"
   },
   {
     "id": "STORE_216",
@@ -2473,7 +2473,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%20133%20Tr%C6%B0%C6%A1ng%20C%C3%B4ng%20%C4%90%E1%BB%8Bnh%2C%20133%20Tr%C6%B0%C6%A1ng%20C%C3%B4ng%20%C4%90%E1%BB%8Bnh%2C%20P.%202%2C%20TP.%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+133+Tr%C6%B0%C6%A1ng+C%C3%B4ng+%C4%90%E1%BB%8Bnh%2C+P.+2%2C+TP.+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_217",
@@ -2485,7 +2485,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20T%E1%BB%95%208%2C%20%E1%BA%A4p%20H%C3%B2a%20H%E1%BA%A1%2C%20T%E1%BB%95%208%2C%20%E1%BA%A4p%20H%C3%B2a%20H%E1%BA%A1%2C%20X.%20Ki%E1%BA%BFn%20An%2C%20H.%20Ch%E1%BB%A3%20M%E1%BB%9Bi"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%E1%BB%95+8%2C+%E1%BA%A4p+H%C3%B2a+H%E1%BA%A1%2C+X.+Ki%E1%BA%BFn+An%2C+H.+Ch%E1%BB%A3+M%E1%BB%9Bi"
   },
   {
     "id": "STORE_218",
@@ -2497,7 +2497,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20T%E1%BB%95%201%2C%20%C4%90.%20T%C3%A2n%20L%E1%BB%99%20Ki%E1%BB%81u%20L%C6%B0%C6%A1ng%2C%20T%E1%BB%95%201%2C%20%C4%90.%20T%C3%A2n%20L%E1%BB%99%20Ki%E1%BB%81u%20L%C6%B0%C6%A1ng%2C%20Kh%C3%B3m%20V%C4%A9nh%20T%C3%A2y%203%2C%20P.%20N%C3%BAi%20Sam%2C%20TP.%20Ch%C3%A2u%20%C4%90%E1%BB%91c"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%E1%BB%95+1%2C+%C4%90.+T%C3%A2n+L%E1%BB%99+Ki%E1%BB%81u+L%C6%B0%C6%A1ng%2C+Kh%C3%B3m+V%C4%A9nh+T%C3%A2y+3%2C+P.+N%C3%BAi+Sam%2C+TP.+Ch%C3%A2u+%C4%90%E1%BB%91c"
   },
   {
     "id": "STORE_219",
@@ -2509,7 +2509,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20T%C4%90S%20308%2C%20TB%C4%90S%2019%20Qu%E1%BB%91c%20l%E1%BB%99%2050%2C%20T%C4%90S%20308%2C%20TB%C4%90S%2019%2C%20Qu%E1%BB%91c%20l%E1%BB%99%2050%2C%20P.%204%2C%20TX.%20G%C3%B2%20C%C3%B4ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90S+308%2C+TB%C4%90S+19+Qu%E1%BB%91c+l%E1%BB%99+50%2C+T%C4%90S+308%2C+TB%C4%90S+19%2C+Qu%E1%BB%91c+l%E1%BB%99+50%2C+P.+4%2C+TX.+G%C3%B2+C%C3%B4ng"
   },
   {
     "id": "STORE_220",
@@ -2521,7 +2521,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20147A%20Tr%E1%BA%A7n%20C%C3%B4ng%20T%C6%B0%E1%BB%9Dng%2C%20147A%20Tr%E1%BA%A7n%20C%C3%B4ng%20T%C6%B0%E1%BB%9Dng%2C%20P.%205%2C%20TX.%20G%C3%B2%20C%C3%B4ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+147A+Tr%E1%BA%A7n+C%C3%B4ng+T%C6%B0%E1%BB%9Dng%2C+P.+5%2C+TX.+G%C3%B2+C%C3%B4ng"
   },
   {
     "id": "STORE_221",
@@ -2533,7 +2533,7 @@
     "nvxl": "Đầu Mối Điều Phối Bạc Liêu",
     "route_name": "Tuyến Bạc Liêu",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BLU%20T%C4%90%20287%2C%20TB%C4%90S%2025%20Ninh%20B%C3%ACnh%2C%20T%C4%90S%20287%2C%20TB%C4%90S%2025%20%C4%90%C6%B0%E1%BB%9Dng%20Ninh%20B%C3%ACnh%2C%20Kh%C3%B3m%204%2C%20P.%202%2C%20TP.%20B%E1%BA%A1c%20Li%C3%AAu"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90+287%2C+TB%C4%90S+25+Ninh+B%C3%ACnh%2C+T%C4%90S+287%2C+TB%C4%90S+25+%C4%90%C6%B0%E1%BB%9Dng+Ninh+B%C3%ACnh%2C+Kh%C3%B3m+4%2C+P.+2%2C+TP.+B%E1%BA%A1c+Li%C3%AAu"
   },
   {
     "id": "STORE_222",
@@ -2545,7 +2545,7 @@
     "nvxl": "Đầu Mối Điều Phối Bạc Liêu",
     "route_name": "Tuyến Bạc Liêu",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BLU%20361%20V%C3%B5%20Th%E1%BB%8B%20S%C3%A1u%2C%20361%20V%C3%B5%20Th%E1%BB%8B%20S%C3%A1u%2C%20Kh%C3%B3m%204%2C%20P.%207%2C%20TP.%20B%E1%BA%A1c%20Li%C3%AAu"
+    "maps_url": "https://maps.google.com/?q=WinMart+361+V%C3%B5+Th%E1%BB%8B+S%C3%A1u%2C+Kh%C3%B3m+4%2C+P.+7%2C+TP.+B%E1%BA%A1c+Li%C3%AAu"
   },
   {
     "id": "STORE_223",
@@ -2557,7 +2557,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20315%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20315%20L%C3%BD%20Th%C6%B0%E1%BB%9Dng%20Ki%E1%BB%87t%2C%20P.%206%2C%20TP.%20C%C3%A0%20Mau"
+    "maps_url": "https://maps.google.com/?q=WinMart+315+L%C3%BD+Th%C6%B0%E1%BB%9Dng+Ki%E1%BB%87t%2C+P.+6%2C+TP.+C%C3%A0+Mau"
   },
   {
     "id": "STORE_224",
@@ -2569,7 +2569,7 @@
     "nvxl": "Đầu Mối Điều Phối Bạc Liêu",
     "route_name": "Tuyến Bạc Liêu",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BLU%206%20L%C3%AA%20Du%E1%BA%A9n%2C%2006%20L%C3%AA%20Du%E1%BA%A9n%2C%20P.%201%2C%20TP.%20B%E1%BA%A1c%20Li%C3%AAu"
+    "maps_url": "https://maps.google.com/?q=WinMart+06+L%C3%AA+Du%E1%BA%A9n%2C+P.+1%2C+TP.+B%E1%BA%A1c+Li%C3%AAu"
   },
   {
     "id": "STORE_225",
@@ -2581,7 +2581,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20662%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20662%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20t%E1%BB%95%2062%20B%C3%ACnh%20%C4%90%E1%BB%A9c%201%2C%20P.%20B%C3%ACnh%20%C4%90%E1%BB%A9c%2C%20TP.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+662+Tr%E1%BA%A7n+H%C6%B0ng+%C4%90%E1%BA%A1o%2C+t%E1%BB%95+62+B%C3%ACnh+%C4%90%E1%BB%A9c+1%2C+P.+B%C3%ACnh+%C4%90%E1%BB%A9c%2C+TP.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_226",
@@ -2593,7 +2593,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20489%20Qu%E1%BB%91c%20l%E1%BB%99%2050%2C%20489%20Qu%E1%BB%91c%20l%E1%BB%99%2050%2C%20khu%20ph%E1%BB%91%204%2C%20P.%209%2C%20TP.%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+489+Qu%E1%BB%91c+l%E1%BB%99+50%2C+khu+ph%E1%BB%91+4%2C+P.+9%2C+TP.+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_227",
@@ -2605,7 +2605,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%204-6%20Pasteur%2C%204-6%20Pasteur%2C%20Kh%C3%B3m%202%2C%20P.%208%2C%20TP.%20S%C3%B3c%20Tr%C4%83ng"
+    "maps_url": "https://maps.google.com/?q=WinMart+4-6+Pasteur%2C+Kh%C3%B3m+2%2C+P.+8%2C+TP.+S%C3%B3c+Tr%C4%83ng"
   },
   {
     "id": "STORE_228",
@@ -2617,7 +2617,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%20T%C4%90%20195-TB%C4%90%2018%20Ung%20C%C3%B4ng%20U%E1%BA%A9n%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%20195%2C%20T%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%2018%2C%20%C4%91%C6%B0%E1%BB%9Dng%20Ung%20C%C3%B4ng%20U%E1%BA%A9n%2C%20%E1%BA%A4p%20An%20Th%C3%A0nh%2C%20TT.%20K%E1%BA%BF%20S%C3%A1ch%2C%20H.%20K%E1%BA%BF%20S%C3%A1ch"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%C4%90+195-TB%C4%90+18+Ung+C%C3%B4ng+U%E1%BA%A9n%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+195%2C+T%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+18%2C+%C4%91%C6%B0%E1%BB%9Dng+Ung+C%C3%B4ng+U%E1%BA%A9n%2C+%E1%BA%A4p+An+Th%C3%A0nh%2C+TT.+K%E1%BA%BF+S%C3%A1ch%2C+H.+K%E1%BA%BF+S%C3%A1ch"
   },
   {
     "id": "STORE_229",
@@ -2629,7 +2629,7 @@
     "nvxl": "Đầu Mối Điều Phối Bến Tre",
     "route_name": "Tuyến Bến Tre",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20BTE%20TB%C4%90%2075%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20%C4%90%E1%BB%8Bnh%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20106%2C%20108%2C%20109%20t%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%2075%2C%20%C4%90%C6%B0%E1%BB%9Dng%20Nguy%E1%BB%85n%20Th%E1%BB%8B%20%C4%90%E1%BB%8Bnh%2C%20KP.%201%2C%20TT.%20Gi%E1%BB%93ng%20Tr%C3%B4m%2C%20H.%20Gi%E1%BB%93ng%20Tr%C3%B4m"
+    "maps_url": "https://maps.google.com/?q=WinMart+TB%C4%90+75+Nguy%E1%BB%85n+Th%E1%BB%8B+%C4%90%E1%BB%8Bnh%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+106%2C+108%2C+109+t%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+75%2C+%C4%90%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+Th%E1%BB%8B+%C4%90%E1%BB%8Bnh%2C+KP.+1%2C+TT.+Gi%E1%BB%93ng+Tr%C3%B4m%2C+H.+Gi%E1%BB%93ng+Tr%C3%B4m"
   },
   {
     "id": "STORE_230",
@@ -2641,7 +2641,7 @@
     "nvxl": "Đầu Mối Điều Phối Sóc Trăng",
     "route_name": "Tuyến Sóc Trăng",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20STG%20%C4%90%C6%B0%E1%BB%9Dng%20t%E1%BB%89nh%20937B%2C%20%E1%BA%A4p%20Ch%E1%BB%A3%20M%E1%BB%9Bi%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%2095%2C%20T%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%2012%2C%20%C4%90%C6%B0%E1%BB%9Dng%20t%E1%BB%89nh%20937B%2C%20%E1%BA%A4p%20Ch%E1%BB%A3%20M%E1%BB%9Bi%2C%20TT.%20H%C6%B0ng%20L%E1%BB%A3i%2C%20H.%20Th%E1%BA%A1nh%20Tr%E1%BB%8B"
+    "maps_url": "https://maps.google.com/?q=WinMart+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+95%2C+T%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+12%2C+%C4%90%C6%B0%E1%BB%9Dng+t%E1%BB%89nh+937B%2C+%E1%BA%A4p+Ch%E1%BB%A3+M%E1%BB%9Bi%2C+TT.+H%C6%B0ng+L%E1%BB%A3i%2C+H.+Th%E1%BA%A1nh+Tr%E1%BB%8B"
   },
   {
     "id": "STORE_231",
@@ -2653,7 +2653,7 @@
     "nvxl": "Đầu Mối Điều Phối Trà Vinh",
     "route_name": "Tuyến Trà Vinh",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TVH%20172%20%C4%90%C6%B0%E1%BB%9Dng%2019/5%2C%20172%20%C4%90%C6%B0%E1%BB%9Dng%2019/5%20Kh%C3%B3m%202%2C%20P.%201%2C%20TX.%20Duy%C3%AAn%20H%E1%BA%A3i"
+    "maps_url": "https://maps.google.com/?q=WinMart+172+%C4%90%C6%B0%E1%BB%9Dng+19%2F5+Kh%C3%B3m+2%2C+P.+1%2C+TX.+Duy%C3%AAn+H%E1%BA%A3i"
   },
   {
     "id": "STORE_232",
@@ -2665,7 +2665,7 @@
     "nvxl": "Đầu Mối Điều Phối Tiền Giang",
     "route_name": "Tuyến Tiền Giang",
     "truck_note": "⚠️ Trục chính nội ô / TP: Chú ý biển cấm tải giờ cao điểm. Khuyến nghị xe tải nhỏ < 2.5T.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20TGG%20202%20Nam%20K%E1%BB%B3%20Kh%E1%BB%9Fi%20Ngh%C4%A9a%2C%20202%20%C4%90%C6%B0%E1%BB%9Dng%20Nam%20K%E1%BB%B3%20Kh%E1%BB%9Fi%20Ngh%C4%A9a%2C%20P.%201%2C%20TP.%20M%E1%BB%B9%20Tho"
+    "maps_url": "https://maps.google.com/?q=WinMart+202+Nam+K%E1%BB%B3+Kh%E1%BB%9Fi+Ngh%C4%A9a%2C+202+%C4%90%C6%B0%E1%BB%9Dng+Nam+K%E1%BB%B3+Kh%E1%BB%9Fi+Ngh%C4%A9a%2C+P.+1%2C+TP.+M%E1%BB%B9+Tho"
   },
   {
     "id": "STORE_233",
@@ -2677,7 +2677,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20332-334%20L%C3%BD%20Th%C3%A1i%20T%E1%BB%95%2C%20332-334%20L%C3%BD%20Th%C3%A1i%20T%E1%BB%95%2C%20P.%20M%E1%BB%B9%20Long%2C%20TP.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+332-334+L%C3%BD+Th%C3%A1i+T%E1%BB%95%2C+P.+M%E1%BB%B9+Long%2C+TP.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_234",
@@ -2689,7 +2689,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20%C4%90%C6%B0%E1%BB%9Dng%20Tr%E1%BA%A7n%20H%C6%B0ng%20%C4%90%E1%BA%A1o%2C%20P.%20M%E1%BB%B9%20Th%E1%BB%9Bi%2C%20TP.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+%C4%90%C6%B0%E1%BB%9Dng+Tr%E1%BA%A7n+H%C6%B0ng+%C4%90%E1%BA%A1o%2C+P.+M%E1%BB%B9+Th%E1%BB%9Bi%2C+TP.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_235",
@@ -2701,7 +2701,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20%E1%BA%A4p%205%2C%20T%C3%A2n%20L%E1%BB%99c%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%20187%2C%20T%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%2017%2C%20%E1%BA%A4p%205%2C%20X.%20T%C3%A2n%20L%E1%BB%99c"
+    "maps_url": "https://maps.google.com/?q=WinMart+%E1%BA%A4p+5%2C+T%C3%A2n+L%E1%BB%99c%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+187%2C+T%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+17%2C+%E1%BA%A4p+5%2C+X.+T%C3%A2n+L%E1%BB%99c"
   },
   {
     "id": "STORE_236",
@@ -2713,7 +2713,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20%E1%BA%A4p%20T%C3%A2n%20Hi%E1%BB%87p%2C%20Tr%E1%BA%A7n%20V%C4%83n%20Th%E1%BB%9Di%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%201%20v%C3%A0%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%202%2C%20T%E1%BB%9D%20B%E1%BA%A3n%20%C4%90%E1%BB%93%2028%2C%20%E1%BA%A4p%20T%C3%A2n%20Hi%E1%BB%87p%2C%20X.%20Tr%E1%BA%A7n%20V%C4%83n%20Th%E1%BB%9Di"
+    "maps_url": "https://maps.google.com/?q=WinMart+%E1%BA%A4p+T%C3%A2n+Hi%E1%BB%87p%2C+Tr%E1%BA%A7n+V%C4%83n+Th%E1%BB%9Di%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+1+v%C3%A0+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+2%2C+T%E1%BB%9D+B%E1%BA%A3n+%C4%90%E1%BB%93+28%2C+%E1%BA%A4p+T%C3%A2n+Hi%E1%BB%87p%2C+X.+Tr%E1%BA%A7n+V%C4%83n+Th%E1%BB%9Di"
   },
   {
     "id": "STORE_237",
@@ -2725,7 +2725,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🚚 Trục Quốc lộ / Tỉnh lộ: Xe tải 2.5T - 5T lưu thông bình thường, đỗ xe an toàn.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20QL1A%2C%20L%C6%B0%C6%A1ng%20Th%E1%BA%BF%20Tr%C3%A2n%2C%20Th%E1%BB%ADa%20%C4%90%E1%BA%A5t%20s%E1%BB%91%2033%20v%C3%A0%2048%2C%20T%E1%BB%9D%20B%E1%BA%A3n%20%C4%90%E1%BB%93%20s%E1%BB%91%2043%2C%20%C4%90%C6%B0%E1%BB%9Dng%20Qu%E1%BB%91c%20l%E1%BB%99%201A%2C%20X.%20L%C6%B0%C6%A1ng%20Th%E1%BA%BF%20Tr%C3%A2n"
+    "maps_url": "https://maps.google.com/?q=WinMart+QL1A%2C+L%C6%B0%C6%A1ng+Th%E1%BA%BF+Tr%C3%A2n%2C+Th%E1%BB%ADa+%C4%90%E1%BA%A5t+s%E1%BB%91+33+v%C3%A0+48%2C+T%E1%BB%9D+B%E1%BA%A3n+%C4%90%E1%BB%93+s%E1%BB%91+43%2C+%C4%90%C6%B0%E1%BB%9Dng+Qu%E1%BB%91c+l%E1%BB%99+1A%2C+X.+L%C6%B0%C6%A1ng+Th%E1%BA%BF+Tr%C3%A2n"
   },
   {
     "id": "STORE_238",
@@ -2737,7 +2737,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20%E1%BA%A4p%20C%C3%A1i%20N%E1%BA%A9y%2C%20N%C4%83m%20C%C4%83n%2C%20Th%E1%BB%ADa%20%C4%90%E1%BA%A5t%20s%E1%BB%91%20265%2C%20266%20v%C3%A0%20267%2C%20T%E1%BB%9D%20B%E1%BA%A3n%20%C4%90%E1%BB%93%20s%E1%BB%91%2011%2C%20%E1%BA%A4p%20C%C3%A1i%20N%E1%BA%A9y%2C%20X.%20N%C4%83m%20C%C4%83n"
+    "maps_url": "https://maps.google.com/?q=WinMart+%E1%BA%A4p+C%C3%A1i+N%E1%BA%A9y%2C+N%C4%83m+C%C4%83n%2C+Th%E1%BB%ADa+%C4%90%E1%BA%A5t+s%E1%BB%91+265%2C+266+v%C3%A0+267%2C+T%E1%BB%9D+B%E1%BA%A3n+%C4%90%E1%BB%93+s%E1%BB%91+11%2C+%E1%BA%A4p+C%C3%A1i+N%E1%BA%A9y%2C+X.+N%C4%83m+C%C4%83n"
   },
   {
     "id": "STORE_239",
@@ -2749,7 +2749,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20232A%20L%C3%BD%20V%C4%83n%20L%C3%A2m%2C%20232A%20L%C3%BD%20V%C4%83n%20L%C3%A2m%2C%20P.%20An%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+232A+L%C3%BD+V%C4%83n+L%C3%A2m%2C+P.+An+Xuy%C3%AAn"
   },
   {
     "id": "STORE_240",
@@ -2761,7 +2761,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%2011B-12%20B%C3%B9i%20Th%E1%BB%8B%20Xu%C3%A2n%2C%20Long%20Xuy%C3%AAn%2C%2011B%20-%2012%20B%C3%B9i%20Th%E1%BB%8B%20Xu%C3%A2n%2C%20P.%20Long%20Xuy%C3%AAn"
+    "maps_url": "https://maps.google.com/?q=WinMart+11B-12+B%C3%B9i+Th%E1%BB%8B+Xu%C3%A2n%2C+Long+Xuy%C3%AAn%2C+11B+-+12+B%C3%B9i+Th%E1%BB%8B+Xu%C3%A2n%2C+P.+Long+Xuy%C3%AAn"
   },
   {
     "id": "STORE_241",
@@ -2773,7 +2773,7 @@
     "nvxl": "Đầu Mối Điều Phối An Giang",
     "route_name": "Tuyến An Giang",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20AGG%20Ama%20138%20%C4%90%C6%B0%E1%BB%9Dng%20Amalfi%2C%20Ama%20138%20%C4%90%C6%B0%E1%BB%9Dng%20Amalfi%2C%20Th%E1%BB%8B%20Tr%E1%BA%A5n%20Sunset%20Town%2C%20KP6%20An%20Th%E1%BB%9Bi%2C%20TP.%20Ph%C3%BA%20Qu%E1%BB%91c%2C%20T%E1%BB%89nh%20Ki%C3%AAn%20Giang"
+    "maps_url": "https://maps.google.com/?q=WinMart+Ama+138+%C4%90%C6%B0%E1%BB%9Dng+Amalfi%2C+Th%E1%BB%8B+Tr%E1%BA%A5n+Sunset+Town%2C+KP6+An+Th%E1%BB%9Bi%2C+TP.+Ph%C3%BA+Qu%E1%BB%91c%2C+T%E1%BB%89nh+Ki%C3%AAn+Giang"
   },
   {
     "id": "STORE_242",
@@ -2785,7 +2785,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%2049%20%C4%90%C6%B0%E1%BB%9Dng%203/2%2C%20T%C3%A2n%20Th%C3%A0nh%2C%20S%E1%BB%91%2049%2C%20%C4%90%C6%B0%E1%BB%9Dng%203%20th%C3%A1ng%202%2C%20P.%20T%C3%A2n%20Th%C3%A0nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+49+%C4%90%C6%B0%E1%BB%9Dng+3%2F2%2C+T%C3%A2n+Th%C3%A0nh%2C+S%E1%BB%91+49%2C+%C4%90%C6%B0%E1%BB%9Dng+3+th%C3%A1ng+2%2C+P.+T%C3%A2n+Th%C3%A0nh"
   },
   {
     "id": "STORE_243",
@@ -2797,7 +2797,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20H%E1%BA%A3i%20Th%C6%B0%E1%BB%A3ng%20L%C3%A3n%20%C3%94ng%2C%20H%C3%B2a%20Th%C3%A0nh%2C%20Th%E1%BB%ADa%20%C4%90%E1%BA%A5t%20s%E1%BB%91%2058%2C%20T%E1%BB%9D%20B%E1%BA%A3n%20%C4%90%E1%BB%93%20s%E1%BB%91%2049%2C%20%C4%90%C6%B0%E1%BB%9Dng%20H%E1%BA%A3i%20Th%C6%B0%E1%BB%A3ng%20L%C3%A3n%20%C3%94ng%2C%20P.%20H%C3%B2a%20Th%C3%A0nh"
+    "maps_url": "https://maps.google.com/?q=WinMart+H%E1%BA%A3i+Th%C6%B0%E1%BB%A3ng+L%C3%A3n+%C3%94ng%2C+H%C3%B2a+Th%C3%A0nh%2C+Th%E1%BB%ADa+%C4%90%E1%BA%A5t+s%E1%BB%91+58%2C+T%E1%BB%9D+B%E1%BA%A3n+%C4%90%E1%BB%93+s%E1%BB%91+49%2C+%C4%90%C6%B0%E1%BB%9Dng+H%E1%BA%A3i+Th%C6%B0%E1%BB%A3ng+L%C3%A3n+%C3%94ng%2C+P.+H%C3%B2a+Th%C3%A0nh"
   },
   {
     "id": "STORE_244",
@@ -2809,7 +2809,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20%E1%BA%A4p%201%2C%20Th%E1%BB%9Bi%20B%C3%ACnh%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20293%2C%20T%E1%BB%9D%20B%E1%BA%A3n%20%C4%90%E1%BB%93%20s%E1%BB%91%2038%2C%20%E1%BA%A4p%201%2C%20X.%20Th%E1%BB%9Bi%20B%C3%ACnh"
+    "maps_url": "https://maps.google.com/?q=WinMart+%E1%BA%A4p+1%2C+Th%E1%BB%9Bi+B%C3%ACnh%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+293%2C+T%E1%BB%9D+B%E1%BA%A3n+%C4%90%E1%BB%93+s%E1%BB%91+38%2C+%E1%BA%A4p+1%2C+X.+Th%E1%BB%9Bi+B%C3%ACnh"
   },
   {
     "id": "STORE_245",
@@ -2821,7 +2821,7 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "Lưu thông bình thường, tuân thủ biển báo giao thông cục bộ.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20T%E1%BA%A1%20An%20Kh%C6%B0%C6%A1ng%2C%20%C4%90%E1%BA%A7m%20D%C6%A1i%2C%20Th%E1%BB%ADa%20%C4%90%E1%BA%A5t%20s%E1%BB%91%20262%2C%20T%E1%BB%9D%20B%E1%BA%A3n%20%C4%90%E1%BB%93%20s%E1%BB%91%2014%2C%20%C4%90%C6%B0%E1%BB%9Dng%20T%E1%BA%A1%20An%20Kh%C6%B0%C6%A1ng%2C%20X.%20%C4%90%E1%BA%A7m%20D%C6%A1i"
+    "maps_url": "https://maps.google.com/?q=WinMart+T%E1%BA%A1+An+Kh%C6%B0%C6%A1ng%2C+%C4%90%E1%BA%A7m+D%C6%A1i%2C+Th%E1%BB%ADa+%C4%90%E1%BA%A5t+s%E1%BB%91+262%2C+T%E1%BB%9D+B%E1%BA%A3n+%C4%90%E1%BB%93+s%E1%BB%91+14%2C+%C4%90%C6%B0%E1%BB%9Dng+T%E1%BA%A1+An+Kh%C6%B0%C6%A1ng%2C+X.+%C4%90%E1%BA%A7m+D%C6%A1i"
   },
   {
     "id": "STORE_246",
@@ -2833,6 +2833,6 @@
     "nvxl": "Đầu Mối Điều Phối Cà Mau",
     "route_name": "Tuyến Cà Mau",
     "truck_note": "🏡 Tuyến huyện / xã: Đường thông thoáng, kiểm tra cầu tải trọng địa phương.",
-    "maps_url": "https://www.google.com/maps/search/?api=1&query=WM%2B%20CMU%20%E1%BA%A4p%2011%2C%20Kh%C3%A1nh%20L%C3%A2m%2C%20Th%E1%BB%ADa%20%C4%91%E1%BA%A5t%20s%E1%BB%91%20118%2C%20T%E1%BB%9D%20b%E1%BA%A3n%20%C4%91%E1%BB%93%20s%E1%BB%91%2064%2C%20%E1%BA%A4p%2011%2C%20X.%20Kh%C3%A1nh%20L%C3%A2m"
+    "maps_url": "https://maps.google.com/?q=WinMart+%E1%BA%A4p+11%2C+Kh%C3%A1nh+L%C3%A2m%2C+Th%E1%BB%ADa+%C4%91%E1%BA%A5t+s%E1%BB%91+118%2C+T%E1%BB%9D+b%E1%BA%A3n+%C4%91%E1%BB%93+s%E1%BB%91+64%2C+%E1%BA%A4p+11%2C+X.+Kh%C3%A1nh+L%C3%A2m"
   }
 ]

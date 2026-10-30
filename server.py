@@ -2526,7 +2526,8 @@ def format_store_telegram_reply(results, query=""):
         f"⏰ <b>Khung giờ nhận hàng:</b> 07:00 – 11:00 | 13:00 – 17:00",
         f"🚛 <b>Lưu ý xe tải:</b> {best['truck_note']}",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-        f"🗺️ 👉 <a href='{best['maps_url']}'><b>BẤM VÀO ĐÂY ĐỂ MỞ GOOGLE MAPS DẪN ĐƯỜNG ↗</b></a>"
+        f"🗺️ 👉 <a href='{best['maps_url']}'><b>BẤM VÀO ĐÂY ĐỂ MỞ GOOGLE MAPS DẪN ĐƯỜNG ↗</b></a>",
+        f"📋 <i>Địa chỉ copy nhanh:</i> <code>{html.escape(best['address'])}</code>"
     ]
     if len(results) > 1:
         reply_lines.append("\n🔍 <i>Các điểm lân cận tương tự:</i>")
