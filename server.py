@@ -3738,14 +3738,16 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         elif is_pure_kpi_cmd and not clean_q:
             tg_html = _format_quick_kpi_telegram_report()
         else:
-            combined_check = f"{clean_q} {reply_to_text}".lower()
-            kpi_keywords = [
-                "kpi", "tồn", "gán", "bình thủy", "cái răng", "vị thanh", "ô môn",
-                "21088000", "21985000", "22862000", "22917000", "gtc", "gtb", "ltc",
-                "tỉ lệ", "tỷ lệ", "cod", "xăng", "thời tiết", "số liệu", "báo cáo",
-                "hôm qua", "hôm nay", "ngày", "thấp", "cao", "chuyến", "làm đi", "gửi liền"
+            # Phân biệt chính xác: Chỉ khi người dùng thực sự hỏi về số liệu KPI, tỷ lệ, tồn kho mới lôi bảng số liệu ra
+            # TUYỆT ĐỐI không kích hoạt bảng KPI cho những câu hỏi giao tiếp thông thường (VD: 'sao không trả lời', 'hôm qua làm gì'...)
+            kpi_intent_keywords = [
+                "kpi", "tỉ lệ", "tỷ lệ", "gtc", "gtb", "ltc", "đơn tồn", "tồn kho",
+                "sản lượng", "bao nhiêu đơn", "chốt ca", "đang giao", "chưa giao",
+                "tình hình kho", "số liệu kho", "báo cáo kho", "tiến độ kho",
+                "báo cáo kpi", "báo cáo hôm nay", "báo cáo hôm qua", "xem số liệu"
             ]
-            if any(k in combined_check for k in kpi_keywords):
+            is_kpi_query = any(k in clean_q.lower() for k in kpi_intent_keywords)
+            if is_kpi_query:
                 realtime_ctx = fetch_realtime_context(clean_q or text)
                 sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx, for_telegram=True)
                 full_prompt = ""
