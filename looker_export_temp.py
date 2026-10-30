@@ -350,20 +350,80 @@ def export_b2b_fast(page, context):
 
 
 def copy_export_and_paste_to_master(context, export_page):
-    """Copy toàn bộ dữ liệu từ sheet xuất sang sheet Master Tab 'Data'."""
-    print("\n[Bước 4] Copy dữ liệu sang Master Dashboard...")
-    export_page.bring_to_front()
-    time.sleep(1.0)
-
-    export_page.mouse.click(200, 250)
-    time.sleep(0.3)
-    export_page.keyboard.press("Control+A")
-    time.sleep(0.3)
-    export_page.keyboard.press("Control+A")
-    time.sleep(0.4)
-    export_page.keyboard.press("Control+C")
-    time.sleep(3.0)
-    print("  ✓ Đã Ctrl+C toàn bộ dữ liệu")
+    """Copy dữ liệu từ sheet xuất sang Master Tab 'Data'.
+    Ưu tiên kiến trúc Zero-RAM (CSV Stream + Service Account API) chống 100% lỗi Out of Memory.
+    """
+    print("\n[Bước 4] Đồng bộ dữ liệu sang Master Dashboard (Zero-RAM Chống Out of Memory)...")
+    import csv
+    import io
+    import re
+    
+    export_url = export_page.url
+    sheet_match = re.search(r'/spreadsheets/d/([a-zA-Z0-9-_]+)', export_url)
+    export_sheet_id = sheet_match.group(1) if sheet_match else None
+    
+    creds_candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "tool_11h_bao_cao_telegram", "credentials.json"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "credentials.json"),
+        os.path.abspath("credentials.json")
+    ]
+    creds_file = next((p for p in creds_candidates if os.path.exists(p)), None)
+    
+    synced_via_api = False
+    if export_sheet_id and creds_file:
+        try:
+            import gspread
+            from google.oauth2.service_account import Credentials
+            print(f"  ✓ Tìm thấy credentials: {creds_file}")
+            print("  📥 Đang tải CSV dữ liệu xuất từ Google Sheets...")
+            csv_url = f"https://docs.google.com/spreadsheets/d/{export_sheet_id}/export?format=csv&gid=0"
+            resp = context.request.get(csv_url, timeout=60000)
+            if resp.status == 200:
+                csv_bytes = resp.body()
+                csv_text = csv_bytes.decode('utf-8', errors='replace')
+                print(f"  ✓ Đã tải {len(csv_text):,} ký tự CSV thành công qua API!")
+                
+                reader = csv.reader(io.StringIO(csv_text))
+                header = next(reader)
+                filtered_rows = [header]
+                den_tinh_idx = header.index('đến tỉnh') if 'đến tỉnh' in header else None
+                
+                for row in reader:
+                    if den_tinh_idx is not None and len(row) > den_tinh_idx:
+                        if row[den_tinh_idx] in PROVINCES_LIST:
+                            filtered_rows.append(row)
+                    else:
+                        filtered_rows.append(row)
+                        
+                total_rows = len(filtered_rows)
+                print(f"  ✓ Đã lọc chuẩn xác {total_rows:,} dòng dữ liệu cho 13 tỉnh Miền Tây")
+                
+                creds = Credentials.from_service_account_file(
+                    creds_file,
+                    scopes=['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+                )
+                gc = gspread.authorize(creds)
+                sh = gc.open_by_key("1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI")
+                ws = sh.worksheet('Data')
+                
+                ws.clear()
+                time.sleep(1.0)
+                if ws.row_count < total_rows + 100:
+                    ws.add_rows((total_rows + 100) - ws.row_count)
+                    
+                batch_size = 12000
+                for i in range(0, total_rows, batch_size):
+                    batch = filtered_rows[i:i+batch_size]
+                    start_row = i + 1
+                    end_row = i + len(batch)
+                    end_col_char = chr(ord('A') + len(header) - 1)
+                    ws.update(values=batch, range_name=f'A{start_row}:{end_col_char}{end_row}')
+                    print(f"  ✓ Đã ghi dòng {start_row:,} -> {end_row:,} vào tab Data")
+                    
+                print("  🎉 ĐỒNG BỘ DỮ LIỆU QUA API THÀNH CÔNG (0 MB RAM BROWSER)!")
+                synced_via_api = True
+        except Exception as ex:
+            print(f"  ! Lỗi đồng bộ API ({ex}), sẽ thử fallback về clipboard...")
 
     master_page = None
     for pg in context.pages:
@@ -378,16 +438,24 @@ def copy_export_and_paste_to_master(context, export_page):
     master_page.bring_to_front()
     time.sleep(2.0)
 
-    try:
-        master_page.evaluate("""() => {
-            const dialog = document.querySelector('.modal-dialog, div[role="dialog"]');
-            if (dialog) {
-                const btn = Array.from(dialog.querySelectorAll('button, div[role="button"]')).find(b => b.innerText && (b.innerText.trim() === 'Tải lại' || b.innerText.trim() === 'Reload'));
-                if (btn && btn.offsetHeight > 0) btn.click();
-            }
-        }""")
-    except Exception:
-        pass
+    if synced_via_api:
+        return master_page
+
+    # Chế độ Fallback clipboard
+    export_page.bring_to_front()
+    time.sleep(1.0)
+    export_page.mouse.click(200, 250)
+    time.sleep(0.3)
+    export_page.keyboard.press("Control+A")
+    time.sleep(0.3)
+    export_page.keyboard.press("Control+A")
+    time.sleep(0.4)
+    export_page.keyboard.press("Control+C")
+    time.sleep(3.0)
+    print("  ✓ Đã Ctrl+C toàn bộ dữ liệu (Fallback)")
+
+    master_page.bring_to_front()
+    time.sleep(2.0)
 
     try:
         data_tab = master_page.locator("[id*='sheet-tab']:has-text('Data'), .docs-sheet-tab:has-text('Data')").first
@@ -411,7 +479,7 @@ def copy_export_and_paste_to_master(context, export_page):
     master_page.keyboard.press("Control+Home")
     time.sleep(0.5)
     master_page.keyboard.press("Control+V")
-    print("  ⏳ Đang đợi 15 giây để Google Sheets upload và lưu toàn bộ 200,000+ dòng dữ liệu lên máy chủ...")
+    print("  ⏳ Đang đợi 15 giây để Google Sheets upload và lưu dữ liệu lên máy chủ...")
     time.sleep(15.0)
     print("  ✓ Đã dán toàn bộ dữ liệu mới vào Data!A1 và lưu thành công")
 

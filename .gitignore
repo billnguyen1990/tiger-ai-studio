@@ -8,6 +8,7 @@ venv/
 .DS_Store
 gemini_config.json
 google_auth_storage.json
+credentials.json
 *.png
 *.jpg
 *.log
