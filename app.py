@@ -2432,11 +2432,10 @@ def save_gemini_api_key(key):
         return False
 
 def extract_ghn_order_codes(text):
-    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, hoặc chuỗi 8-16 ký tự)"""
+    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, VNGH hoặc mã có chữ và số)"""
     if not text:
         return []
     import re
-    tokens = re.findall(r'\b[A-Za-z0-9_-]{8,18}\b', text)
     ignored = {
         "TELEGRAM", "CANDIDATE", "SCHEDULE", "AUTOMATIC", "EXCELLENT", 
         "YESTERDAY", "INTERNAL", "TRACUUNOI", "COPILOT", "STUDIO", 
@@ -2444,16 +2443,32 @@ def extract_ghn_order_codes(text):
         "NOTFOUND", "STATUS", "QUESTION", "RESPONSED", "REPORTER", 
         "PROMPT", "GEMINI", "BINHTHUY", "CAIRANG", "VITHANH", "BINHMINH",
         "WAREHOUSE", "TRACKING", "HISTORY", "LOCATION", "ORDERCODE",
-        "AIAGENTMT", "AIAGENTMTBOT", "AIAGENTMT_BOT", "AIAGENT", "AIBOT", "AIAGENTMT01"
+        "AIAGENTMT", "AIAGENTMTBOT", "AIAGENTMT_BOT", "AIAGENT", "AIBOT", "AIAGENTMT01",
+        "MONDELEZ", "BACHHOA", "BACHHOAXANH", "KINHDO", "TIENTRINH", "DANHSACH",
+        "BAOCAO", "THONGKE", "DONHANG", "GIAOHANG", "KHACHHANG", "NHANVIEN", "DIEUPHOI",
+        "PROJECT", "KEHOACH", "VANHANH"
     }
+    tokens = re.findall(r'\b[A-Za-z0-9_-]{8,18}\b', text)
     results = []
     for t in tokens:
         up = t.upper().replace("-", "").replace("_", "")
-        if up not in ignored:
-            has_letter = any(c.isalpha() for c in up)
-            has_digit = any(c.isdigit() for c in up)
-            is_prefixed = up.startswith(("GYM", "ICT", "GHN", "G", "N"))
-            if is_prefixed or (has_letter and has_digit and 8 <= len(up) <= 16) or len(up) == 8:
+        if up in ignored or len(up) < 8 or len(up) > 18:
+            continue
+        has_digit = any(c.isdigit() for c in up)
+        has_letter = any(c.isalpha() for c in up)
+
+        # 1. Mã đơn chuẩn GHN: Bắt đầu bằng GYM (8-10 ký tự), VNGH (10-18 ký tự)
+        if up.startswith("GYM") and 8 <= len(up) <= 10:
+            results.append(up)
+        elif up.startswith("VNGH") and has_digit and 10 <= len(up) <= 18:
+            results.append(up)
+        elif up.startswith(("ICT", "GHN")) and has_digit and 8 <= len(up) <= 16:
+            results.append(up)
+        # 2. Mã đơn đối tác khác: BẮT BUỘC phải có cả chữ VÀ số (tối thiểu 2 số), không bao giờ là từ thuần chữ cái!
+        elif has_letter and has_digit:
+            digit_count = sum(1 for c in up if c.isdigit())
+            letter_count = sum(1 for c in up if c.isalpha())
+            if digit_count >= 2 and letter_count >= 2 and 8 <= len(up) <= 16:
                 results.append(up)
     return list(dict.fromkeys(results))
 
@@ -3683,8 +3698,34 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     )
     is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
 
-    # 1. Nếu nhân viên gửi mã đơn GHN (VD: GYM...)
+    # 0. QUAN TRỌNG: Nếu người gửi đang @tag nhân viên/NVXL khác (không gọi Bot) -> Bot TUYỆT ĐỐI IM LẶNG!
+    import re
+    other_user_tags = [
+        u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
+        if "aiagentmt" not in u.lower()
+    ]
+    if other_user_tags and not is_tag_or_cmd:
+        return
+
+    # Phân biệt tin nhắn thực sự muốn tra cứu đơn:
+    # - Gọi đích danh bot (@AiAgentMT_bot, /check, /tra, "tra đơn", "check đơn")
+    # - Hoặc gửi danh sách mã đơn thuần túy (chỉ gửi mã đơn, không phải câu giao tiếp đàm thoại dài)
+    words_in_text = [w for w in text.split() if w.strip()]
+    is_pure_order_list = False
     if order_codes:
+        non_code_words = [
+            w for w in words_in_text 
+            if w.upper().replace("-", "").replace("_", "") not in order_codes 
+            and "@" not in w 
+            and w.lower() not in ["check", "tra", "giúp", "giùm", "đơn", "hàng", "xem", "này", "mã", "vs", "với"]
+        ]
+        if len(non_code_words) <= 2:
+            is_pure_order_list = True
+
+    should_lookup_order = bool(order_codes and (is_tag_or_cmd or is_reply_to_bot or is_pure_order_list))
+
+    # 1. Nếu thực sự có nhu cầu tra cứu mã đơn GHN
+    if should_lookup_order:
         # Ghi nhận lượt tra cứu của nhân sự này để phục vụ chỉ đạo của Sếp Lộc
         _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
         is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
