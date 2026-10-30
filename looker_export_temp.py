@@ -718,15 +718,20 @@ def run_looker_export_pipeline(max_retries=3):
                 browser = None
                 if is_headless_cloud:
                     print("  🚀 [CHẾ ĐỘ CLOUD / GITHUB ACTIONS] Khởi chạy Chromium Headless với phiên Google...")
-                    browser = p.chromium.launch(
-                        headless=True,
-                        args=[
+                    launch_kwargs = {
+                        "headless": True,
+                        "args": [
                             "--disable-blink-features=AutomationControlled",
                             "--no-sandbox",
                             "--disable-setuid-sandbox",
                             "--disable-dev-shm-usage"
                         ]
-                    )
+                    }
+                    proxy_env = os.environ.get("VN_PROXY")
+                    if proxy_env:
+                        launch_kwargs["proxy"] = {"server": proxy_env}
+                        print(f"  🌐 Đang định tuyến qua Proxy Việt Nam: {proxy_env.split('@')[-1]}")
+                    browser = p.chromium.launch(**launch_kwargs)
                     storage_state_arg = None
                     if os.path.exists(storage_file):
                         try:
