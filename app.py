@@ -3646,6 +3646,15 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
 
     # 2. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
     if is_reply_to_bot or is_tag_or_cmd:
+        # Nếu người gửi đang tag nhân viên/NVXL khác (VD: Sếp reply báo cáo bot nhưng tag @CONGBANGCAIRANGCANTHO để giao việc)
+        # mà KHÔNG gọi đích danh Bot (@AiAgentMT_bot, ai ơi...), Bot PHẢI IM LẶNG để nhân viên tự trả lời!
+        import re
+        other_user_tags = [
+            u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
+            if "aiagentmt" not in u.lower()
+        ]
+        if other_user_tags and not is_tag_or_cmd:
+            return
         clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
         is_pure_kpi_cmd = clean_q.lower() in ("/kpi", "/ton")
         for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
