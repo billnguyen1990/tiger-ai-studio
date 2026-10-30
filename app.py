@@ -3808,59 +3808,17 @@ def append_telegram_bridge_external():
                 added_count += 1
     return jsonify({"success": True, "added": added_count})
 
-_processed_local_order_msg_ids = set()
-
 def _sync_from_cloud_if_local():
-    """Nếu đang chạy trên PC cá nhân (IP Việt Nam), tự động đồng bộ tin nhắn từ Render Cloud và xử lý Auto Tra Đơn GHN"""
+    """Nếu đang chạy trên PC cá nhân, chỉ đồng bộ tin nhắn từ Render Cloud về hiển thị trên khung chat Web nội bộ"""
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if not is_cloud:
         try:
             r = requests.get("https://tiger-ai-studio.onrender.com/api/telegram-bridge/messages?cloud_raw=1", timeout=4)
             if r.status_code == 200:
                 cdata = r.json()
-                cloud_msgs = cdata.get("messages", [])
-                answered_texts = set()
-                for m in cloud_msgs:
+                for m in cdata.get("messages", []):
                     if m.get("message_id", 0) > 0:
                         _append_telegram_bridge_message(m)
-                    if m.get("hub_badge") == "Auto Tra Đơn":
-                        for c in extract_ghn_order_codes(m.get("text", "")):
-                            answered_texts.add(c)
-                # Kiểm tra nếu có tin nhắn chứa mã đơn GHN chưa được Auto Tra Đơn trả lời
-                for m in cloud_msgs[-15:]:
-                    mid = m.get("message_id", 0)
-                    if mid in _processed_local_order_msg_ids:
-                        continue
-                    codes = extract_ghn_order_codes(m.get("text", ""))
-                    unanswered = [c for c in codes if c not in answered_texts]
-                    if unanswered and m.get("hub_badge") != "Auto Tra Đơn":
-                        _processed_local_order_msg_ids.add(mid)
-                        results = [query_ghn_order_history(c) for c in unanswered[:10]]
-                        if any(res.get("found") for res in results):
-                            reply_html = _format_ghn_order_telegram_reply(results)
-                            topic_id = m.get("topic_id") or 0
-                            sent = _send_telegram_group_message(reply_html, topic_id=topic_id, reply_to_message_id=mid)
-                            if sent.get("ok"):
-                                res_msg = sent.get("result", {})
-                                auto_entry = {
-                                    "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
-                                    "message_id": res_msg.get("message_id", 0),
-                                    "direction": "outgoing_auto",
-                                    "sender_name": "AI 🍻 (Tự động)",
-                                    "username": "@AiAgentMT_bot",
-                                    "hub_badge": "Auto Tra Đơn",
-                                    "topic_id": topic_id,
-                                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
-                                    "text": reply_html,
-                                    "reply_to_text": (m.get("text") or "")[:120],
-                                    "is_explanation": False,
-                                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-                                }
-                                _append_telegram_bridge_message(auto_entry)
-                                try:
-                                    requests.post("https://tiger-ai-studio.onrender.com/api/telegram-bridge/append", json={"entry": auto_entry}, timeout=5)
-                                except Exception:
-                                    pass
         except Exception:
             pass
 
