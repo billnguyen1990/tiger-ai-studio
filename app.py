@@ -3482,23 +3482,35 @@ def toggle_telegram_auto_reply():
             TELEGRAM_AUTO_REPLY_ENABLED = not TELEGRAM_AUTO_REPLY_ENABLED
     return jsonify({"success": True, "auto_reply_enabled": TELEGRAM_AUTO_REPLY_ENABLED})
 
-def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user_text):
-    """Gọi Gemini trả lời tự nhiên, ngắn gọn 1-2 câu như quản lý/điều phối viên trong nhóm chat Telegram"""
+def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user_text, is_boss=False):
+    """Gọi Gemini trả lời nhóm chat Telegram với văn phong chuẩn mực và thứ bậc tôn nghiêm"""
     api_key = get_gemini_api_key()
-    sys_instruction = (
-        "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).\n"
-        "QUY TẮC BẮT BUỘC:\n"
-        "1. Trả lời cực kỳ tự nhiên, gần gũi, ngắn gọn (chỉ 1 đến 2 câu), giống như người điều phối đang nói chuyện trực tiếp với anh em kho.\n"
-        "2. TUYỆT ĐỐI KHÔNG dùng các câu máy móc như 'Tiger AI Copilot đã ghi nhận', 'chuyển lên Bảng Điều Hành của Sếp', hay 'Xin chào tôi là trợ lý AI'.\n"
-        "3. Nếu nhân viên báo nghỉ/off ca (ví dụ: 'nay off AI ơi'): hãy hỏi thăm ngắn gọn và hỏi xem hôm nay ở kho đó ai trực thay để nắm thông tin.\n"
-        "4. Nếu nhân viên giải trình lý do rớt đơn / GTB / hẹn giao: hãy phản hồi xác nhận ngắn gọn và nhắc anh em lưu ý xử lý dứt điểm các đơn tồn.\n"
-        "5. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đúng trọng tâm.\n"
-        "6. TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'check inbox riêng nha' hoặc hứa gửi số liệu qua inbox riêng (mọi thông tin chỉ trao đổi trực tiếp trong nhóm).\n"
-    )
-    context_prompt = ""
-    if reply_to_text:
-        context_prompt += f'Tin nhắn trước đó bạn đã hỏi nhân viên: "{reply_to_text}"\n'
-    context_prompt += f'Nhân viên "{sender_name}" ({hub_badge}) vừa nhắn lại: "{user_text}"\nHãy viết câu trả lời trực tiếp (1-2 câu ngắn gọn):'
+    if is_boss or ("sếp" in sender_name.lower()) or ("lộc" in sender_name.lower()):
+        sys_instruction = (
+            "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho SẾP LỘC (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
+            "QUY TẮC BẮT BUỘC KHI NÓI CHUYỆN VỚI SẾP LỘC:\n"
+            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'Sếp' hoặc 'Sếp Lộc'.\n"
+            "2. NGHIÊM CẤM xưng hô cợt nhả, tuyệt đối KHÔNG gọi 'Lộc ơi', KHÔNG đùa cợt khiếm nhã, KHÔNG nói chuyện suồng sã.\n"
+            "3. Khi Sếp ra lệnh, chỉ đạo, hoặc yêu cầu ghi nhận/thực thi: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ Sếp Lộc! Em đã ghi nhận...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
+        )
+        context_prompt = ""
+        if reply_to_text:
+            context_prompt += f'Tin nhắn trước đó: "{reply_to_text}"\n'
+        context_prompt += f'Sếp Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của Sếp (1-2 câu ngắn gọn, chuẩn mực):'
+    else:
+        sys_instruction = (
+            "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).\n"
+            "QUY TẮC BẮT BUỘC VỚI NHÂN VIÊN:\n"
+            "1. Trả lời cực kỳ tự nhiên, gần gũi, ngắn gọn (chỉ 1 đến 2 câu), như người điều phối đang trao đổi với nhân viên kho.\n"
+            "2. TUYỆT ĐỐI KHÔNG dùng các câu máy móc.\n"
+            "3. Nếu nhân viên báo nghỉ/off ca: hãy hỏi thăm ngắn gọn và hỏi xem hôm nay ai trực thay.\n"
+            "4. Nếu nhân viên giải trình lý do rớt đơn: phản hồi xác nhận và nhắc xử lý đơn tồn.\n"
+            "5. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đúng trọng tâm.\n"
+        )
+        context_prompt = ""
+        if reply_to_text:
+            context_prompt += f'Tin nhắn trước đó bạn đã hỏi nhân viên: "{reply_to_text}"\n'
+        context_prompt += f'Nhân viên "{sender_name}" ({hub_badge}) vừa nhắn lại: "{user_text}"\nHãy viết câu trả lời trực tiếp (1-2 câu ngắn gọn):'
 
     ans = call_gemini_api(context_prompt, sys_instruction, api_key)
     if ans:
@@ -3507,6 +3519,63 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
         ans = re.sub(r'`([^`]+)`', r'<code>\1</code>', ans)
         return ans
     return ""
+
+TRACKING_STATS_FILE = os.path.join(PARENT_DIR, "kpi_history", "tracking_usage_stats.json")
+
+def _record_order_search_usage(sender_name, username, hub_badge, order_codes):
+    """Ghi nhận số lượt tra cứu đơn hàng của từng nhân sự theo chỉ đạo của Sếp Lộc để tổng hợp cuối tháng"""
+    if not order_codes:
+        return
+    try:
+        now_vn = get_vietnam_now()
+        month_key = now_vn.strftime("%Y-%m")
+        stats = {}
+        if os.path.exists(TRACKING_STATS_FILE):
+            try:
+                with open(TRACKING_STATS_FILE, "r", encoding="utf-8") as f:
+                    stats = json.load(f)
+            except Exception:
+                pass
+        m_data = stats.setdefault(month_key, {})
+        u_key = username if username else sender_name
+        user_record = m_data.setdefault(u_key, {
+            "name": sender_name,
+            "username": username,
+            "hub": hub_badge,
+            "total_searches": 0,
+            "orders": []
+        })
+        user_record["total_searches"] += len(order_codes)
+        for code in order_codes:
+            if code not in user_record["orders"]:
+                user_record["orders"].append(code)
+        user_record["last_search_time"] = now_vn.strftime("%H:%M:%S %d/%m/%Y")
+        os.makedirs(os.path.dirname(TRACKING_STATS_FILE), exist_ok=True)
+        with open(TRACKING_STATS_FILE, "w", encoding="utf-8") as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[Tracking Stats Record Error] {e}")
+
+def _format_tracking_usage_report():
+    """Xuất báo cáo tổng hợp ai tra cứu đơn nhiều nhất trong tháng theo lệnh Sếp Lộc"""
+    try:
+        now_vn = get_vietnam_now()
+        month_key = now_vn.strftime("%Y-%m")
+        if not os.path.exists(TRACKING_STATS_FILE):
+            return f"📊 <b>BÁO CÁO LƯỢT TRA CỨU ĐƠN THÁNG {now_vn.strftime('%m/%Y')}</b>\n\nHiện tại chưa có nhân sự nào tra cứu đơn trong tháng này ạ."
+        stats = json.load(open(TRACKING_STATS_FILE, "r", encoding="utf-8"))
+        m_data = stats.get(month_key, {})
+        if not m_data:
+            return f"📊 <b>BÁO CÁO LƯỢT TRA CỨU ĐƠN THÁNG {now_vn.strftime('%m/%Y')}</b>\n\nHiện chưa ghi nhận lượt tra cứu đơn nào trong tháng."
+        sorted_users = sorted(m_data.values(), key=lambda x: x.get("total_searches", 0), reverse=True)
+        lines = [f"📊 <b>BÁO CÁO LƯỢT TRA CỨU ĐƠN THÁNG {now_vn.strftime('%m/%Y')} (THEO CHỈ ĐẠO CỦA SẾP LỘC):</b>\n"]
+        for idx, u in enumerate(sorted_users, 1):
+            uname = f" ({u.get('username')})" if u.get('username') else ""
+            lines.append(f"{idx}. 👤 <b>{u.get('name')}{uname}</b> [{u.get('hub')}]: <b>{u.get('total_searches')} lượt</b> (gồm {len(u.get('orders', []))} đơn khác nhau)")
+        lines.append(f"\n👉 <i>Hệ thống tự động lưu vết 100% để Sếp đối soát phí dịch vụ cuối tháng ạ!</i>")
+        return "\n".join(lines)
+    except Exception as e:
+        return f"Lỗi tổng hợp số liệu tra cứu: {e}"
 
 def _format_ghn_order_telegram_reply(results):
     reply_lines = [f"📦 <b>KẾT QUẢ TRA CỨU ĐƠN HÀNG GHN ({len(results)} đơn):</b>"]
@@ -3616,6 +3685,8 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
 
     # 1. Nếu nhân viên gửi mã đơn GHN (VD: GYM...)
     if order_codes:
+        # Ghi nhận lượt tra cứu của nhân sự này để phục vụ chỉ đạo của Sếp Lộc
+        _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
         is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
         target_codes = order_codes[:10]
         results = []
@@ -3661,7 +3732,10 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             if clean_q.lower().startswith(prefix):
                 clean_q = clean_q[len(prefix):].strip()
 
-        if is_pure_kpi_cmd and not clean_q:
+        is_thongke_cmd = any(k in clean_q.lower() for k in ["/thongketradon", "thu phí", "tra đơn nhiều"])
+        if is_thongke_cmd:
+            tg_html = _format_tracking_usage_report()
+        elif is_pure_kpi_cmd and not clean_q:
             tg_html = _format_quick_kpi_telegram_report()
         else:
             combined_check = f"{clean_q} {reply_to_text}".lower()
@@ -3685,7 +3759,8 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                     entry.get("sender_name", "Anh/chị"),
                     entry.get("hub_badge", "MT01"),
                     reply_to_text,
-                    clean_q or text
+                    clean_q or text,
+                    is_boss=("sếp" in str(entry.get("sender_name", "")).lower() or "lộc" in str(entry.get("sender_name", "")).lower())
                 )
 
         if tg_html:
@@ -3730,8 +3805,13 @@ def _process_single_telegram_update(upd):
     username_raw = (from_user.get("username") or "").strip()
     username_disp = f"@{username_raw}" if username_raw else ""
 
-    nvxl_info = NVXL_USERNAME_HUB_MAP.get(username_raw.lower())
-    hub_badge = f"NVXL {nvxl_info['hub']}" if nvxl_info else "Nhóm MT01"
+    is_boss = ("lộc" in sender_name.lower()) or ("lộc miền tây" in sender_name.lower()) or (from_user.get("id") in (3036941, 1003940889949))
+    if is_boss:
+        sender_name = "Sếp Lộc (Quản lý MT01)"
+        hub_badge = "Quản Lý Cụm MT01"
+    else:
+        nvxl_info = NVXL_USERNAME_HUB_MAP.get(username_raw.lower())
+        hub_badge = f"NVXL {nvxl_info['hub']}" if nvxl_info else "Nhóm MT01"
 
     topic_id = msg.get("message_thread_id") or 0
     topic_name = TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung")
