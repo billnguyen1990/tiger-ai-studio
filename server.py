@@ -3602,6 +3602,97 @@ def toggle_telegram_auto_reply():
             TELEGRAM_AUTO_REPLY_ENABLED = not TELEGRAM_AUTO_REPLY_ENABLED
     return jsonify({"success": True, "auto_reply_enabled": TELEGRAM_AUTO_REPLY_ENABLED})
 
+def _answer_order_context_question(target_code, user_text, reply_to_text, sender_name, hub_badge, is_boss=False):
+    """Trả lời tức thì, chuẩn xác 100% các câu hỏi nghiệp vụ vận hành liên quan đến mã đơn hàng GHN"""
+    res = query_ghn_order_history(target_code)
+    if not res.get("found"):
+        if is_boss:
+            return f"Dạ báo cáo Sếp Lộc! Đơn hàng <code>{target_code}</code> hiện không tìm thấy dữ liệu trên hệ thống GHN Tracuunoibo ạ!"
+        return f"Mã đơn <code>{target_code}</code> hiện không có dữ liệu trên hệ thống Tracuunoibo GHN bạn nhé."
+
+    c_stat = res.get("customer_status", "—")
+    op_stat = res.get("operation_status", "—")
+    tr_stat = res.get("transit_status", "—")
+    c_hub = res.get("current_hub", "—")
+    d_hub = res.get("deliver_hub", "—")
+    actor = res.get("actor", "—")
+    time_str = res.get("time", "—")
+    weight = res.get("weight_kg", 0)
+    cod = res.get("order_value_str", "0 đ")
+    items = res.get("items_count", 1)
+    milestones = res.get("milestones", [])
+
+    facts_lines = [
+        f"MÃ ĐƠN: {target_code}",
+        f"- Trạng thái khách hàng: {c_stat}",
+        f"- Trạng thái vận hành nội bộ: {op_stat} ({tr_stat})",
+        f"- Kho hiện tại: {c_hub}",
+        f"- Kho giao hàng: {d_hub}",
+        f"- Khối lượng & Kiện: {weight} kg, {items} kiện, Thu hộ COD: {cod}",
+        f"- Thao tác gần nhất: {actor} vào lúc {time_str}"
+    ]
+    if milestones:
+        facts_lines.append("- Lịch sử mốc thời gian vận hành:")
+        for m in milestones:
+            facts_lines.append(f"  + {m}")
+    facts_text = "\n".join(facts_lines)
+
+    api_key = get_gemini_api_key()
+    if is_boss or ("sếp" in sender_name.lower()) or ("lộc" in sender_name.lower()):
+        sys_prompt = (
+            "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho SẾP LỘC (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
+            "QUY TẮC BẮT BUỘC:\n"
+            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'Sếp' hoặc 'Sếp Lộc'.\n"
+            "2. ĐI THẲNG VÀO CÂU HỎI VÀ TRẢ LỜI NGAY LẬP TỨC 100% SỰ THẬT dựa trên DỮ LIỆU THỰC TẾ GHN.\n"
+            "3. TUYỆT ĐỐI KHÔNG BAO GIỜ hứa hẹn suông kiểu 'em xin phép kiểm tra lại và báo cáo sau', vì bạn ĐANG NẮM TOÀN BỘ LỊCH SỬ THỰC TẾ TRƯỚC MẶT.\n"
+            "4. Nếu Sếp hỏi về 'đơn hàng gối đầu đúng ko' / 'tồn kho':\n"
+            "   - Khẳng định rõ Đúng hay Không (Nếu có mốc giao thất bại hoặc lưu kho từ ngày trước hôm nay -> ĐÚNG 100% LÀ ĐƠN GỐI ĐẦU).\n"
+            "   - Nêu tóm tắt rõ từng ngày: Ngày nào ai đi giao bị rớt vì lý do gì, ngày nào lưu kho, hiện tại trạng thái là gì.\n"
+            "5. Định dạng HTML Telegram chuẩn (<b>in đậm</b>, <code>mã đơn</code>, <i>in nghiêng</i>)."
+        )
+        user_prompt = (
+            f"DỮ LIỆU LỊCH SỬ VẬN HÀNH THỰC TẾ CỦA ĐƠN HÀNG {target_code}:\n"
+            f"{facts_text}\n\n"
+            f"Sếp Lộc vừa hỏi: \"{user_text}\"\n"
+            f"Hãy viết câu trả lời cung kính, rành mạch, khẳng định dứt khoát và phân tích rõ từng mốc vận hành để báo cáo ngay cho Sếp Lộc:"
+        )
+    else:
+        sys_prompt = (
+            "Bạn là 'AI 🍻' — trợ lý điều hành nội bộ nhóm Telegram Miền Tây 01 (GHN Lastmile).\n"
+            "QUY TẮC:\n"
+            "1. Trả lời trực tiếp, chính xác 100% theo DỮ LIỆU THỰC TẾ GHN. Ngắn gọn, chuyên nghiệp, hỗ trợ đồng nghiệp.\n"
+            "2. TUYỆT ĐỐI KHÔNG hứa hẹn 'sẽ kiểm tra sau' vì bạn đang có đầy đủ dữ liệu trước mặt.\n"
+            "3. Nếu hỏi 'đơn gối đầu đúng ko': giải thích rõ đơn đã qua mấy ngày giao thất bại, khách hẹn hay kho lưu.\n"
+            "4. Định dạng HTML Telegram chuẩn (<b>, <code>, <i>)."
+        )
+        user_prompt = (
+            f"DỮ LIỆU LỊCH SỬ VẬN HÀNH THỰC TẾ CỦA ĐƠN HÀNG {target_code}:\n"
+            f"{facts_text}\n\n"
+            f"Nhân viên ({sender_name} - {hub_badge}) hỏi: \"{user_text}\"\n"
+            f"Hãy trả lời trực tiếp, rõ ràng, giải đáp đúng thắc mắc:"
+        )
+
+    ai_reply = call_gemini_api(user_prompt, sys_prompt, api_key)
+    if ai_reply:
+        return _clean_markdown_to_telegram_html(ai_reply)
+
+    # Fallback chi tiết nếu Gemini không phản hồi
+    lines = []
+    if is_boss:
+        lines.append(f"Dạ báo cáo Sếp Lộc! Về đơn hàng <b><code>{target_code}</code></b>:")
+        has_fail = any("❌ Giao thất bại" in m for m in milestones)
+        if has_fail:
+            lines.append("✅ <b>DẠ ĐÚNG 100%, ĐÂY LÀ ĐƠN HÀNG GỐI ĐẦU ĐÃ TỒN QUA NHIỀU NGÀY:</b>")
+        for m in milestones[:3]:
+            lines.append(f"• {m}")
+        lines.append(f"Hiện tại trạng thái: <b>{c_stat}</b> tại <b>{c_hub}</b>.")
+    else:
+        lines.append(f"Về đơn <b><code>{target_code}</code></b>:")
+        for m in milestones[:2]:
+            lines.append(f"• {m}")
+        lines.append(f"Trạng thái: <b>{c_stat}</b> ({op_stat}).")
+    return "\n".join(lines)
+
 def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user_text, is_boss=False):
     """Gọi Gemini trả lời nhóm chat Telegram với văn phong chuẩn mực và thứ bậc tôn nghiêm"""
     api_key = get_gemini_api_key()
@@ -3611,12 +3702,17 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
             "QUY TẮC BẮT BUỘC KHI NÓI CHUYỆN VỚI SẾP LỘC:\n"
             "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'Sếp' hoặc 'Sếp Lộc'.\n"
             "2. NGHIÊM CẤM xưng hô cợt nhả, tuyệt đối KHÔNG gọi 'Lộc ơi', KHÔNG đùa cợt khiếm nhã, KHÔNG nói chuyện suồng sã.\n"
-            "3. Khi Sếp ra lệnh, chỉ đạo, hoặc yêu cầu ghi nhận/thực thi: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ Sếp Lộc! Em đã ghi nhận...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
+            "3. Nếu Sếp đặt câu hỏi, chất vấn hoặc hỏi thăm: Phải trả lời NGAY VÀ LUÔN, ĐI THẲNG VÀO TRỌNG TÂM, giải đáp tường minh và trung thực 100%, TUYỆT ĐỐI KHÔNG hứa hẹn suông kiểu 'sẽ kiểm tra và báo cáo sau'.\n"
+            "4. Khi Sếp ra lệnh, chỉ đạo, hoặc yêu cầu thực thi: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ Sếp Lộc! Em xin tuân lệnh...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
         )
         context_prompt = ""
         if reply_to_text:
             context_prompt += f'Tin nhắn trước đó: "{reply_to_text}"\n'
-        context_prompt += f'Sếp Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của Sếp (1-2 câu ngắn gọn, chuẩn mực):'
+        is_question = any(q in user_text.lower() for q in ["?", "ko", "không", "sao", "đúng ko", "phải ko", "chưa", "hả", "ai", "bao nhiêu", "khi nào", "thế nào", "đâu", "gì"])
+        if is_question:
+            context_prompt += f'Sếp Lộc (Quản lý vùng MT01) vừa hỏi: "{user_text}"\nHãy trả lời cung kính, đi thẳng vào câu trả lời, giải đáp rõ ràng thấu đáo (1-3 câu chuẩn mực):'
+        else:
+            context_prompt += f'Sếp Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của Sếp (1-2 câu ngắn gọn, chuẩn mực):'
     else:
         sys_instruction = (
             "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).\n"
@@ -3844,6 +3940,9 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     # Phân biệt tin nhắn thực sự muốn tra cứu đơn:
     # - Gọi đích danh bot (@AiAgentMT_bot, /check, /tra, "tra đơn", "check đơn")
     # - Hoặc gửi danh sách mã đơn thuần túy (chỉ gửi mã đơn, không phải câu giao tiếp đàm thoại dài)
+    reply_order_codes = extract_ghn_order_codes(reply_to_text)
+    context_order_codes = order_codes if order_codes else reply_order_codes
+
     words_in_text = [w for w in text.split() if w.strip()]
     is_pure_order_list = False
     if order_codes:
@@ -3856,9 +3955,9 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         if len(non_code_words) <= 2:
             is_pure_order_list = True
 
-    should_lookup_order = bool(order_codes and (is_tag_or_cmd or is_reply_to_bot or is_pure_order_list))
+    should_lookup_order = bool(order_codes and is_pure_order_list and (is_tag_or_cmd or is_reply_to_bot or len(order_codes) >= 1))
 
-    # 1. Nếu thực sự có nhu cầu tra cứu mã đơn GHN
+    # 1. Nếu thực sự có nhu cầu tra cứu danh sách mã đơn GHN (gửi mã đơn thuần túy để lấy thẻ tra cứu)
     if should_lookup_order:
         # Ghi nhận lượt tra cứu của nhân sự này để phục vụ chỉ đạo của Sếp Lộc
         _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
@@ -3867,7 +3966,6 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
-        # Render Cloud tra cứu GHN thành công 100%, gửi ngay kết quả tra cứu về nhóm Telegram
         reply_msg = _format_ghn_order_telegram_reply(results)
         sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         if sent.get("ok"):
@@ -3890,7 +3988,55 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             _append_telegram_bridge_message(auto_entry)
         return
 
-    # 2. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
+    # 2. XỬ LÝ CÂU HỎI NGHIỆP VỤ VỀ MÃ ĐƠN HÀNG (VD: Sếp hỏi 'đơn hàng gối đầu đúng ko', 'sao chưa giao', 'ai đang cầm'...)
+    clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
+    for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
+        if clean_q.lower().startswith(prefix):
+            clean_q = clean_q[len(prefix):].strip()
+
+    order_inquiry_keywords = [
+        "gối đầu", "tồn", "sao chưa", "chưa giao", "giao chưa", "ai giao", "ai cầm", 
+        "kho nào", "tại sao", "lý do", "hẹn", "hoàn", "chuyển hoàn", "đúng ko", 
+        "phải ko", "khi nào", "thế nào", "bao nhiêu", "kiện", "kg", "nặng", "cod",
+        "rớt", "thất bại", "hôm nay", "ngày mai", "giao lại", "xử lý"
+    ]
+    is_order_question = bool(
+        context_order_codes and (
+            is_reply_to_bot or 
+            (order_codes and not is_pure_order_list) or
+            any(k in lower_text for k in order_inquiry_keywords)
+        )
+    )
+    if is_order_question and (is_reply_to_bot or is_tag_or_cmd or not other_user_tags):
+        target_code = context_order_codes[0]
+        is_boss = ("sếp" in str(entry.get("sender_name", "")).lower() or "lộc" in str(entry.get("sender_name", "")).lower())
+        order_ans = _answer_order_context_question(
+            target_code, clean_q or text, reply_to_text,
+            entry.get("sender_name", "Anh/chị"), entry.get("hub_badge", "MT01"),
+            is_boss=is_boss
+        )
+        if order_ans:
+            sent = _send_telegram_group_message(order_ans[:3800], topic_id=topic_id, reply_to_message_id=msg_id)
+            if sent.get("ok"):
+                res_msg = sent.get("result", {})
+                _append_telegram_bridge_message({
+                    "id": f"tg_ai_{res_msg.get('message_id', int(time.time()))}",
+                    "message_id": res_msg.get("message_id", 0),
+                    "direction": "outgoing_auto",
+                    "sender_name": "AI 🍻 (Tự động)",
+                    "username": "@AiAgentMT_bot",
+                    "hub_badge": "AI Giải Đáp Đơn",
+                    "topic_id": topic_id,
+                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                    "text": order_ans[:1500],
+                    "reply_to_text": text[:120],
+                    "replied_to_msg_id": msg_id,
+                    "is_explanation": False,
+                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                })
+        return
+
+    # 3. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
     if is_reply_to_bot or is_tag_or_cmd:
         # Nếu người gửi đang tag nhân viên/NVXL khác (VD: Sếp reply báo cáo bot nhưng tag @CONGBANGCAIRANGCANTHO để giao việc)
         # mà KHÔNG gọi đích danh Bot (@AiAgentMT_bot, ai ơi...), Bot PHẢI IM LẶNG để nhân viên tự trả lời!
