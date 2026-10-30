@@ -502,14 +502,14 @@ def run_filter_to_ketqua(master_page):
 
     start_time = time.time()
     found_done = False
-    while time.time() - start_time < 90:
-        time.sleep(0.5)
+    while time.time() - start_time < 180:
+        time.sleep(1.0)
         toast_text = master_page.evaluate("""() => {
-            const toast = document.querySelector('.docs-butterbar-message, .docs-butterbar-wrap');
+            const toast = document.querySelector('.docs-butterbar-message, .docs-butterbar-wrap, .jfk-butterbar');
             return toast ? toast.innerText : '';
         }""")
-        if "Hoàn tất" in toast_text or "Đã kết thúc tập lệnh" in toast_text or "Finished script" in toast_text:
-            print("  ✓ Đã thấy thông báo Hoàn tất!")
+        if any(w in toast_text for w in ["Đã lọc xong", "Hoàn tất", "Đã kết thúc", "Finished script", "Đã khớp 100%"]):
+            print(f"  ✓ Đã thấy thông báo lọc xong: '{toast_text.strip()}'!")
             found_done = True
             break
             
