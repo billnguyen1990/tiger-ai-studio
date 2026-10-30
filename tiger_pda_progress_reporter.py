@@ -236,7 +236,27 @@ def format_pda_message(results):
         if h["timelines"]:
             lines.append("  └ 🛵 <i>Tiến độ thao tác PDA của NV:</i>")
             for tl in h["timelines"][:5]:
-                lines.append(f"     • <b>NV {tl['driver_name']}</b>: Xong <b>{tl['done_count']}/{tl['total_orders']}</b> đơn (GTC: {tl['gtc']}, GTB: {tl['gtb']}) | Xuất phát: {tl['start_time']} | Đơn đầu: {tl['first_action']} ➔ Cuối: {tl['last_action']}")
+                done = tl['done_count']
+                total = tl['total_orders']
+                gtc = tl['gtc']
+                gtb = tl['gtb']
+                start = tl['start_time']
+                first = tl['first_action']
+                last = tl['last_action']
+
+                if total > 0 and done >= total:
+                    status_lbl = "Xong"
+                    time_lbl = "Hoàn tất"
+                elif done == 0:
+                    status_lbl = "Chưa thao tác"
+                    time_lbl = "Hiện tại"
+                else:
+                    status_lbl = "Đang thao tác"
+                    time_lbl = "Hiện tại"
+
+                lines.append(f"     • <b>NV {tl['driver_name']}</b>:")
+                lines.append(f"        └ <b>{status_lbl}</b> : <b>{done}/{total}</b> đơn ( GTC : <b>{gtc}</b> ;  GTB : <b>{gtb}</b> ) .")
+                lines.append(f"           └  Bắt đầu : {start} | Đơn đầu: {first} ➔ {time_lbl} : {last}")
 
         # 2. Chi tiết tiến độ & đơn GTB (Diff highlight đỏ/xanh)
         diff_lines = ["<pre><code class=\"language-diff\">"]
