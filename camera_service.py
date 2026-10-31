@@ -15,22 +15,26 @@ HEADERS = {
 BASE_API = "https://camera-api.ghn.vn/public-api"
 
 VR_MAP = {
-    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 1},
-    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 1},
-    "binhthuy": {"name": "Kho Bình Thủy (Khu vực tại Kho Cái Răng)", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "allowed_cams": [1, 6, 14, 16]},
-    "bt": {"name": "Kho Bình Thủy (Khu vực tại Kho Cái Răng)", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "allowed_cams": [1, 6, 14, 16]},
-    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 1},
-    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 1},
-    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 1},
-    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 1},
+    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 8, "weather_cam": 8},
+    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 8, "weather_cam": 8},
+    "binhthuy": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 7, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
+    "bt": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 7, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
+    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 3, "weather_cam": 3},
+    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 3, "weather_cam": 3},
+    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 8, "weather_cam": 8},
+    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 8, "weather_cam": 8},
 }
 
 CAM_DESC_MAP = {
     ("6577e3250ad53fcbaab02947", 1): "Cửa dock xuất/nhập xe tải",
     ("6577e3250ad53fcbaab02947", 2): "Toàn cảnh sàn kho & xe nâng",
-    ("6577e3250ad53fcbaab02947", 6): "Khu vực tập kết Pallet & Xe nâng tay (Bình Thủy)",
-    ("6577e3250ad53fcbaab02947", 14): "Toàn cảnh luồng hàng & kho bãi (Bình Thủy)",
-    ("6577e3250ad53fcbaab02947", 16): "Hành lang vận hành bốc dỡ xe nâng (Bình Thủy)",
+    ("6577e3250ad53fcbaab02947", 6): "Khu vực tập kết Pallet & Xe nâng tay",
+    ("6577e3250ad53fcbaab02947", 7): "Bãi đỗ xe tải & Sân ngoài trời (Bình Thủy)",
+    ("6577e3250ad53fcbaab02947", 8): "Bãi đỗ xe tải & Quang cảnh ngoài trời (Cái Răng)",
+    ("6577e3250ad53fcbaab02947", 14): "Toàn cảnh luồng hàng & kho bãi",
+    ("6577e3250ad53fcbaab02947", 16): "Hành lang vận hành bốc dỡ xe nâng",
+    ("69dcba16a22d4e6ace3eadf6", 3): "Sân bãi bê tông ngoài trời (Ô Môn)",
+    ("69c4fb54a9cd53f0d672a24d", 8): "Cổng ngoài trời & đường lộ (Vị Thanh)",
 }
 
 def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None):
