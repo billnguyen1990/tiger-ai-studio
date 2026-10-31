@@ -167,7 +167,7 @@ def get_workflows():
         "lastmile_trips": {
             "id": "lastmile_trips",
             "name": "Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets (05:00)",
-            "description": "Tự động cào toàn bộ danh sách chuyến đi Ngày N-1 của 4 kho MT01 qua API GHN siêu tốc, lọc chuyến FINISHED và đồng bộ thẳng lên Google Sheets của Sếp.",
+            "description": "Tự động cào toàn bộ danh sách chuyến đi Ngày N-1 của 4 kho MT01 qua API GHN siêu tốc, lọc chuyến FINISHED và đồng bộ thẳng lên Google Sheets của anh.",
             "schedule": "05:00 hàng ngày",
             "script_key": "lastmile_05h00",
             "nodes": [
@@ -685,7 +685,7 @@ def get_workflows():
 ADMIN_MASTER_PIN = "150917"
 
 def verify_admin_request(req):
-    """Xác thực quyền Quản Trị Viên (Sếp) qua mã PIN 150917"""
+    """Xác thực quyền Quản Trị Viên (anh) qua mã PIN 150917"""
     pin = req.headers.get("X-Admin-Pin", "").strip()
     if not pin:
         data = req.get_json(silent=True, force=True) or {}
@@ -1008,14 +1008,14 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
                 cloud_output = f"""🐅 <b>TIGER AI - ĐÃ KÍCH HOẠT QUY TRÌNH B2B TRÊN CLOUD THÀNH CÔNG!</b>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ☁️ <b>Máy chủ đám mây:</b> GitHub Actions Cloud Runner (Ubuntu 24/7)
-📱 <b>Thiết bị điều khiển:</b> Điện thoại của Sếp (Máy tính TẮT hoàn toàn)
+📱 <b>Thiết bị điều khiển:</b> Điện thoại của anh (Máy tính TẮT hoàn toàn)
 ✅ <b>Tiến trình:</b> Đang bật Chromium Headless với phiên Google bảo mật để cào Looker Studio.
 📊 <b>Các bước tự động:</b>
   1. Mở Looker Studio (Tab 1. B2B).
   2. Lọc nhanh 13 tỉnh thành ĐBSCL.
   3. Xuất Google Sheets ➔ Đồng bộ sang Master Sheet.
   4. Apps Script tự động vẽ biểu đồ & bắn báo cáo về Telegram Topic 2690!
-⏰ <i>Thời gian hoàn thành ước tính: khoảng 2 - 3 phút. Báo cáo sẽ tự động gửi lên Telegram cho Sếp!</i>"""
+⏰ <i>Thời gian hoàn thành ước tính: khoảng 2 - 3 phút. Báo cáo sẽ tự động gửi lên Telegram cho anh!</i>"""
             else:
                 cloud_output = f"⚠️ Lỗi kích hoạt Cloud Runner: HTTP {gh_res.status_code} - {gh_res.text}"
         except Exception as ex:
@@ -2513,7 +2513,7 @@ def search_winmart_store(query):
 
 def format_store_telegram_reply(results, query=""):
     if not results:
-        return f"🏪 <b>TRA CỨU CỬA HÀNG WINMART:</b>\n\nKhông tìm thấy cửa hàng khớp với từ khóa: <code>{html.escape(query)}</code>.\nSếp và anh em vui lòng kiểm tra lại tên đường hoặc số nhà nhé!"
+        return f"🏪 <b>TRA CỨU CỬA HÀNG WINMART:</b>\n\nKhông tìm thấy cửa hàng khớp với từ khóa: <code>{html.escape(query)}</code>.\nAnh và mọi người vui lòng kiểm tra lại tên đường hoặc số nhà nhé!"
     
     best = results[0]
     reply_lines = [
@@ -2537,7 +2537,7 @@ def format_store_telegram_reply(results, query=""):
     return "\n".join(reply_lines)
 
 def extract_ghn_order_codes(text):
-    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, VNGH hoặc mã có chữ và số)"""
+    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, VNGH, PSD hoặc mã có chữ và số)"""
     if not text:
         return []
     import re
@@ -2553,28 +2553,35 @@ def extract_ghn_order_codes(text):
         "BAOCAO", "THONGKE", "DONHANG", "GIAOHANG", "KHACHHANG", "NHANVIEN", "DIEUPHOI",
         "PROJECT", "KEHOACH", "VANHANH"
     }
-    tokens = re.findall(r'\b[A-Za-z0-9_-]{8,18}\b', text)
+    tokens = re.findall(r'[A-Za-z0-9_-]{8,35}', text)
     results = []
     for t in tokens:
-        up = t.upper().replace("-", "").replace("_", "")
-        if up in ignored or len(up) < 8 or len(up) > 18:
+        raw_up = t.upper().strip('_-')
+        up = raw_up.replace("-", "").replace("_", "")
+        if up in ignored or raw_up in ignored or len(up) < 8 or len(raw_up) > 35:
             continue
         has_digit = any(c.isdigit() for c in up)
         has_letter = any(c.isalpha() for c in up)
 
-        # 1. Mã đơn chuẩn GHN: Bắt đầu bằng GYM (8-10 ký tự), VNGH (10-18 ký tự)
-        if up.startswith("GYM") and 8 <= len(up) <= 10:
+        # 1. Mã đơn dự án / hợp đồng / CPTT đặc biệt (như PSD26-CH-05070-03_CPTT)
+        if raw_up.startswith("PSD") and has_digit and 8 <= len(raw_up) <= 32:
+            results.append(raw_up)
+        # 2. Mã đơn chuẩn GHN: Bắt đầu bằng GYM (8-10 ký tự), VNGH (10-18 ký tự)
+        elif up.startswith("GYM") and 8 <= len(up) <= 10:
             results.append(up)
-        elif up.startswith("VNGH") and has_digit and 10 <= len(up) <= 18:
+        elif up.startswith("VNGH") and has_digit and 10 <= len(up) <= 20:
             results.append(up)
-        elif up.startswith(("ICT", "GHN")) and has_digit and 8 <= len(up) <= 16:
+        elif up.startswith(("ICT", "GHN")) and has_digit and 8 <= len(up) <= 18:
             results.append(up)
-        # 2. Mã đơn đối tác khác: BẮT BUỘC phải có cả chữ VÀ số (tối thiểu 2 số), không bao giờ là từ thuần chữ cái!
+        # 3. Mã đơn đối tác khác
         elif has_letter and has_digit:
             digit_count = sum(1 for c in up if c.isdigit())
             letter_count = sum(1 for c in up if c.isalpha())
-            if digit_count >= 2 and letter_count >= 2 and 8 <= len(up) <= 16:
-                results.append(up)
+            if digit_count >= 2 and letter_count >= 2:
+                if ("-" in raw_up or "_" in raw_up) and 8 <= len(raw_up) <= 32:
+                    results.append(raw_up)
+                elif 8 <= len(up) <= 18:
+                    results.append(up)
     return list(dict.fromkeys(results))
 
 ACTION_MAP = {
@@ -2993,7 +3000,7 @@ def build_mt01_system_context(realtime_context=None, for_telegram=False):
         f"Hôm nay là {now_vn.strftime('%d/%m/%Y')}, hôm qua là {yday_dt.strftime('%d/%m/%Y')}.\n"
         "QUY TẮC BẮT BUỘC TUYỆT ĐỐI:\n"
         "1. Luôn dùng 'NV' (tuyệt đối KHÔNG dùng 'tài xế'), và 'NVXL' cho nhân viên xử lý kho.\n"
-        "2. KHI ĐƯỢC HỎI VỀ SỐ LIỆU KPI, TỶ LỆ GTC/GTB CỦA 1 NGÀY HOẶC NHIỀU NGÀY (VD: từ 23/10 đến 27/10): Bạn ĐÃ CÓ ĐẦY ĐỦ 100% số liệu từng ngày ở bảng bên dưới. Hãy TỰ CỘNG DỒN (Tổng GTC / Tổng đơn gán * 100%) và TRẢ LỜI NGAY LẬP TỨC bằng con số chính xác trong cùng 1 tin nhắn! TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'hệ thống chỉ lưu trữ Snapshot mới nhất', KHÔNG hỏi 'Sếp có muốn em kết nối Data Lake không?', và KHÔNG hứa suông 'em đang tổng hợp gửi liền'!\n"
+        "2. KHI ĐƯỢC HỎI VỀ SỐ LIỆU KPI, TỶ LỆ GTC/GTB CỦA 1 NGÀY HOẶC NHIỀU NGÀY (VD: từ 23/10 đến 27/10): Bạn ĐÃ CÓ ĐẦY ĐỦ 100% số liệu từng ngày ở bảng bên dưới. Hãy TỰ CỘNG DỒN (Tổng GTC / Tổng đơn gán * 100%) và TRẢ LỜI NGAY LẬP TỨC bằng con số chính xác trong cùng 1 tin nhắn! TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'hệ thống chỉ lưu trữ Snapshot mới nhất', KHÔNG hỏi 'anh có muốn em kết nối Data Lake không?', và KHÔNG hứa suông 'em đang tổng hợp gửi liền'!\n"
         "3. TUYỆT ĐỐI KHÔNG BAO GIỜ nói 'check inbox riêng nha' (Bot chỉ trả lời trực tiếp ngay tại khung chat này).\n"
         "4. Phân biệt rõ: Số liệu HÔM QUA (27/10/2026) là số liệu ĐÃ CHỐT CA CUỐI NGÀY (Pending = 0), còn số liệu HÔM NAY (28/10/2026) là số liệu ĐANG ĐI TUYẾN TRỰC TIẾP (các NV đang đi giao, chưa kết thúc ngày).\n\n"
         "Thông tin 4 kho trong Cụm Miền Tây 01:\n"
@@ -3144,7 +3151,7 @@ def copilot_ask():
     prompt = raw_prompt.lower()
 
     if not raw_prompt:
-        return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Sếp có thể hỏi em bất kỳ thông tin nào về 4 kho MT01 (KPI GTC, LTC, nợ COD, đơn hẹn), dán mã đơn hàng GHN để tra cứu nội bộ, hoặc kết nối Google Gemini AI để hỏi mọi chủ đề!"})
+        return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Anh có thể hỏi em bất kỳ thông tin nào về 4 kho MT01 (KPI GTC, LTC, nợ COD, đơn hẹn), dán mã đơn hàng GHN để tra cứu nội bộ, hoặc kết nối Google Gemini AI để hỏi mọi chủ đề!"})
 
     # BƯỚC 0: LỆNH GỬI TRỰC TIẾP VÀO NHÓM TELEGRAM MIỀN TÂY 01 (/tele hoặc @...)
     if prompt.startswith("/tele ") or prompt.startswith("gửi telegram:") or prompt.startswith("nhắn telegram:"):
@@ -3455,7 +3462,7 @@ def copilot_ask():
             "4. **07:35 AM**: Điểm danh ca sáng & đối chiếu lịch làm việc.\n"
             "5. **10:00 AM**: Phân loại tồn kho 443 đơn & bóc tách ngày hẹn SMS.\n"
             "6. **21:00 PM**: Chốt ca đêm & đối soát nợ COD qua màn hình Thu Tiền NV.\n\n"
-            "🔍 Sếp có thể **dán mã đơn hàng** (1 hoặc nhiều đơn) để em tra cứu hành trình nội bộ ngay, "
+            "🔍 Anh có thể **dán mã đơn hàng** (1 hoặc nhiều đơn) để em tra cứu hành trình nội bộ ngay, "
             "hoặc bấm biểu tượng **🔑** trên thanh tiêu đề để kết nối **Google Gemini AI** giúp giải đáp không giới hạn mọi chủ đề!"
         )
 
@@ -3520,7 +3527,7 @@ def _load_telegram_bridge_messages():
                             continue
                         if item.get("id") in ("init_bridge_1", "tg_in_1", "tg_out_3080", "tg_out_3081"):
                             continue
-                        if "Sếp Điền Lộc" in str(item.get("sender_name", "")):
+                        if "anh Điền Lộc" in str(item.get("sender_name", "")):
                             item["sender_name"] = "AI 🍻 (Bạn)"
                         if item.get("hub_badge") == "Đã gửi":
                             item["hub_badge"] = "Đã gửi"
@@ -3635,7 +3642,7 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
     res = query_ghn_order_history(target_code)
     if not res.get("found"):
         if is_boss:
-            return f"Dạ báo cáo Sếp Lộc! Đơn hàng <code>{target_code}</code> hiện không tìm thấy dữ liệu trên hệ thống GHN Tracuunoibo ạ!"
+            return f"Dạ báo cáo anh! Đơn hàng <code>{target_code}</code> hiện không tìm thấy dữ liệu trên hệ thống GHN Tracuunoibo ạ!"
         return f"Mã đơn <code>{target_code}</code> hiện không có dữ liệu trên hệ thống Tracuunoibo GHN bạn nhé."
 
     c_stat = res.get("customer_status", "—")
@@ -3670,10 +3677,10 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
         sys_prompt = (
             "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho SẾP LỘC (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
             "QUY TẮC BẮT BUỘC:\n"
-            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'Sếp' hoặc 'Sếp Lộc'.\n"
+            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'anh' hoặc 'anh Lộc'.\n"
             "2. ĐI THẲNG VÀO CÂU HỎI VÀ TRẢ LỜI NGAY LẬP TỨC 100% SỰ THẬT dựa trên DỮ LIỆU THỰC TẾ GHN.\n"
             "3. TUYỆT ĐỐI KHÔNG BAO GIỜ hứa hẹn suông kiểu 'em xin phép kiểm tra lại và báo cáo sau', vì bạn ĐANG NẮM TOÀN BỘ LỊCH SỬ THỰC TẾ TRƯỚC MẶT.\n"
-            "4. Nếu Sếp hỏi về 'đơn hàng gối đầu đúng ko' / 'tồn kho':\n"
+            "4. Nếu anh hỏi về 'đơn hàng gối đầu đúng ko' / 'tồn kho':\n"
             "   - Khẳng định rõ Đúng hay Không (Nếu có mốc giao thất bại hoặc lưu kho từ ngày trước hôm nay -> ĐÚNG 100% LÀ ĐƠN GỐI ĐẦU).\n"
             "   - Nêu tóm tắt rõ từng ngày: Ngày nào ai đi giao bị rớt vì lý do gì, ngày nào lưu kho, hiện tại trạng thái là gì.\n"
             "5. Định dạng HTML Telegram chuẩn (<b>in đậm</b>, <code>mã đơn</code>, <i>in nghiêng</i>)."
@@ -3681,8 +3688,8 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
         user_prompt = (
             f"DỮ LIỆU LỊCH SỬ VẬN HÀNH THỰC TẾ CỦA ĐƠN HÀNG {target_code}:\n"
             f"{facts_text}\n\n"
-            f"Sếp Lộc vừa hỏi: \"{user_text}\"\n"
-            f"Hãy viết câu trả lời cung kính, rành mạch, khẳng định dứt khoát và phân tích rõ từng mốc vận hành để báo cáo ngay cho Sếp Lộc:"
+            f"anh Lộc vừa hỏi: \"{user_text}\"\n"
+            f"Hãy viết câu trả lời cung kính, rành mạch, khẳng định dứt khoát và phân tích rõ từng mốc vận hành để báo cáo ngay cho anh Lộc:"
         )
     else:
         sys_prompt = (
@@ -3707,7 +3714,7 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
     # Fallback chi tiết nếu Gemini không phản hồi
     lines = []
     if is_boss:
-        lines.append(f"Dạ báo cáo Sếp Lộc! Về đơn hàng <b><code>{target_code}</code></b>:")
+        lines.append(f"Dạ báo cáo anh! Về đơn hàng <b><code>{target_code}</code></b>:")
         has_fail = any("❌ Giao thất bại" in m for m in milestones)
         if has_fail:
             lines.append("✅ <b>DẠ ĐÚNG 100%, ĐÂY LÀ ĐƠN HÀNG GỐI ĐẦU ĐÃ TỒN QUA NHIỀU NGÀY:</b>")
@@ -3728,19 +3735,19 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
         sys_instruction = (
             "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho SẾP LỘC (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
             "QUY TẮC BẮT BUỘC KHI NÓI CHUYỆN VỚI SẾP LỘC:\n"
-            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'Sếp' hoặc 'Sếp Lộc'.\n"
+            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'anh' hoặc 'anh Lộc'.\n"
             "2. NGHIÊM CẤM xưng hô cợt nhả, tuyệt đối KHÔNG gọi 'Lộc ơi', KHÔNG đùa cợt khiếm nhã, KHÔNG nói chuyện suồng sã.\n"
-            "3. Nếu Sếp đặt câu hỏi, chất vấn hoặc hỏi thăm: Phải trả lời NGAY VÀ LUÔN, ĐI THẲNG VÀO TRỌNG TÂM, giải đáp tường minh và trung thực 100%, TUYỆT ĐỐI KHÔNG hứa hẹn suông kiểu 'sẽ kiểm tra và báo cáo sau'.\n"
-            "4. Khi Sếp ra lệnh, chỉ đạo, hoặc yêu cầu thực thi: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ Sếp Lộc! Em xin tuân lệnh...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
+            "3. Nếu anh đặt câu hỏi, chất vấn hoặc hỏi thăm: Phải trả lời NGAY VÀ LUÔN, ĐI THẲNG VÀO TRỌNG TÂM, giải đáp tường minh và trung thực 100%, TUYỆT ĐỐI KHÔNG hứa hẹn suông kiểu 'sẽ kiểm tra và báo cáo sau'.\n"
+            "4. Khi anh ra lệnh, chỉ đạo, hoặc yêu cầu thực thi: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ anh! Em xin tuân lệnh...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
         )
         context_prompt = ""
         if reply_to_text:
             context_prompt += f'Tin nhắn trước đó: "{reply_to_text}"\n'
         is_question = any(q in user_text.lower() for q in ["?", "ko", "không", "sao", "đúng ko", "phải ko", "chưa", "hả", "ai", "bao nhiêu", "khi nào", "thế nào", "đâu", "gì"])
         if is_question:
-            context_prompt += f'Sếp Lộc (Quản lý vùng MT01) vừa hỏi: "{user_text}"\nHãy trả lời cung kính, đi thẳng vào câu trả lời, giải đáp rõ ràng thấu đáo (1-3 câu chuẩn mực):'
+            context_prompt += f'anh Lộc (Quản lý vùng MT01) vừa hỏi: "{user_text}"\nHãy trả lời cung kính, đi thẳng vào câu trả lời, giải đáp rõ ràng thấu đáo (1-3 câu chuẩn mực):'
         else:
-            context_prompt += f'Sếp Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của Sếp (1-2 câu ngắn gọn, chuẩn mực):'
+            context_prompt += f'anh Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của anh (1-2 câu ngắn gọn, chuẩn mực):'
     else:
         sys_instruction = (
             "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).\n"
@@ -3767,7 +3774,7 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
 TRACKING_STATS_FILE = os.path.join(PARENT_DIR, "kpi_history", "tracking_usage_stats.json")
 
 def _record_order_search_usage(sender_name, username, hub_badge, order_codes):
-    """Ghi nhận số lượt tra cứu đơn hàng của từng nhân sự theo chỉ đạo của Sếp Lộc để tổng hợp cuối tháng"""
+    """Ghi nhận số lượt tra cứu đơn hàng của từng nhân sự theo chỉ đạo của anh để tổng hợp cuối tháng"""
     if not order_codes:
         return
     try:
@@ -3801,7 +3808,7 @@ def _record_order_search_usage(sender_name, username, hub_badge, order_codes):
         print(f"[Tracking Stats Record Error] {e}")
 
 def _format_tracking_usage_report():
-    """Xuất báo cáo tổng hợp ai tra cứu đơn nhiều nhất trong tháng theo lệnh Sếp Lộc"""
+    """Xuất báo cáo tổng hợp ai tra cứu đơn nhiều nhất trong tháng theo lệnh anh Lộc"""
     try:
         now_vn = get_vietnam_now()
         month_key = now_vn.strftime("%Y-%m")
@@ -3816,7 +3823,7 @@ def _format_tracking_usage_report():
         for idx, u in enumerate(sorted_users, 1):
             uname = f" ({u.get('username')})" if u.get('username') else ""
             lines.append(f"{idx}. 👤 <b>{u.get('name')}{uname}</b> [{u.get('hub')}]: <b>{u.get('total_searches')} lượt</b> (gồm {len(u.get('orders', []))} đơn khác nhau)")
-        lines.append(f"\n👉 <i>Hệ thống tự động lưu vết 100% để Sếp đối soát phí dịch vụ cuối tháng ạ!</i>")
+        lines.append(f"\n👉 <i>Hệ thống tự động lưu vết 100% để anh đối soát phí dịch vụ cuối tháng ạ!</i>")
         return "\n".join(lines)
     except Exception as e:
         return f"Lỗi tổng hợp số liệu tra cứu: {e}"
@@ -3973,7 +3980,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             CAM_TOPIC_ID = 3365
             if topic_id != CAM_TOPIC_ID and topic_id > 0:
                 _send_telegram_group_message(
-                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Tập trung ảnh tại phòng riêng theo chỉ đạo của Sếp Lộc để tránh trôi tin!)</i>",
+                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Tập trung ảnh tại phòng riêng theo chỉ đạo của anh để tránh trôi tin!)</i>",
                     topic_id=topic_id,
                     reply_to_message_id=msg_id
                 )
@@ -4045,7 +4052,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
 
     # 1. Nếu thực sự có nhu cầu tra cứu danh sách mã đơn GHN (gửi mã đơn thuần túy để lấy thẻ tra cứu)
     if should_lookup_order:
-        # Ghi nhận lượt tra cứu của nhân sự này để phục vụ chỉ đạo của Sếp Lộc
+        # Ghi nhận lượt tra cứu của nhân sự này để phục vụ chỉ đạo của anh
         _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
         is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
         target_codes = order_codes[:10]
@@ -4100,7 +4107,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             _append_telegram_bridge_message(auto_entry)
         return
 
-    # 2. XỬ LÝ CÂU HỎI NGHIỆP VỤ VỀ MÃ ĐƠN HÀNG (VD: Sếp hỏi 'đơn hàng gối đầu đúng ko', 'sao chưa giao', 'ai đang cầm'...)
+    # 2. XỬ LÝ CÂU HỎI NGHIỆP VỤ VỀ MÃ ĐƠN HÀNG (VD: anh hỏi 'đơn hàng gối đầu đúng ko', 'sao chưa giao', 'ai đang cầm'...)
     clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
     for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
         if clean_q.lower().startswith(prefix):
@@ -4150,7 +4157,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
 
     # 3. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
     if is_reply_to_bot or is_tag_or_cmd:
-        # Nếu người gửi đang tag nhân viên/NVXL khác (VD: Sếp reply báo cáo bot nhưng tag @CONGBANGCAIRANGCANTHO để giao việc)
+        # Nếu người gửi đang tag nhân viên/NVXL khác (VD: anh reply báo cáo bot nhưng tag @CONGBANGCAIRANGCANTHO để giao việc)
         # mà KHÔNG gọi đích danh Bot (@AiAgentMT_bot, ai ơi...), Bot PHẢI IM LẶNG để nhân viên tự trả lời!
         import re
         other_user_tags = [
@@ -4242,7 +4249,7 @@ def _process_single_telegram_update(upd):
 
     is_boss = ("lộc" in sender_name.lower()) or ("lộc miền tây" in sender_name.lower()) or (from_user.get("id") in (3036941, 1003940889949))
     if is_boss:
-        sender_name = "Sếp Lộc (Quản lý MT01)"
+        sender_name = "anh Lộc (Quản lý MT01)"
         hub_badge = "Quản Lý Cụm MT01"
     else:
         nvxl_info = NVXL_USERNAME_HUB_MAP.get(username_raw.lower())
@@ -4692,7 +4699,7 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
-    # Trên máy tính cá nhân của Sếp (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
+    # Trên máy tính cá nhân của anh (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     enable_bg_cron = is_cloud or (os.environ.get("TIGER_ENABLE_BG_CRON", "false").lower() in ("true", "1"))
     if enable_bg_cron:
