@@ -825,7 +825,7 @@ def run_looker_export_pipeline(max_retries=3):
                     f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                     f"❌ Hệ thống đã tự động thử lại <b>3 lần</b> nhưng Looker Studio gặp sự cố:\n"
                     f"📝 <i>Chi tiết lỗi:</i> <code>{last_error[:250]}</code>\n\n"
-                    f"👉 <b>Cách xử lý:</b> Sếp có thể bấm nút <b>'KÍCH HOẠT QUY TRÌNH'</b> trên web Tiger AI Command Center MT01 để chạy bù, hoặc kiểm tra lại trình duyệt Chrome bot."
+                    f"👉 <b>Cách xử lý:</b> Anh có thể bấm nút <b>'KÍCH HOẠT QUY TRÌNH'</b> trên web Tiger AI Command Center MT01 để chạy bù, hoặc kiểm tra lại trình duyệt Chrome bot."
                 )
                 send_telegram_alert(alert_text)
 
