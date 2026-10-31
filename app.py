@@ -3474,6 +3474,7 @@ _telegram_last_update_id = 0
 _telegram_bridge_lock = threading.Lock()
 
 TELEGRAM_TOPICS_MAP = {
+    3365: "📸 Camera Giám Sát Kho",
     2690: "🔥 Báo Cáo",
     506: "📅 Đơn Tạo",
     2692: "📓 Quan Trọng",
@@ -3586,6 +3587,33 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
                 if res3.get("ok"):
                     return res3
         return res
+    except Exception as e:
+        return {"ok": False, "description": str(e)}
+
+
+def _send_telegram_photo(photo_path, caption="", topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
+    """Gửi ảnh trực tiếp lên Telegram group/topic"""
+    url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendPhoto"
+    try:
+        with open(photo_path, "rb") as f:
+            files = {"photo": f}
+            data = {
+                "chat_id": TELEGRAM_BRIDGE_CHAT_ID,
+                "caption": caption[:1024],
+                "parse_mode": parse_mode
+            }
+            if topic_id and int(topic_id) > 0:
+                data["message_thread_id"] = int(topic_id)
+            if reply_to_message_id and int(reply_to_message_id) > 0:
+                data["reply_to_message_id"] = int(reply_to_message_id)
+            r = requests.post(url, data=data, files=files, timeout=25)
+            res = r.json()
+            if not res.get("ok") and reply_to_message_id:
+                data.pop("reply_to_message_id", None)
+                f.seek(0)
+                r2 = requests.post(url, data=data, files=files, timeout=25)
+                res = r2.json()
+            return res
     except Exception as e:
         return {"ok": False, "description": str(e)}
 
@@ -3899,6 +3927,54 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     )
     is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
 
+    
+    # 0.1 XỬ LÝ LỆNH CAMERA AI GIÁM SÁT KHO (/cam, /camera)
+    if lower_text.startswith(("/cam", "/camera")):
+        try:
+            # Hỗ trợ cú pháp /cam cr 2,3,5,10,15 hoặc /cam bt 1,6,14,16
+            raw_text = text.replace(",", " ")
+            parts = raw_text.split()
+            hub_key = "cr"
+            cam_nums = []
+            for p in parts[1:]:
+                if p.isdigit():
+                    cam_nums.append(int(p))
+                elif p.lower() in ["cr", "cairang", "cái răng", "bt", "binhthuy", "bình thủy", "om", "omon", "ô môn", "vt", "vithanh", "vị thanh"]:
+                    hub_key = p.lower()
+            
+            if not cam_nums:
+                cam_nums = [None]
+
+            from camera_service import capture_camera_snapshot
+            for c_id in cam_nums[:6]:
+                ok, msg, snap_file = capture_camera_snapshot(hub_key, c_id)
+                if ok and snap_file and os.path.exists(snap_file):
+                    now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                    caption = (
+                        f"📸 <b>{msg.upper()}</b>\n"
+                        f"⏰ <b>Thời gian:</b> {now_str}\n"
+                        f"✅ <i>Trích xuất trực tiếp từ đầu ghi Hikvision GHN</i>"
+                    )
+                    _send_telegram_photo(snap_file, caption=caption, topic_id=topic_id, reply_to_message_id=msg_id)
+                    try:
+                        os.remove(snap_file)
+                    except Exception:
+                        pass
+                    time.sleep(1)
+                else:
+                    _send_telegram_group_message(
+                        f"⚠️ <b>Chưa lấy được hình ảnh Camera {c_id or ''}:</b> {msg}",
+                        topic_id=topic_id,
+                        reply_to_message_id=msg_id
+                    )
+        except Exception as ex:
+            _send_telegram_group_message(
+                f"❌ <b>Lỗi xử lý Camera:</b> {ex}",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id
+            )
+        return
+
     # 0. QUAN TRỌNG: Nếu người gửi đang @tag nhân viên/NVXL khác (không gọi Bot) -> Bot TUYỆT ĐỐI IM LẶNG!
     import re
     other_user_tags = [
@@ -3963,6 +4039,32 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
         is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
         target_codes = order_codes[:10]
+        if len(target_codes) == 1:
+            try:
+                from investigate_order import get_order_deep_investigation
+                deep_rep = get_order_deep_investigation(target_codes[0])
+                sent = _send_telegram_group_message(deep_rep, topic_id=topic_id, reply_to_message_id=msg_id)
+                if sent.get("ok"):
+                    res_msg = sent.get("result", {})
+                    auto_entry = {
+                        "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                        "message_id": res_msg.get("message_id", 0),
+                        "direction": "outgoing_auto",
+                        "sender_name": "AI 🍻 (Tự động)",
+                        "username": "@AiAgentMT_bot",
+                        "hub_badge": "Deep Investigation",
+                        "topic_id": topic_id,
+                        "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                        "text": deep_rep,
+                        "reply_to_text": text[:120],
+                        "replied_to_msg_id": msg_id,
+                        "is_explanation": False,
+                        "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                    }
+                    _append_telegram_bridge_message(auto_entry)
+                return
+            except Exception as e:
+                print("Deep investigation fallback:", e)
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
@@ -4186,6 +4288,22 @@ def _poll_telegram_updates_once():
                     _process_single_telegram_update(upd)
     except Exception:
         pass
+
+
+@app.route("/api/test-cam", methods=["GET"])
+def test_cam_endpoint():
+    try:
+        import cv2
+        cv_ver = cv2.__version__
+    except Exception as e:
+        cv_ver = f"cv2 error: {e}"
+        
+    try:
+        from camera_service import capture_camera_snapshot
+        ok, msg, snap = capture_camera_snapshot("om", 2)
+        return jsonify({"cv2": cv_ver, "capture_ok": ok, "msg": msg, "snap": bool(snap)})
+    except Exception as e:
+        return jsonify({"cv2": cv_ver, "error": str(e)})
 
 @app.route("/api/telegram-webhook", methods=["POST", "GET"])
 def telegram_webhook_receiver():
