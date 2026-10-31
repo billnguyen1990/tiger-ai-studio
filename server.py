@@ -3955,18 +3955,28 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                         f"⏰ <b>Thời gian:</b> {now_str}\n"
                         f"✅ <i>Trích xuất trực tiếp từ đầu ghi Hikvision GHN</i>"
                     )
-                    _send_telegram_photo(snap_file, caption=caption, topic_id=topic_id, reply_to_message_id=msg_id)
+                    CAM_TOPIC_ID = 3365
+                    _send_telegram_photo(snap_file, caption=caption, topic_id=CAM_TOPIC_ID)
                     try:
                         os.remove(snap_file)
                     except Exception:
                         pass
                     time.sleep(1)
                 else:
+                    CAM_TOPIC_ID = 3365
                     _send_telegram_group_message(
                         f"⚠️ <b>Chưa lấy được hình ảnh Camera {c_id or ''}:</b> {msg}",
-                        topic_id=topic_id,
-                        reply_to_message_id=msg_id
+                        topic_id=CAM_TOPIC_ID
                     )
+            
+            # Nếu người gửi yêu cầu từ phòng khác (như Báo Cáo 2690), gửi 1 tin thông báo nhẹ để tránh trôi tin
+            CAM_TOPIC_ID = 3365
+            if topic_id != CAM_TOPIC_ID and topic_id > 0:
+                _send_telegram_group_message(
+                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Tập trung ảnh tại phòng riêng theo chỉ đạo của Sếp Lộc để tránh trôi tin!)</i>",
+                    topic_id=topic_id,
+                    reply_to_message_id=msg_id
+                )
         except Exception as ex:
             _send_telegram_group_message(
                 f"❌ <b>Lỗi xử lý Camera:</b> {ex}",
