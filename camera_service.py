@@ -14,25 +14,42 @@ HEADERS = {
 BASE_API = "https://camera-api.ghn.vn/public-api"
 
 VR_MAP = {
-    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947"},
-    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947"},
-    "binhthuy": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "67e0f0799265070fe4caf176"},
-    "bt": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "67e0f0799265070fe4caf176"},
-    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6"},
-    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6"},
-    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d"},
-    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d"},
+    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 1},
+    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 1},
+    # Bình Thủy đã dời về chung Kho Cái Răng, sử dụng mắt Cam 01, 06, 14 và 16
+    "binhthuy": {"name": "Kho Bình Thủy (Khu vực tại Kho Cái Răng)", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "allowed_cams": [1, 6, 14, 16]},
+    "bt": {"name": "Kho Bình Thủy (Khu vực tại Kho Cái Răng)", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "allowed_cams": [1, 6, 14, 16]},
+    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 1},
+    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 1},
+    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 1},
+    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 1},
 }
 
-def capture_camera_snapshot(hub_key="cairang", cam_id=1, output_file=None):
-    hub_info = VR_MAP.get(hub_key.lower().strip())
-    if not hub_info:
-        hub_info = VR_MAP["cairang"]
+CAM_DESC_MAP = {
+    ( "6577e3250ad53fcbaab02947", 1): "Cửa dock xuất/nhập xe tải",
+    ( "6577e3250ad53fcbaab02947", 2): "Toàn cảnh sàn kho & xe nâng",
+    ( "6577e3250ad53fcbaab02947", 6): "Khu vực tập kết Pallet & Xe nâng tay (Bình Thủy)",
+    ( "6577e3250ad53fcbaab02947", 14): "Toàn cảnh luồng hàng & kho bãi (Bình Thủy)",
+    ( "6577e3250ad53fcbaab02947", 16): "Hành lang vận hành bốc dỡ xe nâng (Bình Thủy)",
+}
+
+def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None):
+    clean_key = hub_key.lower().strip()
+    hub_info = VR_MAP.get(clean_key, VR_MAP["cairang"])
     vr_id = hub_info["vr_id"]
     hub_name = hub_info["name"]
 
+    # Handle default cam or allowed cams
+    if cam_id is None:
+        cam_id = hub_info.get("default_cam", 1)
+    else:
+        try:
+            cam_id = int(cam_id)
+        except Exception:
+            cam_id = hub_info.get("default_cam", 1)
+
     if not output_file:
-        output_file = f"c:/Users/nguye/.gemini/antigravity/scratch/snap_{hub_key}_{cam_id}_{int(time.time())}.jpg"
+        output_file = f"c:/Users/nguye/.gemini/antigravity/scratch/snap_{clean_key}_{cam_id}_{int(time.time())}.jpg"
 
     # 1. Request liveview session
     params = {"vrId": vr_id, "cameraId": cam_id, "subStream": "true"}
@@ -90,10 +107,11 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=1, output_file=None):
 
     if ret and frame is not None:
         cv2.imwrite(output_file, frame)
-        return True, f"Thành công ({frame.shape[1]}x{frame.shape[0]})", output_file
+        desc = CAM_DESC_MAP.get((vr_id, cam_id), f"Mắt Cam số {cam_id:02d}")
+        return True, f"{hub_name} - {desc}", output_file
 
     return False, "Không giải mã được khung hình từ video", None
 
 if __name__ == '__main__':
-    ok, msg, path = capture_camera_snapshot("cr", 1)
+    ok, msg, path = capture_camera_snapshot("bt", 6)
     print("Capture result:", ok, msg, path)

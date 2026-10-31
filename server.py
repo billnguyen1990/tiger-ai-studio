@@ -3944,7 +3944,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             if ok and snap_file and os.path.exists(snap_file):
                 now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
                 caption = (
-                    f"📸 <b>CAMERA KHO {hub_key.upper()} - CAM {cam_num}</b>\n"
+                    f"📸 <b>{msg.upper()}</b>\n"
                     f"⏰ <b>Thời gian:</b> {now_str}\n"
                     f"✅ <i>Trích xuất trực tiếp từ đầu ghi Hikvision GHN</i>"
                 )
