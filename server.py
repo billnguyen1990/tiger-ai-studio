@@ -4288,6 +4288,22 @@ def _poll_telegram_updates_once():
     except Exception:
         pass
 
+
+@app.route("/api/test-cam", methods=["GET"])
+def test_cam_endpoint():
+    try:
+        import cv2
+        cv_ver = cv2.__version__
+    except Exception as e:
+        cv_ver = f"cv2 error: {e}"
+        
+    try:
+        from camera_service import capture_camera_snapshot
+        ok, msg, snap = capture_camera_snapshot("om", 2)
+        return jsonify({"cv2": cv_ver, "capture_ok": ok, "msg": msg, "snap": bool(snap)})
+    except Exception as e:
+        return jsonify({"cv2": cv_ver, "error": str(e)})
+
 @app.route("/api/telegram-webhook", methods=["POST", "GET"])
 def telegram_webhook_receiver():
     if request.method == "GET":
