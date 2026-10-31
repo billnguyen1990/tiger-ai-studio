@@ -3930,35 +3930,42 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     # 0.1 XỬ LÝ LỆNH CAMERA AI GIÁM SÁT KHO (/cam, /camera)
     if lower_text.startswith(("/cam", "/camera")):
         try:
-            parts = text.split()
+            # Hỗ trợ cú pháp /cam cr 2,3,5,10,15 hoặc /cam bt 1,6,14,16
+            raw_text = text.replace(",", " ")
+            parts = raw_text.split()
             hub_key = "cr"
-            cam_num = 1
+            cam_nums = []
             for p in parts[1:]:
                 if p.isdigit():
-                    cam_num = int(p)
+                    cam_nums.append(int(p))
                 elif p.lower() in ["cr", "cairang", "cái răng", "bt", "binhthuy", "bình thủy", "om", "omon", "ô môn", "vt", "vithanh", "vị thanh"]:
                     hub_key = p.lower()
             
+            if not cam_nums:
+                cam_nums = [None]
+
             from camera_service import capture_camera_snapshot
-            ok, msg, snap_file = capture_camera_snapshot(hub_key, cam_num)
-            if ok and snap_file and os.path.exists(snap_file):
-                now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-                caption = (
-                    f"📸 <b>{msg.upper()}</b>\n"
-                    f"⏰ <b>Thời gian:</b> {now_str}\n"
-                    f"✅ <i>Trích xuất trực tiếp từ đầu ghi Hikvision GHN</i>"
-                )
-                _send_telegram_photo(snap_file, caption=caption, topic_id=topic_id, reply_to_message_id=msg_id)
-                try:
-                    os.remove(snap_file)
-                except Exception:
-                    pass
-            else:
-                _send_telegram_group_message(
-                    f"⚠️ <b>Chưa lấy được hình ảnh Camera:</b> {msg}\n<i>(Vui lòng thử lại sau vài giây hoặc chọn camera khác: /cam cr 1, /cam cr 2...)</i>",
-                    topic_id=topic_id,
-                    reply_to_message_id=msg_id
-                )
+            for c_id in cam_nums[:6]:
+                ok, msg, snap_file = capture_camera_snapshot(hub_key, c_id)
+                if ok and snap_file and os.path.exists(snap_file):
+                    now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                    caption = (
+                        f"📸 <b>{msg.upper()}</b>\n"
+                        f"⏰ <b>Thời gian:</b> {now_str}\n"
+                        f"✅ <i>Trích xuất trực tiếp từ đầu ghi Hikvision GHN</i>"
+                    )
+                    _send_telegram_photo(snap_file, caption=caption, topic_id=topic_id, reply_to_message_id=msg_id)
+                    try:
+                        os.remove(snap_file)
+                    except Exception:
+                        pass
+                    time.sleep(1)
+                else:
+                    _send_telegram_group_message(
+                        f"⚠️ <b>Chưa lấy được hình ảnh Camera {c_id or ''}:</b> {msg}",
+                        topic_id=topic_id,
+                        reply_to_message_id=msg_id
+                    )
         except Exception as ex:
             _send_telegram_group_message(
                 f"❌ <b>Lỗi xử lý Camera:</b> {ex}",
