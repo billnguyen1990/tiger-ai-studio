@@ -3474,6 +3474,7 @@ _telegram_last_update_id = 0
 _telegram_bridge_lock = threading.Lock()
 
 TELEGRAM_TOPICS_MAP = {
+    3365: "📸 Camera Giám Sát Kho",
     2690: "🔥 Báo Cáo",
     506: "📅 Đơn Tạo",
     2692: "📓 Quan Trọng",
