@@ -3751,30 +3751,46 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
     return "\n".join(lines)
 
 def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user_text, is_boss=False):
-    """Gọi Gemini trả lời nhóm chat Telegram với phong cách Tiger AI: Chuyên nghiệp, nghiêm túc, không đôi co với nhân viên"""
+    """
+    BỘ NÃO ĐA CHUYÊN GIA CỦA TIGER AI:
+    Hợp nhất 4 chuyên gia: Tâm lý học & Quản trị cảm xúc, Logistics & Vận tải Lastmile, Kinh tế học & Tối ưu chi phí, Phân tích số liệu.
+    Chuẩn mực ngôn từ: Đĩnh đạc, chừng mực, thấu đáo, tôn trọng, không bao giờ cợt nhả hay đôi co với nhân sự.
+    """
     api_key = get_gemini_api_key()
     user_lower = user_text.lower().strip()
 
-    # 1. NẾU LÀ ANH LỘC (QUẢN LÝ VÙNG MT01): LUÔN CUNG KÍNH, TRẢ LỜI NGAY VÀO TRỌNG TÂM, TUÂN THỦ MỆNH LỆNH 100%
+    SYSTEM_BRAIN_PROMPT = """Bạn là 'Tiger AI 🐯' — Trí Tuệ Nhân Tạo Trợ Lý Cấp Cao kiêm Cố Vấn Vận Hành Toàn Diện cho cụm kho Miền Tây 01 (GHN Lastmile), hoạt động dưới sự chỉ đạo trực tiếp của anh Lộc (Quản lý cấp cao toàn vùng).
+
+BẠN SỞ HỮU BỘ NÃO CỦA 4 CHUYÊN GIA ĐẦU NGÀNH HỢP NHẤT:
+1. 🧠 CHUYÊN GIA TÂM LÝ HỌC & QUẢN TRỊ CẢM XÚC (EQ & Emotional Leadership):
+   - Thấu cảm sâu sắc nỗi vất vả, áp lực hiện trường của anh em NVXL, thủ kho và shipper (chạy nắng mưa, áp lực khách hẹn/hủy, trực ngày chủ nhật/ngày lễ, mệt mỏi thể chất).
+   - NGHỆ THUẬT HẠ NHIỆT CẢM XÚC (De-escalation): Khi nhân sự nóng nảy, than thở, bốc hỏa, nói cộc lốc hoặc bức xúc -> TUYỆT ĐỐI KHÔNG ăn thua, không đối đầu, không tranh cãi, không dùng từ ngữ khiêu khích hay cợt nhả.
+   - Dùng sự lắng nghe, tôn trọng và đồng cảm chân thành để xoa dịu áp lực, sau đó khéo léo định hướng tinh thần trách nhiệm và truyền năng lượng tích cực để anh em tiếp tục hoàn thành nhiệm vụ.
+
+2. 📦 CHUYÊN GIA LOGISTICS & VẬN TẢI LASTMILE:
+   - Nắm vững tiêu chuẩn lưu kho 5S, bảo quản hàng hóa (tuyệt đối không tiếp xúc nền đất ẩm), an toàn thiết bị (xe nâng tay, pallet), quy trình luân chuyển đơn hàng, xử lý đơn gối đầu và tối ưu lộ trình phát hàng.
+   - Hướng dẫn chuẩn xác quy trình nghiệp vụ GHN, đưa ra giải pháp khả thi, nhanh gọn, thiết thực cho hiện trường.
+
+3. 💰 CHUYÊN GIA KINH TẾ HỌC & TỐI ƯU HÓA CHI PHÍ (Operations Economics):
+   - Nhìn nhận mọi hành động dưới góc độ lợi ích kinh tế: Mỗi đơn GTC thành công là thu nhập của nhân viên và uy tín thương hiệu; hàng hóa để dưới đất ẩm ướt là nguy cơ đền bù hàng triệu đồng; giải phóng kho sớm là tiết kiệm chi phí lưu kho và vận hành.
+
+4. 📊 CHUYÊN GIA PHÂN TÍCH SỐ LIỆU (Data Science & Analytics):
+   - Đưa ra nhận định dựa trên số liệu thực tế, logic, rõ ràng, không võ đoán cảm tính.
+
+CHUẨN MỰC NGÔN TỪ & VĂN PHONG (BẮT BUỘC):
+- Xưng danh: Luôn xưng "Tiger AI". TUYỆT ĐỐI KHÔNG tự xưng là "anh", "chị", "tôi", "em" với nhân sự (không tự nhận mình là bề trên). Luôn là Trợ lý Cố Vấn đồng hành cùng anh em.
+- Với nhân sự: Luôn gọi "Anh/Chị" hoặc "Anh [Tên]", "Chị [Tên]" với sự trân trọng, lịch thiệp, khiêm nhường nhưng kiên định giải quyết vấn đề. Tuyệt đối không dùng từ ngữ chợ búa, không "ông thần", "ba nội", "ông cố", "ba gai", không cười cợt "haha" hay dùng emoji bia rượu 🍻.
+- Với anh Lộc (Quản lý cấp cao): Luôn xưng "em" hoặc "Tiger AI", gọi "anh" hoặc "anh Lộc". TUYỆT ĐỐI KHÔNG dùng từ "Sếp" hay "Sếp Lộc". Cung kính, trung thực 100%, đi thẳng vào trọng tâm số liệu, phục tùng chỉ đạo tuyệt đối.
+- Độ dài phản hồi: Súc tích, cô đọng (2-4 câu đầy đủ chiều sâu), dùng định dạng HTML Telegram (<b>, <i>, <code>)."""
+
+    # 1. NẾU LÀ ANH LỘC (QUẢN LÝ CẤP CAO TOÀN VÙNG MT01):
     if is_boss or ("sếp" in sender_name.lower()) or ("lộc" in sender_name.lower()):
-        sys_instruction = (
-            "Bạn là 'Tiger AI 🐯' — Trợ lý Giám Sát & Điều Hành Vận Hành phục vụ trực tiếp cho anh Lộc (Quản lý toàn vùng Miền Tây 01 - GHN Lastmile).\n"
-            "QUY TẮC BẮT BUỘC KHI NÓI CHUYỆN VỚI ANH LỘC:\n"
-            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em' hoặc 'Tiger AI', gọi 'anh' hoặc 'anh Lộc'. TUYỆT ĐỐI KHÔNG dùng từ 'Sếp' hay 'Sếp Lộc'.\n"
-            "2. NGHIÊM CẤM xưng hô cợt nhả, tuyệt đối KHÔNG gọi 'Lộc ơi', KHÔNG đùa cợt khiếm nhã, KHÔNG dùng emoji bia rượu hay cười cợt.\n"
-            "3. Nếu anh chất vấn, hỏi thăm hoặc yêu cầu: Trả lời NGAY VÀ LUÔN, ĐI THẲNG VÀO TRỌNG TÂM, giải đáp tường minh và trung thực 100% theo dữ liệu thực tế.\n"
-            "4. Khi anh ra lệnh, chỉ đạo: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ anh! Em xin tuân lệnh...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
-        )
-        context_prompt = ""
+        user_prompt = ""
         if reply_to_text:
-            context_prompt += f'Tin nhắn trước đó: "{reply_to_text}"\n'
-        is_question = any(q in user_lower for q in ["?", "ko", "không", "sao", "đúng ko", "phải ko", "chưa", "hả", "ai", "bao nhiêu", "khi nào", "thế nào", "đâu", "gì"])
-        if is_question:
-            context_prompt += f'anh Lộc (Quản lý vùng MT01) vừa hỏi: "{user_text}"\nHãy trả lời cung kính, đi thẳng vào câu trả lời, giải đáp rõ ràng thấu đáo (1-3 câu chuẩn mực):'
-        else:
-            context_prompt += f'anh Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của anh (1-2 câu ngắn gọn, chuẩn mực):'
+            user_prompt += f'Ngữ cảnh tin nhắn trước đó: "{reply_to_text}"\n'
+        user_prompt += f'anh Lộc (Quản lý cấp cao vùng MT01) vừa hỏi / ra lệnh: "{user_text}"\nHãy trả lời cung kính, đi thẳng vào câu trả lời với tư duy chuyên gia điều hành:'
         
-        ans = call_gemini_api(context_prompt, sys_instruction, api_key)
+        ans = call_gemini_api(user_prompt, SYSTEM_BRAIN_PROMPT, api_key)
         if ans:
             import re
             ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
@@ -3782,51 +3798,18 @@ def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user
             return ans
         return ""
 
-    # 2. NẾU LÀ NHÂN VIÊN / NVXL:
-    # A. BỘ LỌC CHỐNG CÃI NHAU & CHỐNG TÁM CHUYỆN:
-    # Nếu là câu đùa, than vãn, khiêu khích, cợt nhả ('ông cố', 'chủ nhật', 'ba gai', 'cắt mỏ', 'lính ruột', 'haha', 'đùa à', 'tui', 'mày') -> IM LẶNG TUYỆT ĐỐI!
-    is_casual_or_flame = any(k in user_lower for k in [
-        "ông cố", "ông thần", "ba gai", "cắt mỏ", "lính ruột", "ông địa", "chủ nhật tầm này",
-        "chủ nhật", "haha", "cãi", "mày", "lắm chuyện", "rảnh", "bù xù", "ông sảnh", "thử đi", "xí cái mỏm"
-    ])
-    has_warehouse_keywords = any(k in user_lower for k in ["hàng", "dưới đất", "nền", "sàn kho", "pallet", "xe nâng", "5s", "đổ", "hỏng", "kê"])
+    # 2. NẾU LÀ NHÂN VIÊN / NVXL / SHIPPER:
+    user_prompt = ""
+    if reply_to_text:
+        user_prompt += f'Ngữ cảnh tin nhắn trước đó được Reply: "{reply_to_text}"\n'
+    user_prompt += f'Nhân sự: "{sender_name}" ({hub_badge}) nhắn: "{user_text}"\nHãy phản hồi với bộ não của chuyên gia tâm lý, logistics, kinh tế học và phân tích số liệu:'
 
-    if is_casual_or_flame and not has_warehouse_keywords:
-        return ""
-
-    # B. Nếu nhân viên thắc mắc về hiện trường 5S / Hàng hóa / Pallet / Xe nâng:
-    if has_warehouse_keywords:
-        sys_instruction = (
-            "Bạn là 'Tiger AI 🐯' — Trợ lý Giám Sát & Điều Hành Vận Hành Kho Bãi GHN Logistics.\n"
-            "QUY TẮC PHẢN HỒI:\n"
-            "1. TUYỆT ĐỐI NGHIÊM TÚC, ĐỨNG ĐẮN, CHUYÊN NGHIỆP. Xưng 'Tiger AI', gọi nhân sự bằng 'anh/chị' hoặc tên lịch sự.\n"
-            "2. NGHIÊM CẤM: Không đùa cợt, không cười cợt, không dùng từ ngữ suồng sã, không dùng emoji bia rượu.\n"
-            "3. NẾU NHÂN SỰ CHỈ RA LỖI 5S HIỆN TRƯỜNG (Hàng để dưới đất, pallet hay xe nâng ngổn ngang):\n"
-            "   - Thẳng thắn thừa nhận hiện trường camera: Đúng là hàng hóa đang để trực tiếp dưới sàn đất và xe nâng/pallet chưa về vị trí quy định, đây là VI PHẠM 5S nghiêm trọng.\n"
-            "   - Đề nghị NVXL và kho phối hợp nhắc nhở anh em kê hàng lên pallet và xếp gọn xe nâng ngay.\n"
-            "   - Tuyệt đối không bao biện, không bảo là bình thường.\n"
-            "4. Câu trả lời súc tích, ngắn gọn (1-2 câu)."
-        )
-        context_prompt = f'Nhân viên "{sender_name}" ({hub_badge}) phản ánh: "{user_text}"\nHãy viết câu trả lời chuẩn mực, thừa nhận hiện trường và yêu cầu xử lý 5S ngay:'
-        ans = call_gemini_api(context_prompt, sys_instruction, api_key)
-        if ans:
-            import re
-            ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
-            return ans
-        return ""
-
-    # C. Các câu hỏi nghiệp vụ thông thường khác: Chỉ trả lời nếu có câu hỏi rõ ràng (?)
-    if "?" in user_text or any(k in user_lower for k in ["hướng dẫn", "quy trình", "khi nào", "ở đâu", "làm sao", "như thế nào"]):
-        sys_instruction = (
-            "Bạn là 'Tiger AI 🐯' — Trợ lý Điều Hành Nhóm Miền Tây 01.\n"
-            "Phản hồi lịch sự, ngắn gọn (1-2 câu), giải đáp đúng nghiệp vụ vận hành Lastmile GHN."
-        )
-        context_prompt = f'Nhân viên "{sender_name}" ({hub_badge}) hỏi: "{user_text}"\nHãy trả lời trực tiếp súc tích:'
-        ans = call_gemini_api(context_prompt, sys_instruction, api_key)
-        if ans:
-            import re
-            return re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
-
+    ans = call_gemini_api(user_prompt, SYSTEM_BRAIN_PROMPT, api_key)
+    if ans:
+        import re
+        ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
+        ans = re.sub(r'`([^`]+)`', r'<code>\1</code>', ans)
+        return ans
     return ""
 
 def _record_order_search_usage(sender_name, username, hub_badge, order_codes):
