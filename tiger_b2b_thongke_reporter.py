@@ -12,7 +12,7 @@ if not os.path.exists(CREDS_FILE):
 
 BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 CHAT_ID = "-1003940889949"
-TOPIC_IDS = [506, 2690]  # Gửi Topic 506 (Báo cáo B2B) và Topic 2690 (Chỉ huy)
+TOPIC_IDS = [506]  # CHỈ gửi vào Topic 506 (📅 Đơn Tạo), KHÔNG gửi vào Topic 2690 (🔥 Báo Cáo)
 
 def run_b2b_report(send_telegram=True):
     print("=" * 60)
@@ -227,3 +227,4 @@ if __name__ == "__main__":
     send = ("--send" in sys.argv or "--dry-run" not in sys.argv)
     res = run_b2b_report(send_telegram=send)
     print("Kết quả:", res)
+
