@@ -5059,6 +5059,36 @@ def api_send_b2b_report():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route("/cost-dashboard")
+def view_cost_dashboard():
+    """Giao diện Dashboard Chi Phí & Vận Hành Vùng (11 chỉ số, bộ lọc Vùng, Kho, Tháng, Tuần, Ngày)"""
+    return render_template("cost_dashboard.html")
+
+@app.route("/api/cost-dashboard/data", methods=["GET"])
+def api_get_cost_dashboard_data():
+    """API truy vấn dữ liệu chi phí vận tải theo bộ lọc Vùng, Kho, Tháng, Tuần, Ngày"""
+    from flask import request
+    region = request.args.get("region", "Miền Tây 01")
+    hub = request.args.get("hub", "all")
+    mode = request.args.get("mode", "month")
+    key = request.args.get("key")
+    try:
+        from tiger_cost_dashboard_service import query_cost_data
+        data = query_cost_data(region=region, hub=hub, mode=mode, key=key)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/cost-dashboard/sync", methods=["POST", "GET"])
+def api_sync_cost_dashboard():
+    """Kích hoạt đồng bộ tươi toàn bộ ma trận chi phí từ Google Sheet"""
+    try:
+        from tiger_cost_dashboard_service import build_cost_dashboard_matrix
+        data = build_cost_dashboard_matrix(force=True)
+        return jsonify({"success": True, "message": "Đã đồng bộ thành công toàn bộ ma trận Chi Phí từ Google Sheet!", "last_sync": data.get("last_sync")})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/api/cost-analytics", methods=["GET"])
 def api_get_cost_analytics():
     """Lấy dữ liệu chi phí vận tải, lương NVXL, lương NVGH và đối soát xe cố định"""

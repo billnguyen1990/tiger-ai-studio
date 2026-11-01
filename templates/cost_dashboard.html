@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIGER AI • DASHBOARD CHI PHÍ & VẬN HÀNH VÙNG</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐯</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1e293b;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(59, 130, 246, 0.3);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-purple: #a855f7;
+      --accent-red: #f87171;
+      --primary-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .dashboard-header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      font-size: 28px;
+      line-height: 1;
+      filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .sync-badge {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-family: 'JetBrains Mono', monospace;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* MAIN CONTAINER */
+    .main-content {
+      flex: 1;
+      padding: 24px 28px;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* FILTER BAR */
+    .filter-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-sub);
+    }
+
+    .filter-select {
+      background: #1e293b;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      min-width: 160px;
+      transition: all 0.2s;
+    }
+    .filter-select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    .pill-tabs {
+      display: flex;
+      background: #0f172a;
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .pill-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pill-btn.active {
+      background: var(--primary-gradient);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+    }
+
+    /* KPI METRICS GRID */
+    .metrics-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .kpi-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent-blue);
+    }
+    .kpi-card.green::before { background: var(--accent-green); }
+    .kpi-card.amber::before { background: var(--accent-amber); }
+    .kpi-card.purple::before { background: var(--accent-purple); }
+    .kpi-card.red::before { background: var(--accent-red); }
+
+    .kpi-title {
+      font-size: 12px;
+      color: var(--text-sub);
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+    }
+    .kpi-badge.green { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); }
+    .kpi-badge.amber { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); }
+
+    /* CHARTS & TABLES CONTAINER */
+    .dashboard-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 1200px) {
+      .dashboard-row { grid-template-columns: 1fr; }
+    }
+
+    .content-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .box-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 280px;
+      width: 100%;
+    }
+
+    /* TABLE */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #1e293b;
+      color: var(--text-sub);
+      padding: 12px 14px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      white-space: nowrap;
+      color: #cbd5e1;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .td-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .hub-highlight {
+      font-weight: 700;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="brand-group">
+      <div class="brand-logo">🐯</div>
+      <div>
+        <div class="brand-title">TIGER AI • DASHBOARD CHI PHÍ VẬN TẢI</div>
+        <div class="brand-subtitle">Phân tích chuyên sâu 11 chỉ số chi phí & hiệu suất lastmile</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="sync-badge" id="syncStatus">Đồng bộ: Đang tải...</span>
+      <button class="btn btn-primary" id="btnSyncLive" onclick="triggerSync()">
+        <span>🔄 Đồng Bộ Sheets</span>
+      </button>
+      <a href="/api/cost-analytics/excel" class="btn btn-outline" download>
+        <span>📥 Xuất Excel</span>
+      </a>
+      <a href="/" class="btn btn-outline">
+        <span>🔙 Về Studio</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- FILTER BAR -->
+    <section class="filter-card">
+      <div class="filter-group">
+        <!-- Vùng -->
+        <div class="filter-item">
+          <label class="filter-label">1. Vùng Điều Hành</label>
+          <select id="selRegion" class="filter-select" onchange="onRegionChange()">
+            <option value="Miền Tây 01" selected>Miền Tây 01</option>
+            <option value="Miền Tây 02">Miền Tây 02</option>
+            <option value="Miền Tây 03">Miền Tây 03</option>
+            <option value="Miền Tây 04">Miền Tây 04</option>
+            <option value="Miền Tây 05">Miền Tây 05</option>
+          </select>
+        </div>
+
+        <!-- Kho -->
+        <div class="filter-item">
+          <label class="filter-label">2. Kho Vận Hành</label>
+          <select id="selHub" class="filter-select" onchange="fetchData()">
+            <option value="all" selected>Toàn Vùng (Tổng Hợp)</option>
+          </select>
+        </div>
+
+        <!-- Chế độ thời gian -->
+        <div class="filter-item">
+          <label class="filter-label">3. Chế Độ Xem</label>
+          <div class="pill-tabs">
+            <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Tháng</button>
+            <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📅 Tuần</button>
+            <button class="pill-btn" id="pillDay" onclick="setMode('day')">📆 Ngày</button>
+          </div>
+        </div>
+
+        <!-- Chọn mốc cụ thể -->
+        <div class="filter-item">
+          <label class="filter-label" id="lblPeriod">4. Mốc Thời Gian</label>
+          <select id="selPeriodKey" class="filter-select" onchange="fetchData()">
+            <option value="">Đang tải...</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
+        <span>🎯 Trạng thái:</span>
+        <strong id="filterSummaryText" style="color: var(--accent-blue);">Miền Tây 01 • Toàn Vùng • Tháng 10-Năm 2026</strong>
+      </div>
+    </section>
+
+    <!-- SECTION 1: 11 CHỈ SỐ KPI CỐT TỬ -->
+    <section>
+      <div class="metrics-section-title">
+        <span>📊 11 CHỈ SỐ CỐT TỬ CHI PHÍ & HIỆU QUẢ VẬN HÀNH</span>
+      </div>
+
+      <div class="kpi-grid">
+        <!-- 1. Volume Gán -->
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Volume Gán</span>
+            <span class="kpi-badge">Sản Lượng</span>
+          </div>
+          <div class="kpi-value" id="val_vol_gan">0</div>
+        </div>
+
+        <!-- 2. Volume GTC -->
+        <div class="kpi-card green">
+          <div class="kpi-title">
+            <span>Volume GTC</span>
+            <span class="kpi-badge green">Thành Công</span>
+          </div>
+          <div class="kpi-value" id="val_vol_gtc">0</div>
+        </div>
+
+        <!-- 3. Kg GTC -->
+        <div class="kpi-card green">
+          <div class="kpi-title">
+            <span>Kg GTC (Trọng Lượng)</span>
+            <span class="kpi-badge green">Tấn / Kg</span>
+          </div>
+          <div class="kpi-value" id="val_kg_gtc">0</div>
+        </div>
+
+        <!-- 4. Tỷ lệ GTC -->
+        <div class="kpi-card green">
+          <div class="kpi-title">
+            <span>Tỷ Lệ GTC</span>
+            <span class="kpi-badge green">Mục tiêu 85%</span>
+          </div>
+          <div class="kpi-value" id="val_tyle_gtc">0%</div>
+        </div>
+
+        <!-- 5. Stop GTC -->
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Stop GTC</span>
+            <span class="kpi-badge">Điểm Dừng</span>
+          </div>
+          <div class="kpi-value" id="val_stop_gtc">0</div>
+        </div>
+
+        <!-- 6. Lương giao -->
+        <div class="kpi-card amber">
+          <div class="kpi-title">
+            <span>Lương Giao (NVGH)</span>
+            <span class="kpi-badge amber">Chi Phí</span>
+          </div>
+          <div class="kpi-value" id="val_luong_giao">0 đ</div>
+        </div>
+
+        <!-- 7. Lương NVXL -->
+        <div class="kpi-card amber">
+          <div class="kpi-title">
+            <span>Lương NVXL (Kho)</span>
+            <span class="kpi-badge amber">Chi Phí</span>
+          </div>
+          <div class="kpi-value" id="val_luong_xl">0 đ</div>
+        </div>
+
+        <!-- 8. Chi phí xe tải -->
+        <div class="kpi-card red">
+          <div class="kpi-title">
+            <span>Chi Phí Xe Tải (NCC 365)</span>
+            <span class="kpi-badge">Vận Tải</span>
+          </div>
+          <div class="kpi-value" id="val_chi_phi_xe">0 đ</div>
+        </div>
+
+        <!-- 9. Chi phí / đơn -->
+        <div class="kpi-card purple">
+          <div class="kpi-title">
+            <span>Chi Phí Giao + Xe / Đơn</span>
+            <span class="kpi-badge purple">Đơn Vị</span>
+          </div>
+          <div class="kpi-value" id="val_cost_per_order">0 đ</div>
+        </div>
+
+        <!-- 10. Chi phí / stop -->
+        <div class="kpi-card purple">
+          <div class="kpi-title">
+            <span>Chi Phí Giao + Xe / Stop</span>
+            <span class="kpi-badge purple">Điểm Dừng</span>
+          </div>
+          <div class="kpi-value" id="val_cost_per_stop">0 đ</div>
+        </div>
+
+        <!-- 11. Chi phí / kg -->
+        <div class="kpi-card purple">
+          <div class="kpi-title">
+            <span>Chi Phí Giao + Cost / Kg</span>
+            <span class="kpi-badge purple">Kg Cost</span>
+          </div>
+          <div class="kpi-value" id="val_cost_per_kg">0 đ</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CHARTS & COMPARISONS -->
+    <div class="dashboard-row">
+      <!-- Cột 1: Biểu đồ xu hướng -->
+      <div class="content-box">
+        <div class="box-header">
+          <div class="box-title">📈 XU HƯỚNG SẢN LƯỢNG GTC & CHI PHÍ / ĐƠN (14 NGÀY GẦN NHẤT)</div>
+        </div>
+        <div class="chart-container">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Cột 2: Cơ cấu chi phí -->
+      <div class="content-box">
+        <div class="box-header">
+          <div class="box-title">🥧 CƠ CẤU CHI PHÍ VẬN HÀNH</div>
+        </div>
+        <div class="chart-container">
+          <canvas id="costPieChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: BẢNG SO SÁNH CHI TIẾT TỪNG KHO -->
+    <section class="content-box">
+      <div class="box-header">
+        <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH CÁC KHO TRONG VÙNG</div>
+        <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết</span>
+      </div>
+      <div class="table-wrapper">
+        <table id="tblBreakdown">
+          <thead>
+            <tr>
+              <th>Kho Vận Hành</th>
+              <th style="text-align: right;">Volume Gán</th>
+              <th style="text-align: right;">Volume GTC</th>
+              <th style="text-align: right;">Kg GTC</th>
+              <th style="text-align: right;">Tỷ Lệ GTC</th>
+              <th style="text-align: right;">Stop GTC</th>
+              <th style="text-align: right;">Lương Giao</th>
+              <th style="text-align: right;">Lương NVXL</th>
+              <th style="text-align: right;">Chi Phí Xe</th>
+              <th style="text-align: right;">Cost/Đơn</th>
+              <th style="text-align: right;">Cost/Stop</th>
+              <th style="text-align: right;">Cost/Kg</th>
+            </tr>
+          </thead>
+          <tbody id="tblBodyBreakdown">
+            <tr><td colspan="12" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let currentMode = "month";
+    let filterOptions = null;
+    let trendChartInstance = null;
+    let pieChartInstance = null;
+
+    function formatNumber(num) {
+      if (num === null || num === undefined) return "0";
+      return num.toLocaleString("vi-VN");
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll(".pill-btn").forEach(btn => btn.classList.remove("active"));
+      if (mode === "month") document.getElementById("pillMonth").classList.add("active");
+      if (mode === "week") document.getElementById("pillWeek").classList.add("active");
+      if (mode === "day") document.getElementById("pillDay").classList.add("active");
+      
+      updatePeriodDropdown();
+      fetchData();
+    }
+
+    async function loadFilters() {
+      try {
+        const res = await fetch("/api/cost-dashboard/data?region=" + encodeURIComponent(document.getElementById("selRegion").value));
+        const json = await res.json();
+        if (json.success) {
+          filterOptions = json.available_filters;
+          document.getElementById("syncStatus").innerText = "Đồng bộ: " + (json.last_sync || "Mới nhất");
+          populateHubDropdown();
+          updatePeriodDropdown();
+          renderData(json);
+        }
+      } catch (e) {
+        console.error("Failed loading initial data:", e);
+      }
+    }
+
+    function onRegionChange() {
+      const reg = document.getElementById("selRegion").value;
+      fetch("/api/cost-dashboard/data?region=" + encodeURIComponent(reg))
+        .then(r => r.json())
+        .then(json => {
+          if (json.success) {
+            filterOptions = json.available_filters;
+            populateHubDropdown();
+            updatePeriodDropdown();
+            renderData(json);
+          }
+        });
+    }
+
+    function populateHubDropdown() {
+      const selHub = document.getElementById("selHub");
+      selHub.innerHTML = '<option value="all" selected>Toàn Vùng (Tổng Hợp)</option>';
+      if (filterOptions && filterOptions.hubs) {
+        filterOptions.hubs.forEach(h => {
+          if (!h.startsWith("Miền Tây")) {
+            const opt = document.createElement("option");
+            opt.value = h;
+            opt.innerText = h.replace("Kho Giao Hàng Nặng - ", "");
+            selHub.appendChild(opt);
+          }
+        });
+      }
+    }
+
+    function updatePeriodDropdown() {
+      const selKey = document.getElementById("selPeriodKey");
+      const lblPeriod = document.getElementById("lblPeriod");
+      selKey.innerHTML = "";
+
+      let items = [];
+      if (currentMode === "month") {
+        lblPeriod.innerText = "4. Chọn Tháng";
+        items = (filterOptions && filterOptions.months) ? filterOptions.months : [];
+      } else if (currentMode === "week") {
+        lblPeriod.innerText = "4. Chọn Tuần";
+        items = (filterOptions && filterOptions.weeks) ? filterOptions.weeks : [];
+      } else {
+        lblPeriod.innerText = "4. Chọn Ngày";
+        items = (filterOptions && filterOptions.days) ? [...filterOptions.days].reverse() : [];
+      }
+
+      items.forEach((item, idx) => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.innerText = item;
+        if (currentMode === "month" && item.includes("Tháng 10")) opt.selected = true;
+        else if (currentMode === "week" && item.includes("Tuần 44")) opt.selected = true;
+        else if (idx === 0 && !selKey.value) opt.selected = true;
+        selKey.appendChild(opt);
+      });
+    }
+
+    async function fetchData() {
+      const reg = document.getElementById("selRegion").value;
+      const hub = document.getElementById("selHub").value;
+      const key = document.getElementById("selPeriodKey").value;
+
+      document.getElementById("filterSummaryText").innerText = `${reg} • ${hub === 'all' ? 'Toàn Vùng' : hub.replace('Kho Giao Hàng Nặng - ', '')} • ${key || 'Mới nhất'}`;
+
+      try {
+        const url = `/api/cost-dashboard/data?region=${encodeURIComponent(reg)}&hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json.success) {
+          renderData(json);
+        }
+      } catch (e) {
+        console.error("Error fetching cost data:", e);
+      }
+    }
+
+    function renderData(data) {
+      const m = data.metrics || {};
+      
+      const getVal = (name, def="0") => (m[name] ? (m[name].formatted || m[name].raw || def) : def);
+
+      document.getElementById("val_vol_gan").innerText = getVal("Volume gán");
+      document.getElementById("val_vol_gtc").innerText = getVal("Volume GTC");
+      document.getElementById("val_kg_gtc").innerText = getVal("Kg GTC");
+      document.getElementById("val_tyle_gtc").innerText = getVal("Tỷ lệ GTC", "0%");
+      document.getElementById("val_stop_gtc").innerText = getVal("Stop GTC");
+
+      document.getElementById("val_luong_giao").innerText = getVal("Lương giao") + " đ";
+      document.getElementById("val_luong_xl").innerText = getVal("Lương NVXL") + " đ";
+      document.getElementById("val_chi_phi_xe").innerText = getVal("Chi phí xe tải") + " đ";
+
+      document.getElementById("val_cost_per_order").innerText = getVal("Chi phí giao hàng + xe tải / đơn") + " đ";
+      document.getElementById("val_cost_per_stop").innerText = getVal("Chi phí giao hàng + xe tải / stop") + " đ";
+      document.getElementById("val_cost_per_kg").innerText = getVal("Chi phí giao hàng + Cost / kg") + " đ";
+
+      // Render Table
+      renderTable(data.hubs_breakdown || []);
+
+      // Render Charts
+      renderCharts(data);
+    }
+
+    function renderTable(hubs) {
+      const tbody = document.getElementById("tblBodyBreakdown");
+      if (!hubs || hubs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px;">Không có dữ liệu phân rã kho</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = hubs.map(h => `
+        <tr>
+          <td class="hub-highlight">📍 ${h.hub_name || ""}</td>
+          <td class="td-num">${h["Volume gán"] || "-"}</td>
+          <td class="td-num" style="color: var(--accent-green); font-weight:700;">${h["Volume GTC"] || "-"}</td>
+          <td class="td-num">${h["Kg GTC"] || "-"}</td>
+          <td class="td-num" style="color: var(--accent-blue);">${h["Tỷ lệ GTC"] || "-"}</td>
+          <td class="td-num">${h["Stop GTC"] || "-"}</td>
+          <td class="td-num">${h["Lương giao"] || "-"}</td>
+          <td class="td-num">${h["Lương NVXL"] || "-"}</td>
+          <td class="td-num" style="color: var(--accent-amber);">${h["Chi phí xe tải"] || "-"}</td>
+          <td class="td-num" style="color: var(--accent-purple); font-weight:700;">${h["Chi phí giao hàng + xe tải / đơn"] || "-"}</td>
+          <td class="td-num">${h["Chi phí giao hàng + xe tải / stop"] || "-"}</td>
+          <td class="td-num">${h["Chi phí giao hàng + Cost / kg"] || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderCharts(data) {
+      const tc = data.trend_chart || {};
+      const ctxTrend = document.getElementById("trendChart").getContext("2d");
+
+      if (trendChartInstance) trendChartInstance.destroy();
+
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'bar',
+        data: {
+          labels: tc.labels || [],
+          datasets: [
+            {
+              label: 'Volume GTC (Đơn)',
+              data: tc.volume_gtc || [],
+              backgroundColor: 'rgba(56, 189, 248, 0.4)',
+              borderColor: '#38bdf8',
+              borderWidth: 1.5,
+              borderRadius: 6,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Chi Phí / Đơn (VNĐ)',
+              data: tc.cost_per_order || [],
+              type: 'line',
+              borderColor: '#f43f5e',
+              backgroundColor: '#f43f5e',
+              borderWidth: 2.5,
+              tension: 0.35,
+              yAxisID: 'y1',
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#38bdf8' }, title: { display: true, text: 'Volume (Đơn)', color: '#38bdf8' } },
+            y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#f43f5e' }, title: { display: true, text: 'Chi phí/Đơn (VNĐ)', color: '#f43f5e' } }
+          },
+          plugins: {
+            legend: { labels: { color: '#cbd5e1' } }
+          }
+        }
+      });
+
+      // Pie chart
+      const ctxPie = document.getElementById("costPieChart").getContext("2d");
+      if (pieChartInstance) pieChartInstance.destroy();
+
+      const m = data.metrics || {};
+      const luongGiao = m["Lương giao"] ? m["Lương giao"].numeric : 0;
+      const luongXl = m["Lương NVXL"] ? m["Lương NVXL"].numeric : 0;
+      const chiPhiXe = m["Chi phí xe tải"] ? m["Chi phí xe tải"].numeric : 0;
+
+      pieChartInstance = new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: ['Lương Giao', 'Lương NVXL', 'Xe Tải 365'],
+          datasets: [{
+            data: [luongGiao, luongXl, chiPhiXe],
+            backgroundColor: ['#fbbf24', '#34d399', '#38bdf8'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#cbd5e1', padding: 14 } }
+          }
+        }
+      });
+    }
+
+    async function triggerSync() {
+      const btn = document.getElementById("btnSyncLive");
+      btn.innerHTML = "<span>⏳ Đang Kéo Sheets...</span>";
+      try {
+        const res = await fetch("/api/cost-dashboard/sync", { method: "POST" });
+        const json = await res.json();
+        alert(json.message || "Đồng bộ thành công!");
+        loadFilters();
+      } catch (e) {
+        alert("Lỗi đồng bộ: " + e);
+      } finally {
+        btn.innerHTML = "<span>🔄 Đồng Bộ Sheets</span>";
+      }
+    }
+
+    window.onload = loadFilters;
+  </script>
+</body>
+</html>
