@@ -666,20 +666,31 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           body: JSON.stringify({ pin: currentAdminPin || "150917" })
         });
-        const data = await res.json();
+        
+        let data;
+        const textResponse = await res.text();
+        try {
+          data = JSON.parse(textResponse);
+        } catch (jsonErr) {
+          if (res.status === 502 || res.status === 503 || res.status === 504) {
+            throw new Error(`Máy chủ đám mây đang triển khai phiên bản mới (${res.status}). Vui lòng chờ 30 giây rồi thử lại!`);
+          }
+          throw new Error("Phản hồi máy chủ không hợp lệ hoặc đang khởi động lại.");
+        }
+
         if (data.status === "success") {
           btnTriggerUpdate.innerHTML = "<span>✅</span><span>Đã cập nhật mới nhất!</span>";
           const versionTag = document.getElementById("versionTag");
           const modalCurrentVer = document.getElementById("modalCurrentVer");
-          if (versionTag) versionTag.textContent = data.version || "v2.7.0";
-          if (modalCurrentVer) modalCurrentVer.textContent = data.version || "v2.7.0";
+          if (versionTag) versionTag.textContent = data.version || "v2.9.1";
+          if (modalCurrentVer) modalCurrentVer.textContent = data.version || "v2.9.1";
           if (typeof loadAnalytics === "function") {
             await loadAnalytics();
           }
           if (typeof showToast === "function") {
-            showToast(data.message || "🎉 Cập nhật phiên bản v2.7.0 thành công!");
+            showToast(data.message || "🎉 Cập nhật phiên bản mới thành công!");
           } else {
-            alert(data.message || "🎉 Cập nhật phiên bản v2.7.0 thành công!");
+            alert(data.message || "🎉 Cập nhật phiên bản mới thành công!");
           }
           setTimeout(() => {
             if (updateModal) updateModal.style.display = "none";
@@ -692,7 +703,7 @@ document.addEventListener("DOMContentLoaded", () => {
           btnTriggerUpdate.innerHTML = "<span>🔄</span><span>Thử lại cập nhật</span>";
         }
       } catch (err) {
-        alert("❌ Lỗi kết nối máy chủ: " + err);
+        alert("❌ Thông báo hệ thống: " + (err.message || err));
         btnTriggerUpdate.disabled = false;
         btnTriggerUpdate.innerHTML = "<span>🔄</span><span>Thử lại cập nhật</span>";
       }

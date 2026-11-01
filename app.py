@@ -4895,14 +4895,15 @@ def get_version():
 def update_system():
     """Cơ chế One-Click Update: Tự động nạp lại cấu hình, làm mới cache và áp dụng rule mới nhất"""
     try:
-        # 1. Nạp lại và làm mới snapshot dữ liệu mới nhất
-        refresh_analytics_data()
-
-        # 2. Nạp lại cấu hình bản đồ NVXL
+        # 1. Nạp lại cấu hình bản đồ NVXL
         map_file = os.path.join(PARENT_DIR, "nvxl_telegram_map.json")
         if os.path.exists(map_file):
             with open(map_file, "r", encoding="utf-8") as f:
                 _ = json.load(f)
+
+        # 2. Khởi chạy quét đồng bộ dữ liệu ngầm không làm block HTTP response
+        history_dir = os.path.join(PARENT_DIR, "kpi_history")
+        threading.Thread(target=_ensure_recent_kpi_snapshots, args=(history_dir, True), daemon=True).start()
 
         return jsonify({
             "status": "success",
