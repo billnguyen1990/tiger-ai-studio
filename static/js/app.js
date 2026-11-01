@@ -1178,8 +1178,11 @@ document.addEventListener("DOMContentLoaded", () => {
     playCyberSound("pulse");
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       const url = dateToUse ? `/api/hub-detail/${hubId}?date=${dateToUse}` : `/api/hub-detail/${hubId}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
       if (!res.ok) throw new Error("Không thể tải thông tin kho");
       const raw = await res.json();
       const d = raw.data || raw;
@@ -1537,7 +1540,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     } catch (err) {
-      bodyEl.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 30px;">❌ Lỗi nạp chi tiết kho: ${err.message}</div>`;
+      console.error("[openHubDetail Error]", err);
+      const isTimeout = err.name === "AbortError";
+      const errMsg = isTimeout ? "Thời gian phản hồi máy chủ quá 8s (Đang tải ngầm dữ liệu mới)" : (err.message || "Lỗi tải thông tin kho");
+      bodyEl.innerHTML = `
+        <div style="color: #ef4444; text-align: center; padding: 35px 20px;">
+          <div style="font-size: 28px; margin-bottom: 10px;">⚠️</div>
+          <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 6px; color: #f1f5f9;">Không thể tải dữ liệu chi tiết kho</div>
+          <div style="color: #94a3b8; font-size: 12px; margin-bottom: 16px;">${errMsg}</div>
+          <button class="btn btn-secondary" onclick="openHubDetail('${hubId}', '${dateToUse}')" style="font-size:12px; padding:6px 14px;">🔄 Bấm Thử Lại</button>
+        </div>
+      `;
     }
   }
 
