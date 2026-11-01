@@ -34,41 +34,41 @@
       id: "cairang",
       name: "Kho Cái Răng",
       fullName: "Kho Hàng Nặng Cái Răng",
-      lat: 10.0028,
-      lon: 105.7645,
-      gmap: "https://www.google.com/maps/place/10.0028,105.7645"
+      lat: 10.0078565,
+      lon: 105.7968827,
+      gmap: "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6"
     },
     binhthuy: {
       id: "binhthuy",
       name: "Kho Bình Thủy",
       fullName: "Kho Hàng Nặng Bình Thủy",
-      lat: 10.0617,
-      lon: 105.7482,
-      gmap: "https://www.google.com/maps/place/10.0617,105.7482"
+      lat: 10.0078565,
+      lon: 105.7968827,
+      gmap: "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6"
     },
     omon: {
       id: "omon",
       name: "Kho Ô Môn",
       fullName: "Kho Hàng Nặng Ô Môn",
-      lat: 10.1172,
-      lon: 105.6264,
-      gmap: "https://www.google.com/maps/place/10.1172,105.6264"
+      lat: 10.153378,
+      lon: 105.569997,
+      gmap: "https://maps.app.goo.gl/J23y4FKvWKSMZzWZ7"
     },
     vithanh: {
       id: "vithanh",
       name: "Kho Vị Thanh",
       fullName: "Kho Hàng Nặng Vị Thanh",
-      lat: 9.7842,
-      lon: 105.4703,
-      gmap: "https://www.google.com/maps/place/9.7842,105.4703"
+      lat: 9.7782506,
+      lon: 105.4878618,
+      gmap: "https://maps.app.goo.gl/c6QiAyEWAkurJ3uL8"
     }
   };
 
   const FALLBACK_DEFAULT = {
-    lat: 10.0028,
-    lon: 105.7645,
+    lat: 10.0078565,
+    lon: 105.7968827,
     name: "Cái Răng, Cần Thơ",
-    gmap: "https://www.google.com/maps/place/10.0028,105.7645"
+    gmap: "https://maps.app.goo.gl/P9uhaYrMCpTUT3no6"
   };
 
   const STORAGE_KEY = "tiger_selected_location_id";
