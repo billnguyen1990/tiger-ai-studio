@@ -3498,6 +3498,28 @@ NVXL_USERNAME_HUB_MAP = {
 
 TELEGRAM_DELETED_IDS_FILE = os.path.join(PARENT_DIR, "telegram_deleted_ids.json")
 
+def _sync_telegram_bot_commands():
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/setMyCommands"
+        payload = {
+            "commands": [
+                {"command": "soikho", "description": "👁️ Mắt Thần: Soi camera kho, đếm xe, biển số, 5S"},
+                {"command": "hoanao", "description": "🕵️ Thám Tử: Đối soát shipper hoãn ảo, bóc tách cuộc gọi"},
+                {"command": "cam", "description": "📸 Xem ảnh camera trực tiếp 4 kho Miền Tây"},
+                {"command": "kpi", "description": "📊 Xem nhanh KPI Giao Thành Công 4 kho MT01"},
+                {"command": "ton", "description": "📦 Báo cáo phân loại đơn tồn kho MT01"},
+                {"command": "tra", "description": "🔎 Tra cứu thông tin mã đơn hàng GHN"},
+                {"command": "check", "description": "🔍 Kiểm tra chi tiết hành trình đơn hàng"},
+                {"command": "ai", "description": "🤖 Trò chuyện & điều hành với Tiger AI"},
+                {"command": "help", "description": "📋 Danh mục tính năng & hướng dẫn sử dụng"}
+            ]
+        }
+        requests.post(url, json=payload, timeout=10)
+    except Exception:
+        pass
+
+threading.Thread(target=_sync_telegram_bot_commands, daemon=True).start()
+
 def _load_deleted_tg_ids():
     if os.path.exists(TELEGRAM_DELETED_IDS_FILE):
         try:
