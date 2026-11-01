@@ -29,8 +29,8 @@ def get_gemini_api_key():
             pass
     return HARDCODED_DEFAULT_GEMINI_KEY
 
-def analyze_warehouse_camera_image(image_path, hub_name, is_indoor=True):
-    """Sử dụng Gemini 3.5 Flash Vision phân tích thanh tra hiện trường kho bãi khắt khe 100%"""
+def analyze_warehouse_camera_image(image_path, hub_name, cam_label="Sàn kho", is_indoor=True):
+    """Sử dụng Gemini Vision phân tích thanh tra hiện trường kho bãi khắt khe 100% theo tiêu chuẩn 5S GHN"""
     api_key = get_gemini_api_key()
     if not api_key or not os.path.exists(image_path):
         return None
@@ -39,29 +39,29 @@ def analyze_warehouse_camera_image(image_path, hub_name, is_indoor=True):
         img = cv2.imread(image_path)
         if img is None:
             return None
-        img_resized = cv2.resize(img, (800, 450))
+        img_resized = cv2.resize(img, (960, 540))
         _, buf = cv2.imencode('.jpg', img_resized, [cv2.IMWRITE_JPEG_QUALITY, 85])
         img_b64 = base64.b64encode(buf).decode('utf-8')
 
         if is_indoor:
-            prompt = f"""Bạn là 'Tiger AI - Trưởng Ban Giám Sát Thanh Tra Vận Hành & 5S Kho Bãi GHN Logistics'.
-Hãy soi thật kỹ bức ảnh camera an ninh BÊN TRONG SÀN KHO tại {hub_name} và đưa ra kết luận thanh tra cực kỳ chuẩn xác, khắt khe, tuyệt đối không bao biện hay nhận định hời hợt:
+            prompt = f"""Bạn là 'Tiger AI - Trưởng Ban Giám Sát Thanh Tra Vận Hành & Tiêu Chuẩn 5S Kho Bãi GHN Logistics'.
+Hãy soi thật kỹ bức ảnh camera an ninh BÊN TRONG SÀN KHO chứa hàng tại {hub_name} ({cam_label}) và đưa ra kết luận thanh tra cực kỳ chuẩn xác, khắt khe, trung thực 100% với thực tế:
 
-1. 🚨 SOI LỖI HÀNG HÓA ĐẶT DƯỚI NỀN ĐẤT / SÀN BÊ TÔNG (QUAN TRỌNG NHẤT):
-   - Có bất kỳ thùng carton, kiện hàng, bọc bao nào bị ĐỂ TRỰC TIẾP DƯỚI SÀN BÊ TÔNG MÀ KHÔNG KÊ LÊN PALLET không? (Chỉ rõ vị trí: góc trái, góc phải, chân tường, giữa sàn...).
-   - Nếu có hàng dưới đất: BẮT BUỘC KẾT LUẬN LÀ VI PHẠM 5S NGHIÊM TRỌNG, nguy cơ ngấm ẩm hư hỏng bao bì hàng hóa!
+1. 🚨 SOI LỖI HÀNG HÓA TIẾP XÚC TRỰC TIẾP DƯỚI NỀN ĐẤT / SÀN BÊ TÔNG (TIÊU CHUẨN SỐ 1 GHN):
+   - Quan sát kỹ nền bê tông, chân tường, góc kho và khoảng trống giữa các pallet: Có bất kỳ kiện hàng/thùng carton nào ĐANG BỊ ĐẶT TRỰC TIẾP DƯỚI NỀN SÀN BÊ TÔNG MÀ KHÔNG KÊ LÊN PALLET KHÔNG?
+   - Chỉ rõ vị trí cụ thể (ví dụ: góc phải sàn, cạnh tường, giữa sàn...).
+   - Nếu có hàng đặt dưới sàn: BẮT BUỘC ĐÁNH DẤU ❌ [VI PHẠM 5S NGHIÊM TRỌNG] vì vi phạm quy định chống ẩm mốc và bảo quản hàng hóa GHN!
 
-2. 📦 HIỆN TRẠNG PALLET & THIẾT BỊ SÀN KHO:
-   - Các pallet xếp gọn gàng hay ngổn ngang lộn xộn?
-   - Xe nâng tay (pallet jack), xe đẩy có để đúng nơi quy định không (có bị để trên mặt pallet hoặc chặn lối đi không)?
+2. 🚜 SOI HIỆN TRẠNG PALLET RỖNG & XE NÂNG TAY (PALLET JACK):
+   - Pallet rỗng có được xếp chồng vuông vắn gọn gàng vào khu vực quy định không, hay để rải rác ngổn ngang chiếm dụng sàn?
+   - Xe nâng tay (pallet jack) có để lung tung giữa sàn kho hay trên mặt pallet gây cản trở lối đi và mất an toàn lao động không?
 
-3. 🧹 TIÊU CHUẨN 5S & RỦI RO:
-   - Lối đi có bị cản trở không? Hàng hóa có nguy cơ đổ ngã hay va quẹt không?
+3. 📦 MẬT ĐỘ HÀNG HÓA & LỐI THOÁT HIỂM / LỐI VẬN HÀNH:
+   - Sàn kho tồn nhiều hay ít hàng, lối đi chính cho luồng di chuyển có thông thoáng không?
 
 4. 🎯 KẾT LUẬN THANH TRA:
-   - 🔴 [CẢNH BÁO VI PHẠM 5S]: Nếu có hàng để dưới đất hoặc pallet/xe nâng ngổn ngang.
-   - 🟢 [ĐẠT CHUẨN 5S]: CHỈ KHI 100% hàng hóa được kê trên pallet và sàn kho gọn gàng hoàn hảo.
-   - Đề xuất hành động chấn chỉnh dứt khoát cho Thủ kho / NVXL."""
+   - 🔴 [CẢNH BÁO VI PHẠM 5S]: Nếu có hàng để dưới sàn đất HOẶC pallet/xe nâng ngổn ngang. Nêu rõ việc cần làm chấn chỉnh ngay lập tức (kê hàng lên pallet, xếp xe nâng gọn gàng).
+   - 🟢 [ĐẠT CHUẨN 5S]: CHỈ KHI 100% kiện hàng nằm trên pallet và mặt sàn kho hoàn toàn sạch sẽ, gọn gàng."""
         else:
             prompt = f"""Bạn là 'Tiger AI - Trưởng Ban Giám Sát Thanh Tra Vận Hành Bãi Xe & Dock GHN Logistics'.
 Hãy quan sát bức ảnh camera an ninh NGOÀI TRỜI BÃI XE tại {hub_name}:
@@ -99,11 +99,11 @@ def run_vision_guard_audit(hub_key="cairang", cam_id=None, is_indoor=True):
     if not ok or not snap_path:
         return False, f"Không thể lấy luồng camera: {msg}", None, None
 
-    analysis = analyze_warehouse_camera_image(snap_path, msg, is_indoor=is_indoor)
-    return True, msg, snap_path, analysis
+    from camera_service import VR_MAP, CAM_DESC_MAP
+    hub_info = VR_MAP.get(hub_key.lower().strip(), VR_MAP["cairang"])
+    hub_name = hub_info["name"]
+    cid = cam_id or hub_info.get("default_cam", 2)
+    label = CAM_DESC_MAP.get((hub_info["vr_id"], int(cid)), "Khu vực kho")
 
-if __name__ == "__main__":
-    print("Testing Vision Guard strict inspection...")
-    ok, msg, snap, analysis = run_vision_guard_audit("vithanh", 6, is_indoor=True)
-    print("Result:", ok, msg)
-    print("Analysis:\n", analysis)
+    analysis = analyze_warehouse_camera_image(snap_path, hub_name, cam_label=label, is_indoor=is_indoor)
+    return True, analysis or "Không có phản hồi phân tích", snap_path, label

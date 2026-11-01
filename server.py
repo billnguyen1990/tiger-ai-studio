@@ -3163,7 +3163,7 @@ def copilot_ask():
                 "id": f"tg_out_{r_m.get('message_id', int(time.time()))}",
                 "message_id": r_m.get("message_id", 0),
                 "direction": "outgoing",
-                "sender_name": "AI 🍻 (Bạn)",
+                "sender_name": "Tiger AI 🐯 (Bạn)",
                 "username": "@AiAgentMT_bot",
                 "hub_badge": "Đã gửi",
                 "topic_id": 2690,
@@ -3550,7 +3550,7 @@ def _load_telegram_bridge_messages():
                         if item.get("id") in ("init_bridge_1", "tg_in_1", "tg_out_3080", "tg_out_3081"):
                             continue
                         if "anh Điền Lộc" in str(item.get("sender_name", "")):
-                            item["sender_name"] = "AI 🍻 (Bạn)"
+                            item["sender_name"] = "Tiger AI 🐯 (Bạn)"
                         if item.get("hub_badge") == "Đã gửi":
                             item["hub_badge"] = "Đã gửi"
                         cleaned.append(item)
@@ -3697,7 +3697,7 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
     api_key = get_gemini_api_key()
     if is_boss or ("sếp" in sender_name.lower()) or ("lộc" in sender_name.lower()):
         sys_prompt = (
-            "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho anh Lộc (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
+            "Bạn là 'Tiger AI 🐯' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho anh Lộc (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
             "QUY TẮC BẮT BUỘC:\n"
             "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'anh' hoặc 'anh Lộc'.\n"
             "2. ĐI THẲNG VÀO CÂU HỎI VÀ TRẢ LỜI NGAY LẬP TỨC 100% SỰ THẬT dựa trên DỮ LIỆU THỰC TẾ GHN.\n"
@@ -3715,7 +3715,7 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
         )
     else:
         sys_prompt = (
-            "Bạn là 'AI 🍻' — trợ lý điều hành nội bộ nhóm Telegram Miền Tây 01 (GHN Lastmile).\n"
+            "Bạn là 'Tiger AI 🐯' — trợ lý điều hành nội bộ nhóm Telegram Miền Tây 01 (GHN Lastmile).\n"
             "QUY TẮC:\n"
             "1. Trả lời trực tiếp, chính xác 100% theo DỮ LIỆU THỰC TẾ GHN. Ngắn gọn, chuyên nghiệp, hỗ trợ đồng nghiệp.\n"
             "2. TUYỆT ĐỐI KHÔNG hứa hẹn 'sẽ kiểm tra sau' vì bạn đang có đầy đủ dữ liệu trước mặt.\n"
@@ -3751,56 +3751,83 @@ def _answer_order_context_question(target_code, user_text, reply_to_text, sender
     return "\n".join(lines)
 
 def _call_gemini_natural_group_reply(sender_name, hub_badge, reply_to_text, user_text, is_boss=False):
-    """Gọi Gemini trả lời nhóm chat Telegram với văn phong chuẩn mực và thứ bậc tôn nghiêm"""
+    """Gọi Gemini trả lời nhóm chat Telegram với phong cách Tiger AI: Chuyên nghiệp, nghiêm túc, không đôi co với nhân viên"""
     api_key = get_gemini_api_key()
+    user_lower = user_text.lower().strip()
+
+    # 1. NẾU LÀ ANH LỘC (QUẢN LÝ VÙNG MT01): LUÔN CUNG KÍNH, TRẢ LỜI NGAY VÀO TRỌNG TÂM, TUÂN THỦ MỆNH LỆNH 100%
     if is_boss or ("sếp" in sender_name.lower()) or ("lộc" in sender_name.lower()):
         sys_instruction = (
-            "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến phục vụ trực tiếp cho anh Lộc (Quản lý cấp cao toàn vùng Miền Tây 01 - GHN Lastmile).\n"
-            "QUY TẮC BẮT BUỘC KHI NÓI CHUYỆN VỚI ANH LỘC:
-1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'anh' hoặc 'anh Lộc'. TUYỆT ĐỐI KHÔNG dùng từ 'Sếp' hay 'Sếp Lộc'.\n"
-            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em', gọi 'anh' hoặc 'anh Lộc'.\n"
-            "2. NGHIÊM CẤM xưng hô cợt nhả, tuyệt đối KHÔNG gọi 'Lộc ơi', KHÔNG đùa cợt khiếm nhã, KHÔNG nói chuyện suồng sã.\n"
-            "3. Nếu anh đặt câu hỏi, chất vấn hoặc hỏi thăm: Phải trả lời NGAY VÀ LUÔN, ĐI THẲNG VÀO TRỌNG TÂM, giải đáp tường minh và trung thực 100%, TUYỆT ĐỐI KHÔNG hứa hẹn suông kiểu 'sẽ kiểm tra và báo cáo sau'.\n"
-            "4. Khi anh ra lệnh, chỉ đạo, hoặc yêu cầu thực thi: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ anh! Em xin tuân lệnh...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
+            "Bạn là 'Tiger AI 🐯' — Trợ lý Giám Sát & Điều Hành Vận Hành phục vụ trực tiếp cho anh Lộc (Quản lý toàn vùng Miền Tây 01 - GHN Lastmile).\n"
+            "QUY TẮC BẮT BUỘC KHI NÓI CHUYỆN VỚI ANH LỘC:\n"
+            "1. TUYỆT ĐỐI KÍNH TRỌNG, xưng 'em' hoặc 'Tiger AI', gọi 'anh' hoặc 'anh Lộc'. TUYỆT ĐỐI KHÔNG dùng từ 'Sếp' hay 'Sếp Lộc'.\n"
+            "2. NGHIÊM CẤM xưng hô cợt nhả, tuyệt đối KHÔNG gọi 'Lộc ơi', KHÔNG đùa cợt khiếm nhã, KHÔNG dùng emoji bia rượu hay cười cợt.\n"
+            "3. Nếu anh chất vấn, hỏi thăm hoặc yêu cầu: Trả lời NGAY VÀ LUÔN, ĐI THẲNG VÀO TRỌNG TÂM, giải đáp tường minh và trung thực 100% theo dữ liệu thực tế.\n"
+            "4. Khi anh ra lệnh, chỉ đạo: Phải NGHIÊM TÚC GHI NHẬN CHỈ ĐẠO ('Dạ rõ anh! Em xin tuân lệnh...'), xác nhận thi hành ngay lập tức, phục tùng chỉ đạo 100%!\n"
         )
         context_prompt = ""
         if reply_to_text:
             context_prompt += f'Tin nhắn trước đó: "{reply_to_text}"\n'
-        is_question = any(q in user_text.lower() for q in ["?", "ko", "không", "sao", "đúng ko", "phải ko", "chưa", "hả", "ai", "bao nhiêu", "khi nào", "thế nào", "đâu", "gì"])
+        is_question = any(q in user_lower for q in ["?", "ko", "không", "sao", "đúng ko", "phải ko", "chưa", "hả", "ai", "bao nhiêu", "khi nào", "thế nào", "đâu", "gì"])
         if is_question:
             context_prompt += f'anh Lộc (Quản lý vùng MT01) vừa hỏi: "{user_text}"\nHãy trả lời cung kính, đi thẳng vào câu trả lời, giải đáp rõ ràng thấu đáo (1-3 câu chuẩn mực):'
         else:
             context_prompt += f'anh Lộc (Quản lý vùng MT01) vừa ra lệnh/chỉ đạo: "{user_text}"\nHãy viết câu trả lời cung kính, ghi nhận mệnh lệnh của anh (1-2 câu ngắn gọn, chuẩn mực):'
-    else:
+        
+        ans = call_gemini_api(context_prompt, sys_instruction, api_key)
+        if ans:
+            import re
+            ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
+            ans = re.sub(r'`([^`]+)`', r'<code>\1</code>', ans)
+            return ans
+        return ""
+
+    # 2. NẾU LÀ NHÂN VIÊN / NVXL:
+    # A. BỘ LỌC CHỐNG CÃI NHAU & CHỐNG TÁM CHUYỆN:
+    # Nếu là câu đùa, than vãn, khiêu khích, cợt nhả ('ông cố', 'chủ nhật', 'ba gai', 'cắt mỏ', 'lính ruột', 'haha', 'đùa à', 'tui', 'mày') -> IM LẶNG TUYỆT ĐỐI!
+    is_casual_or_flame = any(k in user_lower for k in [
+        "ông cố", "ông thần", "ba gai", "cắt mỏ", "lính ruột", "ông địa", "chủ nhật tầm này",
+        "chủ nhật", "haha", "cãi", "mày", "lắm chuyện", "rảnh", "bù xù", "ông sảnh", "thử đi", "xí cái mỏm"
+    ])
+    has_warehouse_keywords = any(k in user_lower for k in ["hàng", "dưới đất", "nền", "sàn kho", "pallet", "xe nâng", "5s", "đổ", "hỏng", "kê"])
+
+    if is_casual_or_flame and not has_warehouse_keywords:
+        return ""
+
+    # B. Nếu nhân viên thắc mắc về hiện trường 5S / Hàng hóa / Pallet / Xe nâng:
+    if has_warehouse_keywords:
         sys_instruction = (
-            "Bạn là 'AI 🍻' — trợ lý điều hành trực tuyến trong nhóm Telegram nội bộ 'Miền Tây 01' (GHN Lastmile).\n"
-            "QUY TẮC BẮT BUỘC VỚI NHÂN VIÊN:
-"
-            "1. Phản hồi CHUYÊN NGHIỆP, NGHIÊM TÚC, ĐỨNG ĐẮN theo chuẩn mực điều hành Logistics GHN.
-"
-            "2. TUYỆT ĐỐI KHÔNG CỢT NHẢ, KHÔNG 'Haha', KHÔNG BAO BIỆN, KHÔNG NÓI TÀO LAO khi trao đổi về tình hình kho bãi, số liệu hay hiện trường camera.
-"
-            "3. Khi nhân viên chỉ ra lỗi hiện trường (hàng để dưới đất, pallet/xe nâng ngổn ngang): Phải thẳng thắn thừa nhận thực tế, yêu cầu chấn chỉnh 5S ngay lập tức, không được đùa cợt cãi cùn.
-"
-            "4. Nếu nhân viên hỏi số liệu KPI hoặc công việc: trả lời súc tích, đi thẳng vào số liệu chính xác 100%.
-"
-            "5. Nếu nhân viên báo nghỉ/off ca: xác nhận và hỏi ai trực thay một cách đứng đắn.
-"
+            "Bạn là 'Tiger AI 🐯' — Trợ lý Giám Sát & Điều Hành Vận Hành Kho Bãi GHN Logistics.\n"
+            "QUY TẮC PHẢN HỒI:\n"
+            "1. TUYỆT ĐỐI NGHIÊM TÚC, ĐỨNG ĐẮN, CHUYÊN NGHIỆP. Xưng 'Tiger AI', gọi nhân sự bằng 'anh/chị' hoặc tên lịch sự.\n"
+            "2. NGHIÊM CẤM: Không đùa cợt, không cười cợt, không dùng từ ngữ suồng sã, không dùng emoji bia rượu.\n"
+            "3. NẾU NHÂN SỰ CHỈ RA LỖI 5S HIỆN TRƯỜNG (Hàng để dưới đất, pallet hay xe nâng ngổn ngang):\n"
+            "   - Thẳng thắn thừa nhận hiện trường camera: Đúng là hàng hóa đang để trực tiếp dưới sàn đất và xe nâng/pallet chưa về vị trí quy định, đây là VI PHẠM 5S nghiêm trọng.\n"
+            "   - Đề nghị NVXL và kho phối hợp nhắc nhở anh em kê hàng lên pallet và xếp gọn xe nâng ngay.\n"
+            "   - Tuyệt đối không bao biện, không bảo là bình thường.\n"
+            "4. Câu trả lời súc tích, ngắn gọn (1-2 câu)."
         )
-        context_prompt = ""
-        if reply_to_text:
-            context_prompt += f'Tin nhắn trước đó bạn đã hỏi nhân viên: "{reply_to_text}"\n'
-        context_prompt += f'Nhân viên "{sender_name}" ({hub_badge}) vừa nhắn lại: "{user_text}"\nHãy viết câu trả lời trực tiếp (1-2 câu ngắn gọn):'
+        context_prompt = f'Nhân viên "{sender_name}" ({hub_badge}) phản ánh: "{user_text}"\nHãy viết câu trả lời chuẩn mực, thừa nhận hiện trường và yêu cầu xử lý 5S ngay:'
+        ans = call_gemini_api(context_prompt, sys_instruction, api_key)
+        if ans:
+            import re
+            ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
+            return ans
+        return ""
 
-    ans = call_gemini_api(context_prompt, sys_instruction, api_key)
-    if ans:
-        import re
-        ans = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
-        ans = re.sub(r'`([^`]+)`', r'<code>\1</code>', ans)
-        return ans
+    # C. Các câu hỏi nghiệp vụ thông thường khác: Chỉ trả lời nếu có câu hỏi rõ ràng (?)
+    if "?" in user_text or any(k in user_lower for k in ["hướng dẫn", "quy trình", "khi nào", "ở đâu", "làm sao", "như thế nào"]):
+        sys_instruction = (
+            "Bạn là 'Tiger AI 🐯' — Trợ lý Điều Hành Nhóm Miền Tây 01.\n"
+            "Phản hồi lịch sự, ngắn gọn (1-2 câu), giải đáp đúng nghiệp vụ vận hành Lastmile GHN."
+        )
+        context_prompt = f'Nhân viên "{sender_name}" ({hub_badge}) hỏi: "{user_text}"\nHãy trả lời trực tiếp súc tích:'
+        ans = call_gemini_api(context_prompt, sys_instruction, api_key)
+        if ans:
+            import re
+            return re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', ans.strip())
+
     return ""
-
-TRACKING_STATS_FILE = os.path.join(PARENT_DIR, "kpi_history", "tracking_usage_stats.json")
 
 def _record_order_search_usage(sender_name, username, hub_badge, order_codes):
     """Ghi nhận số lượt tra cứu đơn hàng của từng nhân sự theo chỉ đạo của anh để tổng hợp cuối tháng"""
@@ -3957,7 +3984,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     order_codes = extract_ghn_order_codes(text)
     is_tag_or_cmd = (
         ("@aiagentmt_bot" in lower_text) or
-        ("ai 🍻" in lower_text) or
+        ("tiger ai" in lower_text) or
         ("ai ơi" in lower_text) or
         lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton", "/hoi", "/soikho", "/hoanao", "/help", "/menu", "/auditcam"))
     )
@@ -4078,7 +4105,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                             "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                             "message_id": res_msg.get("message_id", 0),
                             "direction": "outgoing_auto",
-                            "sender_name": "AI 🍻 (Tự động)",
+                            "sender_name": "Tiger AI 🐯 (Tự động)",
                             "username": "@AiAgentMT_bot",
                             "hub_badge": "Thám Tử Hoãn Ảo",
                             "topic_id": topic_id,
@@ -4237,7 +4264,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                     "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                     "message_id": res_msg.get("message_id", 0),
                     "direction": "outgoing_auto",
-                    "sender_name": "AI 🍻 (Tự động)",
+                    "sender_name": "Tiger AI 🐯 (Tự động)",
                     "username": "@AiAgentMT_bot",
                     "hub_badge": "Định Vị Điểm Giao",
                     "topic_id": topic_id,
@@ -4288,7 +4315,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                         "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                         "message_id": res_msg.get("message_id", 0),
                         "direction": "outgoing_auto",
-                        "sender_name": "AI 🍻 (Tự động)",
+                        "sender_name": "Tiger AI 🐯 (Tự động)",
                         "username": "@AiAgentMT_bot",
                         "hub_badge": "Deep Investigation",
                         "topic_id": topic_id,
@@ -4314,7 +4341,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                 "message_id": res_msg.get("message_id", 0),
                 "direction": "outgoing_auto",
-                "sender_name": "AI 🍻 (Tự động)",
+                "sender_name": "Tiger AI 🐯 (Tự động)",
                 "username": "@AiAgentMT_bot",
                 "hub_badge": "Auto Tra Đơn",
                 "topic_id": topic_id,
@@ -4363,7 +4390,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                     "id": f"tg_ai_{res_msg.get('message_id', int(time.time()))}",
                     "message_id": res_msg.get("message_id", 0),
                     "direction": "outgoing_auto",
-                    "sender_name": "AI 🍻 (Tự động)",
+                    "sender_name": "Tiger AI 🐯 (Tự động)",
                     "username": "@AiAgentMT_bot",
                     "hub_badge": "AI Giải Đáp Đơn",
                     "topic_id": topic_id,
@@ -4434,7 +4461,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                     "id": f"tg_ai_{res_msg.get('message_id', int(time.time()))}",
                     "message_id": res_msg.get("message_id", 0),
                     "direction": "outgoing_auto",
-                    "sender_name": "AI 🍻 (Tự động)",
+                    "sender_name": "Tiger AI 🐯 (Tự động)",
                     "username": "@AiAgentMT_bot",
                     "hub_badge": "AI Tự Đáp",
                     "topic_id": topic_id,
@@ -4635,7 +4662,7 @@ def send_telegram_bridge_message():
     text = (data.get("text") or "").strip()
     topic_id = int(data.get("topic_id") if data.get("topic_id") is not None else 2690)
     reply_to_id = data.get("reply_to_message_id")
-    sender_title = (data.get("sender_title") or "AI 🍻 (Bạn)").strip()
+    sender_title = (data.get("sender_title") or "Tiger AI 🐯 (Bạn)").strip()
 
     if not text:
         return jsonify({"success": False, "message": "Nội dung tin nhắn không được để trống!"}), 400
