@@ -2432,7 +2432,7 @@ def save_gemini_api_key(key):
         return False
 
 # ==============================================================================
-# HỆ THỐNG TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA SẾP LỘC)
+# HỆ THỐNG TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA ANH LỘC)
 # ==============================================================================
 WINMART_STORES_CACHE = []
 
@@ -3240,8 +3240,8 @@ def copilot_ask():
                 results = list(executor.map(query_ghn_order_history, prev_codes[:50]))
             
             count = len(results)
-            answer = f"🤖 **Tiger AI xin lỗi sếp vì ở phiên trước hệ thống bị giới hạn 10 đơn cũ!**\n\n"
-            answer += f"⚡ Em đã nâng cấp bộ não xử lý đa luồng (Multi-threading) và **đã tra cứu toàn bộ {count} đơn hàng** từ danh sách của sếp:\n\n"
+            answer = f"🤖 **Tiger AI xin lỗi anh vì ở phiên trước hệ thống bị giới hạn 10 đơn cũ!**\n\n"
+            answer += f"⚡ Em đã nâng cấp bộ não xử lý đa luồng (Multi-threading) và **đã tra cứu toàn bộ {count} đơn hàng** từ danh sách của anh:\n\n"
             for idx, res in enumerate(results, 1):
                 if res.get("found"):
                     answer += (
@@ -3454,7 +3454,7 @@ def copilot_ask():
         )
     else:
         answer = (
-            f"🤖 **Tiger AI đã ghi nhận câu hỏi của sếp:** *'{raw_prompt}'*\n\n"
+            f"🤖 **Tiger AI đã ghi nhận câu hỏi của anh:** *'{raw_prompt}'*\n\n"
             "Hệ thống tự động giám sát 24/7 của Tiger AI đang kiểm soát chặt chẽ cả 6 mốc giờ điều hành:\n"
             "1. **02:00 AM**: Cào & Đối soát ODO Xe tải 365 toàn Miền Tây (60 chuyến xe tải hợp lệ).\n"
             "2. **05:00 AM**: Cào chuyến đi Lastmile 4 kho MT01 & nạp đủ 36 cột vào Google Sheet (19 chuyến).\n"
@@ -3819,7 +3819,7 @@ def _format_tracking_usage_report():
         if not m_data:
             return f"📊 <b>BÁO CÁO LƯỢT TRA CỨU ĐƠN THÁNG {now_vn.strftime('%m/%Y')}</b>\n\nHiện chưa ghi nhận lượt tra cứu đơn nào trong tháng."
         sorted_users = sorted(m_data.values(), key=lambda x: x.get("total_searches", 0), reverse=True)
-        lines = [f"📊 <b>BÁO CÁO LƯỢT TRA CỨU ĐƠN THÁNG {now_vn.strftime('%m/%Y')} (THEO CHỈ ĐẠO CỦA SẾP LỘC):</b>\n"]
+        lines = [f"📊 <b>BÁO CÁO LƯỢT TRA CỨU ĐƠN THÁNG {now_vn.strftime('%m/%Y')} (THEO CHỈ ĐẠO CỦA ANH LỘC):</b>\n"]
         for idx, u in enumerate(sorted_users, 1):
             uname = f" ({u.get('username')})" if u.get('username') else ""
             lines.append(f"{idx}. 👤 <b>{u.get('name')}{uname}</b> [{u.get('hub')}]: <b>{u.get('total_searches')} lượt</b> (gồm {len(u.get('orders', []))} đơn khác nhau)")
@@ -3930,11 +3930,156 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         ("@aiagentmt_bot" in lower_text) or
         ("ai 🍻" in lower_text) or
         ("ai ơi" in lower_text) or
-        lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton", "/hoi"))
+        lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton", "/hoi", "/soikho", "/hoanao", "/help", "/menu", "/auditcam"))
     )
     is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
 
     
+    # 0.0 TRỢ GIÚP & MENU LỆNH (/help, /menu, /trogiup)
+    is_help_cmd = any(lower_text.strip() == cmd for cmd in ["/help", "/menu", "/trogiup", "/huongdan", "menu", "giúp đỡ"]) or (
+        is_tag_or_cmd and any(k in lower_text for k in ["làm được gì", "tính năng", "chức năng", "hướng dẫn"])
+    )
+    if is_help_cmd:
+        help_html = (
+            "🐯 <b>TIGER AI 2.0 • DANH MỤC TRỢ LÝ ĐIỀU HÀNH THÔNG MINH</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "🎙️ <b>1. BỘ ĐÀM ĐIỀU HÀNH GIỌNG NÓI:</b>\n"
+            "• Gửi tin nhắn thoại (Voice Note) trực tiếp vào nhóm.\n"
+            "• Tiger AI tự động dịch giọng nói sang văn bản và thực thi khẩu lệnh tức thì.\n\n"
+            "👁️ <b>2. MẮT THẦN CANH KHO (VISION AI):</b>\n"
+            "• Lệnh: <code>/soikho</code> hoặc <code>/soikho [cairang/binhthuy/omon/vithanh]</code>\n"
+            "• Quét camera an ninh hiện trường, đếm xe tải, đọc biển số xe, kiểm tra dock kẹt, lối đi 5S và thời tiết.\n\n"
+            "🕵️ <b>3. THÁM TỬ ĐỐI SOÁT HOÃN ẢO:</b>\n"
+            "• Lệnh: <code>/hoanao [mã đơn]</code> (hoặc Reply tin nhắn có mã đơn)\n"
+            "• Bóc tách lịch sử cuộc gọi shipper, phát hiện ngay các trường hợp báo hoãn láo, không gọi khách hoặc nhá máy.\n\n"
+            "📦 <b>4. TRA CỨU ĐƠN & BÁO CÁO VẬN HÀNH:</b>\n"
+            "• Dán mã đơn GHN (VD: <code>PSD26-CH-05070-03_CPTT</code>) để tra cứu lịch sử chuyên sâu.\n"
+            "• Gõ <code>/kpi</code> hoặc <code>/ton</code> để xem số liệu vận hành và tồn kho tức thì."
+        )
+        _send_telegram_group_message(help_html, topic_id=topic_id, reply_to_message_id=msg_id)
+        return
+
+    # 0.1 MẮT THẦN CANH KHO AI (VISION AI GUARD)
+    is_vision_guard_cmd = any(k in lower_text for k in [
+        "/soikho", "/auditcam", "soi kho", "mắt thần", "giám sát kho", "kiểm tra kho", "báo cáo camera ai"
+    ])
+    if is_vision_guard_cmd:
+        try:
+            from warehouse_vision_guard import run_vision_guard_audit
+            target_hub = "cairang"
+            if any(k in lower_text for k in ["bình thủy", "binhthuy", "bt"]):
+                target_hub = "binhthuy"
+            elif any(k in lower_text for k in ["ô môn", "omon", "om"]):
+                target_hub = "omon"
+            elif any(k in lower_text for k in ["vị thanh", "vithanh", "vt"]):
+                target_hub = "vithanh"
+
+            hub_names = {
+                "cairang": "Kho Cái Răng",
+                "binhthuy": "Kho Bình Thủy",
+                "omon": "Kho Ô Môn",
+                "vithanh": "Kho Vị Thanh"
+            }
+            h_disp = hub_names.get(target_hub, target_hub.title())
+
+            _send_telegram_group_message(
+                f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối camera {h_disp} và phân tích hiện trường bãi xe, dock, 5S...",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id
+            )
+
+            ok, cam_name, snap_file, analysis = run_vision_guard_audit(target_hub)
+            if ok and snap_file and os.path.exists(snap_file):
+                caption_text = (
+                    f"🚨 <b>TIGER AI • MẮT THẦN CANH KHO ({h_disp})</b>\n"
+                    f"⏰ <b>Thời gian:</b> {get_vietnam_now().strftime('%H:%M:%S %d/%m/%Y')}\n\n"
+                )
+                if analysis and len(caption_text + analysis) <= 1020:
+                    caption_text += analysis
+                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=topic_id, reply_to_message_id=msg_id)
+                else:
+                    caption_text += f"📍 Camera: {cam_name}\n<i>(Chi tiết phân tích thông minh gửi kèm bên dưới)</i>"
+                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=topic_id, reply_to_message_id=msg_id)
+                    if analysis:
+                        _send_telegram_group_message(
+                            f"📋 <b>BÁO CÁO PHÂN TÍCH HIỆN TRƯỜNG KHO ({h_disp}):</b>\n\n{analysis}",
+                            topic_id=topic_id,
+                            reply_to_message_id=msg_id
+                        )
+                try:
+                    os.remove(snap_file)
+                except Exception:
+                    pass
+            else:
+                _send_telegram_group_message(
+                    f"⚠️ <b>[MẮT THẦN CANH KHO]</b> Chưa thể trích xuất luồng camera {h_disp}: {cam_name}",
+                    topic_id=topic_id,
+                    reply_to_message_id=msg_id
+                )
+        except Exception as ex:
+            _send_telegram_group_message(
+                f"❌ <b>Lỗi Mắt Thần Canh Kho:</b> {ex}",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id
+            )
+        return
+
+    # 0.2 THÁM TỬ ĐỐI SOÁT SHIPPER HOÃN ẢO
+    is_hoanao_cmd = any(k in lower_text for k in [
+        "/hoanao", "hoãn ảo", "check hoãn", "soi hoãn", "đối soát hoãn", "kiểm tra hoãn"
+    ])
+    if is_hoanao_cmd:
+        try:
+            from shipper_delay_auditor import audit_shipper_delay_for_order
+            reply_codes = extract_ghn_order_codes(reply_to_text)
+            all_target_codes = order_codes if order_codes else reply_codes
+            if not all_target_codes:
+                import re
+                raw_matches = re.findall(r'[A-Za-z0-9_-]{10,}', text)
+                all_target_codes = [c for c in raw_matches if not c.startswith("/")]
+
+            if all_target_codes:
+                target_code = all_target_codes[0]
+                audit_report = audit_shipper_delay_for_order(target_code)
+                if audit_report:
+                    sent = _send_telegram_group_message(audit_report, topic_id=topic_id, reply_to_message_id=msg_id)
+                    if sent.get("ok"):
+                        res_msg = sent.get("result", {})
+                        _append_telegram_bridge_message({
+                            "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                            "message_id": res_msg.get("message_id", 0),
+                            "direction": "outgoing_auto",
+                            "sender_name": "AI 🍻 (Tự động)",
+                            "username": "@AiAgentMT_bot",
+                            "hub_badge": "Thám Tử Hoãn Ảo",
+                            "topic_id": topic_id,
+                            "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                            "text": audit_report,
+                            "reply_to_text": text[:120],
+                            "replied_to_msg_id": msg_id,
+                            "is_explanation": False,
+                            "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                        })
+                else:
+                    _send_telegram_group_message(
+                        f"⚠️ Không tìm thấy dữ liệu đơn hàng <code>{target_code}</code> trên hệ thống GHN để đối soát!",
+                        topic_id=topic_id,
+                        reply_to_message_id=msg_id
+                    )
+            else:
+                _send_telegram_group_message(
+                    "👉 <b>[THÁM TỬ HOÃN ẢO]</b> Vui lòng nhập kèm mã đơn GHN (VD: <code>/hoanao PSD26-CH-05070-03_CPTT</code>) hoặc Reply tin nhắn chứa mã đơn cần đối soát!",
+                    topic_id=topic_id,
+                    reply_to_message_id=msg_id
+                )
+        except Exception as ex:
+            _send_telegram_group_message(
+                f"❌ <b>Lỗi Thám Tử Hoãn Ảo:</b> {ex}",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id
+            )
+        return
+
     # 0.1 XỬ LÝ LỆNH & YÊU CẦU CAMERA AI GIÁM SÁT KHO (Lệnh /cam, câu hỏi tự nhiên "hình ảnh 4 kho", phòng 3365...)
     is_cam_cmd = lower_text.startswith(("/cam", "/camera"))
     is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
@@ -4039,7 +4184,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     if other_user_tags and not is_tag_or_cmd:
         return
 
-    # KIỂM TRA TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA SẾP LỘC)
+    # KIỂM TRA TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA ANH LỘC)
     is_store_query = any(k in lower_text for k in [
         "winmart", "vinmart", "wm+", "vm+", "/store", "/dinhvi", "/vitri", "định vị", "vị trí", "chỉ đường"
     ])
@@ -4276,6 +4421,26 @@ def _process_single_telegram_update(upd):
         return None
 
     text = (msg.get("text") or msg.get("caption") or "").strip()
+    
+    # 🎙️ BỘ ĐÀM ĐIỀU HÀNH GIỌNG NÓI TIGER AI (Speech-to-Text)
+    voice_obj = msg.get("voice") or msg.get("audio")
+    if not text and voice_obj:
+        file_id = voice_obj.get("file_id")
+        if file_id:
+            try:
+                from voice_stt_service import download_and_transcribe_telegram_voice
+                transcribed_text = download_and_transcribe_telegram_voice(file_id, TELEGRAM_BRIDGE_BOT_TOKEN)
+                if transcribed_text:
+                    text = transcribed_text.strip()
+                    ack_msg = f"🎙️ <b>[BỘ ĐÀM TIGER AI]</b> Đã nhận khẩu lệnh: <i>\"{text}\"</i>"
+                    _send_telegram_group_message(
+                        ack_msg,
+                        topic_id=msg.get("message_thread_id") or 0,
+                        reply_to_message_id=msg.get("message_id")
+                    )
+            except Exception as e:
+                print(f"[Voice STT Error] {e}")
+
     if not text:
         return None
 
