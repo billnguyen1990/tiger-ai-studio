@@ -145,6 +145,110 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Theme & Mode Selectors
   const themeSelect = document.getElementById("themeSelect");
+
+  // =========================================================================
+  // 🎨 TIGER AI • BỘ SƯU TẬP GIAO DIỆN & SÁNG/TỐI (MULTI-THEME PALETTE SYSTEM)
+  // =========================================================================
+  const themeMap = {
+    "theme-ghn-teal": { icon: "🟢", label: "Xanh Đen GHN" },
+    "theme-ghn-orange": { icon: "🟠", label: "Cam & Xanh GHN" },
+    "theme-ghn-blue": { icon: "🔵", label: "Xanh Express" },
+    "theme-amber": { icon: "🐯", label: "Cam Hổ Cyber" },
+    "theme-purple": { icon: "🟣", label: "Tím Neon" },
+    "theme-midnight": { icon: "🌑", label: "Đen OLED" },
+    "theme-light": { icon: "☀️", label: "Sáng Thanh Lịch" }
+  };
+
+  const btnThemeToggle = document.getElementById("btnThemeToggle");
+  const themePaletteDropdown = document.getElementById("themePaletteDropdown");
+  const btnCloseThemePalette = document.getElementById("btnCloseThemePalette");
+  const themePillIcon = document.getElementById("themePillIcon");
+  const themePillLabel = document.getElementById("themePillLabel");
+  const btnQuickThemeDark = document.getElementById("btnQuickThemeDark");
+  const btnQuickThemeLight = document.getElementById("btnQuickThemeLight");
+
+  function applyTheme(themeKey, notify = true) {
+    if (!themeMap[themeKey]) themeKey = "theme-ghn-teal";
+    document.body.className = themeKey;
+    localStorage.setItem("tiger_ai_theme", themeKey);
+
+    const info = themeMap[themeKey];
+    if (themePillIcon) themePillIcon.textContent = info.icon;
+    if (themePillLabel) themePillLabel.textContent = info.label;
+
+    // Update active in dropdown
+    document.querySelectorAll(".theme-item").forEach(item => {
+      if (item.getAttribute("data-theme") === themeKey) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+
+    // Sync legacy select if exists
+    if (themeSelect) themeSelect.value = themeKey;
+
+    try {
+      if (typeof canvas !== "undefined" && canvas && typeof canvas.renderEdges === "function") {
+        canvas.renderEdges();
+      }
+    } catch (e) {}
+
+    if (notify && typeof addLog === "function") {
+      addLog("tip", `Đã chuyển phong cách giao diện: [${info.icon} ${info.label}]`);
+    }
+  }
+
+  // Khôi phục theme lúc tải trang
+  const initialTheme = localStorage.getItem("tiger_ai_theme") || "theme-ghn-teal";
+  applyTheme(initialTheme, false);
+
+  if (btnThemeToggle && themePaletteDropdown) {
+    btnThemeToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isVisible = themePaletteDropdown.style.display !== "none";
+      themePaletteDropdown.style.display = isVisible ? "none" : "block";
+    });
+
+    if (btnCloseThemePalette) {
+      btnCloseThemePalette.addEventListener("click", (e) => {
+        e.stopPropagation();
+        themePaletteDropdown.style.display = "none";
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      const wrapper = document.getElementById("themePaletteWrapper");
+      if (wrapper && !wrapper.contains(e.target)) {
+        themePaletteDropdown.style.display = "none";
+      }
+    });
+  }
+
+  // Click vào từng theme trong danh sách
+  document.querySelectorAll(".theme-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const selected = item.getAttribute("data-theme");
+      applyTheme(selected);
+      if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+    });
+  });
+
+  // Chỉnh nhanh Sáng / Tối
+  if (btnQuickThemeDark) {
+    btnQuickThemeDark.addEventListener("click", () => {
+      applyTheme("theme-ghn-teal");
+      if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+    });
+  }
+
+  if (btnQuickThemeLight) {
+    btnQuickThemeLight.addEventListener("click", () => {
+      applyTheme("theme-light");
+      if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+    });
+  }
+
   const btnToggleDemo = document.getElementById("btnToggleDemo");
   const demoModeLabel = document.getElementById("demoModeLabel");
   let isDemoMode = false;

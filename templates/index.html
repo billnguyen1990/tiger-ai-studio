@@ -130,6 +130,104 @@
       <a href="/cost-dashboard" class="btn btn-secondary" style="background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); color: #fbbf24; text-decoration: none;" title="Xem Dashboard Chi Phí & Đối Soát Vận Tải (11 chỉ số)">
         <span>💰 Dashboard Chi Phí</span>
       </a>
+
+      <!-- 🎨 NÚT CHỌN GIAO DIỆN & SÁNG / TỐI NỔI BẬT TRÊN HEADER -->
+      <div class="theme-palette-wrapper" id="themePaletteWrapper">
+        <button id="btnThemeToggle" class="btn btn-theme-pill" title="Đổi màu sắc & Chỉnh Sáng / Tối" type="button">
+          <span id="themePillIcon">🟢</span>
+          <span id="themePillLabel">Xanh Đen GHN</span>
+          <span class="theme-caret">▾</span>
+        </button>
+
+        <div class="theme-palette-dropdown" id="themePaletteDropdown" style="display: none;">
+          <div class="theme-dd-header">
+            <span>🎨 BỘ SƯU TẬP GIAO DIỆN & MÀU SẮC</span>
+            <button type="button" class="theme-dd-close" id="btnCloseThemePalette">&times;</button>
+          </div>
+          
+          <!-- CHỈNH SÁNG / TỐI NHANH 1-CLICK -->
+          <div class="theme-quick-switch-box">
+            <span class="theme-quick-label">⚡ Chỉnh Nhanh:</span>
+            <div class="theme-quick-buttons">
+              <button type="button" class="btn-mode-quick" id="btnQuickThemeDark" title="Chế độ Tối (Dịu mắt ban đêm)">
+                <span>🌙 Tối</span>
+              </button>
+              <button type="button" class="btn-mode-quick" id="btnQuickThemeLight" title="Chế độ Sáng (Thanh lịch ban ngày)">
+                <span>☀️ Sáng</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="theme-dd-divider"></div>
+          <div class="theme-dd-section-title">CHỌN PHONG CÁCH BẢNG MÀU:</div>
+
+          <div class="theme-dd-list">
+            <div class="theme-item active" data-theme="theme-ghn-teal">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #00e5be 0%, #051218 100%); border: 2px solid #00e5be;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🟢 Xanh Đen GHN (Chuẩn Logo)</div>
+                <div class="theme-item-desc">Màu xanh ngọc logo GHN trên nền đen sâu</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-ghn-orange">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #ff6600 0%, #060e18 100%); border: 2px solid #ff6600;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🟠 Cam & Xanh Đen (Đồng Phục GHN)</div>
+                <div class="theme-item-desc">Màu cam nhiệt huyết GHN phối nền xanh đen</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-ghn-blue">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #0ea5e9 0%, #030d1a 100%); border: 2px solid #0ea5e9;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🔵 Xanh Dương GHN Express (Ocean Navy)</div>
+                <div class="theme-item-desc">Màu xanh biển sâu tốc hành tin cậy</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-amber">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #f59e0b 0%, #080c14 100%); border: 2px solid #f59e0b;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🐯 Cam Hổ Cyberpunk (Tiger AI Gold)</div>
+                <div class="theme-item-desc">Vàng cam mãnh hổ, độ tương phản cao</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-purple">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #a855f7 0%, #0d0818 100%); border: 2px solid #a855f7;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🟣 Tím Neon Huyền Bí (Galaxy Sci-Fi)</div>
+                <div class="theme-item-desc">Tím công nghệ tương lai hiện đại</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-midnight">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #475569 0%, #000000 100%); border: 2px solid #64748b;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🌑 Đen OLED Siêu Tối (Midnight Black)</div>
+                <div class="theme-item-desc">Tối giản 100%, bảo vệ mắt & tiết kiệm pin</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-light">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #0d9488 0%, #f1f5f9 100%); border: 2px solid #0d9488;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">☀️ Sáng Thanh Lịch (Light Professional)</div>
+                <div class="theme-item-desc">Giao diện ban ngày dịu mắt văn phòng</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Role Badge & Admin Unlock Trigger -->
       <div id="roleBadgeContainer" class="role-badge-container">
         <button id="btnRoleStatus" class="btn btn-role-pill" title="Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị Viên">

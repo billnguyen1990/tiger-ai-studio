@@ -34,6 +34,321 @@
       flex-direction: column;
     }
 
+    
+    /* ==========================================================================
+       MULTI-THEME PALETTE SYSTEM FOR COST DASHBOARD
+       ========================================================================== */
+    body.theme-ghn-teal {
+      --bg-primary: #051218;
+      --bg-card: #0b1c26;
+      --bg-card-hover: #102a38;
+      --border-color: rgba(0, 229, 190, 0.16);
+      --border-accent: rgba(0, 229, 190, 0.4);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #00e5be;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+      --primary-gradient: linear-gradient(135deg, #00e5be 0%, #00897b 100%);
+    }
+
+    body.theme-ghn-orange {
+      --bg-primary: #060e18;
+      --bg-card: #0c1a2b;
+      --bg-card-hover: #122640;
+      --border-color: rgba(255, 102, 0, 0.2);
+      --border-accent: rgba(255, 102, 0, 0.4);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #00b4d8;
+      --accent-green: #10b981;
+      --accent-amber: #ff6600;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+      --primary-gradient: linear-gradient(135deg, #ff6600 0%, #0099ff 100%);
+    }
+
+    body.theme-ghn-blue {
+      --bg-primary: #030d1a;
+      --bg-card: #081a33;
+      --bg-card-hover: #0c264d;
+      --border-color: rgba(14, 165, 233, 0.22);
+      --border-accent: rgba(14, 165, 233, 0.4);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #0ea5e9;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+      --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    }
+
+    body.theme-amber {
+      --bg-primary: #080c14;
+      --bg-card: #121a2c;
+      --bg-card-hover: #1a2640;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(245, 158, 11, 0.4);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+      --primary-gradient: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+    }
+
+    body.theme-purple {
+      --bg-primary: #0d0818;
+      --bg-card: #1a1033;
+      --bg-card-hover: #26184a;
+      --border-color: rgba(168, 85, 247, 0.22);
+      --border-accent: rgba(168, 85, 247, 0.45);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent-blue: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #c084fc;
+      --accent-purple: #a855f7;
+      --accent-red: #f43f5e;
+      --primary-gradient: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+    }
+
+    body.theme-midnight {
+      --bg-primary: #000000;
+      --bg-card: #0a0a0a;
+      --bg-card-hover: #141414;
+      --border-color: rgba(255, 255, 255, 0.12);
+      --border-accent: rgba(255, 255, 255, 0.25);
+      --text-main: #ffffff;
+      --text-sub: #a1a1aa;
+      --accent-blue: #38bdf8;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+      --primary-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    }
+
+    body.theme-light {
+      --bg-primary: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --border-color: #cbd5e1;
+      --border-accent: rgba(13, 148, 136, 0.35);
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --accent-blue: #0284c7;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --accent-purple: #7c3aed;
+      --accent-red: #dc2626;
+      --primary-gradient: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    }
+
+    /* THEME PALETTE DROPDOWN STYLING */
+    .theme-palette-wrapper {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .btn-theme-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0, 229, 190, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--accent-blue);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .btn-theme-pill:hover {
+      background: rgba(0, 229, 190, 0.16);
+      border-color: var(--border-accent);
+      transform: translateY(-1px);
+    }
+
+    .theme-caret {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-left: 2px;
+    }
+
+    .theme-palette-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 340px;
+      background: var(--bg-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-accent);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      z-index: 500;
+    }
+
+    .theme-dd-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px 10px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent-blue);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .theme-dd-close {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .theme-quick-switch-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 4px 6px 4px;
+    }
+
+    .theme-quick-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .theme-quick-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-mode-quick {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    body.theme-light .btn-mode-quick {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .btn-mode-quick:hover {
+      background: var(--accent-blue);
+      color: #051218;
+      border-color: var(--accent-blue);
+    }
+
+    .theme-dd-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 8px 0;
+    }
+
+    .theme-dd-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 4px 6px;
+    }
+
+    .theme-dd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .theme-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .theme-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-color);
+    }
+
+    .theme-item.active {
+      background: rgba(0, 229, 190, 0.12);
+      border-color: var(--accent-blue);
+    }
+
+    .theme-badge-color {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .theme-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .theme-item-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .theme-item-desc {
+      font-size: 11px;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .theme-item-check {
+      font-size: 14px;
+      color: var(--accent-blue);
+      font-weight: 800;
+      display: none;
+    }
+
+    .theme-item.active .theme-item-check {
+      display: inline-block;
+    }
+
     /* HEADER */
     .dashboard-header {
       background: rgba(17, 24, 39, 0.9);
@@ -407,6 +722,102 @@
       </div>
     </div>
     <div class="header-right">
+
+      <!-- 🎨 NÚT CHỌN GIAO DIỆN & SÁNG / TỐI NỔI BẬT -->
+      <div class="theme-palette-wrapper" id="themePaletteWrapper">
+        <button id="btnThemeToggle" class="btn btn-theme-pill" title="Đổi màu sắc & Chỉnh Sáng / Tối" type="button">
+          <span id="themePillIcon">🟢</span>
+          <span id="themePillLabel">Xanh Đen GHN</span>
+          <span class="theme-caret">▾</span>
+        </button>
+
+        <div class="theme-palette-dropdown" id="themePaletteDropdown" style="display: none;">
+          <div class="theme-dd-header">
+            <span>🎨 BỘ SƯU TẬP GIAO DIỆN & MÀU SẮC</span>
+            <button type="button" class="theme-dd-close" id="btnCloseThemePalette">&times;</button>
+          </div>
+          
+          <div class="theme-quick-switch-box">
+            <span class="theme-quick-label">⚡ Chỉnh Nhanh:</span>
+            <div class="theme-quick-buttons">
+              <button type="button" class="btn-mode-quick" id="btnQuickThemeDark" title="Chế độ Tối (Dịu mắt ban đêm)">
+                <span>🌙 Tối</span>
+              </button>
+              <button type="button" class="btn-mode-quick" id="btnQuickThemeLight" title="Chế độ Sáng (Thanh lịch ban ngày)">
+                <span>☀️ Sáng</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="theme-dd-divider"></div>
+          <div class="theme-dd-section-title">CHỌN PHONG CÁCH BẢNG MÀU:</div>
+
+          <div class="theme-dd-list">
+            <div class="theme-item active" data-theme="theme-ghn-teal">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #00e5be 0%, #051218 100%); border: 2px solid #00e5be;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🟢 Xanh Đen GHN (Chuẩn Logo)</div>
+                <div class="theme-item-desc">Màu xanh ngọc logo GHN trên nền đen sâu</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-ghn-orange">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #ff6600 0%, #060e18 100%); border: 2px solid #ff6600;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🟠 Cam & Xanh Đen (Đồng Phục GHN)</div>
+                <div class="theme-item-desc">Màu cam nhiệt huyết GHN phối nền xanh đen</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-ghn-blue">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #0ea5e9 0%, #030d1a 100%); border: 2px solid #0ea5e9;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🔵 Xanh Dương GHN Express (Ocean Navy)</div>
+                <div class="theme-item-desc">Màu xanh biển sâu tốc hành tin cậy</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-amber">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #f59e0b 0%, #080c14 100%); border: 2px solid #f59e0b;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🐯 Cam Hổ Cyberpunk (Tiger AI Gold)</div>
+                <div class="theme-item-desc">Vàng cam mãnh hổ, độ tương phản cao</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-purple">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #a855f7 0%, #0d0818 100%); border: 2px solid #a855f7;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🟣 Tím Neon Huyền Bí (Galaxy Sci-Fi)</div>
+                <div class="theme-item-desc">Tím công nghệ tương lai hiện đại</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-midnight">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #475569 0%, #000000 100%); border: 2px solid #64748b;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🌑 Đen OLED Siêu Tối (Midnight Black)</div>
+                <div class="theme-item-desc">Tối giản 100%, bảo vệ mắt & tiết kiệm pin</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-light">
+              <span class="theme-badge-color" style="background: linear-gradient(135deg, #0d9488 0%, #f1f5f9 100%); border: 2px solid #0d9488;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">☀️ Sáng Thanh Lịch (Light Professional)</div>
+                <div class="theme-item-desc">Giao diện ban ngày dịu mắt văn phòng</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <span class="sync-badge" id="syncStatus">Đồng bộ: Đang tải...</span>
       <button class="btn btn-primary" id="btnSyncLive" onclick="triggerSync()">
         <span>🔄 Đồng Bộ Sheets</span>
@@ -947,6 +1358,86 @@
       } finally {
         btn.innerHTML = "<span>🔄 Đồng Bộ Sheets</span>";
       }
+    }
+
+    
+    // THEME PALETTE CONTROLLER
+    const themeMap = {
+      "theme-ghn-teal": { icon: "🟢", label: "Xanh Đen GHN" },
+      "theme-ghn-orange": { icon: "🟠", label: "Cam & Xanh GHN" },
+      "theme-ghn-blue": { icon: "🔵", label: "Xanh Express" },
+      "theme-amber": { icon: "🐯", label: "Cam Hổ Cyber" },
+      "theme-purple": { icon: "🟣", label: "Tím Neon" },
+      "theme-midnight": { icon: "🌑", label: "Đen OLED" },
+      "theme-light": { icon: "☀️", label: "Sáng Thanh Lịch" }
+    };
+
+    function applyTheme(themeKey) {
+      if (!themeMap[themeKey]) themeKey = "theme-ghn-teal";
+      document.body.className = themeKey;
+      localStorage.setItem("tiger_ai_theme", themeKey);
+
+      const info = themeMap[themeKey];
+      const pIcon = document.getElementById("themePillIcon");
+      const pLabel = document.getElementById("themePillLabel");
+      if (pIcon) pIcon.textContent = info.icon;
+      if (pLabel) pLabel.textContent = info.label;
+
+      document.querySelectorAll(".theme-item").forEach(item => {
+        if (item.getAttribute("data-theme") === themeKey) item.classList.add("active");
+        else item.classList.remove("active");
+      });
+    }
+
+    const initialTheme = localStorage.getItem("tiger_ai_theme") || "theme-ghn-teal";
+    applyTheme(initialTheme);
+
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const themePaletteDropdown = document.getElementById("themePaletteDropdown");
+    const btnCloseThemePalette = document.getElementById("btnCloseThemePalette");
+
+    if (btnThemeToggle && themePaletteDropdown) {
+      btnThemeToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isVisible = themePaletteDropdown.style.display !== "none";
+        themePaletteDropdown.style.display = isVisible ? "none" : "block";
+      });
+
+      if (btnCloseThemePalette) {
+        btnCloseThemePalette.addEventListener("click", (e) => {
+          e.stopPropagation();
+          themePaletteDropdown.style.display = "none";
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        const wrapper = document.getElementById("themePaletteWrapper");
+        if (wrapper && !wrapper.contains(e.target)) {
+          themePaletteDropdown.style.display = "none";
+        }
+      });
+    }
+
+    document.querySelectorAll(".theme-item").forEach(item => {
+      item.addEventListener("click", () => {
+        applyTheme(item.getAttribute("data-theme"));
+        if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+      });
+    });
+
+    const btnQuickThemeDark = document.getElementById("btnQuickThemeDark");
+    const btnQuickThemeLight = document.getElementById("btnQuickThemeLight");
+    if (btnQuickThemeDark) {
+      btnQuickThemeDark.addEventListener("click", () => {
+        applyTheme("theme-ghn-teal");
+        if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+      });
+    }
+    if (btnQuickThemeLight) {
+      btnQuickThemeLight.addEventListener("click", () => {
+        applyTheme("theme-light");
+        if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+      });
     }
 
     window.onload = loadInitial;
