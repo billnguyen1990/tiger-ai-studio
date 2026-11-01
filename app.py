@@ -3976,7 +3976,16 @@ def _format_quick_kpi_telegram_report():
     return "\n".join(lines)
 
 def _handle_employee_telegram_auto_reply(msg_obj, entry):
-    """Tự động trả lời nhân viên trên Telegram và hiển thị câu trả lời lên khung chat Web"""
+    """
+    🧠 BỘ NÃO ĐIỀU PHỐI & LỌC DỮ LIỆU TELEGRAM (TIGER FILTER BRAIN)
+    Quy tắc nghiêm ngặt theo chỉ đạo của anh Lộc:
+    1. Đơn Tạo -> Chỉ gửi vào đúng Topic 506 (📅 Đơn Tạo). Tuyệt đối cấm gửi sang room khác.
+    2. Camera -> Mọi ảnh & báo cáo camera chuyển vào Topic 3365 (📸 Camera Giám Sát Kho).
+    3. Nhóm Chat hay bất kỳ room nào mà KHÔNG tag @AiAgentMT_bot và KHÔNG dùng lệnh /:
+       -> TUYỆT ĐỐI IM LẶNG!
+       - Tuyệt đối không xen ngang, nói chuyện linh tinh khi nhân sự đang trao đổi nghiêm trọng.
+       - CẤM tự ý trả lời khi người dùng chỉ Reply tin nhắn của bot mà KHÔNG tag @AiAgentMT_bot.
+    """
     global TELEGRAM_AUTO_REPLY_ENABLED
     if not TELEGRAM_AUTO_REPLY_ENABLED:
         return
@@ -3989,19 +3998,38 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     topic_id = entry.get("topic_id") or 0
     reply_to_text = (entry.get("reply_to_text") or "").strip()
 
-    order_codes = extract_ghn_order_codes(text)
-    is_tag_or_cmd = (
-        ("@aiagentmt_bot" in lower_text) or
-        ("tiger ai" in lower_text) or
-        ("ai ơi" in lower_text) or
-        lower_text.startswith(("/check", "/tra", "/don", "/ai", "/kpi", "/ton", "/hoi", "/soikho", "/hoanao", "/help", "/menu", "/auditcam"))
-    )
-    is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
+    # =========================================================================
+    # 🛑 CỔNG CHẶN BẢO VỆ 1: QUY TẮC IM LẶNG TUYỆT ĐỐI
+    # Chỉ phản hồi khi:
+    # - Tag đích danh bot: @aiagentmt_bot hoặc @aiagentmt
+    # - Hoặc gõ lệnh bắt đầu bằng dấu gạch chéo (/)
+    # - Ngoại lệ duy nhất: Đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
+    # =========================================================================
+    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text)
+    is_slash_cmd = lower_text.startswith("/")
+    is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
+        "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock"
+    ]))
 
-    
+    if not (is_tagged or is_slash_cmd or is_cam_in_cam_topic):
+        # KHÔNG tag bot, KHÔNG có lệnh /, KHÔNG phải phòng cam -> IM LẶNG 100%!
+        return
+
+    # Nếu người dùng tag nhân sự khác mà KHÔNG tag bot -> IM LẶNG
+    import re
+    other_user_tags = [
+        u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
+        if "aiagentmt" not in u.lower()
+    ]
+    if other_user_tags and not is_tagged:
+        return
+
+    order_codes = extract_ghn_order_codes(text)
+    is_tag_or_cmd = is_tagged or is_slash_cmd
+
     # 0.0 TRỢ GIÚP & MENU LỆNH (/help, /menu, /trogiup)
-    is_help_cmd = any(lower_text.strip() == cmd for cmd in ["/help", "/menu", "/trogiup", "/huongdan", "menu", "giúp đỡ"]) or (
-        is_tag_or_cmd and any(k in lower_text for k in ["làm được gì", "tính năng", "chức năng", "hướng dẫn"])
+    is_help_cmd = any(lower_text.strip() == cmd for cmd in ["/help", "/menu", "/trogiup", "/huongdan"]) or (
+        is_tagged and any(k in lower_text for k in ["làm được gì", "tính năng", "chức năng", "hướng dẫn", "giúp đỡ"])
     )
     if is_help_cmd:
         help_html = (
@@ -4012,24 +4040,26 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             "• Tiger AI tự động dịch giọng nói sang văn bản và thực thi khẩu lệnh tức thì.\n\n"
             "👁️ <b>2. MẮT THẦN CANH KHO (VISION AI):</b>\n"
             "• Lệnh: <code>/soikho</code> hoặc <code>/soikho [cairang/binhthuy/omon/vithanh]</code>\n"
-            "• Quét camera an ninh hiện trường, đếm xe tải, đọc biển số xe, kiểm tra dock kẹt, lối đi 5S và thời tiết.\n\n"
+            "• Toàn bộ hình ảnh & phân tích tự động chuyển về đúng Topic 3365 (📸 Camera Giám Sát Kho).\n\n"
             "🕵️ <b>3. THÁM TỬ ĐỐI SOÁT HOÃN ẢO:</b>\n"
-            "• Lệnh: <code>/hoanao [mã đơn]</code> (hoặc Reply tin nhắn có mã đơn)\n"
-            "• Bóc tách lịch sử cuộc gọi shipper, phát hiện ngay các trường hợp báo hoãn láo, không gọi khách hoặc nhá máy.\n\n"
+            "• Lệnh: <code>/hoanao [mã đơn]</code>\n"
+            "• Bóc tách lịch sử cuộc gọi shipper, phát hiện ngay báo hoãn láo, nhá máy.\n\n"
             "📦 <b>4. TRA CỨU ĐƠN & BÁO CÁO VẬN HÀNH:</b>\n"
-            "• Dán mã đơn GHN (VD: <code>PSD26-CH-05070-03_CPTT</code>) để tra cứu lịch sử chuyên sâu.\n"
-            "• Gõ <code>/kpi</code> hoặc <code>/ton</code> để xem số liệu vận hành và tồn kho tức thì."
+            "• Lệnh: <code>/tra [mã đơn]</code> hoặc <code>/check [mã đơn]</code>\n"
+            "• Lệnh: <code>/kpi</code> hoặc <code>/ton</code> để xem số liệu KPI và tồn kho tức thì.\n\n"
+            "<i>Lưu ý: Để tránh làm phiền cuộc trao đổi của anh em, Tiger AI chỉ phản hồi khi được gọi đích danh bằng lệnh <code>/</code> hoặc tag <code>@AiAgentMT_bot</code>!</i>"
         )
         _send_telegram_group_message(help_html, topic_id=topic_id, reply_to_message_id=msg_id)
         return
 
-    # 0.1 MẮT THẦN CANH KHO AI (VISION AI GUARD)
-    is_vision_guard_cmd = any(k in lower_text for k in [
-        "/soikho", "/auditcam", "soi kho", "mắt thần", "giám sát kho", "kiểm tra kho", "báo cáo camera ai"
-    ])
+    # 0.1 MẮT THẦN CANH KHO AI (VISION AI GUARD) - QUY TẮC 2: ẢNH & BÁO CÁO PHẢI VÀO TOPIC 3365
+    is_vision_guard_cmd = lower_text.startswith(("/soikho", "/auditcam")) or (
+        is_tagged and any(k in lower_text for k in ["soi kho", "mắt thần", "giám sát kho", "kiểm tra kho", "báo cáo camera ai"])
+    )
     if is_vision_guard_cmd:
         try:
             from warehouse_vision_guard import run_vision_guard_audit
+            CAM_TOPIC_ID = 3365
             target_hub = "cairang"
             if any(k in lower_text for k in ["bình thủy", "binhthuy", "bt"]):
                 target_hub = "binhthuy"
@@ -4046,11 +4076,18 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             }
             h_disp = hub_names.get(target_hub, target_hub.title())
 
-            _send_telegram_group_message(
-                f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối camera {h_disp} và phân tích hiện trường bãi xe, dock, 5S...",
-                topic_id=topic_id,
-                reply_to_message_id=msg_id
-            )
+            if topic_id == CAM_TOPIC_ID:
+                _send_telegram_group_message(
+                    f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối camera {h_disp} và phân tích hiện trường bãi xe, dock, 5S...",
+                    topic_id=CAM_TOPIC_ID,
+                    reply_to_message_id=msg_id
+                )
+            else:
+                _send_telegram_group_message(
+                    f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối camera {h_disp}. Hình ảnh & phân tích sẽ được gửi vào đúng phòng 📸 Camera Giám Sát Kho!",
+                    topic_id=topic_id,
+                    reply_to_message_id=msg_id
+                )
 
             ok, cam_name, snap_file, analysis = run_vision_guard_audit(target_hub)
             if ok and snap_file and os.path.exists(snap_file):
@@ -4060,16 +4097,21 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 )
                 if analysis and len(caption_text + analysis) <= 1020:
                     caption_text += analysis
-                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=topic_id, reply_to_message_id=msg_id)
+                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=CAM_TOPIC_ID)
                 else:
                     caption_text += f"📍 Camera: {cam_name}\n<i>(Chi tiết phân tích thông minh gửi kèm bên dưới)</i>"
-                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=topic_id, reply_to_message_id=msg_id)
+                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=CAM_TOPIC_ID)
                     if analysis:
                         _send_telegram_group_message(
                             f"📋 <b>BÁO CÁO PHÂN TÍCH HIỆN TRƯỜNG KHO ({h_disp}):</b>\n\n{analysis}",
-                            topic_id=topic_id,
-                            reply_to_message_id=msg_id
+                            topic_id=CAM_TOPIC_ID
                         )
+                if topic_id != CAM_TOPIC_ID and topic_id > 0:
+                    _send_telegram_group_message(
+                        f"👉 <b>Tiger AI đã chuyển ảnh và phân tích hiện trường Camera ({h_disp}) vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Theo đúng quy chuẩn điều hành: mọi hình ảnh camera tập trung tại phòng riêng!)</i>",
+                        topic_id=topic_id,
+                        reply_to_message_id=msg_id
+                    )
                 try:
                     os.remove(snap_file)
                 except Exception:
@@ -4077,8 +4119,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             else:
                 _send_telegram_group_message(
                     f"⚠️ <b>[MẮT THẦN CANH KHO]</b> Chưa thể trích xuất luồng camera {h_disp}: {cam_name}",
-                    topic_id=topic_id,
-                    reply_to_message_id=msg_id
+                    topic_id=CAM_TOPIC_ID
                 )
         except Exception as ex:
             _send_telegram_group_message(
@@ -4089,16 +4130,15 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         return
 
     # 0.2 THÁM TỬ ĐỐI SOÁT SHIPPER HOÃN ẢO
-    is_hoanao_cmd = any(k in lower_text for k in [
-        "/hoanao", "hoãn ảo", "check hoãn", "soi hoãn", "đối soát hoãn", "kiểm tra hoãn"
-    ])
+    is_hoanao_cmd = lower_text.startswith(("/hoanao", "/checkhoan")) or (
+        is_tagged and any(k in lower_text for k in ["hoãn ảo", "check hoãn", "soi hoãn", "đối soát hoãn", "kiểm tra hoãn"])
+    )
     if is_hoanao_cmd:
         try:
             from shipper_delay_auditor import audit_shipper_delay_for_order
             reply_codes = extract_ghn_order_codes(reply_to_text)
             all_target_codes = order_codes if order_codes else reply_codes
             if not all_target_codes:
-                import re
                 raw_matches = re.findall(r'[A-Za-z0-9_-]{10,}', text)
                 all_target_codes = [c for c in raw_matches if not c.startswith("/")]
 
@@ -4144,24 +4184,19 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             )
         return
 
-    # 0.1 XỬ LÝ LỆNH & YÊU CẦU CAMERA AI GIÁM SÁT KHO (Lệnh /cam, câu hỏi tự nhiên "hình ảnh 4 kho", phòng 3365...)
+    # 0.3 XỬ LÝ LỆNH CAMERA AI GIÁM SÁT KHO (/cam, /camera) - QUY TẮC 2: ẢNH VÀO TOPIC 3365
     is_cam_cmd = lower_text.startswith(("/cam", "/camera"))
-    is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
-        "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock", "lâu đấy", "đợi", "chưa", "đâu", "nữa hả"
-    ]) and not order_codes)
-    is_cam_natural = any(k in lower_text for k in [
+    is_cam_natural = is_tagged and any(k in lower_text for k in [
         "hình ảnh 4 kho", "ảnh 4 kho", "camera 4 kho", "cam 4 kho", "4 kho hiện tại",
-        "xem camera", "chụp camera", "soi camera", "camera kho", "hình ảnh kho", "ảnh kho", "hình kho", "4 kho"
+        "xem camera", "chụp camera", "soi camera", "camera kho", "hình ảnh kho", "ảnh kho", "hình kho"
     ])
 
     if is_cam_cmd or is_cam_in_cam_topic or is_cam_natural:
         try:
             from camera_service import capture_camera_snapshot
-
             CAM_TOPIC_ID = 3365
             all_hubs = ["cairang", "binhthuy", "omon", "vithanh"]
 
-            # Parse targets
             targets = []
             is_4_hubs = any(k in lower_text for k in ["4 kho", "bốn kho", "tất cả", "toàn bộ"]) or (
                 is_cam_in_cam_topic and not any(k in lower_text for k in [
@@ -4202,7 +4237,6 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 if not matched_any:
                     targets = [{"hub": h, "cam": VR_MAP.get(h, {}).get(target_cam_type)} for h in all_hubs]
 
-            # Trích xuất đồng thời siêu tốc bằng ThreadPoolExecutor
             def _exec_capture(t_item):
                 h_k = t_item["hub"]
                 c_k = t_item.get("cam")
@@ -4232,10 +4266,9 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                         topic_id=CAM_TOPIC_ID
                     )
             
-            # Nếu người gửi yêu cầu từ phòng khác (như Báo Cáo 2690), gửi 1 tin thông báo nhẹ để tránh trôi tin
             if topic_id != CAM_TOPIC_ID and topic_id > 0:
                 _send_telegram_group_message(
-                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Tập trung ảnh tại phòng riêng theo quy chuẩn để không làm trôi tin điều hành!)</i>",
+                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Theo đúng quy chuẩn điều hành: ảnh camera tập trung tại phòng riêng!)</i>",
                     topic_id=topic_id,
                     reply_to_message_id=msg_id
                 )
@@ -4247,19 +4280,10 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             )
         return
 
-    # 0. QUAN TRỌNG: Nếu người gửi đang @tag nhân viên/NVXL khác (không gọi Bot) -> Bot TUYỆT ĐỐI IM LẶNG!
-    import re
-    other_user_tags = [
-        u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
-        if "aiagentmt" not in u.lower()
-    ]
-    if other_user_tags and not is_tag_or_cmd:
-        return
-
-    # KIỂM TRA TRA CỨU ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01 (THEO CHỈ ĐẠO CỦA ANH LỘC)
-    is_store_query = any(k in lower_text for k in [
-        "winmart", "vinmart", "wm+", "vm+", "/store", "/dinhvi", "/vitri", "định vị", "vị trí", "chỉ đường"
-    ])
+    # 0.4 ĐỊNH VỊ CỬA HÀNG WINMART / SIÊU THỊ MT01
+    is_store_query = lower_text.startswith(("/store", "/dinhvi", "/vitri")) or (
+        is_tagged and any(k in lower_text for k in ["winmart", "vinmart", "wm+", "vm+", "định vị", "vị trí", "chỉ đường"])
+    )
     if is_store_query:
         store_res = search_winmart_store(text)
         if store_res:
@@ -4267,7 +4291,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             sent = _send_telegram_group_message(store_reply, topic_id=topic_id, reply_to_message_id=msg_id)
             if sent.get("ok"):
                 res_msg = sent.get("result", {})
-                auto_entry = {
+                _append_telegram_bridge_message({
                     "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                     "message_id": res_msg.get("message_id", 0),
                     "direction": "outgoing_auto",
@@ -4281,46 +4305,30 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                     "replied_to_msg_id": msg_id,
                     "is_explanation": False,
                     "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-                }
-                _append_telegram_bridge_message(auto_entry)
+                })
             return
 
-    # 0.3 HƯỚNG DẪN TRA CỨU ĐƠN NẾU CHỈ GÕ LỆNH /tra HOẶC /check MÀ CHƯA KÈM MÃ ĐƠN
-    is_lookup_cmd_only = any(lower_text.startswith(c) for c in ["/tra", "/check"]) and not bool(order_codes)
+    # 0.5 HƯỚNG DẪN TRA CỨU NẾU GÕ LỆNH /tra HOẶC /check MÀ CHƯA KÈM MÃ ĐƠN
+    is_lookup_cmd_only = any(lower_text.strip() == c for c in ["/tra", "/check", "/don"]) and not bool(order_codes)
     if is_lookup_cmd_only:
         guide_msg = (
             "📦 <b>[TRA CỨU ĐƠN HÀNG GHN]</b>\n\n"
-            "Dạ vui lòng gửi kèm mã đơn hàng GHN (VD: <code>/tra GYMA88MB</code> hoặc dán trực tiếp danh sách mã đơn vào nhóm), "
+            "Dạ vui lòng gửi kèm mã đơn hàng GHN (VD: <code>/tra GYMA88MB</code> hoặc <code>/check [mã đơn]</code>), "
             "Tiger AI sẽ kiểm tra trạng thái lưu kho, hành trình và lịch sử giao nhận ngay lập tức ạ!"
         )
         _send_telegram_group_message(guide_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         return
 
-    # Phân biệt tin nhắn thực sự muốn tra cứu đơn:
-    # - Gọi đích danh bot (@AiAgentMT_bot, /check, /tra, "tra đơn", "check đơn")
-    # - Hoặc gửi danh sách mã đơn thuần túy (chỉ gửi mã đơn, không phải câu giao tiếp đàm thoại dài)
+    # 1. TRA CỨU DANH SÁCH MÃ ĐƠN HÀNG GHN (KHI CÓ LỆNH /tra, /check, /don HOẶC CÓ TAG BOT KÈM MÃ ĐƠN)
     reply_order_codes = extract_ghn_order_codes(reply_to_text)
     context_order_codes = order_codes if order_codes else reply_order_codes
 
-    words_in_text = [w for w in text.split() if w.strip()]
-    is_pure_order_list = False
-    if order_codes:
-        non_code_words = [
-            w for w in words_in_text 
-            if w.upper().replace("-", "").replace("_", "") not in order_codes 
-            and "@" not in w 
-            and w.lower() not in ["check", "tra", "giúp", "giùm", "đơn", "hàng", "xem", "này", "mã", "vs", "với"]
-        ]
-        if len(non_code_words) <= 2:
-            is_pure_order_list = True
+    is_lookup_intent = lower_text.startswith(("/tra", "/check", "/don")) or (
+        is_tagged and (bool(order_codes) or any(k in lower_text for k in ["tra", "check", "soi", "xem đơn"]))
+    )
 
-    should_lookup_order = bool(order_codes and is_pure_order_list and (is_tag_or_cmd or is_reply_to_bot or len(order_codes) >= 1))
-
-    # 1. Nếu thực sự có nhu cầu tra cứu danh sách mã đơn GHN (gửi mã đơn thuần túy để lấy thẻ tra cứu)
-    if should_lookup_order:
-        # Ghi nhận lượt tra cứu của nhân sự này để phục vụ chỉ đạo của anh
+    if order_codes and is_lookup_intent:
         _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
-        is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
         target_codes = order_codes[:10]
         if len(target_codes) == 1:
             try:
@@ -4329,7 +4337,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 sent = _send_telegram_group_message(deep_rep, topic_id=topic_id, reply_to_message_id=msg_id)
                 if sent.get("ok"):
                     res_msg = sent.get("result", {})
-                    auto_entry = {
+                    _append_telegram_bridge_message({
                         "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                         "message_id": res_msg.get("message_id", 0),
                         "direction": "outgoing_auto",
@@ -4343,11 +4351,11 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                         "replied_to_msg_id": msg_id,
                         "is_explanation": False,
                         "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-                    }
-                    _append_telegram_bridge_message(auto_entry)
+                    })
                 return
             except Exception as e:
                 print("Deep investigation fallback:", e)
+
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(query_ghn_order_history, target_codes))
@@ -4355,7 +4363,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
         if sent.get("ok"):
             res_msg = sent.get("result", {})
-            auto_entry = {
+            _append_telegram_bridge_message({
                 "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
                 "message_id": res_msg.get("message_id", 0),
                 "direction": "outgoing_auto",
@@ -4369,13 +4377,12 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 "replied_to_msg_id": msg_id,
                 "is_explanation": False,
                 "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-            }
-            _append_telegram_bridge_message(auto_entry)
+            })
         return
 
-    # 2. XỬ LÝ CÂU HỎI NGHIỆP VỤ VỀ MÃ ĐƠN HÀNG (VD: anh hỏi 'đơn hàng gối đầu đúng ko', 'sao chưa giao', 'ai đang cầm'...)
-    clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
-    for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
+    # 2. XỬ LÝ CÂU HỎI NGHIỆP VỤ VỀ MÃ ĐƠN HÀNG (KHI ĐƯỢC TAG @AiAgentMT_bot)
+    clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").replace("@AiAgentMT", "").replace("@aiagentmt", "").strip()
+    for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi", "/tra"]:
         if clean_q.lower().startswith(prefix):
             clean_q = clean_q[len(prefix):].strip()
 
@@ -4386,13 +4393,9 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         "rớt", "thất bại", "hôm nay", "ngày mai", "giao lại", "xử lý"
     ]
     is_order_question = bool(
-        context_order_codes and (
-            is_reply_to_bot or 
-            (order_codes and not is_pure_order_list) or
-            any(k in lower_text for k in order_inquiry_keywords)
-        )
+        context_order_codes and any(k in lower_text for k in order_inquiry_keywords)
     )
-    if is_order_question and (is_reply_to_bot or is_tag_or_cmd or not other_user_tags):
+    if is_order_question and is_tagged:
         target_code = context_order_codes[0]
         is_boss = ("sếp" in str(entry.get("sender_name", "")).lower() or "lộc" in str(entry.get("sender_name", "")).lower())
         order_ans = _answer_order_context_question(
@@ -4421,18 +4424,9 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 })
         return
 
-    # 3. Khi nhân viên Reply trực tiếp vào tin nhắn của Bot hoặc gọi tên Bot
-    if is_reply_to_bot or is_tag_or_cmd:
-        # Nếu người gửi đang tag nhân viên/NVXL khác (VD: anh reply báo cáo bot nhưng tag @CONGBANGCAIRANGCANTHO để giao việc)
-        # mà KHÔNG gọi đích danh Bot (@AiAgentMT_bot, ai ơi...), Bot PHẢI IM LẶNG để nhân viên tự trả lời!
-        import re
-        other_user_tags = [
-            u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
-            if "aiagentmt" not in u.lower()
-        ]
-        if other_user_tags and not is_tag_or_cmd:
-            return
-        clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").strip()
+    # 3. KHI ĐƯỢC TAG @AiAgentMT_bot HOẶC GÕ LỆNH ĐIỀU HÀNH (/kpi, /ton, /ai...)
+    if is_tagged or is_slash_cmd:
+        clean_q = text.replace("@AiAgentMT_bot", "").replace("@aiagentmt_bot", "").replace("@AiAgentMT", "").replace("@aiagentmt", "").strip()
         is_pure_kpi_cmd = clean_q.lower() in ("/kpi", "/ton")
         for prefix in ["/ai", "/kpi", "/ton", "/check", "/hoi"]:
             if clean_q.lower().startswith(prefix):
@@ -4444,8 +4438,6 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         elif is_pure_kpi_cmd and not clean_q:
             tg_html = _format_quick_kpi_telegram_report()
         else:
-            # Phân biệt chính xác: Chỉ khi người dùng thực sự hỏi về số liệu KPI, tỷ lệ, tồn kho mới lôi bảng số liệu ra
-            # TUYỆT ĐỐI không kích hoạt bảng KPI cho những câu hỏi giao tiếp thông thường (VD: 'sao không trả lời', 'hôm qua làm gì'...)
             kpi_intent_keywords = [
                 "kpi", "tỉ lệ", "tỷ lệ", "gtc", "gtb", "ltc", "đơn tồn", "tồn kho",
                 "sản lượng", "bao nhiêu đơn", "chốt ca", "đang giao", "chưa giao",
@@ -4458,8 +4450,8 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 sys_ctx = build_mt01_system_context(realtime_context=realtime_ctx, for_telegram=True)
                 full_prompt = ""
                 if reply_to_text:
-                    full_prompt += f"Ngữ cảnh tin nhắn trước đó được Reply: \"{reply_to_text}\"\n"
-                full_prompt += f"Người hỏi ({entry.get('sender_name', '')} - {entry.get('hub_badge', '')}): \"{clean_q or text}\"\nHãy trả lời chính xác 100% theo số liệu thực tế trong bảng lịch sử KPI, đi thẳng vào trọng tâm câu hỏi:"
+                    full_prompt += f'Ngữ cảnh tin nhắn trước đó được Reply: "{reply_to_text}"\n'
+                full_prompt += f'Người hỏi ({entry.get("sender_name", "")} - {entry.get("hub_badge", "")}): "{clean_q or text}"\nHãy trả lời chính xác 100% theo số liệu thực tế trong bảng lịch sử KPI, đi thẳng vào trọng tâm câu hỏi:'
                 ai_ans = call_gemini_api(full_prompt, sys_ctx, get_gemini_api_key())
                 tg_html = _clean_markdown_to_telegram_html(ai_ans)
             else:
