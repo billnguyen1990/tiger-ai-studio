@@ -43,115 +43,111 @@ def _clean_num(val_str):
     except:
         return 0.0
 
+def _format_vnd(val):
+    return f"{int(round(val)):,}".replace(",", ".")
+
 def build_cost_dashboard_matrix(force=False):
+    """
+    Chỉ nạp và xử lý CHUYÊN BIỆT cho VÙNG MIỀN TÂY 01
+    Khóa chặt dữ liệu từ Row 3 đến Row 57 của sheet 'Chi Phí MT01'
+    Đảm bảo 100% chuẩn xác không bị đè bởi bảng phụ!
+    """
     now_str = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-    print(f"[{now_str}] 🚀 Đang nạp toàn diện ma trận Chi Phí Vận Hành...")
+    print(f"[{now_str}] 🚀 Đang nạp bảng dữ liệu chuẩn Vùng Miền Tây 01...")
 
     try:
         creds = get_google_creds()
         client = gspread.authorize(creds)
         sh = client.open_by_key(GOOGLE_SHEET_ID)
 
-        regions_config = [
-            ("Miền Tây 01", "Chi Phí MT01"),
-            ("Miền Tây 02", "Chi Phí MT02"),
-            ("Miền Tây 03", "Chi Phí MT03"),
-            ("Miền Tây 04", "Chi Phí MT04"),
-            ("Miền Tây 05", "Chi Phí MT05")
+        ws = sh.worksheet("Chi Phí MT01")
+        rows = ws.get_all_values()
+
+        r0 = rows[0] # Tháng
+        r1 = rows[1] # Tuần
+        r2 = rows[2] # Ngày / Tiêu đề
+
+        # 1. Danh sách mốc thời gian
+        months_dict = {} # "Tháng 10-Năm 2026": [c1, c2, ...]
+        weeks_dict = {}  # "Tuần 44-Năm 2026": [c1, c2, ...]
+        days_list = []   # ["26/05/2026", ...]
+        col_to_date = {}
+
+        for c in range(4, len(r2)):
+            d_str = r2[c].strip()
+            m_str = r0[c].strip()
+            w_str = r1[c].strip()
+
+            if d_str and "/" in d_str and len(d_str) == 10:
+                days_list.append(d_str)
+                col_to_date[c] = d_str
+                if m_str:
+                    months_dict.setdefault(m_str, []).append(c)
+                if w_str:
+                    weeks_dict.setdefault(w_str, []).append(c)
+
+        # 2. Định nghĩa cấu trúc chính xác các thực thể MT01
+        # Row 3 to 13: Miền Tây 01
+        # Row 14 to 24: Kho Cái Răng
+        # Row 25 to 35: Kho Bình Thủy
+        # Row 36 to 46: Kho TP Vị Thanh
+        # Row 47 to 57: Kho Ô Môn
+        entities_config = [
+            ("Toàn Vùng MT01", 3, 14, "Miền Tây 01"),
+            ("Kho Cái Răng", 14, 25, "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ"),
+            ("Kho Bình Thủy", 25, 36, "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ"),
+            ("Kho Vị Thanh", 36, 47, "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang"),
+            ("Kho Ô Môn", 47, 58, "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ")
         ]
+
+        hubs_matrix = {}
+
+        for label, start_r, end_r, full_sheet_name in entities_config:
+            ent_metrics = {}
+            for r in range(start_r, end_r):
+                metric_name = rows[r][1].strip()
+                oct_val = rows[r][2].strip() # Cột Tháng 10 chuẩn
+                w44_val = rows[r][3].strip() # Cột Tuần 44 chuẩn
+                
+                daily_vals = {}
+                for c, d in col_to_date.items():
+                    if c < len(rows[r]):
+                        daily_vals[d] = rows[r][c].strip()
+                    else:
+                        daily_vals[d] = ""
+
+                ent_metrics[metric_name] = {
+                    "oct_official": oct_val,
+                    "w44_official": w44_val,
+                    "daily": daily_vals
+                }
+
+            hubs_matrix[label] = {
+                "display_name": label,
+                "full_name": full_sheet_name,
+                "metrics": ent_metrics
+            }
 
         dashboard_data = {
             "last_sync": now_str,
-            "regions": {}
+            "region": "Miền Tây 01",
+            "months": list(months_dict.keys()),
+            "weeks": list(weeks_dict.keys()),
+            "days": days_list,
+            "hubs": [e[0] for e in entities_config],
+            "entities": hubs_matrix,
+            "months_cols": months_dict,
+            "weeks_cols": weeks_dict
         }
 
-        # Bắt đầu duyệt từng Vùng
-        for reg_name, sheet_name in regions_config:
-            try:
-                ws = sh.worksheet(sheet_name)
-                all_rows = ws.get_all_values()
-                if len(all_rows) < 15:
-                    continue
-
-                r0 = all_rows[0] # Tháng
-                r1 = all_rows[1] # Tuần
-                r2 = all_rows[2] # Ngày / Tiêu đề
-
-                # Xây dựng danh sách mốc thời gian
-                months_dict = {}
-                weeks_dict = {}
-                days_list = []
-
-                for c in range(4, len(r2)):
-                    d_str = r2[c].strip()
-                    m_str = r0[c].strip()
-                    w_str = r1[c].strip()
-
-                    if d_str and "/" in d_str:
-                        days_list.append({"col": c, "date": d_str, "month": m_str, "week": w_str})
-                        if m_str:
-                            months_dict.setdefault(m_str, []).append(c)
-                        if w_str:
-                            weeks_dict.setdefault(w_str, []).append(c)
-
-                # Bóc tách các thực thể (Vùng và từng Kho) cùng 11 chỉ số
-                hubs_data = {}
-                current_ent = None
-
-                # Quét từ hàng 3 đến hàng 65 (khu vực 11 chỉ số chi phí)
-                for r_idx in range(3, min(len(all_rows), 70)):
-                    col0 = all_rows[r_idx][0].strip()
-                    col1 = all_rows[r_idx][1].strip()
-                    
-                    if col0 and not col0.lower().startswith("chi phí"):
-                        current_ent = col0
-
-                    if current_ent and col1:
-                        if current_ent not in hubs_data:
-                            hubs_data[current_ent] = {"metrics": {}}
-
-                        # Giá trị pre-computed ở cột 2 (Tháng 10) và cột 3 (Tuần 44) nếu có
-                        val_oct = all_rows[r_idx][2].strip() if len(all_rows[r_idx]) > 2 else ""
-                        val_w44 = all_rows[r_idx][3].strip() if len(all_rows[r_idx]) > 3 else ""
-
-                        # Toàn bộ giá trị theo từng cột ngày
-                        col_vals = {}
-                        for item in days_list:
-                            c_idx = item["col"]
-                            v_raw = all_rows[r_idx][c_idx].strip() if c_idx < len(all_rows[r_idx]) else ""
-                            col_vals[item["date"]] = v_raw
-
-                        hubs_data[current_ent]["metrics"][col1] = {
-                            "oct_official": val_oct,
-                            "w44_official": val_w44,
-                            "daily": col_vals
-                        }
-
-                # Lưu vào cấu trúc vùng
-                dashboard_data["regions"][reg_name] = {
-                    "sheet": sheet_name,
-                    "months": list(months_dict.keys()),
-                    "weeks": list(weeks_dict.keys()),
-                    "days": [item["date"] for item in days_list],
-                    "hubs": list(hubs_data.keys()),
-                    "entities": hubs_data,
-                    "months_cols": months_dict,
-                    "weeks_cols": weeks_dict
-                }
-                print(f" -> Đã bóc tách xong {reg_name}: {len(hubs_data)} thực thể, {len(months_dict)} tháng, {len(weeks_dict)} tuần, {len(days_list)} ngày.")
-
-            except Exception as e:
-                print(f" -> Lỗi nạp {reg_name}: {e}")
-
-        # Ghi vào cache JSON
         with open(DASHBOARD_CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(dashboard_data, f, ensure_ascii=False, indent=2)
 
-        print(f"[{now_str}] ✅ Đã lưu ma trận Dashboard vào {DASHBOARD_CACHE_FILE}!")
+        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 thành công vào {DASHBOARD_CACHE_FILE}!")
         return dashboard_data
 
     except Exception as ex:
-        print(f"[{now_str}] ⚠️ Lỗi build cost dashboard: {ex}")
+        print(f"[{now_str}] ⚠️ Lỗi build cost dashboard MT01: {ex}")
         if os.path.exists(DASHBOARD_CACHE_FILE):
             with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -166,67 +162,42 @@ def get_cost_dashboard_matrix():
             pass
     return build_cost_dashboard_matrix(force=True)
 
-def query_cost_data(region="Miền Tây 01", hub="all", mode="month", key=None):
+def query_mt01_cost_data(hub="all", mode="month", key=None):
     """
-    Truy vấn dữ liệu chi phí đã chuẩn hóa theo:
-    - region: Miền Tây 01 -> Miền Tây 05
-    - hub: 'all' hoặc tên kho cụ thể
+    Truy vấn dữ liệu chi phí chuẩn xác 100% cho Miền Tây 01:
+    - hub: 'all' (Toàn Vùng MT01) hoặc 'Kho Cái Răng', 'Kho Bình Thủy', 'Kho Vị Thanh', 'Kho Ô Môn'
     - mode: 'month' | 'week' | 'day'
-    - key: Tên tháng / Tuần / Ngày cụ thể (VD: 'Tháng 10-Năm 2026', 'Tuần 44-Năm 2026', '31/10/2026')
+    - key: Mốc thời gian (VD: 'Tháng 10-Năm 2026', 'Tuần 44-Năm 2026', '31/10/2026')
     """
     matrix = get_cost_dashboard_matrix()
-    reg_obj = matrix.get("regions", {}).get(region)
-    if not reg_obj:
-        # Fallback về Miền Tây 01
-        reg_obj = matrix.get("regions", {}).get("Miền Tây 01", {})
+    available_months = matrix.get("months", [])
+    available_weeks = matrix.get("weeks", [])
+    available_days = matrix.get("days", [])
+    available_hubs = matrix.get("hubs", [])
+    entities = matrix.get("entities", {})
 
-    available_months = reg_obj.get("months", [])
-    available_weeks = reg_obj.get("weeks", [])
-    available_days = reg_obj.get("days", [])
-    available_hubs = reg_obj.get("hubs", [])
-
-    # Xác định key mặc định nếu không truyền
+    # Mặc định thời gian
     if mode == "month":
         if not key or key not in available_months:
-            key = "Tháng 10-Năm 2026" if "Tháng 10-Năm 2026" in available_months else (available_months[-1] if available_months else "")
+            key = "Tháng 10-Năm 2026" if "Tháng 10-Năm 2026" in available_months else available_months[-1]
     elif mode == "week":
         if not key or key not in available_weeks:
-            key = "Tuần 44-Năm 2026" if "Tuần 44-Năm 2026" in available_weeks else (available_weeks[-1] if available_weeks else "")
+            key = "Tuần 44-Năm 2026" if "Tuần 44-Năm 2026" in available_weeks else available_weeks[-1]
     elif mode == "day":
         if not key or key not in available_days:
             key = available_days[-1] if available_days else ""
 
-    # Xác định danh sách ngày tương ứng với kỳ được chọn
-    target_dates = []
-    if mode == "month":
-        m_cols = reg_obj.get("months_cols", {}).get(key, [])
-        # Lấy các ngày có cột nằm trong tháng đó
-        for d in available_days:
-            # Kiểm tra xem ngày đó có thuộc tháng này không
-            target_dates.append(d)
-        # Giới hạn ngày theo tháng nếu cần, hoặc lấy theo tháng
-    elif mode == "week":
-        w_cols = reg_obj.get("weeks_cols", {}).get(key, [])
-    elif mode == "day":
-        target_dates = [key] if key else []
+    # Chọn thực thể
+    selected_ent_label = "Toàn Vùng MT01"
+    if hub and hub != "all":
+        for h_l in available_hubs:
+            if hub.lower() in h_l.lower():
+                selected_ent_label = h_l
+                break
 
-    entities = reg_obj.get("entities", {})
+    ent_obj = entities.get(selected_ent_label, {})
+    metrics_map = ent_obj.get("metrics", {})
 
-    # Chuẩn hóa tên thực thể cần xem
-    target_entities = []
-    if hub == "all" or not hub:
-        # Toàn vùng
-        region_entity_name = region
-        target_entities = [region_entity_name] if region_entity_name in entities else list(entities.keys())[:1]
-    else:
-        # Tìm kho khớp
-        matched = [h for h in available_hubs if hub.lower() in h.lower()]
-        target_entities = matched if matched else [available_hubs[0]] if available_hubs else []
-
-    selected_ent = target_entities[0] if target_entities else region
-    metrics_dict = entities.get(selected_ent, {}).get("metrics", {})
-
-    # 11 chỉ số cốt tử
     metric_keys = [
         "Volume gán", "Volume GTC", "Kg GTC", "Tỷ lệ GTC", "Stop GTC",
         "Lương giao", "Lương NVXL", "Chi phí xe tải",
@@ -235,69 +206,101 @@ def query_cost_data(region="Miền Tây 01", hub="all", mode="month", key=None):
         "Chi phí giao hàng + Cost / kg"
     ]
 
-    result_metrics = {}
-    for m in metric_keys:
-        m_info = metrics_dict.get(m, {})
-        val_display = ""
-        val_numeric = 0.0
-
-        if mode == "month" and key == "Tháng 10-Năm 2026" and m_info.get("oct_official"):
-            val_display = m_info.get("oct_official")
-            val_numeric = _clean_num(val_display)
-        elif mode == "week" and key == "Tuần 44-Năm 2026" and m_info.get("w44_official"):
-            val_display = m_info.get("w44_official")
-            val_numeric = _clean_num(val_display)
+    # Hàm lấy giá trị của 1 thực thể tại kỳ được chọn
+    def extract_entity_values(target_metrics):
+        out = {}
+        if mode == "month" and key == "Tháng 10-Năm 2026":
+            # Sử dụng cột tổng hợp chính thức Tháng 10
+            for m in metric_keys:
+                raw_v = target_metrics.get(m, {}).get("oct_official", "")
+                num_v = _clean_num(raw_v)
+                out[m] = {
+                    "raw": raw_v,
+                    "numeric": num_v,
+                    "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
+                }
+        elif mode == "week" and key == "Tuần 44-Năm 2026":
+            # Sử dụng cột tổng hợp chính thức Tuần 44
+            for m in metric_keys:
+                raw_v = target_metrics.get(m, {}).get("w44_official", "")
+                num_v = _clean_num(raw_v)
+                out[m] = {
+                    "raw": raw_v,
+                    "numeric": num_v,
+                    "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
+                }
         elif mode == "day" and key:
-            val_display = m_info.get("daily", {}).get(key, "")
-            val_numeric = _clean_num(val_display)
+            # Sử dụng ngày cụ thể
+            for m in metric_keys:
+                raw_v = target_metrics.get(m, {}).get("daily", {}).get(key, "")
+                num_v = _clean_num(raw_v)
+                out[m] = {
+                    "raw": raw_v,
+                    "numeric": num_v,
+                    "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
+                }
         else:
-            # Fallback lấy giá trị gần nhất
-            daily_map = m_info.get("daily", {})
-            if key in daily_map:
-                val_display = daily_map[key]
-                val_numeric = _clean_num(val_display)
-            else:
-                val_display = m_info.get("oct_official") or (list(daily_map.values())[-1] if daily_map else "0")
-                val_numeric = _clean_num(val_display)
+            # Tự động tính tổng hợp theo danh sách cột của Tháng/Tuần
+            col_indices = matrix.get("months_cols", {}).get(key, []) if mode == "month" else matrix.get("weeks_cols", {}).get(key, [])
+            days_in_period = [available_days[c - 4] for c in col_indices if 0 <= c - 4 < len(available_days)]
+            
+            # Tính tổng các chỉ số số lượng
+            vol_gan = sum(_clean_num(target_metrics.get("Volume gán", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            vol_gtc = sum(_clean_num(target_metrics.get("Volume GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            kg_gtc = sum(_clean_num(target_metrics.get("Kg GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            stop_gtc = sum(_clean_num(target_metrics.get("Stop GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            luong_giao = sum(_clean_num(target_metrics.get("Lương giao", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            luong_xl = sum(_clean_num(target_metrics.get("Lương NVXL", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            chi_phi_xe = sum(_clean_num(target_metrics.get("Chi phí xe tải", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
 
-        result_metrics[m] = {
-            "name": m,
-            "raw": val_display,
-            "numeric": val_numeric,
-            "formatted": val_display or f"{val_numeric:,.0f}"
-        }
+            tot_cost = luong_giao + luong_xl + chi_phi_xe
+            cost_per_order = (tot_cost / vol_gtc) if vol_gtc > 0 else 0
+            cost_per_stop = (tot_cost / stop_gtc) if stop_gtc > 0 else 0
+            cost_per_kg = (tot_cost / kg_gtc) if kg_gtc > 0 else 0
+            rate_gtc = (vol_gtc / vol_gan * 100) if vol_gan > 0 else 0
 
-    # Tính toán bảng so sánh các Kho trong vùng (Hubs Breakdown)
+            computed = {
+                "Volume gán": (vol_gan, _format_vnd(vol_gan)),
+                "Volume GTC": (vol_gtc, _format_vnd(vol_gtc)),
+                "Kg GTC": (kg_gtc, _format_vnd(kg_gtc)),
+                "Tỷ lệ GTC": (rate_gtc, f"{rate_gtc:.0f}%"),
+                "Stop GTC": (stop_gtc, _format_vnd(stop_gtc)),
+                "Lương giao": (luong_giao, _format_vnd(luong_giao)),
+                "Lương NVXL": (luong_xl, _format_vnd(luong_xl)),
+                "Chi phí xe tải": (chi_phi_xe, _format_vnd(chi_phi_xe)),
+                "Chi phí giao hàng + xe tải / đơn": (cost_per_order, _format_vnd(cost_per_order)),
+                "Chi phí giao hàng + xe tải / stop": (cost_per_stop, _format_vnd(cost_per_stop)),
+                "Chi phí giao hàng + Cost / kg": (cost_per_kg, _format_vnd(cost_per_kg))
+            }
+            for m in metric_keys:
+                num_v, fmt_v = computed[m]
+                out[m] = {"raw": fmt_v, "numeric": num_v, "formatted": fmt_v}
+
+        return out
+
+    result_metrics = extract_entity_values(metrics_map)
+
+    # Bảng phân rã 4 Kho trong MT01
     hubs_breakdown = []
-    for h_name in available_hubs:
-        if h_name == region:
-            continue
-        h_metrics = entities.get(h_name, {}).get("metrics", {})
-        h_row = {"hub_name": h_name.replace("Kho Giao Hàng Nặng - ", "")}
+    for h_label in ["Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"]:
+        h_ent = entities.get(h_label, {})
+        h_vals = extract_entity_values(h_ent.get("metrics", {}))
+        row = {"hub_name": h_label}
         for m in metric_keys:
-            m_obj = h_metrics.get(m, {})
-            if mode == "month" and key == "Tháng 10-Năm 2026" and m_obj.get("oct_official"):
-                v = m_obj.get("oct_official")
-            elif mode == "week" and key == "Tuần 44-Năm 2026" and m_obj.get("w44_official"):
-                v = m_obj.get("w44_official")
-            elif mode == "day" and key:
-                v = m_obj.get("daily", {}).get(key, "")
-            else:
-                v = m_obj.get("oct_official") or ""
-            h_row[m] = v
-        hubs_breakdown.append(h_row)
+            row[m] = h_vals.get(m, {}).get("formatted", "-")
+        hubs_breakdown.append(row)
 
-    # Chuỗi xu hướng thời gian (Trend series) để vẽ Chart
+    # Chuỗi xu hướng 14 ngày gần nhất
     recent_days = available_days[-14:] if len(available_days) >= 14 else available_days
     trend_labels = []
     trend_volume = []
     trend_cost_per_order = []
     trend_total_cost = []
 
-    vol_daily = metrics_dict.get("Volume GTC", {}).get("daily", {})
-    cost_per_order_daily = metrics_dict.get("Chi phí giao hàng + xe tải / đơn", {}).get("daily", {})
-    luong_giao_daily = metrics_dict.get("Lương giao", {}).get("daily", {})
-    truck_cost_daily = metrics_dict.get("Chi phí xe tải", {}).get("daily", {})
+    vol_daily = metrics_map.get("Volume GTC", {}).get("daily", {})
+    cost_per_order_daily = metrics_map.get("Chi phí giao hàng + xe tải / đơn", {}).get("daily", {})
+    luong_giao_daily = metrics_map.get("Lương giao", {}).get("daily", {})
+    truck_cost_daily = metrics_map.get("Chi phí xe tải", {}).get("daily", {})
 
     for d in recent_days:
         trend_labels.append(d[:5]) # DD/MM
@@ -311,15 +314,14 @@ def query_cost_data(region="Miền Tây 01", hub="all", mode="month", key=None):
     return {
         "success": True,
         "last_sync": matrix.get("last_sync"),
+        "region": "Miền Tây 01",
         "filter": {
-            "region": region,
-            "hub": hub,
+            "hub": selected_ent_label,
             "mode": mode,
             "key": key
         },
         "available_filters": {
-            "regions": list(matrix.get("regions", {}).keys()),
-            "hubs": available_hubs,
+            "hubs": ["Toàn Vùng MT01", "Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"],
             "months": available_months,
             "weeks": available_weeks,
             "days": available_days
@@ -335,10 +337,8 @@ def query_cost_data(region="Miền Tây 01", hub="all", mode="month", key=None):
     }
 
 if __name__ == "__main__":
-    matrix = build_cost_dashboard_matrix(force=True)
-    q = query_cost_data(region="Miền Tây 01", hub="all", mode="month", key="Tháng 10-Năm 2026")
-    print("\n--- Test Query MT01 Tháng 10 ---")
-    print("Selected:", q["filter"])
-    print("Metrics sample:")
-    for k, v in list(q["metrics"].items())[:6]:
-        print(f"  {k}: {v['formatted']}")
+    build_cost_dashboard_matrix(force=True)
+    res = query_mt01_cost_data(hub="all", mode="month", key="Tháng 10-Năm 2026")
+    print("\n--- MT01 THÁNG 10 OFFICIAL CHECK ---")
+    for k, v in res["metrics"].items():
+        print(f"  {k:35}: {v['formatted']}")

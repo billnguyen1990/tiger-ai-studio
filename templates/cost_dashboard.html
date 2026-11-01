@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TIGER AI • DASHBOARD CHI PHÍ & VẬN HÀNH VÙNG</title>
+  <title>TIGER AI • DASHBOARD CHI PHÍ VẬN HÀNH MIỀN TÂY 01</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐯</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -36,7 +36,7 @@
 
     /* HEADER */
     .dashboard-header {
-      background: rgba(17, 24, 39, 0.85);
+      background: rgba(17, 24, 39, 0.9);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-color);
       padding: 14px 28px;
@@ -155,7 +155,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
 
     .filter-item {
@@ -172,6 +172,19 @@
       color: var(--text-sub);
     }
 
+    .region-fixed-pill {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-blue);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .filter-select {
       background: #1e293b;
       color: var(--text-main);
@@ -182,7 +195,7 @@
       font-weight: 600;
       outline: none;
       cursor: pointer;
-      min-width: 160px;
+      min-width: 180px;
       transition: all 0.2s;
     }
     .filter-select:focus {
@@ -199,7 +212,7 @@
     }
 
     .pill-btn {
-      padding: 6px 14px;
+      padding: 6px 16px;
       font-size: 12px;
       font-weight: 600;
       color: var(--text-sub);
@@ -389,8 +402,8 @@
     <div class="brand-group">
       <div class="brand-logo">🐯</div>
       <div>
-        <div class="brand-title">TIGER AI • DASHBOARD CHI PHÍ VẬN TẢI</div>
-        <div class="brand-subtitle">Phân tích chuyên sâu 11 chỉ số chi phí & hiệu suất lastmile</div>
+        <div class="brand-title">TIGER AI • CHI PHÍ & VẬN HÀNH MIỀN TÂY 01</div>
+        <div class="brand-subtitle">Theo dõi chính xác 11 chỉ số chi phí, lương & xe tải cố định theo Vùng, Kho, Tháng, Tuần, Ngày</div>
       </div>
     </div>
     <div class="header-right">
@@ -410,26 +423,26 @@
   <!-- MAIN -->
   <main class="main-content">
 
-    <!-- FILTER BAR -->
+    <!-- FILTER BAR (CHUYÊN BIỆT MIỀN TÂY 01) -->
     <section class="filter-card">
       <div class="filter-group">
-        <!-- Vùng -->
+        <!-- Vùng cố định -->
         <div class="filter-item">
-          <label class="filter-label">1. Vùng Điều Hành</label>
-          <select id="selRegion" class="filter-select" onchange="onRegionChange()">
-            <option value="Miền Tây 01" selected>Miền Tây 01</option>
-            <option value="Miền Tây 02">Miền Tây 02</option>
-            <option value="Miền Tây 03">Miền Tây 03</option>
-            <option value="Miền Tây 04">Miền Tây 04</option>
-            <option value="Miền Tây 05">Miền Tây 05</option>
-          </select>
+          <label class="filter-label">1. Vùng Vận Hành</label>
+          <div class="region-fixed-pill">
+            <span>📍 MIỀN TÂY 01</span>
+          </div>
         </div>
 
         <!-- Kho -->
         <div class="filter-item">
           <label class="filter-label">2. Kho Vận Hành</label>
           <select id="selHub" class="filter-select" onchange="fetchData()">
-            <option value="all" selected>Toàn Vùng (Tổng Hợp)</option>
+            <option value="all" selected>Toàn Vùng MT01 (Tổng Hợp)</option>
+            <option value="Kho Cái Răng">Kho Cái Răng</option>
+            <option value="Kho Bình Thủy">Kho Bình Thủy</option>
+            <option value="Kho Vị Thanh">Kho Vị Thanh</option>
+            <option value="Kho Ô Môn">Kho Ô Môn</option>
           </select>
         </div>
 
@@ -437,31 +450,31 @@
         <div class="filter-item">
           <label class="filter-label">3. Chế Độ Xem</label>
           <div class="pill-tabs">
-            <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Tháng</button>
-            <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📅 Tuần</button>
-            <button class="pill-btn" id="pillDay" onclick="setMode('day')">📆 Ngày</button>
+            <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Theo Tháng</button>
+            <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📅 Theo Tuần</button>
+            <button class="pill-btn" id="pillDay" onclick="setMode('day')">📆 Theo Ngày</button>
           </div>
         </div>
 
         <!-- Chọn mốc cụ thể -->
         <div class="filter-item">
-          <label class="filter-label" id="lblPeriod">4. Mốc Thời Gian</label>
+          <label class="filter-label" id="lblPeriod">4. Chọn Tháng</label>
           <select id="selPeriodKey" class="filter-select" onchange="fetchData()">
             <option value="">Đang tải...</option>
           </select>
         </div>
       </div>
 
-      <div style="font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
-        <span>🎯 Trạng thái:</span>
-        <strong id="filterSummaryText" style="color: var(--accent-blue);">Miền Tây 01 • Toàn Vùng • Tháng 10-Năm 2026</strong>
+      <div style="font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
+        <span>🎯 Góc nhìn:</span>
+        <strong id="filterSummaryText" style="color: var(--accent-blue);">Toàn Vùng MT01 • Tháng 10-Năm 2026</strong>
       </div>
     </section>
 
     <!-- SECTION 1: 11 CHỈ SỐ KPI CỐT TỬ -->
     <section>
       <div class="metrics-section-title">
-        <span>📊 11 CHỈ SỐ CỐT TỬ CHI PHÍ & HIỆU QUẢ VẬN HÀNH</span>
+        <span>📊 11 CHỈ SỐ CỐT TỬ CHI PHÍ & HIỆU QUẢ VẬN HÀNH MT01</span>
       </div>
 
       <div class="kpi-grid">
@@ -487,7 +500,7 @@
         <div class="kpi-card green">
           <div class="kpi-title">
             <span>Kg GTC (Trọng Lượng)</span>
-            <span class="kpi-badge green">Tấn / Kg</span>
+            <span class="kpi-badge green">Kg</span>
           </div>
           <div class="kpi-value" id="val_kg_gtc">0</div>
         </div>
@@ -496,7 +509,7 @@
         <div class="kpi-card green">
           <div class="kpi-title">
             <span>Tỷ Lệ GTC</span>
-            <span class="kpi-badge green">Mục tiêu 85%</span>
+            <span class="kpi-badge green">Chuẩn 85%</span>
           </div>
           <div class="kpi-value" id="val_tyle_gtc">0%</div>
         </div>
@@ -581,7 +594,7 @@
       <!-- Cột 2: Cơ cấu chi phí -->
       <div class="content-box">
         <div class="box-header">
-          <div class="box-title">🥧 CƠ CẤU CHI PHÍ VẬN HÀNH</div>
+          <div class="box-title">🥧 CƠ CẤU CHI PHÍ VẬN HÀNH MT01</div>
         </div>
         <div class="chart-container">
           <canvas id="costPieChart"></canvas>
@@ -592,7 +605,7 @@
     <!-- SECTION 3: BẢNG SO SÁNH CHI TIẾT TỪNG KHO -->
     <section class="content-box">
       <div class="box-header">
-        <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH CÁC KHO TRONG VÙNG</div>
+        <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
         <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết</span>
       </div>
       <div class="table-wrapper">
@@ -628,11 +641,6 @@
     let trendChartInstance = null;
     let pieChartInstance = null;
 
-    function formatNumber(num) {
-      if (num === null || num === undefined) return "0";
-      return num.toLocaleString("vi-VN");
-    }
-
     function setMode(mode) {
       currentMode = mode;
       document.querySelectorAll(".pill-btn").forEach(btn => btn.classList.remove("active"));
@@ -644,48 +652,18 @@
       fetchData();
     }
 
-    async function loadFilters() {
+    async function loadInitial() {
       try {
-        const res = await fetch("/api/cost-dashboard/data?region=" + encodeURIComponent(document.getElementById("selRegion").value));
+        const res = await fetch("/api/cost-dashboard/data?hub=all&mode=month&key=Tháng 10-Năm 2026");
         const json = await res.json();
         if (json.success) {
           filterOptions = json.available_filters;
           document.getElementById("syncStatus").innerText = "Đồng bộ: " + (json.last_sync || "Mới nhất");
-          populateHubDropdown();
           updatePeriodDropdown();
           renderData(json);
         }
       } catch (e) {
         console.error("Failed loading initial data:", e);
-      }
-    }
-
-    function onRegionChange() {
-      const reg = document.getElementById("selRegion").value;
-      fetch("/api/cost-dashboard/data?region=" + encodeURIComponent(reg))
-        .then(r => r.json())
-        .then(json => {
-          if (json.success) {
-            filterOptions = json.available_filters;
-            populateHubDropdown();
-            updatePeriodDropdown();
-            renderData(json);
-          }
-        });
-    }
-
-    function populateHubDropdown() {
-      const selHub = document.getElementById("selHub");
-      selHub.innerHTML = '<option value="all" selected>Toàn Vùng (Tổng Hợp)</option>';
-      if (filterOptions && filterOptions.hubs) {
-        filterOptions.hubs.forEach(h => {
-          if (!h.startsWith("Miền Tây")) {
-            const opt = document.createElement("option");
-            opt.value = h;
-            opt.innerText = h.replace("Kho Giao Hàng Nặng - ", "");
-            selHub.appendChild(opt);
-          }
-        });
       }
     }
 
@@ -718,14 +696,13 @@
     }
 
     async function fetchData() {
-      const reg = document.getElementById("selRegion").value;
       const hub = document.getElementById("selHub").value;
       const key = document.getElementById("selPeriodKey").value;
 
-      document.getElementById("filterSummaryText").innerText = `${reg} • ${hub === 'all' ? 'Toàn Vùng' : hub.replace('Kho Giao Hàng Nặng - ', '')} • ${key || 'Mới nhất'}`;
+      document.getElementById("filterSummaryText").innerText = `${hub === 'all' ? 'Toàn Vùng MT01' : hub} • ${key || 'Mới nhất'}`;
 
       try {
-        const url = `/api/cost-dashboard/data?region=${encodeURIComponent(reg)}&hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
+        const url = `/api/cost-dashboard/data?hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
         const res = await fetch(url);
         const json = await res.json();
         if (json.success) {
@@ -738,7 +715,6 @@
 
     function renderData(data) {
       const m = data.metrics || {};
-      
       const getVal = (name, def="0") => (m[name] ? (m[name].formatted || m[name].raw || def) : def);
 
       document.getElementById("val_vol_gan").innerText = getVal("Volume gán");
@@ -871,7 +847,7 @@
         const res = await fetch("/api/cost-dashboard/sync", { method: "POST" });
         const json = await res.json();
         alert(json.message || "Đồng bộ thành công!");
-        loadFilters();
+        loadInitial();
       } catch (e) {
         alert("Lỗi đồng bộ: " + e);
       } finally {
@@ -879,7 +855,7 @@
       }
     }
 
-    window.onload = loadFilters;
+    window.onload = loadInitial;
   </script>
 </body>
 </html>

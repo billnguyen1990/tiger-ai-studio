@@ -5073,8 +5073,8 @@ def api_get_cost_dashboard_data():
     mode = request.args.get("mode", "month")
     key = request.args.get("key")
     try:
-        from tiger_cost_dashboard_service import query_cost_data
-        data = query_cost_data(region=region, hub=hub, mode=mode, key=key)
+        from tiger_cost_dashboard_service import query_mt01_cost_data
+        data = query_mt01_cost_data(hub=hub, mode=mode, key=key)
         return jsonify(data)
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
