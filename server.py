@@ -734,6 +734,9 @@ def run_workflow():
         "unassigned": "tiger_unassigned_backlog_reporter.py",
         "pda": "tiger_pda_progress_reporter.py",
         "b2b_looker": "looker_export_temp.py",
+        "b2b_report": "tiger_b2b_thongke_reporter.py",
+        "b2b_thongke": "tiger_b2b_thongke_reporter.py",
+        "don_tao": "tiger_b2b_thongke_reporter.py",
         "evening_cod": "tiger_evening_reporter.py"
     }
 
@@ -1128,7 +1131,7 @@ def get_hub_detail(hub_id):
     except Exception:
         day_of_week = "Thứ Bảy"
 
-    _ensure_recent_kpi_snapshots(history_dir, force_today=False)
+    _trigger_background_snapshot_sync(history_dir, force_today=False)
     today_key_now = get_vietnam_today().strftime("%Y%m%d")
     available_dates = []
     hist_files = sorted(glob.glob(os.path.join(history_dir, "kpi_*.json")), reverse=True)
@@ -1757,6 +1760,26 @@ def _scrape_live_kpi_for_date(target_date_int, history_dir):
         print(f"Lỗi _scrape_live_kpi_for_date({target_date_int}): {e}")
     return False
 
+_scrape_lock = threading.Lock()
+_last_bg_scrape = 0
+
+def _trigger_background_snapshot_sync(history_dir, force_today=False):
+    """Khởi chạy đồng bộ snapshot ngầm không block request người dùng"""
+    global _last_bg_scrape
+    if not force_today and (time.time() - _last_bg_scrape < 300):
+        return
+    _last_bg_scrape = time.time()
+    def _worker():
+        if not _scrape_lock.acquire(blocking=False):
+            return
+        try:
+            _ensure_recent_kpi_snapshots(history_dir, force_today=force_today)
+        except Exception as e:
+            print(f"Lỗi background snapshot sync: {e}")
+        finally:
+            _scrape_lock.release()
+    threading.Thread(target=_worker, daemon=True).start()
+
 def _ensure_recent_kpi_snapshots(history_dir, force_today=False):
     """Đảm bảo luôn có dữ liệu chốt ca hôm qua (N-1) và dữ liệu trực tiếp hôm nay (N)"""
     os.makedirs(history_dir, exist_ok=True)
@@ -1785,7 +1808,7 @@ def get_analytics_dates():
     """Lấy danh sách các ngày đã lưu trữ báo cáo KPI trong thư mục kpi_history/"""
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
     os.makedirs(history_dir, exist_ok=True)
-    _ensure_recent_kpi_snapshots(history_dir, force_today=False)
+    _trigger_background_snapshot_sync(history_dir, force_today=False)
     today_key = get_vietnam_today().strftime("%Y%m%d")
     
     dates = []
@@ -1841,7 +1864,7 @@ def get_analytics_data():
     """Cung cấp dữ liệu thống kê trực quan từ hệ thống thật GHN Lastmile 4 kho MT01 theo từng ngày lịch sử lưu trữ"""
     history_dir = os.path.join(PARENT_DIR, "kpi_history")
     os.makedirs(history_dir, exist_ok=True)
-    _ensure_recent_kpi_snapshots(history_dir, force_today=False)
+    _trigger_background_snapshot_sync(history_dir, force_today=False)
     
     req_date = request.args.get("date", "").strip()
     target_file = None
@@ -4895,14 +4918,15 @@ def get_version():
 def update_system():
     """Cơ chế One-Click Update: Tự động nạp lại cấu hình, làm mới cache và áp dụng rule mới nhất"""
     try:
-        # 1. Nạp lại và làm mới snapshot dữ liệu mới nhất
-        refresh_analytics_data()
-
-        # 2. Nạp lại cấu hình bản đồ NVXL
+        # 1. Nạp lại cấu hình bản đồ NVXL
         map_file = os.path.join(PARENT_DIR, "nvxl_telegram_map.json")
         if os.path.exists(map_file):
             with open(map_file, "r", encoding="utf-8") as f:
                 _ = json.load(f)
+
+        # 2. Khởi chạy quét đồng bộ dữ liệu ngầm không làm block HTTP response
+        history_dir = os.path.join(PARENT_DIR, "kpi_history")
+        threading.Thread(target=_ensure_recent_kpi_snapshots, args=(history_dir, True), daemon=True).start()
 
         return jsonify({
             "status": "success",
@@ -4959,6 +4983,8 @@ try:
     for pda_hr in [10, 12, 15, 19]:
         scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=0, args=["looker_export_temp.py"], id="b2b_18h00")
+    scheduler.add_job(_job_runner, "cron", hour=18, minute=5, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h05")
+    scheduler.add_job(_job_runner, "cron", hour=18, minute=20, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h20")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
@@ -5013,6 +5039,16 @@ def run_cron_webhook(task_key):
         "output": res.stdout[-500:] if res.stdout else "",
         "timestamp": datetime.datetime.now().isoformat()
     })
+
+@app.route("/api/b2b-report/send", methods=["GET", "POST"])
+def api_send_b2b_report():
+    """Kích hoạt chụp và bắn báo cáo Đơn Tạo MT01 trực tiếp lên Telegram"""
+    try:
+        from tiger_b2b_thongke_reporter import run_b2b_report
+        res = run_b2b_report(send_telegram=True)
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/ping")
 def ping_service():

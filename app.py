@@ -734,6 +734,9 @@ def run_workflow():
         "unassigned": "tiger_unassigned_backlog_reporter.py",
         "pda": "tiger_pda_progress_reporter.py",
         "b2b_looker": "looker_export_temp.py",
+        "b2b_report": "tiger_b2b_thongke_reporter.py",
+        "b2b_thongke": "tiger_b2b_thongke_reporter.py",
+        "don_tao": "tiger_b2b_thongke_reporter.py",
         "evening_cod": "tiger_evening_reporter.py"
     }
 
@@ -4980,6 +4983,8 @@ try:
     for pda_hr in [10, 12, 15, 19]:
         scheduler.add_job(_job_runner, "cron", hour=pda_hr, minute=0, args=["tiger_pda_progress_reporter.py"], id=f"pda_{pda_hr}h00")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=0, args=["looker_export_temp.py"], id="b2b_18h00")
+    scheduler.add_job(_job_runner, "cron", hour=18, minute=5, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h05")
+    scheduler.add_job(_job_runner, "cron", hour=18, minute=20, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h20")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
@@ -5034,6 +5039,16 @@ def run_cron_webhook(task_key):
         "output": res.stdout[-500:] if res.stdout else "",
         "timestamp": datetime.datetime.now().isoformat()
     })
+
+@app.route("/api/b2b-report/send", methods=["GET", "POST"])
+def api_send_b2b_report():
+    """Kích hoạt chụp và bắn báo cáo Đơn Tạo MT01 trực tiếp lên Telegram"""
+    try:
+        from tiger_b2b_thongke_reporter import run_b2b_report
+        res = run_b2b_report(send_telegram=True)
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/ping")
 def ping_service():
