@@ -1,6 +1,6 @@
 /**
- * TIGER AI - REAL-TIME CLOCK & LIVE DEVICE WEATHER WIDGET
- * Tự động cập nhật đồng hồ nhảy từng giây và lấy thời tiết theo vị trí GPS thực tế của thiết bị
+ * TIGER AI - REAL-TIME CLOCK & LIVE GOOGLE MAPS WEATHER WIDGET
+ * Cập nhật đồng hồ thời gian thực và thời tiết theo tọa độ Google Maps chính xác
  */
 
 (function () {
@@ -29,8 +29,54 @@
     "Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"
   ];
 
-  let lastLat = null;
-  let lastLon = null;
+  const PRESET_LOCATIONS = {
+    home: {
+      id: "home",
+      name: "Tân An, Cần Thơ",
+      fullName: "Nhà riêng anh Lộc (Tân An, Cần Thơ)",
+      lat: 10.026197,
+      lon: 105.7626793,
+      gmap: "https://maps.app.goo.gl/6LqxgARFMiogLs8y8"
+    },
+    cairang: {
+      id: "cairang",
+      name: "Kho Cái Răng",
+      fullName: "Kho Hàng Nặng Cái Răng",
+      lat: 10.0028,
+      lon: 105.7645,
+      gmap: "https://www.google.com/maps/place/10.0028,105.7645"
+    },
+    binhthuy: {
+      id: "binhthuy",
+      name: "Kho Bình Thủy",
+      fullName: "Kho Hàng Nặng Bình Thủy",
+      lat: 10.0617,
+      lon: 105.7482,
+      gmap: "https://www.google.com/maps/place/10.0617,105.7482"
+    },
+    omon: {
+      id: "omon",
+      name: "Kho Ô Môn",
+      fullName: "Kho Hàng Nặng Ô Môn",
+      lat: 10.1172,
+      lon: 105.6264,
+      gmap: "https://www.google.com/maps/place/10.1172,105.6264"
+    },
+    vithanh: {
+      id: "vithanh",
+      name: "Kho Vị Thanh",
+      fullName: "Kho Hàng Nặng Vị Thanh",
+      lat: 9.7842,
+      lon: 105.4703,
+      gmap: "https://www.google.com/maps/place/9.7842,105.4703"
+    }
+  };
+
+  const STORAGE_KEY = "tiger_selected_location_id";
+  let currentLocationId = "home";
+  let currentLat = PRESET_LOCATIONS.home.lat;
+  let currentLon = PRESET_LOCATIONS.home.lon;
+  let currentGmapUrl = PRESET_LOCATIONS.home.gmap;
   let isFetchingWeather = false;
 
   // 1. CẬP NHẬT ĐỒNG HỒ THỜI GIAN THỰC (MỖI GIÂY)
@@ -52,8 +98,24 @@
     dateEl.textContent = `${dayName}, ${date}/${month}/${year}`;
   }
 
-  // 2. LẤY THỜI TIẾT VÀ TÊN ĐỊA DANH TỪ TỌA ĐỘ GPS
-  async function fetchWeatherForCoords(lat, lon) {
+  // 2. CẬP NHẬT LIÊN KẾT GOOGLE MAPS TRÊN GIAO DIỆN
+  function updateGoogleMapsLinks(url, locName) {
+    currentGmapUrl = url;
+    const gmapLink = document.getElementById("hwcGmapLink");
+    const ddGmapBtn = document.getElementById("hwcBtnOpenGmap");
+
+    if (gmapLink) {
+      gmapLink.href = url;
+      gmapLink.title = `Xem ${locName} trên Google Maps (vệ tinh)`;
+    }
+    if (ddGmapBtn) {
+      ddGmapBtn.href = url;
+      ddGmapBtn.textContent = `🗺️ Mở "${locName}" trên Google Maps`;
+    }
+  }
+
+  // 3. LẤY THỜI TIẾT TỪ OPEN-METEO THEO TỌA ĐỘ GOOGLE MAPS
+  async function fetchWeatherForCoords(lat, lon, customName = null, gmapUrl = null) {
     if (isFetchingWeather) return;
     isFetchingWeather = true;
 
@@ -64,54 +126,62 @@
     const widgetEl = document.getElementById("headerWeatherClockWidget");
 
     try {
-      // Gọi song song: Reverse Geocoding (Lấy tên địa danh) + Open-Meteo (Thời tiết)
-      const geoPromise = fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`
-      ).then(r => r.json()).catch(() => null);
-
-      const weatherPromise = fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,is_day`
-      ).then(r => r.json()).catch(() => null);
-
-      const [geoData, weatherData] = await Promise.all([geoPromise, weatherPromise]);
-
-      // Xử lý Tên địa điểm thiết bị
-      let locationName = "Cần Thơ";
-      if (geoData) {
-        const locality = geoData.locality || geoData.district || geoData.principalSubdivisionDistrict || "";
-        const city = geoData.city || geoData.principalSubdivision || "";
-        if (locality && city && locality !== city) {
-          locationName = `${locality}, ${city}`;
-        } else if (city) {
-          locationName = city;
-        } else if (locality) {
-          locationName = locality;
+      let displayName = customName;
+      if (!displayName) {
+        // Dùng Reverse Geocoding nếu không có tên sẵn (ví dụ khi dùng GPS thiết bị)
+        try {
+          const geoRes = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`
+          );
+          if (geoRes.ok) {
+            const geoData = await geoRes.json();
+            const locality = geoData.locality || geoData.district || "";
+            const city = geoData.city || geoData.principalSubdivision || "";
+            if (locality && city && locality !== city) {
+              displayName = `${locality}, ${city}`;
+            } else {
+              displayName = locality || city || "Cần Thơ";
+            }
+          }
+        } catch (e) {
+          displayName = "Vị trí GPS";
         }
       }
 
       if (locEl) {
-        locEl.textContent = locationName;
-        locEl.title = `Tọa độ GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)} (${locationName})`;
+        locEl.textContent = displayName;
+        locEl.title = `Tọa độ: ${lat.toFixed(4)}, ${lon.toFixed(4)} (${displayName})`;
       }
 
-      // Xử lý Thời tiết thực tế
-      if (weatherData && weatherData.current) {
-        const cur = weatherData.current;
-        const temp = Math.round(cur.temperature_2m);
-        const wCode = cur.weather_code;
-        const weatherInfo = WMO_WEATHER_MAP[wCode] || { desc: "Thời tiết ổn định", icon: cur.is_day ? "🌤️" : "🌙" };
+      // Cập nhật link Google Maps
+      const finalGmapUrl = gmapUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+      updateGoogleMapsLinks(finalGmapUrl, displayName);
 
-        if (tempEl) tempEl.textContent = `${temp}°C`;
-        if (iconEl) iconEl.textContent = weatherInfo.icon;
-        if (descEl) descEl.textContent = weatherInfo.desc;
+      // Gọi Open-Meteo
+      const weatherRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,is_day`
+      );
 
-        if (widgetEl) {
-          widgetEl.title = `📍 ${locationName}\n🌡️ Nhiệt độ: ${temp}°C\n💧 Độ ẩm: ${cur.relative_humidity_2m}%\n🌤️ Tình trạng: ${weatherInfo.desc}\n(Nhấp chuột để làm mới định vị GPS)`;
+      if (weatherRes.ok) {
+        const weatherData = await weatherRes.json();
+        if (weatherData && weatherData.current) {
+          const cur = weatherData.current;
+          const temp = Math.round(cur.temperature_2m);
+          const wCode = cur.weather_code;
+          const weatherInfo = WMO_WEATHER_MAP[wCode] || { desc: "Thời tiết ổn định", icon: cur.is_day ? "🌤️" : "🌙" };
+
+          if (tempEl) tempEl.textContent = `${temp}°C`;
+          if (iconEl) iconEl.textContent = weatherInfo.icon;
+          if (descEl) descEl.textContent = weatherInfo.desc;
+
+          if (widgetEl) {
+            widgetEl.title = `📍 ${displayName}\n🌡️ Nhiệt độ: ${temp}°C\n💧 Độ ẩm: ${cur.relative_humidity_2m}%\n🌤️ Tình trạng: ${weatherInfo.desc}\n(Nhấp chuột để chọn vị trí hoặc mở Google Maps)`;
+          }
         }
       }
 
-      lastLat = lat;
-      lastLon = lon;
+      currentLat = lat;
+      currentLon = lon;
     } catch (e) {
       console.warn("[Weather Widget Error]", e);
       if (descEl && !descEl.textContent) descEl.textContent = "Cập nhật sau";
@@ -120,65 +190,100 @@
     }
   }
 
-  // 3. FALLBACK THEO IP INTERNET (NẾU CHƯA CÓ QUYỀN GPS HOẶC THIẾT BỊ KHÔNG CÓ GPS)
-  async function fallbackIpWeather() {
-    try {
-      const res = await fetch("https://ipapi.co/json/", { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.latitude && data.longitude) {
-          fetchWeatherForCoords(data.latitude, data.longitude);
-          return;
-        }
+  // 4. CHUYỂN ĐỔI ĐỊA ĐIỂM
+  function setLocation(locationId) {
+    currentLocationId = locationId;
+    localStorage.setItem(STORAGE_KEY, locationId);
+
+    // Cập nhật class active trong dropdown
+    document.querySelectorAll(".hwc-dd-item").forEach(item => {
+      if (item.dataset.id === locationId) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
       }
-    } catch (e) {
-      // Ignored
-    }
-    // Mặc định Cần Thơ (Trung tâm MT01)
-    fetchWeatherForCoords(10.0452, 105.7469);
-  }
+    });
 
-  // 4. KÍCH HOẠT ĐỊNH VỊ THIẾT BỊ (HTML5 GEOLOCATION API)
-  function initDeviceLocation() {
-    const locEl = document.getElementById("hwcLocation");
-    if (locEl && (!lastLat || !lastLon)) {
-      locEl.textContent = "Đang dò GPS...";
-    }
+    if (locationId === "device_gps") {
+      const locEl = document.getElementById("hwcLocation");
+      if (locEl) locEl.textContent = "Đang dò GPS...";
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          fetchWeatherForCoords(lat, lon);
-        },
-        (err) => {
-          console.log("[Geolocation Notice] Dùng IP fallback:", err.message);
-          fallbackIpWeather();
-        },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-      );
-
-      // Theo dõi vị trí khi thiết bị di chuyển (Live Tracking)
-      try {
-        navigator.geolocation.watchPosition(
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
           (pos) => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
-            // Chỉ cập nhật khi vị trí thay đổi đáng kể (> 0.01 độ ~ 1km)
-            if (!lastLat || !lastLon || Math.abs(lat - lastLat) > 0.01 || Math.abs(lon - lastLon) > 0.01) {
-              fetchWeatherForCoords(lat, lon);
-            }
+            fetchWeatherForCoords(lat, lon, null, `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`);
           },
-          null,
-          { enableHighAccuracy: false, maximumAge: 300000 }
+          (err) => {
+            console.warn("[GPS error, fallback to Home]", err.message);
+            // Fallback về nhà anh Lộc
+            const home = PRESET_LOCATIONS.home;
+            fetchWeatherForCoords(home.lat, home.lon, home.name, home.gmap);
+          },
+          { enableHighAccuracy: true, timeout: 8000 }
         );
-      } catch (e) {
-        // Watch not supported
+      } else {
+        const home = PRESET_LOCATIONS.home;
+        fetchWeatherForCoords(home.lat, home.lon, home.name, home.gmap);
       }
-    } else {
-      fallbackIpWeather();
+    } else if (PRESET_LOCATIONS[locationId]) {
+      const target = PRESET_LOCATIONS[locationId];
+      fetchWeatherForCoords(target.lat, target.lon, target.name, target.gmap);
     }
+  }
+
+  // 5. KHỞI TẠO SỰ KIỆN GIAO DIỆN VÀ DROPDOWN
+  function initEvents() {
+    const weatherSection = document.getElementById("hwcWeatherSection");
+    const dropdown = document.getElementById("hwcLocationDropdown");
+    const closeBtn = document.getElementById("hwcDdClose");
+    const gmapLink = document.getElementById("hwcGmapLink");
+
+    // Click vào Maps badge: mở Google Maps trực tiếp, không đóng mở dropdown
+    if (gmapLink) {
+      gmapLink.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // Toggle dropdown khi nhấp vào weather section
+    if (weatherSection && dropdown) {
+      weatherSection.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown.style.display === "block";
+        dropdown.style.display = isOpen ? "none" : "block";
+      });
+    }
+
+    // Đóng dropdown khi bấm nút X
+    if (closeBtn && dropdown) {
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.style.display = "none";
+      });
+    }
+
+    // Chọn địa điểm trong dropdown
+    document.querySelectorAll(".hwc-dd-item").forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const locId = item.dataset.id;
+        if (locId) {
+          setLocation(locId);
+          if (dropdown) dropdown.style.display = "none";
+        }
+      });
+    });
+
+    // Đóng dropdown khi bấm ra ngoài
+    document.addEventListener("click", (e) => {
+      if (dropdown && dropdown.style.display === "block") {
+        if (!dropdown.contains(e.target) && !weatherSection.contains(e.target)) {
+          dropdown.style.display = "none";
+        }
+      }
+    });
   }
 
   // Khởi động khi tải xong trang
@@ -186,30 +291,20 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    initDeviceLocation();
+    initEvents();
+
+    // Đọc vị trí đã lưu, mặc định là nhà riêng anh Lộc (home)
+    const savedLoc = localStorage.getItem(STORAGE_KEY) || "home";
+    setLocation(savedLoc);
 
     // Tự động làm mới thời tiết mỗi 15 phút
     setInterval(() => {
-      if (lastLat && lastLon) {
-        fetchWeatherForCoords(lastLat, lastLon);
-      } else {
-        initDeviceLocation();
+      if (currentLat && currentLon) {
+        const preset = PRESET_LOCATIONS[currentLocationId];
+        const name = preset ? preset.name : null;
+        fetchWeatherForCoords(currentLat, currentLon, name, currentGmapUrl);
       }
     }, 15 * 60 * 1000);
-
-    // Cho phép người dùng nhấp vào widget để ép làm mới định vị
-    const widget = document.getElementById("headerWeatherClockWidget");
-    if (widget) {
-      widget.addEventListener("click", () => {
-        const iconEl = document.getElementById("hwcWeatherIcon");
-        if (iconEl) {
-          iconEl.style.transition = "transform 0.5s ease";
-          iconEl.style.transform = "rotate(360deg)";
-          setTimeout(() => { iconEl.style.transform = "none"; }, 500);
-        }
-        initDeviceLocation();
-      });
-    }
   }
 
   if (document.readyState === "loading") {

@@ -30,7 +30,7 @@
     </div>
 
     <!-- REAL-TIME CLOCK & LIVE DEVICE WEATHER WIDGET (TỰ ĐỘNG THEO VỊ TRÍ ĐỊNH VỊ CỦA THIẾT BỊ) -->
-    <div class="header-weather-clock-widget" id="headerWeatherClockWidget" title="Đồng hồ & Thời tiết thực tế theo vị trí thiết bị (Nhấp chuột để làm mới định vị GPS)">
+    <div class="header-weather-clock-widget" id="headerWeatherClockWidget" title="Nhấp để chuyển vị trí hoặc xem trên Google Maps">
       <div class="hwc-clock-section">
         <div class="hwc-time" id="hwcTime">--:--:--</div>
         <div class="hwc-date" id="hwcDate">Đang cập nhật...</div>
@@ -39,12 +39,81 @@
       <div class="hwc-weather-section" id="hwcWeatherSection">
         <div class="hwc-weather-top">
           <span class="hwc-loc-icon">📍</span>
-          <span class="hwc-location" id="hwcLocation">Đang định vị...</span>
+          <span class="hwc-location" id="hwcLocation">Tân An, Cần Thơ</span>
+          <a href="https://maps.app.goo.gl/6LqxgARFMiogLs8y8" target="_blank" rel="noopener noreferrer" class="hwc-gmap-btn" id="hwcGmapLink" title="Mở vị trí trên Google Maps (Ảnh vệ tinh)">
+            <span class="gmap-badge">🗺️ Maps</span>
+          </a>
+          <span class="hwc-caret">▾</span>
         </div>
         <div class="hwc-weather-bottom">
           <span class="hwc-weather-icon" id="hwcWeatherIcon">⛅</span>
           <span class="hwc-temperature" id="hwcTemperature">--°C</span>
           <span class="hwc-weather-desc" id="hwcWeatherDesc">Đang tải...</span>
+        </div>
+      </div>
+
+      <!-- DROPDOWN CHỌN VỊ TRÍ GOOGLE MAPS -->
+      <div class="hwc-location-dropdown" id="hwcLocationDropdown" style="display:none;">
+        <div class="hwc-dd-header">
+          <span>📍 VỊ TRÍ GOOGLE MAPS & THỜI TIẾT</span>
+          <button type="button" class="hwc-dd-close" id="hwcDdClose" title="Đóng">&times;</button>
+        </div>
+        <div class="hwc-dd-list">
+          <div class="hwc-dd-item active" data-id="home" data-lat="10.026197" data-lon="105.7626793" data-name="Tân An, Cần Thơ" data-gmap="https://maps.app.goo.gl/6LqxgARFMiogLs8y8">
+            <div class="hwc-dd-icon">🏠</div>
+            <div class="hwc-dd-info">
+              <div class="hwc-dd-title">Nhà riêng anh Lộc (Tân An, Cần Thơ)</div>
+              <div class="hwc-dd-sub">10.0262° N, 105.7627° E • Google Maps chính xác</div>
+            </div>
+            <span class="hwc-dd-check">✓</span>
+          </div>
+          <div class="hwc-dd-item" data-id="device_gps" data-name="GPS Thiết bị thực tế">
+            <div class="hwc-dd-icon">📱</div>
+            <div class="hwc-dd-info">
+              <div class="hwc-dd-title">GPS Thiết bị thực tế (Mobile / Laptop)</div>
+              <div class="hwc-dd-sub">Tự động định vị theo cảm biến GPS thời gian thực</div>
+            </div>
+            <span class="hwc-dd-check">✓</span>
+          </div>
+          <div class="hwc-dd-divider"></div>
+          <div class="hwc-dd-section-title">🏢 CỤM KHO HÀNG NẶNG MIỀN TÂY 01</div>
+          <div class="hwc-dd-item" data-id="cairang" data-lat="10.0028" data-lon="105.7645" data-name="Kho Cái Răng, Cần Thơ" data-gmap="https://www.google.com/maps/place/10.0028,105.7645">
+            <div class="hwc-dd-icon">🚚</div>
+            <div class="hwc-dd-info">
+              <div class="hwc-dd-title">Kho Hàng Nặng Cái Răng</div>
+              <div class="hwc-dd-sub">KV Yên Thượng, P. Lê Bình, Cái Răng, Cần Thơ</div>
+            </div>
+            <span class="hwc-dd-check">✓</span>
+          </div>
+          <div class="hwc-dd-item" data-id="binhthuy" data-lat="10.0617" data-lon="105.7482" data-name="Kho Bình Thủy, Cần Thơ" data-gmap="https://www.google.com/maps/place/10.0617,105.7482">
+            <div class="hwc-dd-icon">🚚</div>
+            <div class="hwc-dd-info">
+              <div class="hwc-dd-title">Kho Hàng Nặng Bình Thủy</div>
+              <div class="hwc-dd-sub">Trà An, Bình Thủy, Cần Thơ</div>
+            </div>
+            <span class="hwc-dd-check">✓</span>
+          </div>
+          <div class="hwc-dd-item" data-id="omon" data-lat="10.1172" data-lon="105.6264" data-name="Kho Ô Môn, Cần Thơ" data-gmap="https://www.google.com/maps/place/10.1172,105.6264">
+            <div class="hwc-dd-icon">🚚</div>
+            <div class="hwc-dd-info">
+              <div class="hwc-dd-title">Kho Hàng Nặng Ô Môn</div>
+              <div class="hwc-dd-sub">Châu Văn Liêm, Ô Môn, Cần Thơ</div>
+            </div>
+            <span class="hwc-dd-check">✓</span>
+          </div>
+          <div class="hwc-dd-item" data-id="vithanh" data-lat="9.7842" data-lon="105.4703" data-name="Kho Vị Thanh, Hậu Giang" data-gmap="https://www.google.com/maps/place/9.7842,105.4703">
+            <div class="hwc-dd-icon">🚚</div>
+            <div class="hwc-dd-info">
+              <div class="hwc-dd-title">Kho Hàng Nặng Vị Thanh</div>
+              <div class="hwc-dd-sub">Phường 4, TP. Vị Thanh, Hậu Giang</div>
+            </div>
+            <span class="hwc-dd-check">✓</span>
+          </div>
+        </div>
+        <div class="hwc-dd-footer">
+          <a href="https://maps.app.goo.gl/6LqxgARFMiogLs8y8" target="_blank" rel="noopener noreferrer" class="hwc-btn-open-gmap" id="hwcBtnOpenGmap">
+            🗺️ Mở vị trí này trên Google Maps
+          </a>
         </div>
       </div>
     </div>
