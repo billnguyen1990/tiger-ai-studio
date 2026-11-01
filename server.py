@@ -3812,6 +3812,8 @@ CHUẨN MỰC NGÔN TỪ & VĂN PHONG (BẮT BUỘC):
         return ans
     return ""
 
+TRACKING_STATS_FILE = os.path.join(PARENT_DIR, "kpi_history", "tracking_usage_stats.json")
+
 def _record_order_search_usage(sender_name, username, hub_badge, order_codes):
     """Ghi nhận số lượt tra cứu đơn hàng của từng nhân sự theo chỉ đạo của anh để tổng hợp cuối tháng"""
     if not order_codes:
@@ -4132,7 +4134,6 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     if is_cam_cmd or is_cam_in_cam_topic or is_cam_natural:
         try:
             from camera_service import capture_camera_snapshot
-            from concurrent.futures import ThreadPoolExecutor
 
             CAM_TOPIC_ID = 3365
             all_hubs = ["cairang", "binhthuy", "omon", "vithanh"]
@@ -4260,6 +4261,17 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 }
                 _append_telegram_bridge_message(auto_entry)
             return
+
+    # 0.3 HƯỚNG DẪN TRA CỨU ĐƠN NẾU CHỈ GÕ LỆNH /tra HOẶC /check MÀ CHƯA KÈM MÃ ĐƠN
+    is_lookup_cmd_only = any(lower_text.startswith(c) for c in ["/tra", "/check"]) and not bool(order_codes)
+    if is_lookup_cmd_only:
+        guide_msg = (
+            "📦 <b>[TRA CỨU ĐƠN HÀNG GHN]</b>\n\n"
+            "Dạ vui lòng gửi kèm mã đơn hàng GHN (VD: <code>/tra GYMA88MB</code> hoặc dán trực tiếp danh sách mã đơn vào nhóm), "
+            "Tiger AI sẽ kiểm tra trạng thái lưu kho, hành trình và lịch sử giao nhận ngay lập tức ạ!"
+        )
+        _send_telegram_group_message(guide_msg, topic_id=topic_id, reply_to_message_id=msg_id)
+        return
 
     # Phân biệt tin nhắn thực sự muốn tra cứu đơn:
     # - Gọi đích danh bot (@AiAgentMT_bot, /check, /tra, "tra đơn", "check đơn")
