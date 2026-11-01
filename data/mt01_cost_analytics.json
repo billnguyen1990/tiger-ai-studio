@@ -1,0 +1,1232 @@
+{
+  "last_sync": "21:14:36 01/11/2026",
+  "sheet_id": "1eHuDDhfZy17fIC_jWPTnDT69-1gf-31gm8K1Qgo6Ssc",
+  "sheet_url": "https://docs.google.com/spreadsheets/d/1eHuDDhfZy17fIC_jWPTnDT69-1gf-31gm8K1Qgo6Ssc/edit",
+  "truck_analytics": {
+    "standard_norm": {
+      "Cái Răng": 6,
+      "Bình Thủy": 3,
+      "Vị Thanh": 2,
+      "Ô Môn": 2,
+      "Tổng": 13
+    },
+    "daily_records": [
+      {
+        "date": "01/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "02/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "03/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "04/10/2026",
+        "total_running": 12,
+        "standard_norm": 13,
+        "diff": -1,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          }
+        }
+      },
+      {
+        "date": "05/10/2026",
+        "total_running": 10,
+        "standard_norm": 13,
+        "diff": -3,
+        "hubs": {
+          "Cái Răng": {
+            "running": 5,
+            "norm": 6,
+            "diff": -1
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          },
+          "Ô Môn": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          }
+        }
+      },
+      {
+        "date": "06/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "07/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "08/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "09/10/2026",
+        "total_running": 10,
+        "standard_norm": 13,
+        "diff": -3,
+        "hubs": {
+          "Cái Răng": {
+            "running": 5,
+            "norm": 6,
+            "diff": -1
+          },
+          "Bình Thủy": {
+            "running": 2,
+            "norm": 3,
+            "diff": -1
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          }
+        }
+      },
+      {
+        "date": "10/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "11/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "12/10/2026",
+        "total_running": 15,
+        "standard_norm": 13,
+        "diff": 2,
+        "hubs": {
+          "Cái Răng": {
+            "running": 7,
+            "norm": 6,
+            "diff": 1
+          },
+          "Bình Thủy": {
+            "running": 4,
+            "norm": 3,
+            "diff": 1
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "13/10/2026",
+        "total_running": 15,
+        "standard_norm": 13,
+        "diff": 2,
+        "hubs": {
+          "Cái Răng": {
+            "running": 7,
+            "norm": 6,
+            "diff": 1
+          },
+          "Bình Thủy": {
+            "running": 4,
+            "norm": 3,
+            "diff": 1
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "14/10/2026",
+        "total_running": 15,
+        "standard_norm": 13,
+        "diff": 2,
+        "hubs": {
+          "Cái Răng": {
+            "running": 7,
+            "norm": 6,
+            "diff": 1
+          },
+          "Bình Thủy": {
+            "running": 4,
+            "norm": 3,
+            "diff": 1
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "15/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "16/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "17/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "18/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "19/10/2026",
+        "total_running": 12,
+        "standard_norm": 13,
+        "diff": -1,
+        "hubs": {
+          "Cái Răng": {
+            "running": 5,
+            "norm": 6,
+            "diff": -1
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "20/10/2026",
+        "total_running": 15,
+        "standard_norm": 13,
+        "diff": 2,
+        "hubs": {
+          "Cái Răng": {
+            "running": 7,
+            "norm": 6,
+            "diff": 1
+          },
+          "Bình Thủy": {
+            "running": 4,
+            "norm": 3,
+            "diff": 1
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "21/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "22/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "23/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "24/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "25/10/2026",
+        "total_running": 11,
+        "standard_norm": 13,
+        "diff": -2,
+        "hubs": {
+          "Cái Răng": {
+            "running": 5,
+            "norm": 6,
+            "diff": -1
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          }
+        }
+      },
+      {
+        "date": "26/10/2026",
+        "total_running": 10,
+        "standard_norm": 13,
+        "diff": -3,
+        "hubs": {
+          "Cái Răng": {
+            "running": 5,
+            "norm": 6,
+            "diff": -1
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          },
+          "Ô Môn": {
+            "running": 1,
+            "norm": 2,
+            "diff": -1
+          }
+        }
+      },
+      {
+        "date": "27/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "28/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "29/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "30/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "31/10/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "01/11/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      },
+      {
+        "date": "02/11/2026",
+        "total_running": 13,
+        "standard_norm": 13,
+        "diff": 0,
+        "hubs": {
+          "Cái Răng": {
+            "running": 6,
+            "norm": 6,
+            "diff": 0
+          },
+          "Bình Thủy": {
+            "running": 3,
+            "norm": 3,
+            "diff": 0
+          },
+          "Vị Thanh": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          },
+          "Ô Môn": {
+            "running": 2,
+            "norm": 2,
+            "diff": 0
+          }
+        }
+      }
+    ],
+    "reduced_days": [
+      {
+        "date": "04/10/2026",
+        "total": 12,
+        "details": [
+          "Ô Môn: 1/2 (-1 xe)"
+        ]
+      },
+      {
+        "date": "05/10/2026",
+        "total": 10,
+        "details": [
+          "Cái Răng: 5/6 (-1 xe)",
+          "Vị Thanh: 1/2 (-1 xe)",
+          "Ô Môn: 1/2 (-1 xe)"
+        ]
+      },
+      {
+        "date": "09/10/2026",
+        "total": 10,
+        "details": [
+          "Cái Răng: 5/6 (-1 xe)",
+          "Bình Thủy: 2/3 (-1 xe)",
+          "Ô Môn: 1/2 (-1 xe)"
+        ]
+      },
+      {
+        "date": "19/10/2026",
+        "total": 12,
+        "details": [
+          "Cái Răng: 5/6 (-1 xe)"
+        ]
+      },
+      {
+        "date": "25/10/2026",
+        "total": 11,
+        "details": [
+          "Cái Răng: 5/6 (-1 xe)",
+          "Ô Môn: 1/2 (-1 xe)"
+        ]
+      },
+      {
+        "date": "26/10/2026",
+        "total": 10,
+        "details": [
+          "Cái Răng: 5/6 (-1 xe)",
+          "Vị Thanh: 1/2 (-1 xe)",
+          "Ô Môn: 1/2 (-1 xe)"
+        ]
+      }
+    ],
+    "increased_days": [
+      {
+        "date": "12/10/2026",
+        "total": 15,
+        "details": [
+          "Cái Răng: 7/6 (+1 xe)",
+          "Bình Thủy: 4/3 (+1 xe)"
+        ]
+      },
+      {
+        "date": "13/10/2026",
+        "total": 15,
+        "details": [
+          "Cái Răng: 7/6 (+1 xe)",
+          "Bình Thủy: 4/3 (+1 xe)"
+        ]
+      },
+      {
+        "date": "14/10/2026",
+        "total": 15,
+        "details": [
+          "Cái Răng: 7/6 (+1 xe)",
+          "Bình Thủy: 4/3 (+1 xe)"
+        ]
+      },
+      {
+        "date": "20/10/2026",
+        "total": 15,
+        "details": [
+          "Cái Răng: 7/6 (+1 xe)",
+          "Bình Thủy: 4/3 (+1 xe)"
+        ]
+      }
+    ],
+    "reconciliation_365": {
+      "period": "26/09/2026 - 25/10/2026",
+      "total_running": 328,
+      "total_off": 56,
+      "hubs": {
+        "Cái Răng": {
+          "norm": 6,
+          "running": 153,
+          "off": 26
+        },
+        "Bình Thủy": {
+          "norm": 3,
+          "running": 71,
+          "off": 22
+        },
+        "Vị Thanh": {
+          "norm": 2,
+          "running": 56,
+          "off": 2
+        },
+        "Ô Môn": {
+          "norm": 2,
+          "running": 48,
+          "off": 6
+        }
+      },
+      "note": "Cắt xe cố định từ ngày 21/10./2026"
+    }
+  },
+  "salary_nvxl": {
+    "grand_total": 39269262.57482299,
+    "by_hub": {
+      "Cái Răng - Cần Thơ": 16330190.4421,
+      "TP Vị Thanh - Hậu Giang": 7250658.661699998,
+      "Ô Môn - Cần Thơ": 5556942.312549999,
+      "Bình Thủy - Cần Thơ": 10131471.158473002
+    },
+    "by_emp": {
+      "Cái Răng - Cần Thơ": {
+        "1716012 - Công Bằng": 16330190.4421
+      },
+      "TP Vị Thanh - Hậu Giang": {
+        "3126024 - Huỳnh Diệp Đức Trung": 7250658.661699998
+      },
+      "Ô Môn - Cần Thơ": {
+        "3130847 - Trần Trọng Bằng": 5556942.312549999
+      },
+      "Bình Thủy - Cần Thơ": {
+        "3064883 - Nguyễn Phước Bảo Toàn": 10125980.431200001,
+        "1716012 - Công Bằng": 5490.727273
+      }
+    }
+  },
+  "salary_nvgh": {
+    "grand_total": 142817263.0,
+    "by_hub": {
+      "Bình Thủy - Cần Thơ": [
+        {
+          "driver_name": "Nguyễn Anh Bằng",
+          "total_salary": 7501887.0,
+          "formatted_salary": "7,501,887 đ"
+        },
+        {
+          "driver_name": "Nguyễn Thanh Tiền",
+          "total_salary": 7373693.0,
+          "formatted_salary": "7,373,693 đ"
+        },
+        {
+          "driver_name": "Võ Trung Hiếu",
+          "total_salary": 6861643.0,
+          "formatted_salary": "6,861,643 đ"
+        },
+        {
+          "driver_name": "Nguyễn Duy Khương",
+          "total_salary": 6319210.0,
+          "formatted_salary": "6,319,210 đ"
+        },
+        {
+          "driver_name": "Nguyễn Hữu Thanh",
+          "total_salary": 5397240.0,
+          "formatted_salary": "5,397,240 đ"
+        }
+      ],
+      "Cái Răng - Cần Thơ": [
+        {
+          "driver_name": "Nguyễn Hải Đông",
+          "total_salary": 9465044.0,
+          "formatted_salary": "9,465,044 đ"
+        },
+        {
+          "driver_name": "Nguyễn Tấn Thành",
+          "total_salary": 8776956.0,
+          "formatted_salary": "8,776,956 đ"
+        },
+        {
+          "driver_name": "Lê Hồng Tú",
+          "total_salary": 8612454.0,
+          "formatted_salary": "8,612,454 đ"
+        },
+        {
+          "driver_name": "Văn Trường Thọ",
+          "total_salary": 7857369.0,
+          "formatted_salary": "7,857,369 đ"
+        },
+        {
+          "driver_name": "Ngô Hữu Liêm",
+          "total_salary": 6362519.0,
+          "formatted_salary": "6,362,519 đ"
+        },
+        {
+          "driver_name": "Nguyễn Chí Linh",
+          "total_salary": 6334369.0,
+          "formatted_salary": "6,334,369 đ"
+        },
+        {
+          "driver_name": "Nguyễn Quốc Hưng",
+          "total_salary": 6136842.0,
+          "formatted_salary": "6,136,842 đ"
+        },
+        {
+          "driver_name": "Nguyễn Văn Được Em",
+          "total_salary": 5866518.0,
+          "formatted_salary": "5,866,518 đ"
+        },
+        {
+          "driver_name": "Phan Ngọc Hải",
+          "total_salary": 5586916.0,
+          "formatted_salary": "5,586,916 đ"
+        },
+        {
+          "driver_name": "Nguyễn Duy Linh",
+          "total_salary": 5059225.0,
+          "formatted_salary": "5,059,225 đ"
+        },
+        {
+          "driver_name": "Trần Vủ Hải",
+          "total_salary": 3867653.0,
+          "formatted_salary": "3,867,653 đ"
+        },
+        {
+          "driver_name": "Trần Thanh Đảm",
+          "total_salary": 595033.0,
+          "formatted_salary": "595,033 đ"
+        }
+      ],
+      "Đức Hòa - Long An": [],
+      "Gò Công - Tiền Giang": [],
+      "Ô Môn - Cần Thơ": [
+        {
+          "driver_name": "Nguyễn Chí Toàn",
+          "total_salary": 8617023.0,
+          "formatted_salary": "8,617,023 đ"
+        },
+        {
+          "driver_name": "Huỳnh Trung Lành",
+          "total_salary": 3057648.0,
+          "formatted_salary": "3,057,648 đ"
+        },
+        {
+          "driver_name": "Trần Minh Bình",
+          "total_salary": 282088.0,
+          "formatted_salary": "282,088 đ"
+        },
+        {
+          "driver_name": "Trần Trọng Bằng",
+          "total_salary": 0.0,
+          "formatted_salary": "0 đ"
+        }
+      ],
+      "Tam Nông - Đồng Tháp": [],
+      "TP Bạc Liêu - Bạc Liêu": [],
+      "TP Bến Tre - Bến Tre": [],
+      "TP Cà Mau - Cà Mau": [],
+      "TP Châu Đốc - An Giang": [],
+      "TP Hà Tiên - Kiên Giang": [],
+      "TP Long Xuyên - An Giang": [],
+      "TP Mỹ Tho - Tiền Giang": [],
+      "TP Rạch Giá - Kiên Giang": [],
+      "TP Sóc Trăng - Sóc Trăng": [],
+      "TP Tân An - Long An": [],
+      "TP Trà Vinh - Trà Vinh": [],
+      "TP Vị Thanh - Hậu Giang": [
+        {
+          "driver_name": "Nguyễn An Khang",
+          "total_salary": 7238898.0,
+          "formatted_salary": "7,238,898 đ"
+        },
+        {
+          "driver_name": "Nguyễn Thành Độ",
+          "total_salary": 6135908.0,
+          "formatted_salary": "6,135,908 đ"
+        },
+        {
+          "driver_name": "Nhan Văn Tươi",
+          "total_salary": 5931788.0,
+          "formatted_salary": "5,931,788 đ"
+        },
+        {
+          "driver_name": "Nguyễn Minh Tiến",
+          "total_salary": 3579339.0,
+          "formatted_salary": "3,579,339 đ"
+        }
+      ],
+      "TP Vĩnh Long - Vĩnh Long": [],
+      "TX Cai Lậy - Tiền Giang": [],
+      "Kho Giao Hàng Nặng-TP.Cao Lãnh-Đồng Tháp": []
+    }
+  }
+}

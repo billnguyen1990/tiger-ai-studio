@@ -4308,6 +4308,19 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 })
             return
 
+        # 0.6 BÁO CÁO NHANH CHI PHÍ & ĐỐI SOÁT VẬN TẢI MT01 (/chiphi, /doisoat365, /luongnv)
+    is_cost_cmd = lower_text.startswith(("/chiphi", "/doisoat365", "/doisoat", "/luongnv", "/xetai")) or (
+        is_tagged and any(k in lower_text for k in ["chi phí", "xe cố định", "đối soát 365", "lương nhân viên", "lương nvxl", "lương nvgh", "bảng lương"])
+    )
+    if is_cost_cmd:
+        try:
+            from tiger_cost_sync_service import generate_quick_cost_telegram_report
+            cost_rep = generate_quick_cost_telegram_report()
+            _send_telegram_group_message(cost_rep, topic_id=topic_id, reply_to_message_id=msg_id)
+        except Exception as ex:
+            _send_telegram_group_message(f"❌ <b>Lỗi tra cứu Chi Phí:</b> {ex}", topic_id=topic_id, reply_to_message_id=msg_id)
+        return
+
     # 0.5 HƯỚNG DẪN TRA CỨU NẾU GÕ LỆNH /tra HOẶC /check MÀ CHƯA KÈM MÃ ĐƠN
     is_lookup_cmd_only = any(lower_text.strip() == c for c in ["/tra", "/check", "/don"]) and not bool(order_codes)
     if is_lookup_cmd_only:
@@ -4979,6 +4992,8 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=18, minute=20, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h20")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
+    scheduler.add_job(_job_runner, "cron", hour=6, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_06h30")
+    scheduler.add_job(_job_runner, "cron", hour=20, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_20h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
     # Trên máy tính cá nhân của anh (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
@@ -5005,7 +5020,9 @@ def run_cron_webhook(task_key):
         "pda": "tiger_pda_progress_reporter.py",
         "b2b": "looker_export_temp.py",
         "b2b_looker": "looker_export_temp.py",
-        "evening": "tiger_evening_reporter.py"
+        "evening": "tiger_evening_reporter.py",
+        "cost": "tiger_cost_sync_service.py",
+        "cost_sync": "tiger_cost_sync_service.py"
     }
     script_name = script_map.get(task_key)
     if not script_name:
@@ -5041,6 +5058,35 @@ def api_send_b2b_report():
         return jsonify(res)
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/cost-analytics", methods=["GET"])
+def api_get_cost_analytics():
+    """Lấy dữ liệu chi phí vận tải, lương NVXL, lương NVGH và đối soát xe cố định"""
+    try:
+        from tiger_cost_sync_service import get_cached_cost_data
+        data = get_cached_cost_data()
+        return jsonify({"success": True, "data": data})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/cost-analytics/sync", methods=["POST", "GET"])
+def api_sync_cost_analytics():
+    """Kích hoạt đồng bộ tươi dữ liệu chi phí từ Google Sheet"""
+    try:
+        from tiger_cost_sync_service import sync_mt01_cost_data
+        data = sync_mt01_cost_data(force=True)
+        return jsonify({"success": True, "message": "Đồng bộ dữ liệu chi phí thành công!", "last_sync": data.get("last_sync")})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/cost-analytics/excel", methods=["GET"])
+def api_download_cost_excel():
+    """Tải file Excel đối soát chi phí & xe tải mới nhất"""
+    from flask import send_file
+    excel_path = os.path.join(BASE_DIR, "data", "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+    if os.path.exists(excel_path):
+        return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+    return jsonify({"success": False, "error": "Chưa có file Excel đối soát"}), 404
 
 @app.route("/api/ping")
 def ping_service():
