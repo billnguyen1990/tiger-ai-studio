@@ -633,6 +633,44 @@
       </div>
     </section>
 
+    <!-- SECTION 4: BẢNG LƯƠNG CHI TIẾT TÀI XẾ GIAO NHẬN (NVGH) -->
+    <section class="content-box" style="margin-top: 24px;">
+      <div class="box-header" style="flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="box-title" style="color: var(--accent-amber);">🛵 BẢNG LƯƠNG CHI TIẾT TÀI XẾ GIAO NHẬN (NVGH)</div>
+          <span id="badgeDriverCount" class="badge-tag" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px;">29 Tài xế</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
+            <span style="color: var(--text-sub);">Tổng lương NVGH:</span>
+            <b id="txtTotalDriverSalary" style="color: var(--accent-green); margin-left: 6px; font-size: 15px;">155.700.708 đ</b>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
+            <span style="color: var(--text-sub);">Bình quân/TX:</span>
+            <b id="txtAvgDriverSalary" style="color: var(--accent-blue); margin-left: 6px;">5.368.990 đ</b>
+          </div>
+          <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm kiếm tài xế..." oninput="filterDriversTable()" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 180px;">
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tblDrivers">
+          <thead>
+            <tr>
+              <th style="width: 70px; text-align: center;">Hạng</th>
+              <th>Họ & Tên Tài Xế (NVGH)</th>
+              <th>Kho Trực Thuộc</th>
+              <th style="text-align: right;">Thu Nhập / Lương (VNĐ)</th>
+              <th style="text-align: right;">Tỷ Trọng (%)</th>
+              <th style="text-align: center;">Trạng Thái / Đánh Giá</th>
+            </tr>
+          </thead>
+          <tbody id="tblBodyDrivers">
+            <tr><td colspan="6" style="text-align: center; padding: 20px;">Đang tải danh sách tài xế...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -734,8 +772,64 @@
       // Render Table
       renderTable(data.hubs_breakdown || []);
 
+      // Render Drivers
+      const db = data.drivers_breakdown || {};
+      allLoadedDrivers = db.list || [];
+      renderDriversTable(allLoadedDrivers, db.summary);
+
       // Render Charts
       renderCharts(data);
+    }
+
+    let allLoadedDrivers = [];
+
+    function renderDriversTable(drivers, summary) {
+      if (summary) {
+        document.getElementById("badgeDriverCount").innerText = `${summary.count || 0} Tài xế`;
+        document.getElementById("txtTotalDriverSalary").innerText = summary.formatted_total || "0 đ";
+        document.getElementById("txtAvgDriverSalary").innerText = summary.formatted_avg || "0 đ";
+      }
+
+      const tbody = document.getElementById("tblBodyDrivers");
+      if (!drivers || drivers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Không có tài xế nào khớp bộ lọc</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = drivers.map(d => {
+        let rankBadge = `#${d.rank}`;
+        if (d.rank === 1) rankBadge = `<span style="font-size: 16px;">🥇</span> <b style="color: #fbbf24;">#1</b>`;
+        else if (d.rank === 2) rankBadge = `<span style="font-size: 16px;">🥈</span> <b style="color: #94a3b8;">#2</b>`;
+        else if (d.rank === 3) rankBadge = `<span style="font-size: 16px;">🥉</span> <b style="color: #b45309;">#3</b>`;
+
+        return `
+          <tr>
+            <td style="text-align: center;">${rankBadge}</td>
+            <td style="font-weight: 700; color: #fff;">👤 ${d.driver_name}</td>
+            <td style="color: var(--accent-blue);">🏢 ${d.hub_name}</td>
+            <td class="td-num" style="color: var(--accent-green); font-weight: 700; font-size: 14px;">${d.formatted_period_salary || d.formatted_total_salary}</td>
+            <td class="td-num" style="color: var(--accent-purple); font-weight: 600;">${d.percentage || "0%"}</td>
+            <td style="text-align: center;">
+              <span style="background: ${d.badge_color}22; color: ${d.badge_color}; border: 1px solid ${d.badge_color}44; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">
+                ${d.badge}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function filterDriversTable() {
+      const q = (document.getElementById("txtSearchDriver").value || "").toLowerCase().trim();
+      if (!q) {
+        renderDriversTable(allLoadedDrivers);
+        return;
+      }
+      const filtered = allLoadedDrivers.filter(d => 
+        d.driver_name.toLowerCase().includes(q) || 
+        d.hub_name.toLowerCase().includes(q)
+      );
+      renderDriversTable(filtered);
     }
 
     function renderTable(hubs) {

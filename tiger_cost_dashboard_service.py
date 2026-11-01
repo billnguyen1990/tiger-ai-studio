@@ -49,8 +49,8 @@ def _format_vnd(val):
 def build_cost_dashboard_matrix(force=False):
     """
     Chỉ nạp và xử lý CHUYÊN BIỆT cho VÙNG MIỀN TÂY 01
-    Khóa chặt dữ liệu từ Row 3 đến Row 57 của sheet 'Chi Phí MT01'
-    Đảm bảo 100% chuẩn xác không bị đè bởi bảng phụ!
+    1. Khóa chặt dữ liệu từ Row 3 đến Row 57 của sheet 'Chi Phí MT01'
+    2. Nạp chi tiết lương từng tài xế (NVGH) từ sheet 'Lương Nhân Viên '
     """
     now_str = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
     print(f"[{now_str}] 🚀 Đang nạp bảng dữ liệu chuẩn Vùng Miền Tây 01...")
@@ -60,6 +60,7 @@ def build_cost_dashboard_matrix(force=False):
         client = gspread.authorize(creds)
         sh = client.open_by_key(GOOGLE_SHEET_ID)
 
+        # 1. BẢNG CHI PHÍ VẬN HÀNH MT01
         ws = sh.worksheet("Chi Phí MT01")
         rows = ws.get_all_values()
 
@@ -67,10 +68,9 @@ def build_cost_dashboard_matrix(force=False):
         r1 = rows[1] # Tuần
         r2 = rows[2] # Ngày / Tiêu đề
 
-        # 1. Danh sách mốc thời gian
-        months_dict = {} # "Tháng 10-Năm 2026": [c1, c2, ...]
-        weeks_dict = {}  # "Tuần 44-Năm 2026": [c1, c2, ...]
-        days_list = []   # ["26/05/2026", ...]
+        months_dict = {}
+        weeks_dict = {}
+        days_list = []
         col_to_date = {}
 
         for c in range(4, len(r2)):
@@ -86,12 +86,6 @@ def build_cost_dashboard_matrix(force=False):
                 if w_str:
                     weeks_dict.setdefault(w_str, []).append(c)
 
-        # 2. Định nghĩa cấu trúc chính xác các thực thể MT01
-        # Row 3 to 13: Miền Tây 01
-        # Row 14 to 24: Kho Cái Răng
-        # Row 25 to 35: Kho Bình Thủy
-        # Row 36 to 46: Kho TP Vị Thanh
-        # Row 47 to 57: Kho Ô Môn
         entities_config = [
             ("Toàn Vùng MT01", 3, 14, "Miền Tây 01"),
             ("Kho Cái Răng", 14, 25, "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ"),
@@ -101,13 +95,12 @@ def build_cost_dashboard_matrix(force=False):
         ]
 
         hubs_matrix = {}
-
         for label, start_r, end_r, full_sheet_name in entities_config:
             ent_metrics = {}
             for r in range(start_r, end_r):
                 metric_name = rows[r][1].strip()
-                oct_val = rows[r][2].strip() # Cột Tháng 10 chuẩn
-                w44_val = rows[r][3].strip() # Cột Tuần 44 chuẩn
+                oct_val = rows[r][2].strip()
+                w44_val = rows[r][3].strip()
                 
                 daily_vals = {}
                 for c, d in col_to_date.items():
@@ -128,6 +121,50 @@ def build_cost_dashboard_matrix(force=False):
                 "metrics": ent_metrics
             }
 
+        # 2. BẢNG CHI TIẾT LƯƠNG TÀI XẾ (NVGH) TỪ SHEET 'Lương Nhân Viên '
+        drivers_list = []
+        try:
+            ws_salary = sh.worksheet("Lương Nhân Viên ")
+            salary_rows = ws_salary.get_all_values()
+            salary_header = salary_rows[1] if len(salary_rows) > 1 else []
+
+            hub_name_map = {
+                "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ": "Kho Bình Thủy",
+                "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ": "Kho Cái Răng",
+                "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ": "Kho Ô Môn",
+                "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang": "Kho Vị Thanh"
+            }
+
+            cur_hub = ""
+            for r in salary_rows[2:]:
+                c0 = r[0].strip() if len(r) > 0 else ""
+                c1 = r[1].strip() if len(r) > 1 else ""
+                tot_str = r[-1].strip().replace(".", "").replace(",", "") if len(r) > 0 else "0"
+
+                if c0 in hub_name_map:
+                    cur_hub = hub_name_map[c0]
+                elif c0.startswith("Tổng số") or "Tổng cộng" in c0:
+                    continue
+                elif c0 and c0 not in hub_name_map:
+                    cur_hub = ""
+
+                if cur_hub and c1:
+                    daily_d = {}
+                    for c_idx, d_name in enumerate(salary_header):
+                        if "/" in d_name and c_idx < len(r):
+                            daily_d[d_name] = _clean_num(r[c_idx])
+
+                    tot_num = float(tot_str) if tot_str.isdigit() else 0.0
+                    drivers_list.append({
+                        "driver_name": c1,
+                        "hub_name": cur_hub,
+                        "total_salary": tot_num,
+                        "formatted_salary": _format_vnd(tot_num) + " đ",
+                        "daily_salary": daily_d
+                    })
+        except Exception as sal_ex:
+            print(f"[{now_str}] ⚠️ Lỗi đọc sheet Lương Nhân Viên : {sal_ex}")
+
         dashboard_data = {
             "last_sync": now_str,
             "region": "Miền Tây 01",
@@ -136,6 +173,7 @@ def build_cost_dashboard_matrix(force=False):
             "days": days_list,
             "hubs": [e[0] for e in entities_config],
             "entities": hubs_matrix,
+            "drivers": drivers_list,
             "months_cols": months_dict,
             "weeks_cols": weeks_dict
         }
@@ -143,7 +181,7 @@ def build_cost_dashboard_matrix(force=False):
         with open(DASHBOARD_CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(dashboard_data, f, ensure_ascii=False, indent=2)
 
-        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 thành công vào {DASHBOARD_CACHE_FILE}!")
+        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 & {len(drivers_list)} tài xế thành công!")
         return dashboard_data
 
     except Exception as ex:
@@ -163,31 +201,24 @@ def get_cost_dashboard_matrix():
     return build_cost_dashboard_matrix(force=True)
 
 def query_mt01_cost_data(hub="all", mode="month", key=None):
-    """
-    Truy vấn dữ liệu chi phí chuẩn xác 100% cho Miền Tây 01:
-    - hub: 'all' (Toàn Vùng MT01) hoặc 'Kho Cái Răng', 'Kho Bình Thủy', 'Kho Vị Thanh', 'Kho Ô Môn'
-    - mode: 'month' | 'week' | 'day'
-    - key: Mốc thời gian (VD: 'Tháng 10-Năm 2026', 'Tuần 44-Năm 2026', '31/10/2026')
-    """
     matrix = get_cost_dashboard_matrix()
     available_months = matrix.get("months", [])
     available_weeks = matrix.get("weeks", [])
     available_days = matrix.get("days", [])
     available_hubs = matrix.get("hubs", [])
     entities = matrix.get("entities", {})
+    all_drivers = matrix.get("drivers", [])
 
-    # Mặc định thời gian
     if mode == "month":
         if not key or key not in available_months:
-            key = "Tháng 10-Năm 2026" if "Tháng 10-Năm 2026" in available_months else available_months[-1]
+            key = "Tháng 10-Năm 2026" if "Tháng 10-Năm 2026" in available_months else (available_months[-1] if available_months else "")
     elif mode == "week":
         if not key or key not in available_weeks:
-            key = "Tuần 44-Năm 2026" if "Tuần 44-Năm 2026" in available_weeks else available_weeks[-1]
+            key = "Tuần 44-Năm 2026" if "Tuần 44-Năm 2026" in available_weeks else (available_weeks[-1] if available_weeks else "")
     elif mode == "day":
         if not key or key not in available_days:
             key = available_days[-1] if available_days else ""
 
-    # Chọn thực thể
     selected_ent_label = "Toàn Vùng MT01"
     if hub and hub != "all":
         for h_l in available_hubs:
@@ -206,11 +237,9 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
         "Chi phí giao hàng + Cost / kg"
     ]
 
-    # Hàm lấy giá trị của 1 thực thể tại kỳ được chọn
     def extract_entity_values(target_metrics):
         out = {}
         if mode == "month" and key == "Tháng 10-Năm 2026":
-            # Sử dụng cột tổng hợp chính thức Tháng 10
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("oct_official", "")
                 num_v = _clean_num(raw_v)
@@ -220,7 +249,6 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
                     "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
                 }
         elif mode == "week" and key == "Tuần 44-Năm 2026":
-            # Sử dụng cột tổng hợp chính thức Tuần 44
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("w44_official", "")
                 num_v = _clean_num(raw_v)
@@ -230,7 +258,6 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
                     "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
                 }
         elif mode == "day" and key:
-            # Sử dụng ngày cụ thể
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("daily", {}).get(key, "")
                 num_v = _clean_num(raw_v)
@@ -240,11 +267,9 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
                     "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
                 }
         else:
-            # Tự động tính tổng hợp theo danh sách cột của Tháng/Tuần
             col_indices = matrix.get("months_cols", {}).get(key, []) if mode == "month" else matrix.get("weeks_cols", {}).get(key, [])
             days_in_period = [available_days[c - 4] for c in col_indices if 0 <= c - 4 < len(available_days)]
             
-            # Tính tổng các chỉ số số lượng
             vol_gan = sum(_clean_num(target_metrics.get("Volume gán", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
             vol_gtc = sum(_clean_num(target_metrics.get("Volume GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
             kg_gtc = sum(_clean_num(target_metrics.get("Kg GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
@@ -290,7 +315,51 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             row[m] = h_vals.get(m, {}).get("formatted", "-")
         hubs_breakdown.append(row)
 
-    # Chuỗi xu hướng 14 ngày gần nhất
+    # PHÂN RÃ CHI TIẾT LƯƠNG TÀI XẾ (NVGH) THEO BỘ LỌC KHO & KỲ BÁO CÁO
+    filtered_drivers = []
+    for d in all_drivers:
+        if selected_ent_label == "Toàn Vùng MT01" or d["hub_name"] == selected_ent_label:
+            if mode == "day" and key and key in d.get("daily_salary", {}):
+                sal_period = d["daily_salary"][key]
+            else:
+                sal_period = d.get("total_salary", 0.0)
+
+            filtered_drivers.append({
+                "driver_name": d["driver_name"],
+                "hub_name": d["hub_name"],
+                "period_salary": sal_period,
+                "formatted_period_salary": _format_vnd(sal_period) + " đ",
+                "total_salary": d.get("total_salary", 0.0),
+                "formatted_total_salary": d.get("formatted_salary", "0 đ")
+            })
+
+    # Sắp xếp tài xế theo lương cao nhất trước
+    filtered_drivers.sort(key=lambda x: x["period_salary"], reverse=True)
+    
+    # Tính tổng lương và tỷ trọng
+    tot_driver_sal = sum(d["period_salary"] for d in filtered_drivers)
+    for idx, d in enumerate(filtered_drivers, 1):
+        d["rank"] = idx
+        pct = (d["period_salary"] / tot_driver_sal * 100) if tot_driver_sal > 0 else 0
+        d["percentage"] = f"{pct:.1f}%"
+        if pct >= 8.0:
+            d["badge"] = "Top Thu Nhập"
+            d["badge_color"] = "#10b981"
+        elif d["period_salary"] > 0:
+            d["badge"] = "Tích Cực"
+            d["badge_color"] = "#3b82f6"
+        else:
+            d["badge"] = "NVXL / Dự Bị"
+            d["badge_color"] = "#94a3b8"
+
+    driver_summary = {
+        "count": len(filtered_drivers),
+        "total_salary": tot_driver_sal,
+        "formatted_total": _format_vnd(tot_driver_sal) + " đ",
+        "avg_salary": (tot_driver_sal / len(filtered_drivers)) if filtered_drivers else 0,
+        "formatted_avg": _format_vnd(tot_driver_sal / len(filtered_drivers)) + " đ" if filtered_drivers else "0 đ"
+    }
+
     recent_days = available_days[-14:] if len(available_days) >= 14 else available_days
     trend_labels = []
     trend_volume = []
@@ -303,7 +372,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
     truck_cost_daily = metrics_map.get("Chi phí xe tải", {}).get("daily", {})
 
     for d in recent_days:
-        trend_labels.append(d[:5]) # DD/MM
+        trend_labels.append(d[:5])
         v_num = _clean_num(vol_daily.get(d, 0))
         c_num = _clean_num(cost_per_order_daily.get(d, 0))
         tot_c = _clean_num(luong_giao_daily.get(d, 0)) + _clean_num(truck_cost_daily.get(d, 0))
@@ -328,6 +397,10 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
         },
         "metrics": result_metrics,
         "hubs_breakdown": hubs_breakdown,
+        "drivers_breakdown": {
+            "summary": driver_summary,
+            "list": filtered_drivers
+        },
         "trend_chart": {
             "labels": trend_labels,
             "volume_gtc": trend_volume,
@@ -339,6 +412,8 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
 if __name__ == "__main__":
     build_cost_dashboard_matrix(force=True)
     res = query_mt01_cost_data(hub="all", mode="month", key="Tháng 10-Năm 2026")
-    print("\n--- MT01 THÁNG 10 OFFICIAL CHECK ---")
-    for k, v in res["metrics"].items():
-        print(f"  {k:35}: {v['formatted']}")
+    print("\n--- MT01 DRIVERS SUMMARY ---")
+    print(res["drivers_breakdown"]["summary"])
+    print(f"Top 5 Drivers:")
+    for d in res["drivers_breakdown"]["list"][:5]:
+        print(f"  #{d['rank']} {d['driver_name']} ({d['hub_name']}): {d['formatted_period_salary']} ({d['percentage']})")
