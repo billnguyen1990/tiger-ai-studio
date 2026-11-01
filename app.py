@@ -3935,52 +3935,90 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     is_reply_to_bot = bool(msg_obj.get("reply_to_message", {}).get("from", {}).get("id") == 8809500027)
 
     
-    # 0.1 XỬ LÝ LỆNH CAMERA AI GIÁM SÁT KHO (/cam, /camera)
-    if lower_text.startswith(("/cam", "/camera")):
-        try:
-            # Hỗ trợ cú pháp /cam cr 2,3,5,10,15 hoặc /cam bt 1,6,14,16
-            raw_text = text.replace(",", " ")
-            parts = raw_text.split()
-            hub_key = "cr"
-            cam_nums = []
-            for p in parts[1:]:
-                if p.isdigit():
-                    cam_nums.append(int(p))
-                elif p.lower() in ["cr", "cairang", "cái răng", "bt", "binhthuy", "bình thủy", "om", "omon", "ô môn", "vt", "vithanh", "vị thanh"]:
-                    hub_key = p.lower()
-            
-            if not cam_nums:
-                cam_nums = [None]
+    # 0.1 XỬ LÝ LỆNH & YÊU CẦU CAMERA AI GIÁM SÁT KHO (Lệnh /cam, câu hỏi tự nhiên "hình ảnh 4 kho", phòng 3365...)
+    is_cam_cmd = lower_text.startswith(("/cam", "/camera"))
+    is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
+        "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock", "lâu đấy", "đợi", "chưa", "đâu", "nữa hả"
+    ]) and not order_codes)
+    is_cam_natural = any(k in lower_text for k in [
+        "hình ảnh 4 kho", "ảnh 4 kho", "camera 4 kho", "cam 4 kho", "4 kho hiện tại",
+        "xem camera", "chụp camera", "soi camera", "camera kho", "hình ảnh kho", "ảnh kho", "hình kho", "4 kho"
+    ])
 
+    if is_cam_cmd or is_cam_in_cam_topic or is_cam_natural:
+        try:
             from camera_service import capture_camera_snapshot
-            for c_id in cam_nums[:6]:
-                ok, msg, snap_file = capture_camera_snapshot(hub_key, c_id)
+            from concurrent.futures import ThreadPoolExecutor
+
+            CAM_TOPIC_ID = 3365
+            all_hubs = ["cairang", "binhthuy", "omon", "vithanh"]
+
+            # Parse targets
+            targets = []
+            is_4_hubs = any(k in lower_text for k in ["4 kho", "bốn kho", "tất cả", "toàn bộ"]) or (
+                is_cam_in_cam_topic and not any(k in lower_text for k in [
+                    "cr", "cairang", "cái răng", "bt", "binhthuy", "bình thủy", "om", "omon", "ô môn", "vt", "vithanh", "vị thanh"
+                ])
+            )
+
+            if is_4_hubs:
+                targets = [{"hub": h, "cam": None} for h in all_hubs]
+            else:
+                hub_keywords = {
+                    "cairang": ["cr", "cairang", "cái răng"],
+                    "binhthuy": ["bt", "binhthuy", "bình thủy"],
+                    "omon": ["om", "omon", "ô môn"],
+                    "vithanh": ["vt", "vithanh", "vị thanh"]
+                }
+                cam_nums = [int(p) for p in re.findall(r'\b\d+\b', text) if 1 <= int(p) <= 32 and int(p) != 4]
+                
+                matched_any = False
+                for h_key, aliases in hub_keywords.items():
+                    if any(a in lower_text for a in aliases):
+                        matched_any = True
+                        if cam_nums:
+                            for c in cam_nums:
+                                targets.append({"hub": h_key, "cam": c})
+                        else:
+                            targets.append({"hub": h_key, "cam": None})
+                            
+                if not matched_any:
+                    targets = [{"hub": h, "cam": None} for h in all_hubs]
+
+            # Trích xuất đồng thời siêu tốc bằng ThreadPoolExecutor
+            def _exec_capture(t_item):
+                h_k = t_item["hub"]
+                c_k = t_item.get("cam")
+                ok, msg, snap = capture_camera_snapshot(h_k, c_k)
+                return h_k, c_k, ok, msg, snap
+
+            with ThreadPoolExecutor(max_workers=min(len(targets), 4)) as executor:
+                results = list(executor.map(_exec_capture, targets))
+
+            now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+            for h_k, c_k, ok, msg, snap_file in results:
                 if ok and snap_file and os.path.exists(snap_file):
-                    now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
                     caption = (
                         f"📸 <b>{msg.upper()}</b>\n"
-                        f"⏰ <b>Thời gian:</b> {now_str}\n"
+                        f"⏰ <b>Thời gian chụp:</b> {now_str}\n"
                         f"✅ <i>Trích xuất trực tiếp từ đầu ghi Hikvision GHN</i>"
                     )
-                    CAM_TOPIC_ID = 3365
                     _send_telegram_photo(snap_file, caption=caption, topic_id=CAM_TOPIC_ID)
                     try:
                         os.remove(snap_file)
                     except Exception:
                         pass
-                    time.sleep(1)
+                    time.sleep(0.5)
                 else:
-                    CAM_TOPIC_ID = 3365
                     _send_telegram_group_message(
-                        f"⚠️ <b>Chưa lấy được hình ảnh Camera {c_id or ''}:</b> {msg}",
+                        f"⚠️ <b>Chưa lấy được hình ảnh Camera {h_k.upper()} (Cam {c_k or 'mặc định'}):</b> {msg}",
                         topic_id=CAM_TOPIC_ID
                     )
             
             # Nếu người gửi yêu cầu từ phòng khác (như Báo Cáo 2690), gửi 1 tin thông báo nhẹ để tránh trôi tin
-            CAM_TOPIC_ID = 3365
             if topic_id != CAM_TOPIC_ID and topic_id > 0:
                 _send_telegram_group_message(
-                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Tập trung ảnh tại phòng riêng theo chỉ đạo của anh để tránh trôi tin!)</i>",
+                    f"👉 <b>Tiger AI đã cập nhật ảnh camera vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Tập trung ảnh tại phòng riêng theo quy chuẩn để không làm trôi tin điều hành!)</i>",
                     topic_id=topic_id,
                     reply_to_message_id=msg_id
                 )
