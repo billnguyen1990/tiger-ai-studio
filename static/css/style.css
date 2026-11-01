@@ -5446,3 +5446,141 @@ body.theme-light .tg-msg-outgoing {
   opacity: 1;
   text-decoration: underline;
 }
+
+
+/* ==========================================================================
+   REAL-TIME CLOCK & LIVE DEVICE WEATHER WIDGET (HEADER)
+   ========================================================================== */
+.header-weather-clock-widget {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 14px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
+}
+
+.header-weather-clock-widget:hover {
+  border-color: rgba(20, 184, 166, 0.7);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.25);
+  transform: translateY(-1px);
+}
+
+.hwc-clock-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.15;
+}
+
+.hwc-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.hwc-date {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.hwc-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.hwc-weather-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.15;
+  min-width: 130px;
+}
+
+.hwc-weather-top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hwc-loc-icon {
+  font-size: 11px;
+  animation: pulse-pin 2s infinite ease-in-out;
+}
+
+@keyframes pulse-pin {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.8; }
+}
+
+.hwc-location {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hwc-weather-bottom {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hwc-weather-icon {
+  font-size: 13px;
+  display: inline-block;
+}
+
+.hwc-temperature {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.hwc-weather-desc {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+/* Light theme support */
+body.theme-light .header-weather-clock-widget {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+body.theme-light .hwc-time {
+  color: #0284c7;
+  text-shadow: none;
+}
+body.theme-light .hwc-location {
+  color: #0f172a;
+}
+body.theme-light .hwc-date,
+body.theme-light .hwc-weather-desc {
+  color: #64748b;
+}
+body.theme-light .hwc-divider {
+  background: #e2e8f0;
+}

@@ -29,14 +29,26 @@
       </div>
     </div>
 
-    <!-- WORKFLOW PILL GỌN GÀNG TRÊN HEADER (BẤM SẼ XỔ THANH QUY TRÌNH HIỆN TẠI) -->
-    <div class="workflow-selector-wrapper">
-      <button type="button" id="btnHeaderWorkflowPill" class="btn-workflow-pill" title="Bấm để mở danh mục quy trình bên thanh hiện tại">
-        <span class="pill-dot"></span>
-        <span class="pill-label">QUY TRÌNH:</span>
-        <span id="headerWfDisplay" class="pill-val">07:00 • KPI GTC Hôm Qua</span>
-        <span class="pill-arrow">▾</span>
-      </button>
+    <!-- REAL-TIME CLOCK & LIVE DEVICE WEATHER WIDGET (TỰ ĐỘNG THEO VỊ TRÍ ĐỊNH VỊ CỦA THIẾT BỊ) -->
+    <div class="header-weather-clock-widget" id="headerWeatherClockWidget" title="Đồng hồ & Thời tiết thực tế theo vị trí thiết bị (Nhấp chuột để làm mới định vị GPS)">
+      <div class="hwc-clock-section">
+        <div class="hwc-time" id="hwcTime">--:--:--</div>
+        <div class="hwc-date" id="hwcDate">Đang cập nhật...</div>
+      </div>
+      <div class="hwc-divider"></div>
+      <div class="hwc-weather-section" id="hwcWeatherSection">
+        <div class="hwc-weather-top">
+          <span class="hwc-loc-icon">📍</span>
+          <span class="hwc-location" id="hwcLocation">Đang định vị...</span>
+        </div>
+        <div class="hwc-weather-bottom">
+          <span class="hwc-weather-icon" id="hwcWeatherIcon">⛅</span>
+          <span class="hwc-temperature" id="hwcTemperature">--°C</span>
+          <span class="hwc-weather-desc" id="hwcWeatherDesc">Đang tải...</span>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-selector-wrapper" style="display:none;">
       <select id="workflowSelect" class="workflow-dropdown-hidden" style="display:none;">
         <option value="truck_odo_365">🚚 02:00 • Quản Lý & Đối Soát ODO Xe Tải 365 (02:00 AM)</option>
         <option value="lastmile_trips">📦 05:00 • Cào Chuyến Đi Lastmile N-1 ➔ Google Sheets</option>
@@ -883,5 +895,6 @@
 
   <script src="/static/js/canvas.js?v=3.5.0"></script>
   <script src="/static/js/app.js?v=3.5.0"></script>
+  <script src="/static/js/weather_clock.js?v=3.6.0"></script>
 </body>
 </html>
