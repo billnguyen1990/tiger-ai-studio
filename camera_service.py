@@ -15,26 +15,30 @@ HEADERS = {
 BASE_API = "https://camera-api.ghn.vn/public-api"
 
 VR_MAP = {
-    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 8, "weather_cam": 8},
-    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 8, "weather_cam": 8},
-    "binhthuy": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 7, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
-    "bt": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 7, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
-    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 3, "weather_cam": 3},
-    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 3, "weather_cam": 3},
-    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 8, "weather_cam": 8},
-    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 8, "weather_cam": 8},
+    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 2, "outdoor_cam": 8, "indoor_cam": 2, "weather_cam": 8},
+    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 2, "outdoor_cam": 8, "indoor_cam": 2, "weather_cam": 8},
+    "binhthuy": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "outdoor_cam": 7, "indoor_cam": 6, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
+    "bt": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "outdoor_cam": 7, "indoor_cam": 6, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
+    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 4, "outdoor_cam": 3, "indoor_cam": 4, "weather_cam": 3},
+    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 4, "outdoor_cam": 3, "indoor_cam": 4, "weather_cam": 3},
+    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 6, "outdoor_cam": 8, "indoor_cam": 6, "weather_cam": 8},
+    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 6, "outdoor_cam": 8, "indoor_cam": 6, "weather_cam": 8},
 }
 
 CAM_DESC_MAP = {
     ("6577e3250ad53fcbaab02947", 1): "Cửa dock xuất/nhập xe tải",
-    ("6577e3250ad53fcbaab02947", 2): "Toàn cảnh sàn kho & xe nâng",
-    ("6577e3250ad53fcbaab02947", 6): "Khu vực tập kết Pallet & Xe nâng tay",
+    ("6577e3250ad53fcbaab02947", 2): "Sàn kho & Khu vực tập kết Pallet hàng hóa (Cái Răng)",
+    ("6577e3250ad53fcbaab02947", 6): "Khu vực tập kết Pallet & Kiện hàng sàn kho (Bình Thủy)",
     ("6577e3250ad53fcbaab02947", 7): "Bãi đỗ xe tải & Sân ngoài trời (Bình Thủy)",
     ("6577e3250ad53fcbaab02947", 8): "Bãi đỗ xe tải & Quang cảnh ngoài trời (Cái Răng)",
     ("6577e3250ad53fcbaab02947", 14): "Toàn cảnh luồng hàng & kho bãi",
     ("6577e3250ad53fcbaab02947", 16): "Hành lang vận hành bốc dỡ xe nâng",
     ("69dcba16a22d4e6ace3eadf6", 3): "Sân bãi bê tông ngoài trời (Ô Môn)",
+    ("69dcba16a22d4e6ace3eadf6", 4): "Sàn kho trung tâm & Pallet chứa hàng (Ô Môn)",
+    ("69dcba16a22d4e6ace3eadf6", 2): "Sàn kho bốc dỡ & Pallet nhựa (Ô Môn)",
     ("69c4fb54a9cd53f0d672a24d", 8): "Cổng ngoài trời & đường lộ (Vị Thanh)",
+    ("69c4fb54a9cd53f0d672a24d", 6): "Khu vực lưu trữ hàng hóa & Pallet kiện hàng (Vị Thanh)",
+    ("69c4fb54a9cd53f0d672a24d", 3): "Sàn kho hàng hóa & Pallet nhựa (Vị Thanh)",
 }
 
 def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None):
@@ -45,12 +49,12 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None):
 
     # Handle default cam or allowed cams
     if cam_id is None:
-        cam_id = hub_info.get("default_cam", 1)
+        cam_id = hub_info.get("default_cam", 2)
     else:
         try:
             cam_id = int(cam_id)
         except Exception:
-            cam_id = hub_info.get("default_cam", 1)
+            cam_id = hub_info.get("default_cam", 2)
 
     temp_dir = tempfile.gettempdir()
     if not output_file:
@@ -79,44 +83,51 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None):
             break
 
     if not playlist_text:
-        return False, "Camera chưa sẵn sàng truyền luồng video (stream warming up)", None
+        return False, "Không trích xuất được playlist video HLS từ Camera", None
 
-    # 3. Parse init and latest m4s segment
-    lines = [l.strip() for l in playlist_text.split("\n") if l.strip()]
+    # Parse init segment and first media segment
     init_file = None
-    m4s_file = None
-    for l in lines:
-        if "EXT-X-MAP" in l and 'URI="' in l:
-            init_file = l.split('URI="')[1].split('"')[0]
-        elif l.endswith(".m4s"):
-            m4s_file = l
+    media_files = []
+    for line in playlist_text.splitlines():
+        line = line.strip()
+        if line.startswith("#EXT-X-MAP:URI="):
+            init_file = line.split('"')[1]
+        elif line.endswith(".m4s"):
+            media_files.append(line)
 
-    if not init_file or not m4s_file:
-        return False, "Không tìm thấy đoạn video m4s trong playlist", None
+    if not init_file or not media_files:
+        return False, "Không tìm thấy segment media mp4/m4s trong stream", None
 
-    # 4. Download init and chunk
+    # 3. Download init + media chunk
     r_init = requests.get(base_stream_url + init_file, headers=HEADERS, timeout=8)
-    r_chunk = requests.get(base_stream_url + m4s_file, headers=HEADERS, timeout=8)
+    r_media = requests.get(base_stream_url + media_files[-1], headers=HEADERS, timeout=8)
 
-    temp_mp4 = os.path.join(temp_dir, f"temp_{vr_id}_{cam_id}.mp4")
-    with open(temp_mp4, "wb") as f:
-        f.write(r_init.content + r_chunk.content)
+    if r_init.status_code != 200 or r_media.status_code != 200:
+        return False, "Không tải được dữ liệu frame video từ CDN", None
 
-    cap = cv2.VideoCapture(temp_mp4)
-    ret, frame = cap.read()
+    temp_video = os.path.join(temp_dir, f"temp_cam_{clean_key}_{cam_id}_{int(time.time())}.mp4")
+    with open(temp_video, "wb") as f:
+        f.write(r_init.content)
+        f.write(r_media.content)
+
+    # 4. Extract frame using OpenCV
+    cap = cv2.VideoCapture(temp_video)
+    success, frame = cap.read()
     cap.release()
+
     try:
-        os.remove(temp_mp4)
+        os.remove(temp_video)
     except Exception:
         pass
 
-    if ret and frame is not None:
-        cv2.imwrite(output_file, frame)
-        desc = CAM_DESC_MAP.get((vr_id, cam_id), f"Mắt Cam số {cam_id:02d}")
-        return True, f"{hub_name} - {desc}", output_file
+    if not success or frame is None:
+        return False, "Không thể giải mã frame hình ảnh qua OpenCV", None
 
-    return False, "Không giải mã được khung hình từ video", None
+    cv2.imwrite(output_file, frame)
+    desc = CAM_DESC_MAP.get((vr_id, cam_id), f"Mắt Cam số {cam_id:02d}")
+    return True, f"{hub_name} - {desc}", output_file
 
-if __name__ == '__main__':
-    ok, msg, path = capture_camera_snapshot("bt", 6)
-    print("Capture result:", ok, msg, path)
+if __name__ == "__main__":
+    print("Testing capture Cái Răng indoor cam 2...")
+    ok, msg, snap = capture_camera_snapshot("cr", 2)
+    print("Result:", ok, msg, snap)

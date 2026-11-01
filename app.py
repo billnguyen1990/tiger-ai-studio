@@ -4128,8 +4128,17 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 ])
             )
 
+            from camera_service import VR_MAP
+            is_outdoor_intent = any(k in lower_text for k in [
+                "xe tải", "bãi xe", "sân bãi", "ngoài trời", "thời tiết", "mưa", "nắng", "đường lộ", "cổng"
+            ])
+            is_indoor_intent = any(k in lower_text for k in [
+                "hàng hóa", "hàng", "bên trong", "trong kho", "sàn kho", "pallet", "tồn kho", "luồng hàng", "kiện hàng"
+            ])
+            target_cam_type = "outdoor_cam" if (is_outdoor_intent and not is_indoor_intent) else "indoor_cam"
+
             if is_4_hubs:
-                targets = [{"hub": h, "cam": None} for h in all_hubs]
+                targets = [{"hub": h, "cam": VR_MAP.get(h, {}).get(target_cam_type)} for h in all_hubs]
             else:
                 hub_keywords = {
                     "cairang": ["cr", "cairang", "cái răng"],
@@ -4147,10 +4156,10 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                             for c in cam_nums:
                                 targets.append({"hub": h_key, "cam": c})
                         else:
-                            targets.append({"hub": h_key, "cam": None})
+                            targets.append({"hub": h_key, "cam": VR_MAP.get(h_key, {}).get(target_cam_type)})
                             
                 if not matched_any:
-                    targets = [{"hub": h, "cam": None} for h in all_hubs]
+                    targets = [{"hub": h, "cam": VR_MAP.get(h, {}).get(target_cam_type)} for h in all_hubs]
 
             # Trích xuất đồng thời siêu tốc bằng ThreadPoolExecutor
             def _exec_capture(t_item):
