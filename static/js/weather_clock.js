@@ -1,6 +1,6 @@
 /**
  * TIGER AI - REAL-TIME CLOCK & LIVE GOOGLE MAPS WEATHER WIDGET
- * Cập nhật đồng hồ thời gian thực và thời tiết theo tọa độ Google Maps chính xác
+ * Cập nhật đồng hồ thời gian thực và thời tiết theo tọa độ GPS thiết bị & Cụm Kho MT01
  */
 
 (function () {
@@ -30,14 +30,6 @@
   ];
 
   const PRESET_LOCATIONS = {
-    home: {
-      id: "home",
-      name: "Tân An, Cần Thơ",
-      fullName: "Nhà riêng anh Lộc (Tân An, Cần Thơ)",
-      lat: 10.026197,
-      lon: 105.7626793,
-      gmap: "https://maps.app.goo.gl/6LqxgARFMiogLs8y8"
-    },
     cairang: {
       id: "cairang",
       name: "Kho Cái Răng",
@@ -72,11 +64,18 @@
     }
   };
 
+  const FALLBACK_DEFAULT = {
+    lat: 10.0028,
+    lon: 105.7645,
+    name: "Cái Răng, Cần Thơ",
+    gmap: "https://www.google.com/maps/place/10.0028,105.7645"
+  };
+
   const STORAGE_KEY = "tiger_selected_location_id";
-  let currentLocationId = "home";
-  let currentLat = PRESET_LOCATIONS.home.lat;
-  let currentLon = PRESET_LOCATIONS.home.lon;
-  let currentGmapUrl = PRESET_LOCATIONS.home.gmap;
+  let currentLocationId = "device_gps";
+  let currentLat = FALLBACK_DEFAULT.lat;
+  let currentLon = FALLBACK_DEFAULT.lon;
+  let currentGmapUrl = FALLBACK_DEFAULT.gmap;
   let isFetchingWeather = false;
 
   // 1. CẬP NHẬT ĐỒNG HỒ THỜI GIAN THỰC (MỖI GIÂY)
@@ -114,7 +113,7 @@
     }
   }
 
-  // 3. LẤY THỜI TIẾT TỪ OPEN-METEO THEO TỌA ĐỘ GOOGLE MAPS
+  // 3. LẤY THỜI TIẾT TỪ OPEN-METEO THEO TỌA ĐỘ
   async function fetchWeatherForCoords(lat, lon, customName = null, gmapUrl = null) {
     if (isFetchingWeather) return;
     isFetchingWeather = true;
@@ -128,7 +127,6 @@
     try {
       let displayName = customName;
       if (!displayName) {
-        // Dùng Reverse Geocoding nếu không có tên sẵn (ví dụ khi dùng GPS thiết bị)
         try {
           const geoRes = await fetch(
             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`
@@ -153,11 +151,9 @@
         locEl.title = `Tọa độ: ${lat.toFixed(4)}, ${lon.toFixed(4)} (${displayName})`;
       }
 
-      // Cập nhật link Google Maps
       const finalGmapUrl = gmapUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
       updateGoogleMapsLinks(finalGmapUrl, displayName);
 
-      // Gọi Open-Meteo
       const weatherRes = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,is_day`
       );
@@ -190,7 +186,25 @@
     }
   }
 
-  // 4. CHUYỂN ĐỔI ĐỊA ĐIỂM
+  // 4. FALLBACK IP KHI KHÔNG CÓ QUYỀN GPS
+  async function fallbackIpWeather() {
+    try {
+      const res = await fetch("https://ipapi.co/json/", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.latitude && data.longitude) {
+          const locName = data.city ? `${data.city}, Cần Thơ` : "Cần Thơ";
+          fetchWeatherForCoords(data.latitude, data.longitude, locName, `https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`);
+          return;
+        }
+      }
+    } catch (e) {
+      // Ignored
+    }
+    fetchWeatherForCoords(FALLBACK_DEFAULT.lat, FALLBACK_DEFAULT.lon, FALLBACK_DEFAULT.name, FALLBACK_DEFAULT.gmap);
+  }
+
+  // 5. CHUYỂN ĐỔI ĐỊA ĐIỂM
   function setLocation(locationId) {
     currentLocationId = locationId;
     localStorage.setItem(STORAGE_KEY, locationId);
@@ -216,16 +230,13 @@
             fetchWeatherForCoords(lat, lon, null, `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`);
           },
           (err) => {
-            console.warn("[GPS error, fallback to Home]", err.message);
-            // Fallback về nhà anh Lộc
-            const home = PRESET_LOCATIONS.home;
-            fetchWeatherForCoords(home.lat, home.lon, home.name, home.gmap);
+            console.warn("[GPS error, fallback to IP/Default]", err.message);
+            fallbackIpWeather();
           },
           { enableHighAccuracy: true, timeout: 8000 }
         );
       } else {
-        const home = PRESET_LOCATIONS.home;
-        fetchWeatherForCoords(home.lat, home.lon, home.name, home.gmap);
+        fallbackIpWeather();
       }
     } else if (PRESET_LOCATIONS[locationId]) {
       const target = PRESET_LOCATIONS[locationId];
@@ -233,21 +244,19 @@
     }
   }
 
-  // 5. KHỞI TẠO SỰ KIỆN GIAO DIỆN VÀ DROPDOWN
+  // 6. KHỞI TẠO SỰ KIỆN GIAO DIỆN VÀ DROPDOWN
   function initEvents() {
     const weatherSection = document.getElementById("hwcWeatherSection");
     const dropdown = document.getElementById("hwcLocationDropdown");
     const closeBtn = document.getElementById("hwcDdClose");
     const gmapLink = document.getElementById("hwcGmapLink");
 
-    // Click vào Maps badge: mở Google Maps trực tiếp, không đóng mở dropdown
     if (gmapLink) {
       gmapLink.addEventListener("click", (e) => {
         e.stopPropagation();
       });
     }
 
-    // Toggle dropdown khi nhấp vào weather section
     if (weatherSection && dropdown) {
       weatherSection.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -256,7 +265,6 @@
       });
     }
 
-    // Đóng dropdown khi bấm nút X
     if (closeBtn && dropdown) {
       closeBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -264,7 +272,6 @@
       });
     }
 
-    // Chọn địa điểm trong dropdown
     document.querySelectorAll(".hwc-dd-item").forEach(item => {
       item.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -276,7 +283,6 @@
       });
     });
 
-    // Đóng dropdown khi bấm ra ngoài
     document.addEventListener("click", (e) => {
       if (dropdown && dropdown.style.display === "block") {
         if (!dropdown.contains(e.target) && !weatherSection.contains(e.target)) {
@@ -293,16 +299,21 @@
 
     initEvents();
 
-    // Đọc vị trí đã lưu, mặc định là nhà riêng anh Lộc (home)
-    const savedLoc = localStorage.getItem(STORAGE_KEY) || "home";
+    // Mặc định là GPS thiết bị thực tế, dọn dẹp giá trị cũ nếu có
+    let savedLoc = localStorage.getItem(STORAGE_KEY) || "device_gps";
+    if (savedLoc === "home") {
+      savedLoc = "device_gps";
+      localStorage.setItem(STORAGE_KEY, "device_gps");
+    }
     setLocation(savedLoc);
 
     // Tự động làm mới thời tiết mỗi 15 phút
     setInterval(() => {
-      if (currentLat && currentLon) {
-        const preset = PRESET_LOCATIONS[currentLocationId];
-        const name = preset ? preset.name : null;
-        fetchWeatherForCoords(currentLat, currentLon, name, currentGmapUrl);
+      if (currentLocationId === "device_gps") {
+        setLocation("device_gps");
+      } else if (PRESET_LOCATIONS[currentLocationId]) {
+        const target = PRESET_LOCATIONS[currentLocationId];
+        fetchWeatherForCoords(target.lat, target.lon, target.name, target.gmap);
       }
     }, 15 * 60 * 1000);
   }
