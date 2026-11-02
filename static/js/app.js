@@ -2858,7 +2858,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (copilotChatBody) {
           copilotChatBody.innerHTML = `
             <div class="chat-msg msg-ai">
-              🧹 Đã xóa lịch sử trò chuyện! Sếp có thể hỏi số liệu 4 kho MT01, dán mã đơn GHN, hoặc bấm sang tab <b>📡 Đàm Thoại Telegram MT01</b>.
+              🧹 Đã xóa lịch sử trò chuyện! Anh có thể hỏi số liệu 4 kho MT01, dán mã đơn GHN, hoặc bấm sang tab <b>📡 Đàm Thoại Telegram MT01</b>.
             </div>
           `;
         }
