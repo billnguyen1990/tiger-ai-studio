@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Đêm Hoa Đăng & Phóng Sanh Sông Hậu 3D • Cần Thơ | Tiger AI</title>
-    <link rel="icon" href="/static/img/tiger_ai_avatar.png" type="image/png">
+    <link rel="icon" href="/static/img/hoa_sen_avatar.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -90,11 +90,24 @@
         }
 
         .brand-box img {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 2px solid #ffd166;
-            box-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+            box-shadow: 0 0 14px rgba(255, 209, 102, 0.8), 0 0 25px rgba(244, 63, 94, 0.5);
+            object-fit: cover;
+            animation: lotusGlowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes lotusGlowPulse {
+            0%, 100% {
+                box-shadow: 0 0 14px rgba(255, 209, 102, 0.8), 0 0 25px rgba(244, 63, 94, 0.5);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 22px rgba(255, 215, 0, 0.95), 0 0 38px rgba(244, 63, 94, 0.75);
+                transform: scale(1.06);
+            }
         }
 
         .brand-title h1 {
@@ -575,7 +588,7 @@
             <div style="display: flex; align-items: center; gap: 15px;">
                 <a href="/" class="back-nav">← Về Dashboard</a>
                 <div class="brand-box">
-                    <img src="/static/img/tiger_ai_avatar.png" alt="Tiger AI">
+                    <img src="/static/img/hoa_sen_avatar.png" alt="Tiger AI">
                     <div class="brand-title">
                         <h1>ĐÊM HOA ĐĂNG & PHÓNG SANH 3D</h1>
                         <p>Sông Nước Cần Thơ • Khí Tiết Thanh Tịnh • Tiger AI Live</p>
@@ -931,8 +944,8 @@
                 this.y = y || (height * 0.62 + Math.random() * 70);
                 this.name = name || "Phật tử";
                 this.wish = wish || "Vạn sự bình an";
-                this.speedX = (Math.random() - 0.25) * 0.45; // Trôi nhẹ xuôi dòng
-                this.speedY = -0.35 - Math.random() * 0.25; // Trôi dần vào xa xăm
+                this.speedX = (Math.random() - 0.5) * 0.8; // Trôi nhẹ tản đều hai bên dòng
+                this.speedY = -0.58 - Math.random() * 0.42; // Trôi dần vào xa xăm thanh thoát
                 this.size = 52 + Math.random() * 14;
                 this.flicker = Math.random() * Math.PI * 2;
                 this.isGolden = isGolden;
@@ -948,8 +961,8 @@
 
                 // Tỷ lệ nhỏ dần tạo phối cảnh 3D xa gần
                 this.scale = Math.max(0.32, (this.y - (height * 0.38)) / (height * 0.5));
-                if (this.y < height * 0.42) {
-                    this.alpha -= 0.005;
+                if (this.y < height * 0.48) {
+                    this.alpha -= 0.008;
                 }
 
                 // Nhả tàn nến bay lên trời
@@ -1609,13 +1622,17 @@
             const name = currentSender || "Phật tử";
             const wish = selectedWish || "Cầu vạn sự bình an";
 
-            // Thả chùm 3 hoa đăng 3D phân tán đều không chồng nhau
+            // Thả chùm 3 hoa đăng 3D phân tán rộng khắp mặt sông, không bị dồn cục
             for (let i = 0; i < 3; i++) {
                 setTimeout(() => {
-                    const spreadX = width * 0.35 + (i * width * 0.15) + (Math.random() - 0.5) * 60;
+                    if (lanterns.length > 25) {
+                        for (let k = 0; k < 3; k++) if (lanterns[k]) lanterns[k].alpha -= 0.05;
+                    }
+                    const slotWidth = (width * 0.76) / 3;
+                    const spreadX = (width * 0.12) + (i * slotWidth) + (Math.random() - 0.5) * (slotWidth * 0.6);
                     const l = new LotusLantern3D(
                         spreadX,
-                        height * 0.70 + Math.random() * 40,
+                        height * 0.68 + (Math.random() * 60),
                         name,
                         wish,
                         true
@@ -1645,22 +1662,28 @@
 
             playSplashSound();
 
-            // Thả đàn 4 cá Koi 3D bơi tản ra các góc
+            // Thả đàn 4 cá Koi 3D bơi tản rộng muôn hướng, tung tăng lượn sóng
             const breeds = ['kohaku', 'ogon', 'sanke', 'kohaku'];
             for (let i = 0; i < 4; i++) {
                 setTimeout(() => {
-                    const startX = width * 0.3 + (i * width * 0.14) + (Math.random() - 0.5) * 50;
+                    if (fishes.length > 16) {
+                        for (let k = 0; k < 4; k++) if (fishes[k]) fishes[k].alpha -= 0.06;
+                    }
+                    const slotW = (width * 0.74) / 4;
+                    const startX = (width * 0.13) + (i * slotW) + (Math.random() - 0.5) * (slotW * 0.7);
                     const f = new ArticulatedKoi3D(
                         startX,
-                        height * 0.68 + Math.random() * 50,
+                        height * 0.66 + Math.random() * 65,
                         name,
                         breeds[i]
                     );
-                    // Góc bơi hướng tỏa ra ngoài
-                    f.angle = -Math.PI / 2 + ((i - 1.5) * 0.35) + (Math.random() - 0.5) * 0.2;
+                    f.speed = 3.2 + Math.random() * 1.6;
+                    // Bơi tản rộng các hướng đa dạng
+                    const angleOffset = ((i - 1.5) / 1.5) * 0.85 + (Math.random() - 0.5) * 0.4;
+                    f.angle = -Math.PI / 2 + angleOffset;
                     f.targetAngle = f.angle;
                     fishes.push(f);
-                }, i * 160);
+                }, i * 150);
             }
 
             totalFishCount += 4;
