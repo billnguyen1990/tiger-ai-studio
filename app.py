@@ -3606,6 +3606,11 @@ def _append_telegram_bridge_message(entry):
         return True
 
 def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
+    # 🛑 BẢO VỆ AN TOÀN: Tuyệt đối chặn gửi lộ token hoặc tin rác
+    if not text or "8809500027" in text or "AAFC2Xz" in text:
+        print("[SECURITY GUARD] Chặn gửi tin nhắn không hợp lệ hoặc chứa Bot Token!")
+        return {"ok": False, "description": "Blocked by security guard"}
+
     url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_BRIDGE_CHAT_ID,
@@ -3645,6 +3650,11 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
 
 def _send_telegram_photo(photo_path, caption="", topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
     """Gửi ảnh trực tiếp lên Telegram group/topic"""
+    # 🛑 BẢO VỆ AN TOÀN: Tuyệt đối chặn gửi ảnh lộ token hoặc tin rác
+    if caption and ("8809500027" in caption or "AAFC2Xz" in caption):
+        print("[SECURITY GUARD] Chặn gửi ảnh chứa Bot Token!")
+        return {"ok": False, "description": "Blocked by security guard"}
+
     url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendPhoto"
     try:
         with open(photo_path, "rb") as f:
