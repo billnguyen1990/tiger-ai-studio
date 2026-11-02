@@ -25,11 +25,9 @@ SHEET_NAME = "GHNa"
 SHEET_VIEW_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit#gid=0"
 SHEET_CSV_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet={SHEET_NAME}"
 
-# Cấu hình Telegram
+# Cấu hình Telegram (Chỉ gửi DUY NHẤT về room 'The 5 Guardians' theo chỉ đạo của anh Lộc)
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
-LOC_CHAT_ID = "5617525120"               # Chat ID cá nhân của anh Lộc
-GROUP_CHAT_ID = "-1003940889949"         # Nhóm Miền Tây 01
-GROUP_TOPIC_ID = 2690                    # Topic Báo Cáo
+GUARDIANS_CHAT_ID = "-5295214199"        # Room The 5 Guardians (8 thành viên cốt cán)
 
 SNAPSHOT_FILE = os.path.join(BASE_DIR, "ghna_state_snapshot.json")
 
@@ -127,10 +125,9 @@ def get_row_hash(row_dict):
     return hashlib.md5(serialized.encode("utf-8")).hexdigest()
 
 def send_telegram_alert(message_html):
-    """Gửi cảnh báo đến cả chat riêng của anh Lộc và topic Báo Cáo MT01"""
+    """Gửi cảnh báo DUY NHẤT đến room The 5 Guardians theo chỉ đạo anh Lộc (bỏ 2 room kia)"""
     targets = [
-        {"name": "anh Lộc (Riêng)", "chat_id": LOC_CHAT_ID, "thread_id": None},
-        {"name": "Topic Báo Cáo MT01", "chat_id": GROUP_CHAT_ID, "thread_id": GROUP_TOPIC_ID}
+        {"name": "The 5 Guardians", "chat_id": GUARDIANS_CHAT_ID, "thread_id": None}
     ]
     results = {}
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -292,3 +289,4 @@ if __name__ == "__main__":
     force = "--send" in sys.argv or "--force" in sys.argv
     res = run_check(force_send=force, silent_if_empty=not force)
     print(json.dumps(res, indent=2, ensure_ascii=False))
+
