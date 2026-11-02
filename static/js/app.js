@@ -2326,14 +2326,161 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentTrackedOrders = [];
 
-  // Toggle Copilot Drawer
+  // ==========================================================================
+  // FLOATING DRAGGABLE TIGER AI MASCOT (CÓ THỂ DI DỜI TRÊN MÀN HÌNH)
+  // ==========================================================================
+  const floatingTigerAI = document.getElementById("floatingTigerAI");
+
+  function initDraggableTigerMascot() {
+    if (!floatingTigerAI) return;
+
+    let isDragging = false;
+    let hasMoved = false;
+    let startX = 0, startY = 0;
+    let initialLeft = 0, initialTop = 0;
+    const dragThreshold = 6;
+
+    // Restore saved position from localStorage
+    try {
+      const savedX = localStorage.getItem("tiger_mascot_x");
+      const savedY = localStorage.getItem("tiger_mascot_y");
+      if (savedX !== null && savedY !== null) {
+        const px = parseFloat(savedX);
+        const py = parseFloat(savedY);
+        const winW = window.innerWidth;
+        const winH = window.innerHeight;
+        if (!isNaN(px) && !isNaN(py) && px >= 0 && px < winW - 50 && py >= 0 && py < winH - 50) {
+          floatingTigerAI.style.left = px + "px";
+          floatingTigerAI.style.top = py + "px";
+          floatingTigerAI.style.right = "auto";
+          floatingTigerAI.style.bottom = "auto";
+          if (px < 160) {
+            floatingTigerAI.classList.add("flip-pill");
+          } else {
+            floatingTigerAI.classList.remove("flip-pill");
+          }
+        }
+      }
+    } catch (e) {}
+
+    function startDrag(clientX, clientY) {
+      isDragging = true;
+      hasMoved = false;
+      startX = clientX;
+      startY = clientY;
+
+      const rect = floatingTigerAI.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+
+      floatingTigerAI.style.right = "auto";
+      floatingTigerAI.style.bottom = "auto";
+      floatingTigerAI.style.left = initialLeft + "px";
+      floatingTigerAI.style.top = initialTop + "px";
+    }
+
+    function doDrag(clientX, clientY) {
+      if (!isDragging) return;
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+
+      if (!hasMoved && Math.hypot(dx, dy) > dragThreshold) {
+        hasMoved = true;
+        floatingTigerAI.classList.add("is-dragging");
+      }
+
+      if (hasMoved) {
+        const rect = floatingTigerAI.getBoundingClientRect();
+        const maxLeft = window.innerWidth - rect.width - 12;
+        const maxTop = window.innerHeight - rect.height - 12;
+        const newLeft = Math.max(12, Math.min(maxLeft, initialLeft + dx));
+        const newTop = Math.max(12, Math.min(maxTop, initialTop + dy));
+
+        floatingTigerAI.style.left = newLeft + "px";
+        floatingTigerAI.style.top = newTop + "px";
+
+        if (newLeft < 160) {
+          floatingTigerAI.classList.add("flip-pill");
+        } else {
+          floatingTigerAI.classList.remove("flip-pill");
+        }
+      }
+    }
+
+    function endDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      floatingTigerAI.classList.remove("is-dragging");
+
+      if (hasMoved) {
+        try {
+          localStorage.setItem("tiger_mascot_x", parseFloat(floatingTigerAI.style.left));
+          localStorage.setItem("tiger_mascot_y", parseFloat(floatingTigerAI.style.top));
+        } catch (e) {}
+      } else {
+        // Pure click: Toggle Copilot Drawer!
+        if (copilotDrawer) {
+          copilotDrawer.classList.toggle("hidden-copilot");
+          if (typeof playCyberSound === "function") playCyberSound("start");
+          if (!copilotDrawer.classList.contains("hidden-copilot")) {
+            if (copilotInput) copilotInput.focus();
+            if (copilotChatBody) copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
+          }
+        }
+      }
+    }
+
+    floatingTigerAI.addEventListener("mousedown", (e) => {
+      if (e.button !== 0) return;
+      startDrag(e.clientX, e.clientY);
+
+      const onMouseMove = (ev) => doDrag(ev.clientX, ev.clientY);
+      const onMouseUp = () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+        endDrag();
+      };
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    });
+
+    floatingTigerAI.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    window.addEventListener("touchmove", (e) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      doDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    window.addEventListener("touchend", () => {
+      if (isDragging) endDrag();
+    });
+
+    // Auto open copilot if URL contains ?open_copilot=1
+    if (window.location.search.includes("open_copilot=1")) {
+      setTimeout(() => {
+        if (copilotDrawer && copilotDrawer.classList.contains("hidden-copilot")) {
+          copilotDrawer.classList.remove("hidden-copilot");
+          if (copilotInput) copilotInput.focus();
+        }
+      }, 500);
+    }
+  }
+
+  initDraggableTigerMascot();
+
+  // Fallback if btnOpenCopilot exists anywhere
   if (btnOpenCopilot) {
     btnOpenCopilot.addEventListener("click", () => {
-      copilotDrawer.classList.toggle("hidden-copilot");
-      playCyberSound("start");
-      if (!copilotDrawer.classList.contains("hidden-copilot")) {
-        copilotInput.focus();
-        copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
+      if (copilotDrawer) {
+        copilotDrawer.classList.toggle("hidden-copilot");
+        if (typeof playCyberSound === "function") playCyberSound("start");
+        if (!copilotDrawer.classList.contains("hidden-copilot")) {
+          if (copilotInput) copilotInput.focus();
+          if (copilotChatBody) copilotChatBody.scrollTop = copilotChatBody.scrollHeight;
+        }
       }
     });
   }

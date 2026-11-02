@@ -6160,3 +6160,149 @@ body.theme-light .hwc-dd-footer {
   border-top-color: #e2e8f0;
 }
 
+
+/* ==========================================================================
+   FLOATING DRAGGABLE TIGER AI MASCOT (CÓ THỂ DI DỜI TRÊN MÀN HÌNH)
+   ========================================================================== */
+.floating-tiger-mascot {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+}
+
+.floating-tiger-mascot:hover {
+  filter: drop-shadow(0 0 16px rgba(0, 229, 190, 0.7));
+}
+
+.floating-tiger-mascot.is-dragging {
+  cursor: grabbing !important;
+  animation: none !important;
+  transform: scale(1.12) !important;
+  transition: none !important;
+  filter: drop-shadow(0 0 24px rgba(0, 229, 190, 0.9)) !important;
+}
+
+.floating-tiger-mascot .mascot-aura {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 229, 190, 0.4) 0%, rgba(0, 160, 255, 0.2) 45%, transparent 70%);
+  animation: mascotPulse 2.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.floating-tiger-mascot .mascot-avatar-wrapper {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0e3040 0%, #05141c 100%);
+  border: 2px solid rgba(0, 229, 190, 0.75);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 229, 190, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  animation: mascotFloat 3.2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floating-tiger-mascot .mascot-emoji {
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  transition: transform 0.25s ease;
+  pointer-events: none;
+}
+
+.floating-tiger-mascot:hover .mascot-emoji {
+  transform: scale(1.18) rotate(6deg);
+}
+
+.floating-tiger-mascot .mascot-online-ping {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: #10b981;
+  border: 2.5px solid #05141c;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+  pointer-events: none;
+}
+
+.floating-tiger-mascot .mascot-label-pill {
+  position: absolute;
+  right: 70px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(5, 20, 28, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 229, 190, 0.5);
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), 0 0 14px rgba(0, 229, 190, 0.25);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.floating-tiger-mascot .mascot-sparkle {
+  color: #fbbf24;
+  font-size: 13px;
+}
+
+.floating-tiger-mascot.flip-pill .mascot-label-pill {
+  right: auto;
+  left: 70px;
+}
+
+body.theme-light .floating-tiger-mascot .mascot-avatar-wrapper {
+  background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
+  border-color: #0284c7;
+  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3), 0 0 15px rgba(2, 132, 199, 0.25);
+}
+
+body.theme-light .floating-tiger-mascot .mascot-label-pill {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(2, 132, 199, 0.4);
+  color: #0f172a;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 0 12px rgba(2, 132, 199, 0.2);
+}
+
+@keyframes mascotFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes mascotPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.88);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.28);
+    opacity: 0.95;
+  }
+}
