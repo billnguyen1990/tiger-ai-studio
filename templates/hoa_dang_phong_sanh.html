@@ -556,161 +556,10 @@
     <script>
         // ========================================================
                 // ========================================================
-        // 1B. HỆ THỐNG NHẠC HỘI HOA ĐĂNG CỔ TRUYỀN & THIỀN TỊNH
-        // Tái hiện điệu Lục Cúng Hoa Đăng & nhạc thiền an yên
-        // Gồm: Khí thiền Singing Bowl, Đờn Tranh ngũ cung, Sáo Trúc và Tiếng Mõ
+        // 1. HỆ THỐNG NHẠC HỘI HOA ĐĂNG THU ÂM THỰC TẾ (CHỈ PHÁT 2 BẢN MP3 THUẦN KHIẾT)
+        // Đã loại bỏ hoàn toàn các âm thanh tổng hợp cũ và tiếng drone điện tử
         // ========================================================
         let isMusicPlaying = false;
-        let musicTimer = null;
-        let droneOsc1 = null, droneOsc2 = null, droneGain = null;
-
-        // Thang âm ngũ cung Hội Hoa Đăng (D, F, G, A, C - Điệu Oán / Điệu Bắc thiền tịnh)
-        const hoiHoaDangNotes = [
-            146.83, // D3 (Bass trầm)
-            220.00, // A3
-            293.66, // D4 (Hò)
-            349.23, // F4 (Xự)
-            392.00, // G4 (Xang)
-            440.00, // A4 (Xê)
-            523.25, // C5 (Cống)
-            587.33, // D5 (Liu)
-            698.46, // F5
-            880.00  // A5
-        ];
-
-        // Tiếng Đờn Tranh (Dan Tranh Pluck)
-        function playDanTranhNote(freq, delay = 0, vol = 0.28) {
-            if (!audioCtx || !isMusicPlaying) return;
-            const now = audioCtx.currentTime + delay;
-
-            const osc1 = audioCtx.createOscillator();
-            const osc2 = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
-            // Sóng âm đờn tranh giàu họa âm
-            osc1.type = 'triangle';
-            osc2.type = 'sawtooth';
-            osc1.frequency.setValueAtTime(freq, now);
-            osc2.frequency.setValueAtTime(freq * 2, now); // Họa âm bậc 2
-
-            // Bộ lọc màng gỗ đờn tranh
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(1800, now);
-            filter.frequency.exponentialRampToValueAtTime(350, now + 1.8);
-
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(vol, now + 0.02); // Gảy phím nảy
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2); // Ngân vang rồi tắt dần
-
-            osc1.connect(filter);
-            osc2.connect(filter);
-            filter.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc1.start(now);
-            osc2.start(now);
-            osc1.stop(now + 2.3);
-            osc2.stop(now + 2.3);
-        }
-
-        // Tiếng Mõ gỗ thiền tịnh (Temple Woodblock)
-        function playMoWoodblock(delay = 0) {
-            if (!audioCtx || !isMusicPlaying) return;
-            const now = audioCtx.currentTime + delay;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            const filter = audioCtx.createBiquadFilter();
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(580, now);
-            osc.frequency.exponentialRampToValueAtTime(320, now + 0.06);
-
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(520, now);
-            filter.Q.setValueAtTime(6, now);
-
-            gain.gain.setValueAtTime(0.35, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc.start(now);
-            osc.stop(now + 0.13);
-        }
-
-        // Bắt đầu chuỗi nhạc thiền Hội Hoa Đăng tuần hoàn
-        let melodyStep = 0;
-        const melodyPattern = [
-            [2, 4],    // D4, G4
-            [3],       // F4
-            [4, 6],    // G4, C5
-            [5],       // A4
-            [7, 5],    // D5, A4
-            [6],       // C5
-            [4, 2],    // G4, D4
-            [1, 0]     // A3, D3
-        ];
-
-        function scheduleNextMeditationPhrase() {
-            if (!isMusicPlaying) return;
-
-            const currentNotes = melodyPattern[melodyStep % melodyPattern.length];
-            melodyStep++;
-
-            currentNotes.forEach((nIdx, i) => {
-                const freq = hoiHoaDangNotes[nIdx];
-                playDanTranhNote(freq, i * 0.28, 0.26);
-            });
-
-            // Cứ 2 nhịp thì điểm một tiếng Mõ hoặc Chuông ngân
-            if (melodyStep % 2 === 0) {
-                playMoWoodblock(0.1);
-            }
-            if (melodyStep % 4 === 0) {
-                playBellSound();
-            }
-
-            musicTimer = setTimeout(scheduleNextMeditationPhrase, 1800 + Math.random() * 400);
-        }
-
-        // Khởi động Drone âm hưởng Singing Bowl nền
-        function startMeditationDrone() {
-            if (!audioCtx) initAudio();
-            const now = audioCtx.currentTime;
-
-            droneOsc1 = audioCtx.createOscillator();
-            droneOsc2 = audioCtx.createOscillator();
-            droneGain = audioCtx.createGain();
-
-            droneOsc1.type = 'sine';
-            droneOsc1.frequency.setValueAtTime(108, now); // Tần số 108Hz thiền định linh thiêng
-            droneOsc2.type = 'triangle';
-            droneOsc2.frequency.setValueAtTime(216.4, now); // Hòa âm bát ngát
-
-            droneGain.gain.setValueAtTime(0, now);
-            droneGain.gain.linearRampToValueAtTime(0.12, now + 2.5);
-
-            droneOsc1.connect(droneGain);
-            droneOsc2.connect(droneGain);
-            droneGain.connect(audioCtx.destination);
-
-            droneOsc1.start(now);
-            droneOsc2.start(now);
-        }
-
-        function stopMeditationDrone() {
-            if (droneGain && audioCtx) {
-                const now = audioCtx.currentTime;
-                droneGain.gain.linearRampToValueAtTime(0.0001, now + 1.0);
-                setTimeout(() => {
-                    try { droneOsc1.stop(); droneOsc2.stop(); } catch(e){}
-                }, 1100);
-            }
-        }
-
         const audioPlaylist = [
             { title: "Khúc 1 • Sáo Trúc Thiền Tịnh (Bình An)", src: "/static/audio/hoi_hoa_dang_zen.mp3" },
             { title: "Khúc 2 • Sông Nước An Nhiên (Tâm Tĩnh)", src: "/static/audio/hoi_hoa_dang_zen_2.mp3" }
@@ -733,7 +582,6 @@
         }
 
         function toggleHoiHoaDangMusic() {
-            initAudio();
             const audioElem = document.getElementById('audioHoiHoaDang');
             isMusicPlaying = !isMusicPlaying;
 
@@ -748,16 +596,9 @@
                 btn.style.color = "#a7f3d0";
                 eq.classList.remove('eq-paused');
 
-                // Phát bản nhạc thu âm MP3 mộc mạc acoustic
+                // Phát bản nhạc thu âm MP3 mộc mạc acoustic thuần khiết
                 audioElem.volume = 0.85;
-                const p = audioElem.play();
-                if (p !== undefined) {
-                    p.catch(err => console.log("Cần tương tác người dùng để phát âm thanh:", err));
-                }
-
-                // Điểm xuyết hòa âm nền
-                startMeditationDrone();
-                scheduleNextMeditationPhrase();
+                audioElem.play().catch(err => console.log("Cần tương tác người dùng để phát âm thanh:", err));
 
                 showAnnouncement("🎶 NHẠC HỘI HOA ĐĂNG ĐANG PHÁT", audioPlaylist[currentTrackIdx].title);
             } else {
@@ -768,8 +609,6 @@
                 eq.classList.add('eq-paused');
 
                 audioElem.pause();
-                stopMeditationDrone();
-                if (musicTimer) clearTimeout(musicTimer);
             }
         }
 
