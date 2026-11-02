@@ -126,16 +126,16 @@
     <!-- ACTION CONTROLS & STACKED UTILITIES -->
     <!-- ACTION CONTROLS & STACKED UTILITIES -->
     <div class="header-actions">
-      <!-- Nút mở Dashboard Chi Phí -->
-      <a href="/cost-dashboard" class="btn btn-secondary" style="background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); color: #fbbf24; text-decoration: none;" title="Xem Dashboard Chi Phí & Đối Soát Vận Tải (11 chỉ số)">
-        <span>💰 Dashboard Chi Phí</span>
+      <!-- Nút mở Dashboard Vận Hành -->
+      <a href="/cost-dashboard" class="btn btn-secondary" style="background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); color: #fbbf24; text-decoration: none;" title="Xem Dashboard Vận Hành MT01 (11 chỉ số chi phí, lương & xe tải)">
+        <span>📊 Dashboard Vận Hành</span>
       </a>
 
       <div id="roleBadgeContainer" class="role-badge-container">
-        <button id="btnRoleStatus" class="btn btn-role-pill" title="Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị Viên">
+        <button id="btnRoleStatus" class="btn btn-role-pill" title="Chế độ Admin (Bấm để đăng nhập/mở khóa)">
           <span class="role-dot viewer" id="roleDot"></span>
-          <span id="roleLabel">NVXL (Chỉ Xem)</span>
-          <span id="roleActionHint" class="role-hint">🔑 Mở Khóa</span>
+          <span id="roleLabel">Admin</span>
+          <span id="roleActionHint" class="role-hint" style="display: none;"></span>
         </button>
       </div>
 
@@ -171,6 +171,13 @@
           <div class="tools-mobile-header">
             <span class="tools-mobile-title">📂 TIỆN ÍCH MT01</span>
             <button class="tools-mobile-close" id="btnCloseToolsMenu" type="button">✕</button>
+          </div>
+          <div class="stack-menu-item" id="stackItemBulkTrack">
+            <span class="item-icon">🔍</span>
+            <div class="item-info">
+              <div class="item-name">Tra Đơn GHN (Bulk Tracking)</div>
+              <div class="item-desc">Tra cứu nhanh mã đơn hàng nội bộ GHN (1 hoặc nhiều đơn)</div>
+            </div>
           </div>
           <div class="stack-menu-item" id="stackItemAnalytics">
             <span class="item-icon">📊</span>
@@ -226,12 +233,7 @@
         </div>
       </div>
 
-      <div class="divider-v"></div>
 
-      <button id="btnOpenBulkTrack" class="btn btn-secondary" title="Tra cứu mã đơn hàng nội bộ GHN (1 hoặc nhiều đơn cùng lúc)">
-        <span class="btn-icon">🔍</span>
-        <span>Tra Đơn GHN</span>
-      </button>
 
       <button id="btnOpenCopilot" class="btn btn-gradient" title="Mở Trợ Lý Đàm Thoại Thông Minh Tiger AI">
         <span class="btn-icon">💬</span>

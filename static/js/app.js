@@ -79,11 +79,14 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".admin-only-item").forEach(el => el.classList.remove("locked-hidden"));
       if (btnRoleStatus) {
         btnRoleStatus.className = "btn btn-role-pill admin-active";
-        btnRoleStatus.title = "Đang ở chế độ Sếp (Quản Trị Viên). Bấm để khóa lại chế độ NVXL";
+        btnRoleStatus.title = "Đang ở chế độ Admin. Bấm để khóa lại";
       }
       if (roleDot) roleDot.className = "role-dot admin";
-      if (roleLabel) roleLabel.textContent = "👑 Sếp (Quản Trị)";
-      if (roleActionHint) roleActionHint.textContent = "🔒 Khóa lại";
+      if (roleLabel) roleLabel.textContent = "👑 Admin";
+      if (roleActionHint) {
+        roleActionHint.textContent = "";
+        roleActionHint.style.display = "none";
+      }
       // Đảm bảo dù Sếp đăng nhập thì Bảng Chi Tiết Node vẫn giữ trạng thái xếp gọn mặc định cho đến khi Sếp chủ động bấm mở
       if (nodeInspector && (nodeInspector.classList.contains("hidden-sidebar") || nodeInspector.classList.contains("collapsed"))) {
         nodeInspector.classList.add("hidden-sidebar");
@@ -107,11 +110,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (btnRoleStatus) {
         btnRoleStatus.className = "btn btn-role-pill";
-        btnRoleStatus.title = "Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI). Bấm để mở quyền Quản Trị";
+        btnRoleStatus.title = "Chế độ Admin. Bấm để đăng nhập/mở khóa";
       }
       if (roleDot) roleDot.className = "role-dot viewer";
-      if (roleLabel) roleLabel.textContent = "NVXL (Chỉ Xem)";
-      if (roleActionHint) roleActionHint.textContent = "🔑 Mở Khóa";
+      if (roleLabel) roleLabel.textContent = "Admin";
+      if (roleActionHint) {
+        roleActionHint.textContent = "";
+        roleActionHint.style.display = "none";
+      }
     }
     setTimeout(() => { if (canvas && typeof canvas.renderEdges === "function") canvas.renderEdges(); }, 320);
   }
@@ -697,6 +703,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const stackItemBulkTrack = document.getElementById("stackItemBulkTrack");
+  if (stackItemBulkTrack) {
+    stackItemBulkTrack.addEventListener("click", () => {
+      closeToolsMenu();
+      if (modalBulkTrack) modalBulkTrack.classList.add("open");
+      playCyberSound("start");
+      if (bulkTrackInput) bulkTrackInput.focus();
+    });
+  }
+
   if (stackItemAnalytics) {
     stackItemAnalytics.addEventListener("click", () => {
       closeToolsMenu();
@@ -1060,12 +1076,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnRoleStatus) {
     btnRoleStatus.addEventListener("click", () => {
       if (isUserAdmin) {
-        if (confirm("Sếp có muốn khóa lại Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI) không?")) {
+        if (confirm("Anh có muốn khóa lại Chế độ Admin không?")) {
           localStorage.removeItem("tiger_admin_pin");
           currentAdminPin = "";
           applyRoleUI(false);
           playCyberSound("click");
-          addLog("info", "🔒 Đã khóa lại Chế độ NVXL (Chỉ Xem & Hỏi Tiger AI).");
+          addLog("info", "🔒 Đã khóa lại Chế độ Admin.");
         }
       } else {
         if (modalAdminAuth) {
