@@ -22,7 +22,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Cấu hình Google Sheet
 SPREADSHEET_ID = "17ntSJzL8IS180hiJ0jBLWctnKF6iZVZ64sOE5JB1mwg"
 SHEET_NAME = "GHNa"
-SHEET_VIEW_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit#gid=0"
+SHEET_GID = "1819305983"
+SHEET_VIEW_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit#gid={SHEET_GID}"
 SHEET_CSV_URL = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet={SHEET_NAME}"
 
 # Cấu hình Telegram (Chỉ gửi DUY NHẤT về room 'The 5 Guardians' theo chỉ đạo của anh Lộc)
@@ -203,7 +204,8 @@ def format_alert_message(new_rows, updated_rows):
             )
 
     lines.append("")
-    lines.append(f"🔗 <a href='{SHEET_VIEW_URL}'>Xem trực tiếp Google Sheet GHNa ↗</a>")
+    lines.append("📊 <b>Link vào ngay tab GHNa:</b>")
+    lines.append(f"👉 <a href='{SHEET_VIEW_URL}'>{SHEET_VIEW_URL}</a>")
     lines.append("<i>Tiger AI tự động rà soát 4 lần/ngày: 08:00 • 12:00 • 16:00 • 20:00</i>")
 
     return "\n".join(lines)
@@ -268,7 +270,9 @@ def run_check(force_send=False, silent_if_empty=True):
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"⏰ <b>Thời điểm kiểm tra:</b> <code>{now_str}</code>\n"
                 f"📋 <b>Hiện trạng:</b> Tab <b>GHNa</b> hiện có <b>{len(current_data_rows)} dòng dữ liệu</b>.\n"
-                "✅ <i>Chưa phát sinh dữ liệu mới hoặc ghi chú vi phạm mới từ bưu cục. Tiger AI sẽ tiếp tục rà soát ca kế tiếp!</i> 🍻"
+                "✅ <i>Chưa phát sinh dữ liệu mới hoặc ghi chú vi phạm mới từ bưu cục. Tiger AI sẽ tiếp tục rà soát ca kế tiếp!</i> 🍻\n\n"
+                "📊 <b>Link vào ngay tab GHNa:</b>\n"
+                f"👉 <a href='{SHEET_VIEW_URL}'>{SHEET_VIEW_URL}</a>"
             )
         print("[GHNa Monitor] Gửi thông báo đến Telegram...")
         telegram_res = send_telegram_alert(msg)
