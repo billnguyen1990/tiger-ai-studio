@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Đêm Hoa Đăng & Phóng Sanh Sông Hậu • Cần Thơ | Tiger AI</title>
+    <title>Đêm Hoa Đăng & Phóng Sanh Sông Hậu 3D • Cần Thơ | Tiger AI</title>
     <link rel="icon" href="/static/img/tiger_ai_avatar.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #070b14;
+            --bg-dark: #050914;
             --gold-glow: #ffd166;
             --lotus-pink: #ff758f;
-            --lotus-glow: rgba(255, 117, 143, 0.4);
-            --water-deep: #0a192f;
-            --water-surface: #112240;
-            --card-glass: rgba(15, 23, 42, 0.75);
-            --card-border: rgba(255, 209, 102, 0.25);
+            --lotus-glow: rgba(255, 117, 143, 0.45);
+            --water-deep: #06101e;
+            --water-mid: #0b1a30;
+            --card-glass: rgba(13, 21, 38, 0.78);
+            --card-border: rgba(255, 209, 102, 0.28);
         }
 
         * {
@@ -35,7 +35,7 @@
             position: relative;
         }
 
-        /* Canvas toàn màn hình */
+        /* Canvas toàn màn hình hiển thị thế giới 3D */
         #nightCanvas {
             position: absolute;
             top: 0;
@@ -76,8 +76,8 @@
             border: 1px solid var(--card-border);
             padding: 10px 18px;
             border-radius: 999px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
 
         .brand-box img {
@@ -85,19 +85,21 @@
             height: 38px;
             border-radius: 50%;
             border: 2px solid #ffd166;
+            box-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
         }
 
         .brand-title h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: #ffd166;
             margin: 0;
             letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
 
         .brand-title p {
             font-size: 0.72rem;
-            color: #94a3b8;
+            color: #cbd5e1;
             margin: 0;
         }
 
@@ -105,11 +107,12 @@
             display: flex;
             gap: 15px;
             background: var(--card-glass);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.12);
             padding: 10px 20px;
             border-radius: 999px;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             font-size: 0.85rem;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.4);
         }
 
         .stat-item {
@@ -123,32 +126,56 @@
             font-weight: 800;
         }
 
+        /* Nút quay lại dashboard */
+        .back-nav {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        .back-nav:hover {
+            color: #fff;
+            border-color: #ffd166;
+            background: rgba(15, 23, 42, 0.95);
+            transform: translateY(-1px);
+        }
+
         /* Cột tương tác TikTok Live giả lập (Góc trái) */
         .tiktok-live-chat {
             position: absolute;
-            bottom: 120px;
+            bottom: 125px;
             left: 20px;
-            width: 320px;
+            width: 330px;
             max-height: 360px;
             overflow: hidden;
             pointer-events: auto;
-            mask-image: linear-gradient(to top, black 80%, transparent 100%);
+            mask-image: linear-gradient(to top, black 85%, transparent 100%);
             display: flex;
             flex-direction: column-reverse;
             gap: 8px;
         }
 
         .chat-bubble {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
             padding: 8px 12px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             font-size: 0.8rem;
             animation: slideInChat 0.35s ease-out;
             display: flex;
             align-items: flex-start;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
 
         @keyframes slideInChat {
@@ -157,17 +184,18 @@
         }
 
         .chat-avatar {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: #f59e0b;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
             color: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
         }
 
         .chat-content .user-name {
@@ -183,12 +211,14 @@
             padding: 2px 6px;
             border-radius: 4px;
             margin-left: 4px;
+            font-weight: 600;
         }
 
         .chat-content .wish-text {
             color: #e2e8f0;
-            margin-top: 2px;
+            margin-top: 3px;
             font-style: italic;
+            line-height: 1.3;
         }
 
         /* Bảng Vàng Công Đức (Góc phải) */
@@ -196,19 +226,19 @@
             position: absolute;
             top: 80px;
             right: 20px;
-            width: 280px;
+            width: 290px;
             background: var(--card-glass);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 16px;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             pointer-events: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.5);
         }
 
         .honors-board h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             color: #ffd166;
             display: flex;
             align-items: center;
@@ -229,9 +259,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 8px;
-            background: rgba(255,255,255,0.03);
+            padding: 6px 10px;
+            background: rgba(255,255,255,0.04);
             border-radius: 8px;
+            border-left: 3px solid #ffd166;
         }
 
         .honor-row span {
@@ -247,21 +278,21 @@
             pointer-events: auto;
             margin: 0 auto;
             width: 100%;
-            max-width: 820px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(255, 209, 102, 0.35);
-            border-radius: 24px;
-            padding: 14px 20px;
-            backdrop-filter: blur(16px);
+            max-width: 860px;
+            background: rgba(13, 21, 38, 0.88);
+            border: 1px solid rgba(255, 209, 102, 0.4);
+            border-radius: 26px;
+            padding: 16px 24px;
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 24px rgba(255, 209, 102, 0.15);
+            gap: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 30px rgba(255, 209, 102, 0.2);
         }
 
         .inputs-row {
             display: flex;
-            gap: 12px;
+            gap: 14px;
         }
 
         .input-group {
@@ -271,33 +302,33 @@
 
         .input-group input {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 18px;
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(255,255,255,0.18);
             border-radius: 14px;
             color: #fff;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.25s;
         }
 
         .input-group input:focus {
             border-color: #ffd166;
             background: rgba(30, 41, 59, 0.95);
-            box-shadow: 0 0 12px rgba(255, 209, 102, 0.3);
+            box-shadow: 0 0 14px rgba(255, 209, 102, 0.4);
         }
 
         .buttons-row {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
 
         .btn-action {
             flex: 1;
-            padding: 12px 18px;
+            padding: 13px 20px;
             border-radius: 14px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             cursor: pointer;
             border: none;
             display: flex;
@@ -316,78 +347,54 @@
         .btn-hoa-dang {
             background: linear-gradient(135deg, #ff758f 0%, #ff4d6d 50%, #c9184a 100%);
             color: #fff;
-            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+            box-shadow: 0 8px 24px rgba(255, 77, 109, 0.5);
         }
 
         .btn-hoa-dang:hover {
-            box-shadow: 0 8px 25px rgba(255, 77, 109, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.7);
             transform: translateY(-2px);
         }
 
         .btn-phong-sanh {
             background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
             color: #fff;
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35);
+            box-shadow: 0 8px 24px rgba(56, 189, 248, 0.45);
         }
 
         .btn-phong-sanh:hover {
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.55);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.65);
             transform: translateY(-2px);
         }
 
         .btn-chuong {
-            flex: 0 0 140px;
+            flex: 0 0 150px;
             background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
             color: #1e1b4b;
-            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.35);
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
         }
 
         .btn-chuong:hover {
-            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.55);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.6);
             transform: translateY(-2px);
         }
 
-        /* Nút quay lại dashboard */
-        .back-nav {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            pointer-events: auto;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #94a3b8;
-            padding: 8px 14px;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .back-nav:hover {
-            color: #fff;
-            border-color: #ffd166;
-            background: rgba(15, 23, 42, 0.9);
-        }
-
-        /* Thông điệp vừa phóng sanh / thả hoa đăng xuất hiện giữa màn hình */
+        /* Banner thông báo vạn sự bình an */
         .floating-announcement {
             position: absolute;
-            top: 30%;
+            top: 25%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(15, 23, 42, 0.85);
+            transform: translate(-50%, -50%) scale(0.85);
+            background: rgba(13, 21, 38, 0.92);
             border: 2px solid #ffd166;
-            padding: 16px 28px;
-            border-radius: 20px;
+            padding: 18px 32px;
+            border-radius: 24px;
             text-align: center;
             pointer-events: none;
             opacity: 0;
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 50;
-            box-shadow: 0 0 40px rgba(255, 209, 102, 0.4);
+            box-shadow: 0 0 50px rgba(255, 209, 102, 0.5);
+            backdrop-filter: blur(16px);
         }
 
         .floating-announcement.show {
@@ -398,18 +405,18 @@
         .floating-announcement h2 {
             font-family: 'Playfair Display', serif;
             color: #ffd166;
-            font-size: 1.4rem;
+            font-size: 1.45rem;
             margin-bottom: 4px;
         }
 
         .floating-announcement p {
             color: #e2e8f0;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
         }
 
         @media (max-width: 768px) {
             .honors-board { display: none; }
-            .tiktok-live-chat { width: 240px; bottom: 170px; }
+            .tiktok-live-chat { width: 250px; bottom: 175px; }
             .bottom-action-dock { padding: 12px; }
             .inputs-row { flex-direction: column; gap: 8px; }
             .buttons-row { flex-wrap: wrap; }
@@ -420,7 +427,7 @@
 </head>
 <body>
 
-    <!-- Canvas mô phỏng dòng sông Hậu về đêm, hoa đăng và cá quẫy đuôi -->
+    <!-- Canvas mô phỏng dòng sông Hậu 3D, hoa đăng ngọc sen và cá chép bơi lội -->
     <canvas id="nightCanvas"></canvas>
 
     <!-- HUD Overlay -->
@@ -430,27 +437,30 @@
         <div class="header-bar">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <a href="/" class="back-nav">← Về Dashboard</a>
-                <div class="brand-box" style="margin-left: 140px;">
+                <div class="brand-box">
                     <img src="/static/img/tiger_ai_avatar.png" alt="Tiger AI">
                     <div class="brand-title">
-                        <h1>ĐÊM HOA ĐĂNG & PHÓNG SANH CẦN THƠ</h1>
-                        <p>Trải Nghiệm Văn Hóa Sông Nước Miền Tây • Tiger AI Live</p>
+                        <h1>ĐÊM HOA ĐĂNG & PHÓNG SANH 3D</h1>
+                        <p>Sông Nước Cần Thơ • Khí Tiết Thanh Tịnh • Tiger AI Live</p>
                     </div>
                 </div>
             </div>
 
-            <div class="stats-badge">
+                        <div class="stats-badge">
+                <button onclick="open3DGallery()" style="background: rgba(255,209,102,0.18); border: 1px solid #ffd166; color: #ffd166; padding: 4px 12px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;">
+                    <span>✨</span> CHI TIẾT 3D MASTER
+                </button>
                 <div class="stat-item">
-                    <span>🪷 Hoa đăng:</span>
-                    <strong id="counterLanterns">1,286</strong>
+                    <span>🪷 Hoa đăng 3D:</span>
+                    <strong id="counterLanterns">1,890</strong>
                 </div>
                 <div class="stat-item">
-                    <span>🐟 Cá phóng sinh:</span>
-                    <strong id="counterFishes">3,450</strong>
+                    <span>🐟 Cá Koi phóng sanh:</span>
+                    <strong id="counterFishes">5,240</strong>
                 </div>
                 <div class="stat-item">
                     <span>👥 Đang xem live:</span>
-                    <strong style="color: #4ade80;">14.2K</strong>
+                    <strong style="color: #4ade80;">18.6K</strong>
                 </div>
             </div>
         </div>
@@ -462,23 +472,23 @@
 
         <!-- Bảng Vàng Hồi Hướng Cầu Phúc -->
         <div class="honors-board">
-            <h3>📿 BẢNG VÀNG CẦU AN</h3>
+            <h3>📿 BẢNG VÀNG CÔNG ĐỨC</h3>
             <div class="honors-list" id="honorsList">
                 <div class="honor-row">
                     <span>Anh Lộc (MT01)</span>
-                    <strong>99 Hoa Đăng</strong>
+                    <strong>99 Hoa Đăng Vàng</strong>
+                </div>
+                <div class="honor-row">
+                    <span>The 5 Guardians</span>
+                    <strong>108 Cá Koi May Mắn</strong>
                 </div>
                 <div class="honor-row">
                     <span>Bưu cục Cái Răng</span>
-                    <strong>50 Cá Vàng</strong>
+                    <strong>50 Cá Chép Vàng</strong>
                 </div>
                 <div class="honor-row">
                     <span>Đội Xe Tải MT</span>
-                    <strong>68 Hoa Đăng</strong>
-                </div>
-                <div class="honor-row">
-                    <span>Team The 5 Guardians</span>
-                    <strong>108 Cá Chép</strong>
+                    <strong>68 Hoa Đăng Hồng</strong>
                 </div>
             </div>
         </div>
@@ -486,19 +496,19 @@
         <!-- Thanh điều khiển thả hoa đăng & phóng sinh -->
         <div class="bottom-action-dock">
             <div class="inputs-row">
-                <div class="input-group" style="flex: 0 0 240px;">
-                    <input type="text" id="inputName" placeholder="Tên người cầu an (VD: Anh Lộc...)" value="Anh Lộc (Quản lý MT01)">
+                <div class="input-group" style="flex: 0 0 250px;">
+                    <input type="text" id="inputName" placeholder="Tên người cầu an..." value="Anh Lộc (Quản lý MT01)">
                 </div>
                 <div class="input-group">
-                    <input type="text" id="inputWish" placeholder="Lời ước nguyện (VD: Gia đạo bình an, phát tài phát lộc, vạn sự hanh thông...)" value="Cầu tập thể Miền Tây 01 vạn dặm bình an, đạt đỉnh KPI!">
+                    <input type="text" id="inputWish" placeholder="Lời chúc nguyện..." value="Cầu gia đạo bình an, tập thể Miền Tây 01 vạn dặm hanh thông!">
                 </div>
             </div>
             <div class="buttons-row">
                 <button class="btn-action btn-hoa-dang" onclick="triggerReleaseLantern()">
-                    <span>🪷</span> THẢ HOA ĐĂNG
+                    <span>🪷</span> THẢ HOA ĐĂNG 3D
                 </button>
                 <button class="btn-action btn-phong-sanh" onclick="triggerReleaseFish()">
-                    <span>🐟</span> PHÓNG SANH CÁ
+                    <span>🐟</span> PHÓNG SANH CÁ KOI 3D
                 </button>
                 <button class="btn-action btn-chuong" onclick="ringTempleBell()">
                     <span>🔔</span> THỈNH CHUÔNG
@@ -516,77 +526,60 @@
 
     <script>
         // ========================================================
-        // 1. ÂM THANH CHUÔNG VÀ NƯỚC RÓC RÁCH (WEB AUDIO API)
+        // 1. ÂM THANH THIỀN: CHUÔNG ĐỒNG & NƯỚC RÓC RÁCH (WEB AUDIO API)
         // ========================================================
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new AudioContext();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // Âm thanh tiếng chuông đồng thanh tịnh (Temple Bell Chime)
         function playBellSound() {
             initAudio();
             const now = audioCtx.currentTime;
-            
-            // Tần số chuông thiền
-            const freqs = [350, 700, 1050, 1400];
+            const freqs = [350, 700, 1050, 1400, 2100];
             freqs.forEach((f, idx) => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 osc.type = idx === 0 ? 'sine' : 'triangle';
                 osc.frequency.setValueAtTime(f, now);
-                
-                gain.gain.setValueAtTime(0.3 / (idx + 1), now);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
-                
+                gain.gain.setValueAtTime(0.35 / (idx + 1), now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.start(now);
-                osc.stop(now + 3.6);
+                osc.stop(now + 4.0);
             });
         }
 
-        // Âm thanh tiếng nước róc rách / quẫy đuôi cá
         function playSplashSound() {
             initAudio();
             const now = audioCtx.currentTime;
-            const bufferSize = audioCtx.sampleRate * 0.4;
+            const bufferSize = audioCtx.sampleRate * 0.45;
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
             for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+                data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
             }
-
             const noise = audioCtx.createBufferSource();
             noise.buffer = buffer;
-
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(800, now);
-            filter.frequency.exponentialRampToValueAtTime(200, now + 0.35);
-
+            filter.frequency.setValueAtTime(900, now);
+            filter.frequency.exponentialRampToValueAtTime(180, now + 0.4);
             const gain = audioCtx.createGain();
-            gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-
+            gain.gain.setValueAtTime(0.45, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(audioCtx.destination);
-
             noise.start(now);
         }
 
         // ========================================================
-        // 2. CANVAS ENGINE: ĐÊM SÔNG HẬU, HOA ĐĂNG VÀ CÁ
+        // 2. CANVAS ENGINE: THẾ GIỚI 3D SÔNG HẬU, HOA ĐĂNG & CÁ KOI
         // ========================================================
         const canvas = document.getElementById('nightCanvas');
         const ctx = canvas.getContext('2d');
@@ -604,150 +597,62 @@
         let stars = [];
         function initStars() {
             stars = [];
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < 90; i++) {
                 stars.push({
                     x: Math.random() * width,
-                    y: Math.random() * (height * 0.45),
-                    radius: Math.random() * 1.5,
+                    y: Math.random() * (height * 0.42),
+                    radius: Math.random() * 1.6 + 0.4,
                     alpha: Math.random() * 0.8 + 0.2,
-                    speed: Math.random() * 0.02 + 0.005
+                    twinkleSpeed: Math.random() * 0.03 + 0.01
                 });
             }
         }
         initStars();
 
-        // Danh sách hoa đăng và cá
         const lanterns = [];
         const fishes = [];
         const ripples = [];
+        const embers = []; // Hạt than hồng bay lên từ ngọn nến
 
-        // Class Hoa Đăng (Lotus Lantern)
-        class Lantern {
+        // ========================================================
+        // MODEL 3D HOA ĐĂNG ĐA TẦNG CÁNH SEN (3D VOLUMETRIC LOTUS)
+        // ========================================================
+        class LotusLantern3D {
             constructor(x, y, name, wish, isGolden = false) {
-                this.x = x || (width * 0.2 + Math.random() * width * 0.6);
-                this.y = y || (height * 0.75 + Math.random() * 60);
-                this.targetY = height * 0.45 + Math.random() * (height * 0.4);
+                this.x = x || (width * 0.15 + Math.random() * width * 0.7);
+                this.y = y || (height * 0.62 + Math.random() * 70);
                 this.name = name || "Phật tử";
                 this.wish = wish || "Vạn sự bình an";
-                this.speedX = (Math.random() - 0.3) * 0.6; // Trôi nhẹ về bên phải theo dòng nước
-                this.speedY = -0.35 - Math.random() * 0.3; // Trôi dần ra xa
-                this.size = 28 + Math.random() * 10;
-                this.flicker = Math.random() * Math.PI;
+                this.speedX = (Math.random() - 0.25) * 0.45; // Trôi nhẹ xuôi dòng
+                this.speedY = -0.35 - Math.random() * 0.25; // Trôi dần vào xa xăm
+                this.size = 52 + Math.random() * 14;
+                this.flicker = Math.random() * Math.PI * 2;
                 this.isGolden = isGolden;
                 this.alpha = 1;
-                this.scale = 1;
+                this.bobPhase = Math.random() * Math.PI * 2; // Nhấp nhô sóng nước
             }
 
             update() {
-                this.x += this.speedX + Math.sin(this.y * 0.02) * 0.2;
+                this.bobPhase += 0.04;
+                this.x += this.speedX + Math.sin(this.bobPhase) * 0.3;
                 this.y += this.speedY;
-                this.flicker += 0.08;
-                // Khi trôi ra xa, nhỏ dần và mờ dần tạo chiều sâu 3D
-                this.scale = Math.max(0.35, (this.y - (height * 0.4)) / (height * 0.5));
+                this.flicker += 0.12;
+
+                // Tỷ lệ nhỏ dần tạo phối cảnh 3D xa gần
+                this.scale = Math.max(0.32, (this.y - (height * 0.38)) / (height * 0.5));
                 if (this.y < height * 0.42) {
-                    this.alpha -= 0.004;
-                }
-            }
-
-            draw() {
-                if (this.alpha <= 0) return;
-                ctx.save();
-                ctx.globalAlpha = Math.max(0, this.alpha);
-                ctx.translate(this.x, this.y);
-                ctx.scale(this.scale, this.scale);
-
-                const glowSize = 30 + Math.sin(this.flicker) * 5;
-                
-                // Vệt sáng phản chiếu xuống mặt nước
-                const waterReflect = ctx.createRadialGradient(0, 10, 2, 0, 15, glowSize * 1.5);
-                waterReflect.addColorStop(0, this.isGolden ? 'rgba(255, 215, 0, 0.45)' : 'rgba(255, 117, 143, 0.45)');
-                waterReflect.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = waterReflect;
-                ctx.beginPath();
-                ctx.ellipse(0, 12, glowSize * 1.4, glowSize * 0.6, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Cánh sen hoa đăng
-                const petalColor = this.isGolden ? '#ffd166' : '#ff758f';
-                const petalEdge = this.isGolden ? '#ffaa00' : '#c9184a';
-
-                for (let i = 0; i < 8; i++) {
-                    ctx.save();
-                    ctx.rotate((i * Math.PI) / 4);
-                    ctx.fillStyle = petalColor;
-                    ctx.strokeStyle = petalEdge;
-                    ctx.lineWidth = 1.5;
-                    ctx.beginPath();
-                    ctx.ellipse(0, -10, 7, 14, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
-                    ctx.restore();
+                    this.alpha -= 0.005;
                 }
 
-                // Đài sen ở giữa
-                ctx.fillStyle = '#ffb703';
-                ctx.beginPath();
-                ctx.arc(0, 0, 8, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Ngọn nến phát sáng
-                const flameY = -6 + Math.sin(this.flicker * 2) * 2;
-                const flameGrad = ctx.createRadialGradient(0, flameY, 1, 0, flameY, 12);
-                flameGrad.addColorStop(0, '#ffffff');
-                flameGrad.addColorStop(0.3, '#ffea00');
-                flameGrad.addColorStop(0.8, '#ff5400');
-                flameGrad.addColorStop(1, 'rgba(255,84,0,0)');
-                ctx.fillStyle = flameGrad;
-                ctx.beginPath();
-                ctx.arc(0, flameY, 10, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Tên người thả hoa đăng gắn trên ngọn đèn
-                if (this.scale > 0.5) {
-                    ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillStyle = '#fff';
-                    ctx.shadowColor = 'rgba(0,0,0,0.9)';
-                    ctx.shadowBlur = 6;
-                    ctx.fillText(this.name, 0, -22);
-                    ctx.shadowBlur = 0;
-                }
-
-                ctx.restore();
-            }
-        }
-
-        // Class Cá Phóng Sanh (Fish)
-        class Fish {
-            constructor(x, y, name, fishType = 'carp') {
-                this.x = x || (width * 0.3 + Math.random() * width * 0.4);
-                this.y = y || (height * 0.78 + Math.random() * 40);
-                this.name = name || "Người phóng sanh";
-                this.fishType = fishType; // 'carp' (chép vàng), 'koi' (chép đỏ), 'catfish' (cá tra/basa sông Mekong)
-                this.angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.8; // Hướng bơi ra xa
-                this.speed = 2.2 + Math.random() * 1.5;
-                this.wiggle = Math.random() * Math.PI;
-                this.wiggleSpeed = 0.25;
-                this.size = 20 + Math.random() * 8;
-                this.alpha = 1;
-                this.depth = 1; // Lặn dần
-            }
-
-            update() {
-                this.x += Math.cos(this.angle) * this.speed;
-                this.y += Math.sin(this.angle) * this.speed;
-                this.wiggle += this.wiggleSpeed;
-                this.depth += 0.015; // Lặn sâu dần xuống nước
-                this.alpha -= 0.006;
-
-                // Thỉnh thoảng tạo bọt nước gợn sóng
-                if (Math.random() < 0.2) {
-                    ripples.push({
-                        x: this.x,
-                        y: this.y,
-                        radius: 4,
-                        maxRadius: 25,
-                        alpha: 0.6
+                // Nhả tàn nến bay lên trời
+                if (Math.random() < 0.25 && this.alpha > 0.3) {
+                    embers.push({
+                        x: this.x + (Math.random() - 0.5) * 6,
+                        y: this.y - 15 * this.scale,
+                        speedY: -0.8 - Math.random() * 0.8,
+                        speedX: (Math.random() - 0.5) * 0.5,
+                        size: (Math.random() * 1.5 + 1) * this.scale,
+                        alpha: 0.9
                     });
                 }
             }
@@ -756,42 +661,391 @@
                 if (this.alpha <= 0) return;
                 ctx.save();
                 ctx.globalAlpha = Math.max(0, this.alpha);
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle + Math.PI / 2);
+                const bobOffset = Math.sin(this.bobPhase) * 3;
+                ctx.translate(this.x, this.y + bobOffset);
+                ctx.scale(this.scale, this.scale);
 
-                const tailWiggle = Math.sin(this.wiggle) * 6;
+                const glowSize = 35 + Math.sin(this.flicker) * 6;
 
-                // Thân cá
-                const fishColor = this.fishType === 'carp' ? '#fbbf24' : (this.fishType === 'koi' ? '#f43f5e' : '#38bdf8');
-                ctx.fillStyle = fishColor;
+                // 1. Vệt sáng phản chiếu lung linh dưới nước
+                const waterGlow = ctx.createRadialGradient(0, 15, 3, 0, 18, glowSize * 2.2);
+                waterGlow.addColorStop(0, this.isGolden ? 'rgba(255, 215, 0, 0.55)' : 'rgba(255, 117, 143, 0.55)');
+                waterGlow.addColorStop(0.5, this.isGolden ? 'rgba(255, 170, 0, 0.25)' : 'rgba(255, 77, 109, 0.25)');
+                waterGlow.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = waterGlow;
                 ctx.beginPath();
-                ctx.ellipse(0, 0, this.size * 0.3, this.size * 0.7, 0, 0, Math.PI * 2);
+                ctx.ellipse(0, 18, glowSize * 2.2, glowSize * 0.8, 0, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Vây đuôi quẫy
-                ctx.fillStyle = fishColor;
+                // 2. Tầng lá sen xanh ngọc làm đế đỡ (Outer Lotus Base)
+                ctx.fillStyle = '#064e3b';
+                ctx.strokeStyle = '#059669';
+                ctx.lineWidth = 1.2;
+                for (let i = 0; i < 6; i++) {
+                    ctx.save();
+                    ctx.rotate((i * Math.PI) / 3);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 18, 12, 18, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
+                // 3. Tầng cánh sen bên ngoài nở rộng (Tier 1 Outer Petals - 8 cánh)
+                const cBase = this.isGolden ? '#d97706' : '#9f1239';
+                const cMid = this.isGolden ? '#fbbf24' : '#f43f5e';
+                const cTip = this.isGolden ? '#fef08a' : '#ffe4e6';
+
+                for (let i = 0; i < 10; i++) {
+                    ctx.save();
+                    ctx.rotate((i * Math.PI * 2) / 10);
+                    const grad = ctx.createLinearGradient(0, 0, 0, -26);
+                    grad.addColorStop(0, cBase);
+                    grad.addColorStop(0.5, cMid);
+                    grad.addColorStop(1, cTip);
+                    ctx.fillStyle = grad;
+                    ctx.strokeStyle = this.isGolden ? '#fef08a' : '#fff';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(-14, -10, -12, -24, 0, -28);
+                    ctx.bezierCurveTo(12, -24, 14, -10, 0, 0);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
+                // 4. Tầng cánh sen giữa dựng đứng (Tier 2 Inner Petals - 8 cánh)
+                for (let i = 0; i < 8; i++) {
+                    ctx.save();
+                    ctx.rotate(((i + 0.5) * Math.PI * 2) / 8);
+                    const grad2 = ctx.createLinearGradient(0, 0, 0, -20);
+                    grad2.addColorStop(0, this.isGolden ? '#b45309' : '#be123c');
+                    grad2.addColorStop(0.6, this.isGolden ? '#f59e0b' : '#fb7185');
+                    grad2.addColorStop(1, '#ffffff');
+                    ctx.fillStyle = grad2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(-10, -8, -8, -18, 0, -22);
+                    ctx.bezierCurveTo(8, -18, 10, -8, 0, 0);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // 5. Cây nến trụ tròn 3D & Tim nến (Beeswax Candle Cylinder)
+                const candleGrad = ctx.createLinearGradient(-6, 0, 6, 0);
+                candleGrad.addColorStop(0, '#fef08a');
+                candleGrad.addColorStop(0.5, '#ffffff');
+                candleGrad.addColorStop(1, '#fde047');
+                ctx.fillStyle = candleGrad;
                 ctx.beginPath();
-                ctx.moveTo(0, this.size * 0.6);
-                ctx.lineTo(-8 + tailWiggle, this.size * 1.2);
-                ctx.lineTo(8 + tailWiggle, this.size * 1.2);
+                ctx.ellipse(0, 2, 8, 4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillRect(-8, -10, 16, 12);
+                ctx.beginPath();
+                ctx.ellipse(0, -10, 8, 4, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Bấc nến
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -10);
+                ctx.lineTo(0, -16);
+                ctx.stroke();
+
+                // 6. Ngọn lửa bập bùng sống động (3D Volumetric Flame)
+                const flameHeight = 16 + Math.sin(this.flicker * 3) * 3;
+                const flameTilt = Math.sin(this.flicker * 2) * 2;
+                
+                // Quầng sáng ngoài
+                const flameAura = ctx.createRadialGradient(flameTilt, -20, 2, flameTilt, -20, 18);
+                flameAura.addColorStop(0, 'rgba(255, 234, 0, 0.9)');
+                flameAura.addColorStop(0.4, 'rgba(255, 84, 0, 0.6)');
+                flameAura.addColorStop(1, 'rgba(255, 0, 0, 0)');
+                ctx.fillStyle = flameAura;
+                ctx.beginPath();
+                ctx.arc(flameTilt, -20, 18, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Ngọn lửa hình giọt nước
+                ctx.fillStyle = '#ff7b00';
+                ctx.beginPath();
+                ctx.moveTo(0, -14);
+                ctx.quadraticCurveTo(-6, -20, flameTilt, -14 - flameHeight);
+                ctx.quadraticCurveTo(6, -20, 0, -14);
+                ctx.fill();
+
+                // Lõi trắng sáng
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(0, -15);
+                ctx.quadraticCurveTo(-3, -20, flameTilt * 0.5, -14 - flameHeight * 0.6);
+                ctx.quadraticCurveTo(3, -20, 0, -15);
+                ctx.fill();
+
+                // 7. Nhãn tên người thả hoa đăng gắn nổi 3D
+                if (this.scale > 0.45) {
+                    ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowColor = 'rgba(0,0,0,0.95)';
+                    ctx.shadowBlur = 8;
+                    ctx.fillText(this.name, 0, -36);
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // ========================================================
+        // MODEL 3D CÁ KOI UỐN LƯỢN ĐA ĐỐT XƯƠNG (ARTICULATED 3D KOI)
+        // ========================================================
+        class ArticulatedKoi3D {
+            constructor(x, y, name, breed = 'kohaku') {
+                this.x = x || (width * 0.2 + Math.random() * width * 0.6);
+                this.y = y || (height * 0.65 + Math.random() * 60);
+                this.name = name || "Người phóng sanh";
+                this.breed = breed; // 'kohaku' (đỏ-trắng), 'ogon' (vàng kim), 'sanke' (tam thể)
+                this.angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+                this.targetAngle = this.angle;
+                this.speed = 2.4 + Math.random() * 1.2;
+                this.size = 46 + Math.random() * 14; // Kích thước cá
+                this.alpha = 1;
+                this.depth = 1; // Độ sâu lặn
+                this.swimCycle = Math.random() * Math.PI * 2;
+                this.swimFreq = 0.18 + Math.random() * 0.05;
+
+                // Xương sống 10 đốt (10 Spine Segments for Inverse Kinematics)
+                this.numSegments = 10;
+                this.spine = [];
+                for (let i = 0; i < this.numSegments; i++) {
+                    this.spine.push({
+                        x: this.x - Math.cos(this.angle) * i * (this.size * 0.18),
+                        y: this.y - Math.sin(this.angle) * i * (this.size * 0.18),
+                        angle: this.angle
+                    });
+                }
+            }
+
+            update() {
+                this.swimCycle += this.swimFreq;
+
+                // Đổi hướng bơi tự nhiên lượn sóng
+                if (Math.random() < 0.03) {
+                    this.targetAngle += (Math.random() - 0.5) * 0.8;
+                }
+                this.angle += (this.targetAngle - this.angle) * 0.05;
+
+                // Di chuyển đầu cá
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.alpha -= 0.005; // Lặn dần vào bóng nước sâu
+                this.depth += 0.01;
+
+                // Cập nhật đốt xương đầu tiên
+                this.spine[0].x = this.x;
+                this.spine[0].y = this.y;
+                this.spine[0].angle = this.angle;
+
+                // Đuôi quẫy uốn lượn lan truyền dọc sống lưng (Sinusoidal Wave Spine Propagation)
+                const segDist = this.size * 0.16;
+                for (let i = 1; i < this.numSegments; i++) {
+                    const waveOffset = Math.sin(this.swimCycle - i * 0.5) * (i * 1.2);
+                    const prev = this.spine[i - 1];
+                    const dx = this.spine[i].x - prev.x;
+                    const dy = this.spine[i].y - prev.y;
+                    let segAngle = Math.atan2(dy, dx);
+                    
+                    this.spine[i].x = prev.x + Math.cos(segAngle) * segDist + Math.cos(segAngle + Math.PI / 2) * waveOffset * 0.15;
+                    this.spine[i].y = prev.y + Math.sin(segAngle) * segDist + Math.sin(segAngle + Math.PI / 2) * waveOffset * 0.15;
+                    this.spine[i].angle = segAngle;
+                }
+
+                // Gợn sóng nước lăn tăn sau đuôi cá
+                if (Math.random() < 0.18) {
+                    const tail = this.spine[this.numSegments - 1];
+                    ripples.push({
+                        x: tail.x,
+                        y: tail.y,
+                        radius: 5,
+                        maxRadius: 28,
+                        alpha: 0.55
+                    });
+                }
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+
+                // Độ rộng thân cá dọc 10 đốt (Body Profile)
+                const widths = [0.8, 1.0, 1.15, 1.2, 1.1, 0.95, 0.75, 0.55, 0.38, 0.22];
+
+                // Bảng màu giống cá Koi
+                let colorBase, colorPatch;
+                if (this.breed === 'kohaku') {
+                    colorBase = '#f8fafc'; // Trắng ngọc
+                    colorPatch = '#ea580c'; // Đỏ cam rực rỡ
+                } else if (this.breed === 'ogon') {
+                    colorBase = '#fbbf24'; // Hoàng kim
+                    colorPatch = '#d97706'; // Vàng đậm kim loại
+                } else {
+                    colorBase = '#ffffff'; // Sanke
+                    colorPatch = '#dc2626'; // Đỏ son
+                }
+
+                // 1. Bóng đổ cá dưới đáy nước tạo độ sâu 3D (Underwater Drop Shadow)
+                ctx.save();
+                ctx.translate(8, 14);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+                ctx.beginPath();
+                for (let i = 0; i < this.numSegments; i++) {
+                    const s = this.spine[i];
+                    const w = widths[i] * (this.size * 0.35);
+                    if (i === 0) ctx.moveTo(s.x, s.y);
+                    else ctx.lineTo(s.x + Math.cos(s.angle + Math.PI / 2) * w, s.y + Math.sin(s.angle + Math.PI / 2) * w);
+                }
+                for (let i = this.numSegments - 1; i >= 0; i--) {
+                    const s = this.spine[i];
+                    const w = widths[i] * (this.size * 0.35);
+                    ctx.lineTo(s.x - Math.cos(s.angle + Math.PI / 2) * w, s.y - Math.sin(s.angle + Math.PI / 2) * w);
+                }
                 ctx.closePath();
                 ctx.fill();
+                ctx.restore();
 
-                // Mắt cá
-                ctx.fillStyle = '#000';
+                // 2. Vây ngực đôi mỏng như lụa đập nước (Translucent Pectoral Fins)
+                const head = this.spine[0];
+                const finSway = Math.sin(this.swimCycle) * 0.35;
+                for (let side of [-1, 1]) {
+                    ctx.save();
+                    ctx.translate(head.x, head.y);
+                    ctx.rotate(this.angle + (Math.PI / 2) * side + (side * 0.4) + (side * finSway));
+                    
+                    const finGrad = ctx.createLinearGradient(0, 0, 0, this.size * 0.7);
+                    finGrad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+                    finGrad.addColorStop(0.5, this.breed === 'ogon' ? 'rgba(251, 191, 36, 0.65)' : 'rgba(255, 125, 150, 0.65)');
+                    finGrad.addColorStop(1, 'rgba(255, 255, 255, 0.15)');
+                    ctx.fillStyle = finGrad;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(this.size * 0.3, this.size * 0.3, this.size * 0.35, this.size * 0.6, 0, this.size * 0.75);
+                    ctx.bezierCurveTo(-this.size * 0.2, this.size * 0.5, -this.size * 0.1, this.size * 0.2, 0, 0);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // 3. Đuôi cá xòe lụa bồng bềnh uốn lượn (Flowing Caudal Tail Fin)
+                const tailSeg = this.spine[this.numSegments - 1];
+                ctx.save();
+                ctx.translate(tailSeg.x, tailSeg.y);
+                ctx.rotate(tailSeg.angle + Math.PI);
+                const tailWave = Math.sin(this.swimCycle * 1.2) * 8;
+                
+                const tailGrad = ctx.createLinearGradient(0, 0, 0, this.size * 0.9);
+                tailGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                tailGrad.addColorStop(0.5, this.breed === 'ogon' ? 'rgba(251, 191, 36, 0.7)' : 'rgba(234, 88, 12, 0.7)');
+                tailGrad.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
+                ctx.fillStyle = tailGrad;
+
                 ctx.beginPath();
-                ctx.arc(-3, -this.size * 0.4, 2, 0, Math.PI * 2);
-                ctx.arc(3, -this.size * 0.4, 2, 0, Math.PI * 2);
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-14 + tailWave, this.size * 0.4, -18 + tailWave, this.size * 0.8, 0, this.size * 0.95);
+                ctx.bezierCurveTo(18 + tailWave, this.size * 0.8, 14 + tailWave, this.size * 0.4, 0, 0);
+                ctx.fill();
+                ctx.restore();
+
+                // 4. Thân cá 3D nguyên khối bọc quanh xương sống (Volumetric 3D Torso)
+                ctx.beginPath();
+                // Nửa phải thân cá
+                for (let i = 0; i < this.numSegments; i++) {
+                    const s = this.spine[i];
+                    const w = widths[i] * (this.size * 0.36);
+                    const px = s.x + Math.cos(s.angle + Math.PI / 2) * w;
+                    const py = s.y + Math.sin(s.angle + Math.PI / 2) * w;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                // Bo tròn chóp đuôi
+                const last = this.spine[this.numSegments - 1];
+                ctx.lineTo(last.x, last.y);
+                // Nửa trái thân cá
+                for (let i = this.numSegments - 1; i >= 0; i--) {
+                    const s = this.spine[i];
+                    const w = widths[i] * (this.size * 0.36);
+                    const px = s.x - Math.cos(s.angle + Math.PI / 2) * w;
+                    const py = s.y - Math.sin(s.angle + Math.PI / 2) * w;
+                    ctx.lineTo(px, py);
+                }
+                // Bo tròn đầu cá
+                ctx.closePath();
+
+                // Đổ bóng gradient hình trụ 3D (Cylindrical Lighting)
+                const bodyGrad = ctx.createLinearGradient(
+                    head.x + Math.cos(this.angle + Math.PI / 2) * 12,
+                    head.y + Math.sin(this.angle + Math.PI / 2) * 12,
+                    head.x - Math.cos(this.angle + Math.PI / 2) * 12,
+                    head.y - Math.sin(this.angle + Math.PI / 2) * 12
+                );
+                bodyGrad.addColorStop(0, colorBase);
+                bodyGrad.addColorStop(0.3, '#ffffff');
+                bodyGrad.addColorStop(1, '#cbd5e1');
+                ctx.fillStyle = bodyGrad;
                 ctx.fill();
 
-                // Tên người phóng sanh
-                ctx.font = 'bold 10px Plus Jakarta Sans, sans-serif';
+                // 5. Đốm màu đặc trưng giống cá Koi Nhật Bản (Vibrant Koi Markings)
+                ctx.fillStyle = colorPatch;
+                for (let i = 1; i < 7; i += 2) {
+                    const seg = this.spine[i];
+                    const w = widths[i] * (this.size * 0.28);
+                    ctx.beginPath();
+                    ctx.ellipse(seg.x, seg.y, w, w * 0.8, seg.angle, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // 6. Mắt cá & râu cá chép (Eyes & Whisker Barbels)
+                ctx.fillStyle = '#0f172a';
+                for (let side of [-1, 1]) {
+                    const eyeX = head.x + Math.cos(this.angle) * 5 + Math.cos(this.angle + Math.PI / 2) * (side * 6);
+                    const eyeY = head.y + Math.sin(this.angle) * 5 + Math.sin(this.angle + Math.PI / 2) * (side * 6);
+                    ctx.beginPath();
+                    ctx.arc(eyeX, eyeY, 2.2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // 7. Nhãn tên người phóng sanh
+                ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillStyle = '#38bdf8';
-                ctx.shadowColor = '#000';
-                ctx.shadowBlur = 4;
-                ctx.fillText(`🐟 ${this.name}`, 0, -this.size - 4);
+                ctx.shadowColor = 'rgba(0,0,0,0.95)';
+                ctx.shadowBlur = 8;
+                ctx.fillText(`🐟 ${this.name}`, head.x, head.y - this.size * 0.6);
+                ctx.shadowBlur = 0;
 
+                ctx.restore();
+            }
+        }
+
+        // Cập nhật tàn nến bay lên
+        function updateDrawEmbers() {
+            for (let i = embers.length - 1; i >= 0; i--) {
+                const em = embers[i];
+                em.x += em.speedX;
+                em.y += em.speedY;
+                em.alpha -= 0.012;
+                if (em.alpha <= 0) {
+                    embers.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.fillStyle = `rgba(255, 214, 10, ${em.alpha})`;
+                ctx.beginPath();
+                ctx.arc(em.x, em.y, em.size, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.restore();
             }
         }
@@ -801,89 +1055,89 @@
             for (let i = ripples.length - 1; i >= 0; i--) {
                 const r = ripples[i];
                 r.radius += 0.8;
-                r.alpha -= 0.015;
+                r.alpha -= 0.014;
                 if (r.alpha <= 0) {
                     ripples.splice(i, 1);
                     continue;
                 }
                 ctx.save();
-                ctx.strokeStyle = `rgba(56, 189, 248, ${r.alpha * 0.5})`;
-                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = `rgba(56, 189, 248, ${r.alpha * 0.55})`;
+                ctx.lineWidth = 1.6;
                 ctx.beginPath();
-                ctx.ellipse(r.x, r.y, r.radius * 2, r.radius * 0.6, 0, 0, Math.PI * 2);
+                ctx.ellipse(r.x, r.y, r.radius * 2.2, r.radius * 0.65, 0, 0, Math.PI * 2);
                 ctx.stroke();
                 ctx.restore();
             }
         }
 
-        // Vẽ khung cảnh nền: Sông Hậu về đêm
+        // Vẽ phong cảnh đêm sông Hậu trăng rằm
         function drawNightBackground() {
             // Trời đêm
-            const skyGrad = ctx.createLinearGradient(0, 0, 0, height * 0.45);
-            skyGrad.addColorStop(0, '#030712');
-            skyGrad.addColorStop(0.6, '#0f172a');
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, height * 0.44);
+            skyGrad.addColorStop(0, '#020617');
+            skyGrad.addColorStop(0.5, '#0a1128');
             skyGrad.addColorStop(1, '#1e1b4b');
             ctx.fillStyle = skyGrad;
-            ctx.fillRect(0, 0, width, height * 0.45);
+            ctx.fillRect(0, 0, width, height * 0.44);
 
-            // Vẽ sao lấp lánh
+            // Sao lấp lánh
             stars.forEach(s => {
-                s.alpha += Math.sin(Date.now() * s.speed) * 0.01;
+                s.alpha += Math.sin(Date.now() * s.twinkleSpeed) * 0.01;
                 ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
                 ctx.fill();
             });
 
-            // Mặt trăng rằm sáng vằng vặc
+            // Mặt trăng rằm lớn
             const moonX = width * 0.82;
             const moonY = height * 0.16;
-            const moonGlow = ctx.createRadialGradient(moonX, moonY, 15, moonX, moonY, 120);
-            moonGlow.addColorStop(0, 'rgba(255, 255, 230, 0.9)');
-            moonGlow.addColorStop(0.3, 'rgba(255, 243, 176, 0.4)');
+            const moonGlow = ctx.createRadialGradient(moonX, moonY, 15, moonX, moonY, 140);
+            moonGlow.addColorStop(0, 'rgba(255, 255, 230, 0.95)');
+            moonGlow.addColorStop(0.25, 'rgba(255, 243, 176, 0.45)');
             moonGlow.addColorStop(1, 'rgba(255, 243, 176, 0)');
             ctx.fillStyle = moonGlow;
             ctx.beginPath();
-            ctx.arc(moonX, moonY, 120, 0, Math.PI * 2);
+            ctx.arc(moonX, moonY, 140, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.fillStyle = '#fffbeb';
             ctx.beginPath();
-            ctx.arc(moonX, moonY, 28, 0, Math.PI * 2);
+            ctx.arc(moonX, moonY, 32, 0, Math.PI * 2);
             ctx.fill();
 
-            // Dãy đèn xa xa của cầu Cần Thơ / bờ sông
-            ctx.fillStyle = 'rgba(251, 191, 36, 0.6)';
-            for (let x = 0; x < width; x += 35) {
-                const bY = height * 0.44 + Math.sin(x * 0.01) * 3;
+            // Ánh đèn cầu Cần Thơ xa xa
+            ctx.fillStyle = 'rgba(251, 191, 36, 0.7)';
+            for (let x = 0; x < width; x += 32) {
+                const bY = height * 0.43 + Math.sin(x * 0.01) * 3;
                 ctx.beginPath();
-                ctx.arc(x, bY, 1.8, 0, Math.PI * 2);
+                ctx.arc(x, bY, 2, 0, Math.PI * 2);
                 ctx.fill();
             }
 
             // Dòng sông Hậu
-            const riverGrad = ctx.createLinearGradient(0, height * 0.45, 0, height);
-            riverGrad.addColorStop(0, '#0c1b33');
-            riverGrad.addColorStop(0.4, '#091528');
-            riverGrad.addColorStop(1, '#050b14');
+            const riverGrad = ctx.createLinearGradient(0, height * 0.44, 0, height);
+            riverGrad.addColorStop(0, '#0a192f');
+            riverGrad.addColorStop(0.3, '#071526');
+            riverGrad.addColorStop(1, '#030811');
             ctx.fillStyle = riverGrad;
-            ctx.fillRect(0, height * 0.45, width, height * 0.55);
+            ctx.fillRect(0, height * 0.44, width, height * 0.56);
 
-            // Vệt trăng phản chiếu trên mặt nước sông
-            const moonReflect = ctx.createLinearGradient(moonX - 40, height * 0.45, moonX + 40, height);
-            moonReflect.addColorStop(0, 'rgba(255, 243, 176, 0.3)');
+            // Vệt trăng chiếu trên mặt nước
+            const moonReflect = ctx.createLinearGradient(moonX - 50, height * 0.44, moonX + 50, height);
+            moonReflect.addColorStop(0, 'rgba(255, 243, 176, 0.35)');
             moonReflect.addColorStop(0.5, 'rgba(255, 243, 176, 0.1)');
             moonReflect.addColorStop(1, 'rgba(255, 243, 176, 0)');
             ctx.fillStyle = moonReflect;
             ctx.beginPath();
-            ctx.ellipse(moonX, height * 0.6, 60, height * 0.25, 0, 0, Math.PI * 2);
+            ctx.ellipse(moonX, height * 0.65, 70, height * 0.28, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Gợn sóng lăn tăn nhẹ nhàng
+            // Sóng nước lăn tăn
             const time = Date.now() * 0.001;
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.lineWidth = 1;
-            for (let y = height * 0.48; y < height; y += 18) {
+            for (let y = height * 0.46; y < height; y += 18) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
                 for (let x = 0; x < width; x += 40) {
@@ -898,48 +1152,47 @@
             drawNightBackground();
             updateDrawRipples();
 
-            // Cập nhật & vẽ cá
+            // Cập nhật & vẽ cá Koi 3D
             for (let i = fishes.length - 1; i >= 0; i--) {
                 const f = fishes[i];
                 f.update();
                 f.draw();
-                if (f.alpha <= 0) {
-                    fishes.splice(i, 1);
-                }
+                if (f.alpha <= 0) fishes.splice(i, 1);
             }
 
-            // Cập nhật & vẽ hoa đăng
+            // Cập nhật & vẽ hoa đăng 3D
             for (let i = lanterns.length - 1; i >= 0; i--) {
                 const l = lanterns[i];
                 l.update();
                 l.draw();
-                if (l.alpha <= 0) {
-                    lanterns.splice(i, 1);
-                }
+                if (l.alpha <= 0) lanterns.splice(i, 1);
             }
 
+            updateDrawEmbers();
             requestAnimationFrame(animate);
         }
         animate();
 
-        // Tự động tạo hoa đăng nền trôi lững lờ ban đầu
-        for (let i = 0; i < 16; i++) {
-            const sampleNames = ["Nguyễn Hữu Lộc", "Bưu cục Bình Thủy", "Đội Tài Xế MT01", "Cái Răng", "Vị Thanh", "Ô Môn", "An Bình", "Thốt Nốt"];
-            const l = new Lantern(
-                width * 0.1 + Math.random() * width * 0.8,
-                height * 0.5 + Math.random() * (height * 0.35),
-                sampleNames[i % sampleNames.length],
-                "Bình an & Hạnh phúc",
-                i % 4 === 0
+        // Tự động phân bố hoa đăng nền đẹp mắt, rải đều không chồng đè
+        const initialNames = ["Anh Lộc (MT01)", "The 5 Guardians", "Bưu cục Bình Thủy", "Đội Xe Tải MT01", "Cái Răng", "Vị Thanh", "Ô Môn", "An Bình", "Thốt Nốt", "Ngọc Mai Cần Thơ"];
+        for (let i = 0; i < 12; i++) {
+            const spreadX = (width * 0.08) + (i * (width * 0.85) / 12) + (Math.random() - 0.5) * 50;
+            const spreadY = height * 0.52 + (i % 3) * 60 + Math.random() * 30;
+            const l = new LotusLantern3D(
+                spreadX,
+                spreadY,
+                initialNames[i % initialNames.length],
+                "Phước Duyên Viên Mãn",
+                i % 3 === 0
             );
             lanterns.push(l);
         }
 
         // ========================================================
-        // 3. TƯƠNG TÁC THẢ HOA ĐĂNG & PHÓNG SANH CÁ
+        // 3. TƯƠNG TÁC THẢ HOA ĐĂNG & PHÓNG SANH CÁ 3D
         // ========================================================
-        let totalLanternCount = 1286;
-        let totalFishCount = 3450;
+        let totalLanternCount = 1890;
+        let totalFishCount = 5240;
 
         function showAnnouncement(title, sub) {
             const box = document.getElementById('announceBox');
@@ -957,12 +1210,13 @@
 
             playBellSound();
 
-            // Tạo chùm 3 hoa đăng rực rỡ
+            // Thả chùm 3 hoa đăng 3D phân tán đều không chồng nhau
             for (let i = 0; i < 3; i++) {
                 setTimeout(() => {
-                    const l = new Lantern(
-                        width * 0.45 + (Math.random() - 0.5) * 120,
-                        height * 0.82 + Math.random() * 20,
+                    const spreadX = width * 0.35 + (i * width * 0.15) + (Math.random() - 0.5) * 60;
+                    const l = new LotusLantern3D(
+                        spreadX,
+                        height * 0.70 + Math.random() * 40,
                         name,
                         wish,
                         true
@@ -972,18 +1226,18 @@
                         x: l.x,
                         y: l.y,
                         radius: 8,
-                        maxRadius: 40,
-                        alpha: 0.8
+                        maxRadius: 42,
+                        alpha: 0.85
                     });
-                }, i * 200);
+                }, i * 220);
             }
 
             totalLanternCount += 3;
             document.getElementById('counterLanterns').innerText = totalLanternCount.toLocaleString();
 
-            showAnnouncement("🪷 THẢ HOA ĐĂNG CẦU AN THÀNH CÔNG", `Đèn hoa của "${name}" đã tỏa sáng lung linh trên sông Hậu!`);
-            addChatBubble(name, "🪷 Đã thả 3 Hoa Đăng", wish);
-            updateHonors(name, "3 Hoa Đăng");
+            showAnnouncement("🪷 THẢ HOA ĐĂNG 3D THÀNH CÔNG", `Đèn hoa của "${name}" đã tỏa sáng lung linh trên sông Hậu!`);
+            addChatBubble(name, "🪷 Đã thả 3 Hoa Đăng 3D", wish);
+            updateHonors(name, "3 Hoa Đăng 3D");
         }
 
         function triggerReleaseFish() {
@@ -992,26 +1246,30 @@
 
             playSplashSound();
 
-            // Thả đàn 5 con cá bơi lội tung tăng
-            const types = ['carp', 'koi', 'catfish'];
-            for (let i = 0; i < 5; i++) {
+            // Thả đàn 4 cá Koi 3D bơi tản ra các góc
+            const breeds = ['kohaku', 'ogon', 'sanke', 'kohaku'];
+            for (let i = 0; i < 4; i++) {
                 setTimeout(() => {
-                    const f = new Fish(
-                        width * 0.5 + (Math.random() - 0.5) * 150,
-                        height * 0.85 + Math.random() * 20,
+                    const startX = width * 0.3 + (i * width * 0.14) + (Math.random() - 0.5) * 50;
+                    const f = new ArticulatedKoi3D(
+                        startX,
+                        height * 0.68 + Math.random() * 50,
                         name,
-                        types[i % types.length]
+                        breeds[i]
                     );
+                    // Góc bơi hướng tỏa ra ngoài
+                    f.angle = -Math.PI / 2 + ((i - 1.5) * 0.35) + (Math.random() - 0.5) * 0.2;
+                    f.targetAngle = f.angle;
                     fishes.push(f);
-                }, i * 150);
+                }, i * 160);
             }
 
-            totalFishCount += 5;
+            totalFishCount += 4;
             document.getElementById('counterFishes').innerText = totalFishCount.toLocaleString();
 
-            showAnnouncement("🐟 PHÓNG SANH CÁ VỀ SÔNG THÀNH CÔNG", `Cầu chúc "${name}" phước duyên tròn đầy, sinh linh tự do!`);
-            addChatBubble(name, "🐟 Đã Phóng Sanh 5 Cá", wish);
-            updateHonors(name, "5 Cá Chép");
+            showAnnouncement("🐟 PHÓNG SANH CÁ KOI 3D THÀNH CÔNG", `Cầu chúc "${name}" phước duyên tròn đầy, sinh linh tự do!`);
+            addChatBubble(name, "🐟 Đã Phóng Sanh 4 Cá Koi 3D", wish);
+            updateHonors(name, "4 Cá Koi 3D");
         }
 
         function ringTempleBell() {
@@ -1050,8 +1308,6 @@
             `;
 
             container.prepend(bubble);
-
-            // Giữ tối đa 6 tin nhắn
             if (container.children.length > 6) {
                 container.removeChild(container.lastChild);
             }
@@ -1071,28 +1327,70 @@
             }
         }
 
-        // Tự động mô phỏng người xem TikTok vào thả hoa đăng / phóng sinh ngẫu nhiên
+        // Tự động mô phỏng người xem thả hoa đăng / cá cách nhau hợp lý
         setInterval(() => {
-            if (Math.random() < 0.6) {
+            if (Math.random() < 0.55) {
                 const u = sampleLiveUsers[Math.floor(Math.random() * sampleLiveUsers.length)];
                 const isFish = Math.random() < 0.5;
 
                 if (isFish) {
-                    const f = new Fish(width * 0.2 + Math.random() * width * 0.6, height * 0.8, u.name);
+                    const breeds = ['kohaku', 'ogon', 'sanke'];
+                    const f = new ArticulatedKoi3D(
+                        width * 0.15 + Math.random() * width * 0.7,
+                        height * 0.82,
+                        u.name,
+                        breeds[Math.floor(Math.random() * breeds.length)]
+                    );
                     fishes.push(f);
                     totalFishCount += 1;
                     document.getElementById('counterFishes').innerText = totalFishCount.toLocaleString();
-                    addChatBubble(u.name, "🐟 Phóng sanh cá", u.wish);
+                    addChatBubble(u.name, "🐟 Phóng sanh cá Koi 3D", u.wish);
                 } else {
-                    const l = new Lantern(width * 0.2 + Math.random() * width * 0.6, height * 0.78, u.name, u.wish);
+                    const l = new LotusLantern3D(
+                        width * 0.15 + Math.random() * width * 0.7,
+                        height * 0.8,
+                        u.name,
+                        u.wish,
+                        Math.random() < 0.3
+                    );
                     lanterns.push(l);
                     totalLanternCount += 1;
                     document.getElementById('counterLanterns').innerText = totalLanternCount.toLocaleString();
-                    addChatBubble(u.name, "🪷 Thả hoa đăng", u.wish);
+                    addChatBubble(u.name, "🪷 Thả hoa đăng 3D", u.wish);
                 }
             }
-        }, 3500);
+        }, 4000);
 
+    </script>
+    <!-- Modal Chi Tiết 3D Siêu Thực 8K -->
+    <div id="modal3DGallery" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(16px); z-index: 100; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: rgba(13, 21, 38, 0.95); border: 2px solid #ffd166; border-radius: 28px; width: 100%; max-width: 900px; padding: 24px; box-shadow: 0 0 60px rgba(255, 209, 102, 0.4); position: relative; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,209,102,0.25); padding-bottom: 12px;">
+                <h2 style="font-family: 'Playfair Display', serif; color: #ffd166; font-size: 1.4rem; margin: 0;">✨ NGHỆ THUẬT 3D SIÊU THỰC • HOA ĐĂNG & CÁ KOI SÔNG HẬU</h2>
+                <button onclick="close3DGallery()" style="background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer;">✕</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(0,0,0,0.4); border-radius: 18px; padding: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <img src="/static/img/hoa_dang_3d_master.jpg" alt="Hoa Đăng 3D Master" style="width: 100%; height: 260px; object-fit: cover; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
+                    <h3 style="color: #ff758f; font-size: 1.1rem; margin-top: 12px; margin-bottom: 4px;">🪷 Hoa Đăng Bạch Liên Thần</h3>
+                    <p style="color: #94a3b8; font-size: 0.82rem; line-height: 1.4;">Cánh sen lụa hồng đa tầng mạ viền vàng, ngọn nến sáp ong phát quang toả ánh sáng ấm áp, phản chiếu huyền ảo trên mặt nước sông Hậu.</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); border-radius: 18px; padding: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <img src="/static/img/koi_fish_3d_master.jpg" alt="Cá Koi 3D Master" style="width: 100%; height: 260px; object-fit: cover; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
+                    <h3 style="color: #38bdf8; font-size: 1.1rem; margin-top: 12px; margin-bottom: 4px;">🐟 Hoàng Kim Nishikigoi</h3>
+                    <p style="color: #94a3b8; font-size: 0.82rem; line-height: 1.4;">Cá chép Koi vảy ánh kim, vây lụa mỏng uốn lượn mềm mại quẫy sóng nước, mang lại may mắn, bình an và sinh khí dồi dào khi phóng sanh.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function open3DGallery() {
+            document.getElementById('modal3DGallery').style.display = 'flex';
+        }
+        function close3DGallery() {
+            document.getElementById('modal3DGallery').style.display = 'none';
+        }
     </script>
 </body>
 </html>
