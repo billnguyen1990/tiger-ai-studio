@@ -3605,19 +3605,20 @@ def _append_telegram_bridge_message(entry):
         _save_telegram_bridge_messages(msgs)
         return True
 
-def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
+def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, parse_mode="HTML", target_chat_id=None):
     # 🛑 BẢO VỆ AN TOÀN: Tuyệt đối chặn gửi lộ token hoặc tin rác
     if not text or "8809500027" in text or "AAFC2Xz" in text:
         print("[SECURITY GUARD] Chặn gửi tin nhắn không hợp lệ hoặc chứa Bot Token!")
         return {"ok": False, "description": "Blocked by security guard"}
 
+    effective_chat_id = target_chat_id or TELEGRAM_BRIDGE_CHAT_ID
     url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendMessage"
     payload = {
-        "chat_id": TELEGRAM_BRIDGE_CHAT_ID,
+        "chat_id": effective_chat_id,
         "text": text,
         "parse_mode": parse_mode
     }
-    if topic_id and int(topic_id) > 0:
+    if not target_chat_id and topic_id and int(topic_id) > 0:
         payload["message_thread_id"] = int(topic_id)
     if reply_to_message_id and int(reply_to_message_id) > 0:
         payload["reply_to_message_id"] = int(reply_to_message_id)
@@ -4008,14 +4009,21 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     topic_id = entry.get("topic_id") or 0
     reply_to_text = (entry.get("reply_to_text") or "").strip()
 
+    # Nhận diện tin nhắn riêng 1-1 (Private DM) để phản hồi thẳng về người gửi
+    chat_info = (msg_obj.get("chat") or {}) if isinstance(msg_obj, dict) else {}
+    chat_type = chat_info.get("type", "")
+    is_private_chat = (chat_type == "private")
+    sender_chat_id = chat_info.get("id") if is_private_chat else None
+
     # =========================================================================
     # 🛑 CỔNG CHẶN BẢO VỆ 1: QUY TẮC IM LẶNG TUYỆT ĐỐI
     # Chỉ phản hồi khi:
+    # - Chat riêng trực tiếp 1-1 với bot
     # - Tag đích danh bot: @aiagentmt_bot hoặc @aiagentmt
     # - Hoặc gõ lệnh bắt đầu bằng dấu gạch chéo (/)
     # - Ngoại lệ duy nhất: Đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
     # =========================================================================
-    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text)
+    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat
     is_slash_cmd = lower_text.startswith("/")
     is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
         "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock"
@@ -4059,8 +4067,32 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             "• Lệnh: <code>/kpi</code> hoặc <code>/ton</code> để xem số liệu KPI và tồn kho tức thì.\n\n"
             "<i>Lưu ý: Để tránh làm phiền cuộc trao đổi của anh em, Tiger AI chỉ phản hồi khi được gọi đích danh bằng lệnh <code>/</code> hoặc tag <code>@AiAgentMT_bot</code>!</i>"
         )
-        _send_telegram_group_message(help_html, topic_id=topic_id, reply_to_message_id=msg_id)
+        _send_telegram_group_message(help_html, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
         return
+
+    # 0.0b GIÁM SÁT TAB GHNa THEO YÊU CẦU (/ghna, /scanghna)
+    is_ghna_cmd = any(lower_text.strip() == cmd for cmd in ["/ghna", "/scanghna", "/sheetghna", "/kiemtrasheet"]) or (
+        is_tagged and any(k in lower_text for k in ["soi sheet", "quét sheet", "check sheet", "sheet ghna"])
+    )
+    if is_ghna_cmd:
+        try:
+            from ghna_sheet_monitor import run_check
+            _send_telegram_group_message(
+                "🐯 <b>[TIGER AI]</b> Đang kết nối Google Sheet để rà soát tab <b>GHNa</b> ngay tức thì...",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id,
+                target_chat_id=sender_chat_id
+            )
+            res = run_check(force_send=True, silent_if_empty=False)
+            return
+        except Exception as e:
+            _send_telegram_group_message(
+                f"❌ <b>Lỗi quét sheet GHNa:</b> <code>{e}</code>",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id,
+                target_chat_id=sender_chat_id
+            )
+            return
 
     # 0.1 MẮT THẦN CANH KHO AI (VISION AI GUARD) - QUY TẮC 2: ẢNH & BÁO CÁO PHẢI VÀO TOPIC 3365
     is_vision_guard_cmd = lower_text.startswith(("/soikho", "/auditcam")) or (
@@ -4623,6 +4655,18 @@ def test_cam_endpoint():
     except Exception as e:
         return jsonify({"cv2": cv_ver, "error": str(e)})
 
+@app.route("/api/scan-ghna-sheet", methods=["GET", "POST"])
+def trigger_ghna_sheet_scan():
+    """Trigger quét tab GHNa trên Google Sheet và báo cáo Telegram"""
+    try:
+        force = request.args.get("force", "false").lower() in ("true", "1")
+        from ghna_sheet_monitor import run_check
+        res = run_check(force_send=force, silent_if_empty=not force)
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
+
+
 @app.route("/api/telegram-webhook", methods=["POST", "GET"])
 def telegram_webhook_receiver():
     if request.method == "GET":
@@ -5004,6 +5048,11 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     scheduler.add_job(_job_runner, "cron", hour=6, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_06h30")
     scheduler.add_job(_job_runner, "cron", hour=20, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_20h30")
+    # 🐯 TIGER AI: Giám sát Google Sheet tab GHNa 4 lần/ngày theo chỉ đạo anh Lộc
+    scheduler.add_job(_job_runner, "cron", hour=8, minute=0, args=["ghna_sheet_monitor.py"], id="ghna_08h00")
+    scheduler.add_job(_job_runner, "cron", hour=12, minute=0, args=["ghna_sheet_monitor.py"], id="ghna_12h00")
+    scheduler.add_job(_job_runner, "cron", hour=16, minute=0, args=["ghna_sheet_monitor.py"], id="ghna_16h00")
+    scheduler.add_job(_job_runner, "cron", hour=20, minute=0, args=["ghna_sheet_monitor.py"], id="ghna_20h00")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
     # Trên máy tính cá nhân của anh (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
@@ -5073,6 +5122,12 @@ def api_send_b2b_report():
 def view_cost_dashboard():
     """Giao diện Dashboard Chi Phí & Vận Hành Vùng (11 chỉ số, bộ lọc Vùng, Kho, Tháng, Tuần, Ngày)"""
     return render_template("cost_dashboard.html")
+
+@app.route("/dua-ghe-live")
+@app.route("/cho-noi-live")
+def view_dua_ghe_live():
+    """Giao diện Game Tương Tác Đua Ghe Chợ Nổi Cái Răng - TikTok Live Overlay"""
+    return render_template("cho_noi_live.html")
 
 @app.route("/api/cost-dashboard/data", methods=["GET"])
 def api_get_cost_dashboard_data():
