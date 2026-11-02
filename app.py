@@ -5126,8 +5126,15 @@ def view_cost_dashboard():
 @app.route("/dua-ghe-live")
 @app.route("/cho-noi-live")
 def view_dua_ghe_live():
-    """Giao diện Game Tương Tác Đua Ghe Chợ Nổi Cái Răng - TikTok Live Overlay"""
+    """Giao diện Khung Cảnh Chợ Nổi Cái Răng Buổi Sáng - Trải Nghiệm Văn Hóa Sông Nước"""
     return render_template("cho_noi_live.html")
+
+@app.route("/hoa-dang")
+@app.route("/phong-sanh")
+@app.route("/hoa-dang-live")
+def view_hoa_dang_phong_sanh():
+    """Giao diện Tương Tác Thả Hoa Đăng & Phóng Sanh Sông Hậu - TikTok Live"""
+    return render_template("hoa_dang_phong_sanh.html")
 
 @app.route("/api/cost-dashboard/data", methods=["GET"])
 def api_get_cost_dashboard_data():
