@@ -632,21 +632,7 @@
         }
 
         function playBellSound() {
-            initAudio();
-            const now = audioCtx.currentTime;
-            const freqs = [350, 700, 1050, 1400, 2100];
-            freqs.forEach((f, idx) => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = idx === 0 ? 'sine' : 'triangle';
-                osc.frequency.setValueAtTime(f, now);
-                gain.gain.setValueAtTime(0.35 / (idx + 1), now);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 4.0);
-            });
+            // Đã tắt hoàn toàn tiếng ting ting chói tai, giữ trọn vẹn không gian nhạc thiền êm ái
         }
 
         function playSplashSound() {
@@ -1395,8 +1381,7 @@
         function triggerReleaseLantern() {
             const name = document.getElementById('inputName').value.trim() || "Phật tử";
             const wish = document.getElementById('inputWish').value.trim() || "Cầu vạn sự như ý";
-
-            playBellSound();
+            // Đã tắt hoàn toàn tiếng ting ting chói tai theo chỉ đạo của anh Lộc
 
             // Thả chùm 3 hoa đăng 3D phân tán đều không chồng nhau
             for (let i = 0; i < 3; i++) {
