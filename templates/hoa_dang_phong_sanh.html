@@ -282,7 +282,130 @@
             color: #fbbf24;
         }
 
-        /* Thanh điều khiển chính (Bottom Dock) */
+        /* Thanh điều khiển chính (Bottom Dock) - Tối Ưu Cho TikTok Live */
+        .bottom-action-dock {
+            pointer-events: auto;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 920px;
+            background: rgba(13, 21, 38, 0.92);
+            border: 1px solid rgba(255, 209, 102, 0.45);
+            border-radius: 24px;
+            padding: 14px 20px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 30px rgba(255, 209, 102, 0.2);
+        }
+
+        .dock-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sender-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.8rem;
+            color: #ffd166;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sender-pill:hover {
+            background: rgba(255, 209, 102, 0.15);
+            border-color: #ffd166;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .cat-tab {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #cbd5e1;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .cat-tab:hover, .cat-tab.active {
+            background: rgba(255, 209, 102, 0.25);
+            border-color: #ffd166;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* Khung chọn câu chúc nhanh (Quick Wish Grid) */
+        .wishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+            max-height: 125px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .wishes-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .wishes-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 209, 102, 0.3);
+            border-radius: 4px;
+        }
+
+        .wish-chip {
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            line-height: 1.25;
+        }
+        .wish-chip:hover {
+            background: rgba(51, 65, 85, 0.9);
+            border-color: #ffd166;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .wish-chip.selected {
+            background: linear-gradient(135deg, rgba(255, 117, 143, 0.25), rgba(255, 209, 102, 0.25));
+            border-color: #ffd166;
+            color: #ffd166;
+            font-weight: 700;
+            box-shadow: 0 0 14px rgba(255, 209, 102, 0.3);
+        }
+        .wish-key-badge {
+            background: rgba(255, 209, 102, 0.2);
+            color: #ffd166;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 209, 102, 0.4);
+        }
         .bottom-action-dock {
             pointer-events: auto;
             margin: 0 auto;
@@ -522,16 +645,32 @@
             </div>
         </div>
 
-        <!-- Thanh điều khiển thả hoa đăng & phóng sinh -->
+        <!-- Thanh điều khiển tương tác Live: Bảng Lời Chúc Cầu Phúc Đa Dạng -->
         <div class="bottom-action-dock">
-            <div class="inputs-row">
-                <div class="input-group" style="flex: 0 0 250px;">
-                    <input type="text" id="inputName" placeholder="Tên người cầu an..." value="Anh Lộc (Quản lý MT01)">
+            <!-- Header của Dock: Tên người gửi & Bộ lọc chủ đề lời chúc -->
+            <div class="dock-header-row">
+                <div class="sender-pill" onclick="changeSenderName()" title="Bấm để đổi tên người cầu phúc">
+                    <span>👤 Người cầu:</span>
+                    <strong id="displaySenderName">Anh Lộc (Quản lý MT01)</strong>
+                    <span style="font-size: 0.7rem; opacity: 0.7;">✏️</span>
                 </div>
-                <div class="input-group">
-                    <input type="text" id="inputWish" placeholder="Lời chúc nguyện..." value="Cầu gia đạo bình an, tập thể Miền Tây 01 vạn dặm hanh thông!">
+
+                <div class="category-tabs">
+                    <button class="cat-tab active" onclick="filterWishes('all', this)">🌸 Tất Cả (10)</button>
+                    <button class="cat-tab" onclick="filterWishes('family', this)">👨‍👩‍👧‍👦 Gia Đình</button>
+                    <button class="cat-tab" onclick="filterWishes('peace', this)">🕊️ Bình An</button>
+                    <button class="cat-tab" onclick="filterWishes('fortune', this)">💰 Tài Lộc</button>
+                    <button class="cat-tab" onclick="filterWishes('friends', this)">🤝 Bạn Bè</button>
+                    <button class="cat-tab" onclick="filterWishes('karma', this)">🐟 Phóng Sanh</button>
                 </div>
             </div>
+
+            <!-- Danh sách các câu chúc lựa chọn tương tác Live -->
+            <div class="wishes-grid" id="wishesGrid">
+                <!-- Rendered dynamically by JS -->
+            </div>
+
+            <!-- Các nút hành động chính: Thả Hoa Đăng 3D, Phóng Sanh Cá Koi 3D, Chọn Ngẫu Nhiên -->
             <div class="buttons-row">
                 <button class="btn-action btn-hoa-dang" onclick="triggerReleaseLantern()">
                     <span>🪷</span> THẢ HOA ĐĂNG 3D
@@ -539,8 +678,8 @@
                 <button class="btn-action btn-phong-sanh" onclick="triggerReleaseFish()">
                     <span>🐟</span> PHÓNG SANH CÁ KOI 3D
                 </button>
-                <button class="btn-action btn-chuong" onclick="ringTempleBell()">
-                    <span>🔔</span> THỈNH CHUÔNG
+                <button class="btn-action" onclick="pickRandomWishAndTrigger()" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; box-shadow: 0 8px 24px rgba(139, 92, 246, 0.45);" title="Tự động chọn 1 câu chúc ngẫu nhiên cho người xem trên Live">
+                    <span>🎲</span> CHỌN NGẪU NHIÊN
                 </button>
             </div>
         </div>
@@ -554,6 +693,94 @@
     </div>
 
     <script>
+                // ========================================================
+        // 5. KHO CÂU CHÚC CẦU PHÚC ĐA DẠNG CHO TƯƠNG TÁC LIVE
+        // Bao gồm: Gia Đình, Bình An, Tài Lộc, Bạn Bè, Phóng Sanh
+        // ========================================================
+        const allWishes = [
+            { id: 1, key: '1', cat: 'family', text: 'Cầu cha mẹ an khang trường thọ, gia đạo êm ấm hạnh phúc' },
+            { id: 2, key: '2', cat: 'family', text: 'Cầu gia đình hòa thuận, vạn sự cát tường, con cháu thảo hiền' },
+            { id: 3, key: '3', cat: 'peace',  text: 'Cầu thân tâm an lạc, tai qua nạn khỏi, bệnh tật tiêu trừ' },
+            { id: 4, key: '4', cat: 'peace',  text: 'Cầu một đời an yên, tâm thanh tịnh trí sáng suốt, vạn dặm bình an' },
+            { id: 5, key: '5', cat: 'fortune', text: 'Cầu công danh thăng tiến, buôn may bán đắt, tài lộc dồi dào' },
+            { id: 6, key: '6', cat: 'fortune', text: 'Cầu thuận buồm xuôi gió, khách thương ủng hộ, vượt mốc chỉ tiêu KPI' },
+            { id: 7, key: '7', cat: 'friends', text: 'Cầu bạn bè chân tình, đồng đội gắn kết, tương trợ vạn sự hanh thông' },
+            { id: 8, key: '8', cat: 'friends', text: 'Cầu anh em chiến hữu sức khỏe dồi dào, vạn dặm lái xe an toàn' },
+            { id: 9, key: '9', cat: 'karma',  text: 'Phóng sinh cứu vạn vật, tiêu trừ nghiệp chướng, tăng trưởng phước lành' },
+            { id: 10, key: '10', cat: 'karma', text: 'Hồi hướng công đức muôn phương, vạn loài tự do, chúng sinh an lạc' }
+        ];
+
+        let selectedWish = allWishes[0].text;
+        let selectedWishId = 1;
+        let currentSender = "Anh Lộc (Quản lý MT01)";
+
+        function renderWishes(cat = 'all') {
+            const grid = document.getElementById('wishesGrid');
+            grid.innerHTML = '';
+            
+            const filtered = (cat === 'all') ? allWishes : allWishes.filter(w => w.cat === cat);
+            filtered.forEach(w => {
+                const chip = document.createElement('div');
+                chip.className = `wish-chip ${w.id === selectedWishId ? 'selected' : ''}`;
+                chip.onclick = () => selectWish(w.id, w.text, chip);
+                chip.innerHTML = `
+                    <span class="wish-key-badge">${w.key}</span>
+                    <span>${w.text}</span>
+                `;
+                grid.appendChild(chip);
+            });
+        }
+
+        function selectWish(id, text, elem) {
+            selectedWishId = id;
+            selectedWish = text;
+            document.querySelectorAll('.wish-chip').forEach(c => c.classList.remove('selected'));
+            if (elem) elem.classList.add('selected');
+        }
+
+        function filterWishes(cat, btn) {
+            document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderWishes(cat);
+        }
+
+        function changeSenderName() {
+            const newName = prompt("Nhập tên người cầu phúc trên Live:", currentSender);
+            if (newName && newName.trim()) {
+                currentSender = newName.trim();
+                document.getElementById('displaySenderName').innerText = currentSender;
+            }
+        }
+
+        function pickRandomWishAndTrigger() {
+            const rand = allWishes[Math.floor(Math.random() * allWishes.length)];
+            selectWish(rand.id, rand.text, null);
+            renderWishes('all');
+            
+            // Ngẫu nhiên thả hoa đăng hoặc phóng sanh
+            if (Math.random() < 0.5) {
+                triggerReleaseLantern();
+            } else {
+                triggerReleaseFish();
+            }
+        }
+
+        // Tự động nạp danh sách lời chúc khi tải trang
+        renderWishes('all');
+
+        // Lắng nghe phím tắt số 1 - 9 trên bàn phím để kích hoạt nhanh
+        window.addEventListener('keydown', (e) => {
+            const num = parseInt(e.key);
+            if (num >= 1 && num <= 9) {
+                const found = allWishes.find(w => w.id === num);
+                if (found) {
+                    selectWish(found.id, found.text, null);
+                    renderWishes('all');
+                    triggerReleaseLantern();
+                }
+            }
+        });
+
         // ========================================================
                 // ========================================================
         // 1. HỆ THỐNG NHẠC HỘI HOA ĐĂNG THU ÂM THỰC TẾ (CHỈ PHÁT 2 BẢN MP3 THUẦN KHIẾT)
@@ -1379,9 +1606,8 @@
         }
 
         function triggerReleaseLantern() {
-            const name = document.getElementById('inputName').value.trim() || "Phật tử";
-            const wish = document.getElementById('inputWish').value.trim() || "Cầu vạn sự như ý";
-            // Đã tắt hoàn toàn tiếng ting ting chói tai theo chỉ đạo của anh Lộc
+            const name = currentSender || "Phật tử";
+            const wish = selectedWish || "Cầu vạn sự bình an";
 
             // Thả chùm 3 hoa đăng 3D phân tán đều không chồng nhau
             for (let i = 0; i < 3; i++) {
@@ -1414,8 +1640,8 @@
         }
 
         function triggerReleaseFish() {
-            const name = document.getElementById('inputName').value.trim() || "Người phóng sanh";
-            const wish = document.getElementById('inputWish').value.trim() || "Phóng sinh tích đức";
+            const name = currentSender || "Người phóng sanh";
+            const wish = selectedWish || "Phóng sinh tích đức";
 
             playSplashSound();
 
