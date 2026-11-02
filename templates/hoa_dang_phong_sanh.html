@@ -435,6 +435,11 @@
     </style>
 </head>
 <body>
+    <!-- Trình Phát Nhạc Hội Hoa Đăng Chân Thực (Acoustic MP3) -->
+    <audio id="audioHoiHoaDang" loop preload="auto">
+        <source src="/static/audio/hoi_hoa_dang_zen.mp3" type="audio/mpeg">
+        <source src="/static/audio/hoi_hoa_dang_zen_2.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Canvas mô phỏng dòng sông Hậu 3D, hoa đăng ngọc sen và cá chép bơi lội -->
     <canvas id="nightCanvas"></canvas>
@@ -456,16 +461,21 @@
             </div>
 
                         <div class="stats-badge">
-                <!-- Nút Bật/Tắt Nhạc Hội Hoa Đăng -->
-                <button id="btnMusicToggle" onclick="toggleHoiHoaDangMusic()" style="background: rgba(244, 63, 94, 0.22); border: 1px solid #ff758f; color: #ffe4e6; padding: 5px 14px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.25s;">
-                    <span id="musicIcon">🎵</span>
-                    <span id="musicText">NHẠC HỘI HOA ĐĂNG: BẬT</span>
-                    <div id="equalizerBars" style="display: flex; gap: 2px; align-items: flex-end; height: 12px;">
-                        <span class="eq-bar" style="width: 2px; height: 10px; background: #ffd166; animation: eqAnim 0.6s infinite alternate;"></span>
-                        <span class="eq-bar" style="width: 2px; height: 6px; background: #ff758f; animation: eqAnim 0.4s infinite alternate 0.2s;"></span>
-                        <span class="eq-bar" style="width: 2px; height: 12px; background: #38bdf8; animation: eqAnim 0.7s infinite alternate 0.4s;"></span>
-                    </div>
-                </button>
+                <!-- Nút Bật/Tắt & Đổi Nhạc Hội Hoa Đăng Thực Tế -->
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button id="btnMusicToggle" onclick="toggleHoiHoaDangMusic()" style="background: rgba(16, 185, 129, 0.25); border: 1px solid #34d399; color: #a7f3d0; padding: 6px 16px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.82rem; display: flex; align-items: center; gap: 8px; transition: all 0.25s; box-shadow: 0 0 12px rgba(52, 211, 153, 0.3);">
+                        <span id="musicIcon">🎵</span>
+                        <span id="musicText">NHẠC HỘI HOA ĐĂNG: BẬT</span>
+                        <div id="equalizerBars" style="display: flex; gap: 2px; align-items: flex-end; height: 12px;">
+                            <span class="eq-bar" style="width: 2px; height: 11px; background: #ffd166; animation: eqAnim 0.6s infinite alternate;"></span>
+                            <span class="eq-bar" style="width: 2px; height: 7px; background: #ff758f; animation: eqAnim 0.4s infinite alternate 0.2s;"></span>
+                            <span class="eq-bar" style="width: 2px; height: 13px; background: #38bdf8; animation: eqAnim 0.7s infinite alternate 0.4s;"></span>
+                        </div>
+                    </button>
+                    <button onclick="switchHoiHoaDangTrack()" title="Đổi bài nhạc thiền khác" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #ffd166; padding: 6px 10px; border-radius: 999px; font-size: 0.75rem; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                        <span>🔀</span> <span id="trackLabel">Bài 1</span>
+                    </button>
+                </div>
                 <button onclick="open3DGallery()" style="background: rgba(255,209,102,0.18); border: 1px solid #ffd166; color: #ffd166; padding: 5px 12px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;">
                     <span>✨</span> 3D MASTER
                 </button>
@@ -701,8 +711,30 @@
             }
         }
 
+        const audioPlaylist = [
+            { title: "Khúc 1 • Sáo Trúc Thiền Tịnh (Bình An)", src: "/static/audio/hoi_hoa_dang_zen.mp3" },
+            { title: "Khúc 2 • Sông Nước An Nhiên (Tâm Tĩnh)", src: "/static/audio/hoi_hoa_dang_zen_2.mp3" }
+        ];
+        let currentTrackIdx = 0;
+
+        function switchHoiHoaDangTrack() {
+            currentTrackIdx = (currentTrackIdx + 1) % audioPlaylist.length;
+            const audioElem = document.getElementById('audioHoiHoaDang');
+            const trackItem = audioPlaylist[currentTrackIdx];
+            
+            document.getElementById('trackLabel').innerText = `Bài ${currentTrackIdx + 1}`;
+            audioElem.src = trackItem.src;
+            audioElem.load();
+            
+            if (isMusicPlaying) {
+                audioElem.play().catch(e => console.log(e));
+                showAnnouncement("🎶 ĐỔI KHÚC THIỀN HOA ĐĂNG", trackItem.title);
+            }
+        }
+
         function toggleHoiHoaDangMusic() {
             initAudio();
+            const audioElem = document.getElementById('audioHoiHoaDang');
             isMusicPlaying = !isMusicPlaying;
 
             const btn = document.getElementById('btnMusicToggle');
@@ -710,18 +742,32 @@
             const eq = document.getElementById('equalizerBars');
 
             if (isMusicPlaying) {
-                txt.innerText = "NHẠC HỘI HOA ĐĂNG: ĐANG PHÁT";
-                btn.style.background = "rgba(16, 185, 129, 0.25)";
+                txt.innerText = "NHẠC HOA ĐĂNG: ĐANG PHÁT";
+                btn.style.background = "rgba(16, 185, 129, 0.28)";
                 btn.style.borderColor = "#34d399";
+                btn.style.color = "#a7f3d0";
                 eq.classList.remove('eq-paused');
+
+                // Phát bản nhạc thu âm MP3 mộc mạc acoustic
+                audioElem.volume = 0.85;
+                const p = audioElem.play();
+                if (p !== undefined) {
+                    p.catch(err => console.log("Cần tương tác người dùng để phát âm thanh:", err));
+                }
+
+                // Điểm xuyết hòa âm nền
                 startMeditationDrone();
                 scheduleNextMeditationPhrase();
-                showAnnouncement("🎶 KHỞI NHẠC HỘI HOA ĐĂNG", "Khúc thiền thanh tịnh • Vạn sự an yên");
+
+                showAnnouncement("🎶 NHẠC HỘI HOA ĐĂNG ĐANG PHÁT", audioPlaylist[currentTrackIdx].title);
             } else {
-                txt.innerText = "NHẠC HỘI HOA ĐĂNG: TẠM DỪNG";
+                txt.innerText = "NHẠC HOA ĐĂNG: TẠM DỪNG";
                 btn.style.background = "rgba(244, 63, 94, 0.22)";
                 btn.style.borderColor = "#ff758f";
+                btn.style.color = "#ffe4e6";
                 eq.classList.add('eq-paused');
+
+                audioElem.pause();
                 stopMeditationDrone();
                 if (musicTimer) clearTimeout(musicTimer);
             }
