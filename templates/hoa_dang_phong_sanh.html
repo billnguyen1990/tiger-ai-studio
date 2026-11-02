@@ -45,6 +45,15 @@
             z-index: 1;
         }
 
+                @keyframes eqAnim {
+            0% { height: 3px; }
+            100% { height: 13px; }
+        }
+        .eq-paused .eq-bar {
+            animation: none !important;
+            height: 3px !important;
+        }
+
         /* Overlay giao diện HUD */
         .hud-layer {
             position: absolute;
@@ -447,8 +456,18 @@
             </div>
 
                         <div class="stats-badge">
-                <button onclick="open3DGallery()" style="background: rgba(255,209,102,0.18); border: 1px solid #ffd166; color: #ffd166; padding: 4px 12px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;">
-                    <span>✨</span> CHI TIẾT 3D MASTER
+                <!-- Nút Bật/Tắt Nhạc Hội Hoa Đăng -->
+                <button id="btnMusicToggle" onclick="toggleHoiHoaDangMusic()" style="background: rgba(244, 63, 94, 0.22); border: 1px solid #ff758f; color: #ffe4e6; padding: 5px 14px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.25s;">
+                    <span id="musicIcon">🎵</span>
+                    <span id="musicText">NHẠC HỘI HOA ĐĂNG: BẬT</span>
+                    <div id="equalizerBars" style="display: flex; gap: 2px; align-items: flex-end; height: 12px;">
+                        <span class="eq-bar" style="width: 2px; height: 10px; background: #ffd166; animation: eqAnim 0.6s infinite alternate;"></span>
+                        <span class="eq-bar" style="width: 2px; height: 6px; background: #ff758f; animation: eqAnim 0.4s infinite alternate 0.2s;"></span>
+                        <span class="eq-bar" style="width: 2px; height: 12px; background: #38bdf8; animation: eqAnim 0.7s infinite alternate 0.4s;"></span>
+                    </div>
+                </button>
+                <button onclick="open3DGallery()" style="background: rgba(255,209,102,0.18); border: 1px solid #ffd166; color: #ffd166; padding: 5px 12px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px;">
+                    <span>✨</span> 3D MASTER
                 </button>
                 <div class="stat-item">
                     <span>🪷 Hoa đăng 3D:</span>
@@ -526,6 +545,197 @@
 
     <script>
         // ========================================================
+                // ========================================================
+        // 1B. HỆ THỐNG NHẠC HỘI HOA ĐĂNG CỔ TRUYỀN & THIỀN TỊNH
+        // Tái hiện điệu Lục Cúng Hoa Đăng & nhạc thiền an yên
+        // Gồm: Khí thiền Singing Bowl, Đờn Tranh ngũ cung, Sáo Trúc và Tiếng Mõ
+        // ========================================================
+        let isMusicPlaying = false;
+        let musicTimer = null;
+        let droneOsc1 = null, droneOsc2 = null, droneGain = null;
+
+        // Thang âm ngũ cung Hội Hoa Đăng (D, F, G, A, C - Điệu Oán / Điệu Bắc thiền tịnh)
+        const hoiHoaDangNotes = [
+            146.83, // D3 (Bass trầm)
+            220.00, // A3
+            293.66, // D4 (Hò)
+            349.23, // F4 (Xự)
+            392.00, // G4 (Xang)
+            440.00, // A4 (Xê)
+            523.25, // C5 (Cống)
+            587.33, // D5 (Liu)
+            698.46, // F5
+            880.00  // A5
+        ];
+
+        // Tiếng Đờn Tranh (Dan Tranh Pluck)
+        function playDanTranhNote(freq, delay = 0, vol = 0.28) {
+            if (!audioCtx || !isMusicPlaying) return;
+            const now = audioCtx.currentTime + delay;
+
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            // Sóng âm đờn tranh giàu họa âm
+            osc1.type = 'triangle';
+            osc2.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(freq, now);
+            osc2.frequency.setValueAtTime(freq * 2, now); // Họa âm bậc 2
+
+            // Bộ lọc màng gỗ đờn tranh
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1800, now);
+            filter.frequency.exponentialRampToValueAtTime(350, now + 1.8);
+
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(vol, now + 0.02); // Gảy phím nảy
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2); // Ngân vang rồi tắt dần
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 2.3);
+            osc2.stop(now + 2.3);
+        }
+
+        // Tiếng Mõ gỗ thiền tịnh (Temple Woodblock)
+        function playMoWoodblock(delay = 0) {
+            if (!audioCtx || !isMusicPlaying) return;
+            const now = audioCtx.currentTime + delay;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(580, now);
+            osc.frequency.exponentialRampToValueAtTime(320, now + 0.06);
+
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(520, now);
+            filter.Q.setValueAtTime(6, now);
+
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.13);
+        }
+
+        // Bắt đầu chuỗi nhạc thiền Hội Hoa Đăng tuần hoàn
+        let melodyStep = 0;
+        const melodyPattern = [
+            [2, 4],    // D4, G4
+            [3],       // F4
+            [4, 6],    // G4, C5
+            [5],       // A4
+            [7, 5],    // D5, A4
+            [6],       // C5
+            [4, 2],    // G4, D4
+            [1, 0]     // A3, D3
+        ];
+
+        function scheduleNextMeditationPhrase() {
+            if (!isMusicPlaying) return;
+
+            const currentNotes = melodyPattern[melodyStep % melodyPattern.length];
+            melodyStep++;
+
+            currentNotes.forEach((nIdx, i) => {
+                const freq = hoiHoaDangNotes[nIdx];
+                playDanTranhNote(freq, i * 0.28, 0.26);
+            });
+
+            // Cứ 2 nhịp thì điểm một tiếng Mõ hoặc Chuông ngân
+            if (melodyStep % 2 === 0) {
+                playMoWoodblock(0.1);
+            }
+            if (melodyStep % 4 === 0) {
+                playBellSound();
+            }
+
+            musicTimer = setTimeout(scheduleNextMeditationPhrase, 1800 + Math.random() * 400);
+        }
+
+        // Khởi động Drone âm hưởng Singing Bowl nền
+        function startMeditationDrone() {
+            if (!audioCtx) initAudio();
+            const now = audioCtx.currentTime;
+
+            droneOsc1 = audioCtx.createOscillator();
+            droneOsc2 = audioCtx.createOscillator();
+            droneGain = audioCtx.createGain();
+
+            droneOsc1.type = 'sine';
+            droneOsc1.frequency.setValueAtTime(108, now); // Tần số 108Hz thiền định linh thiêng
+            droneOsc2.type = 'triangle';
+            droneOsc2.frequency.setValueAtTime(216.4, now); // Hòa âm bát ngát
+
+            droneGain.gain.setValueAtTime(0, now);
+            droneGain.gain.linearRampToValueAtTime(0.12, now + 2.5);
+
+            droneOsc1.connect(droneGain);
+            droneOsc2.connect(droneGain);
+            droneGain.connect(audioCtx.destination);
+
+            droneOsc1.start(now);
+            droneOsc2.start(now);
+        }
+
+        function stopMeditationDrone() {
+            if (droneGain && audioCtx) {
+                const now = audioCtx.currentTime;
+                droneGain.gain.linearRampToValueAtTime(0.0001, now + 1.0);
+                setTimeout(() => {
+                    try { droneOsc1.stop(); droneOsc2.stop(); } catch(e){}
+                }, 1100);
+            }
+        }
+
+        function toggleHoiHoaDangMusic() {
+            initAudio();
+            isMusicPlaying = !isMusicPlaying;
+
+            const btn = document.getElementById('btnMusicToggle');
+            const txt = document.getElementById('musicText');
+            const eq = document.getElementById('equalizerBars');
+
+            if (isMusicPlaying) {
+                txt.innerText = "NHẠC HỘI HOA ĐĂNG: ĐANG PHÁT";
+                btn.style.background = "rgba(16, 185, 129, 0.25)";
+                btn.style.borderColor = "#34d399";
+                eq.classList.remove('eq-paused');
+                startMeditationDrone();
+                scheduleNextMeditationPhrase();
+                showAnnouncement("🎶 KHỞI NHẠC HỘI HOA ĐĂNG", "Khúc thiền thanh tịnh • Vạn sự an yên");
+            } else {
+                txt.innerText = "NHẠC HỘI HOA ĐĂNG: TẠM DỪNG";
+                btn.style.background = "rgba(244, 63, 94, 0.22)";
+                btn.style.borderColor = "#ff758f";
+                eq.classList.add('eq-paused');
+                stopMeditationDrone();
+                if (musicTimer) clearTimeout(musicTimer);
+            }
+        }
+
+        // Tự động khởi động nhạc khi người dùng click tương tác đầu tiên trên trang
+        window.addEventListener('click', function autoStartMusicOnce() {
+            if (!isMusicPlaying) {
+                toggleHoiHoaDangMusic();
+            }
+            window.removeEventListener('click', autoStartMusicOnce);
+        }, { once: true });
+
+
         // 1. ÂM THANH THIỀN: CHUÔNG ĐỒNG & NƯỚC RÓC RÁCH (WEB AUDIO API)
         // ========================================================
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1070,74 +1280,167 @@
             }
         }
 
-        // Vẽ phong cảnh đêm sông Hậu trăng rằm
+        // ========================================================
+        // VẼ PHONG CẢNH ĐÊM SÔNG HẬU, TRĂNG 3D VÀ ĐƯỜNG TRĂNG DÁT VÀNG
+        // ========================================================
         function drawNightBackground() {
-            // Trời đêm
-            const skyGrad = ctx.createLinearGradient(0, 0, 0, height * 0.44);
-            skyGrad.addColorStop(0, '#020617');
-            skyGrad.addColorStop(0.5, '#0a1128');
-            skyGrad.addColorStop(1, '#1e1b4b');
-            ctx.fillStyle = skyGrad;
-            ctx.fillRect(0, 0, width, height * 0.44);
+            const time = Date.now() * 0.001;
+            const horizonY = height * 0.43;
 
-            // Sao lấp lánh
+            // 1. Trời đêm tĩnh lặng
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+            skyGrad.addColorStop(0, '#01040f');
+            skyGrad.addColorStop(0.55, '#071126');
+            skyGrad.addColorStop(1, '#161d3f');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, width, horizonY);
+
+            // 2. Bầu trời đầy sao lấp lánh
             stars.forEach(s => {
-                s.alpha += Math.sin(Date.now() * s.twinkleSpeed) * 0.01;
+                s.alpha += Math.sin(Date.now() * s.twinkleSpeed) * 0.015;
                 ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
                 ctx.fill();
             });
 
-            // Mặt trăng rằm lớn
-            const moonX = width * 0.82;
-            const moonY = height * 0.16;
-            const moonGlow = ctx.createRadialGradient(moonX, moonY, 15, moonX, moonY, 140);
-            moonGlow.addColorStop(0, 'rgba(255, 255, 230, 0.95)');
-            moonGlow.addColorStop(0.25, 'rgba(255, 243, 176, 0.45)');
-            moonGlow.addColorStop(1, 'rgba(255, 243, 176, 0)');
-            ctx.fillStyle = moonGlow;
+            // 3. VẦNG TRĂNG 3D CÓ CHIỀU SÂU & HÀO QUANG (3D SPHERICAL TEXTURED MOON)
+            // Vị trí trăng nằm lệch bên phải, cách bảng vàng một khoảng thoáng đẹp
+            const moonX = width * 0.58;
+            const moonFloatY = (height * 0.16) + Math.sin(time * 0.8) * 3.5; // Trăng thở nhịp nhàng
+            const moonRadius = 40;
+
+            // 3.1. Hào quang thiên giới tỏa rộng (Multi-tier Ethereal Halo)
+            const haloGrad = ctx.createRadialGradient(moonX, moonFloatY, moonRadius * 0.5, moonX, moonFloatY, 190);
+            haloGrad.addColorStop(0, 'rgba(255, 250, 224, 0.65)');
+            haloGrad.addColorStop(0.2, 'rgba(255, 238, 170, 0.35)');
+            haloGrad.addColorStop(0.55, 'rgba(255, 215, 120, 0.12)');
+            haloGrad.addColorStop(1, 'rgba(255, 215, 120, 0)');
+            ctx.fillStyle = haloGrad;
             ctx.beginPath();
-            ctx.arc(moonX, moonY, 140, 0, Math.PI * 2);
+            ctx.arc(moonX, moonFloatY, 190, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.fillStyle = '#fffbeb';
+            // 3.2. Quả cầu trăng 3D đổ bóng hình cầu (Spherical Shading)
+            const sphereGrad = ctx.createRadialGradient(
+                moonX - moonRadius * 0.35,
+                moonFloatY - moonRadius * 0.35,
+                moonRadius * 0.1,
+                moonX,
+                moonFloatY,
+                moonRadius
+            );
+            sphereGrad.addColorStop(0, '#ffffff');       // Điểm sáng chói cực bắc
+            sphereGrad.addColorStop(0.35, '#fffdf0');
+            sphereGrad.addColorStop(0.75, '#fef08a');
+            sphereGrad.addColorStop(0.96, '#f59e0b');
+            sphereGrad.addColorStop(1, '#92400e');       // Viền tối rìa hình cầu
+            ctx.fillStyle = sphereGrad;
             ctx.beginPath();
-            ctx.arc(moonX, moonY, 32, 0, Math.PI * 2);
+            ctx.arc(moonX, moonFloatY, moonRadius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ánh đèn cầu Cần Thơ xa xa
-            ctx.fillStyle = 'rgba(251, 191, 36, 0.7)';
-            for (let x = 0; x < width; x += 32) {
-                const bY = height * 0.43 + Math.sin(x * 0.01) * 3;
+            // 3.3. Chi tiết vân cung trăng 3D (Lunar Maria Basalt Plain Craters)
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(moonX, moonFloatY, moonRadius, 0, Math.PI * 2);
+            ctx.clip(); // Giới hạn bên trong hình cầu mặt trăng
+
+            ctx.fillStyle = 'rgba(180, 130, 80, 0.25)';
+            // Biển Mưa (Mare Imbrium)
+            ctx.beginPath();
+            ctx.ellipse(moonX - 12, moonFloatY - 14, 15, 11, -0.25, 0, Math.PI * 2);
+            ctx.fill();
+            // Biển Tĩnh Lặng (Mare Tranquillitatis)
+            ctx.beginPath();
+            ctx.ellipse(moonX + 14, moonFloatY + 3, 17, 13, 0.35, 0, Math.PI * 2);
+            ctx.fill();
+            // Biển Bão Tố (Oceanus Procellarum)
+            ctx.beginPath();
+            ctx.ellipse(moonX - 16, moonFloatY + 10, 14, 18, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 3.4. Làn mây bạc trôi nhẹ ngang qua vầng trăng tạo chiều sâu huyền ảo
+            const cloudSpeed = time * 12;
+            for (let c = 0; c < 3; c++) {
+                const cX = moonX - 120 + ((c * 85 + cloudSpeed) % 280);
+                const cY = moonFloatY - 10 + c * 14 + Math.sin(time + c) * 4;
+                const cGrad = ctx.createRadialGradient(cX, cY, 5, cX, cY, 55);
+                cGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
+                cGrad.addColorStop(0.5, 'rgba(210, 230, 255, 0.1)');
+                cGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = cGrad;
                 ctx.beginPath();
-                ctx.arc(x, bY, 2, 0, Math.PI * 2);
+                ctx.ellipse(cX, cY, 55, 16, 0.05, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // 4. Ánh đèn cầu Cần Thơ & bờ sông lung linh
+            ctx.fillStyle = 'rgba(251, 191, 36, 0.75)';
+            for (let x = 0; x < width; x += 32) {
+                const bY = horizonY - 1 + Math.sin(x * 0.012) * 2.5;
+                ctx.beginPath();
+                ctx.arc(x, bY, 2.2, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            // Dòng sông Hậu
-            const riverGrad = ctx.createLinearGradient(0, height * 0.44, 0, height);
-            riverGrad.addColorStop(0, '#0a192f');
-            riverGrad.addColorStop(0.3, '#071526');
-            riverGrad.addColorStop(1, '#030811');
+            // 5. Dòng sông Hậu mênh mông về đêm
+            const riverGrad = ctx.createLinearGradient(0, horizonY, 0, height);
+            riverGrad.addColorStop(0, '#09182f');
+            riverGrad.addColorStop(0.28, '#061324');
+            riverGrad.addColorStop(1, '#020710');
             ctx.fillStyle = riverGrad;
-            ctx.fillRect(0, height * 0.44, width, height * 0.56);
+            ctx.fillRect(0, horizonY, width, height - horizonY);
 
-            // Vệt trăng chiếu trên mặt nước
-            const moonReflect = ctx.createLinearGradient(moonX - 50, height * 0.44, moonX + 50, height);
-            moonReflect.addColorStop(0, 'rgba(255, 243, 176, 0.35)');
-            moonReflect.addColorStop(0.5, 'rgba(255, 243, 176, 0.1)');
-            moonReflect.addColorStop(1, 'rgba(255, 243, 176, 0)');
-            ctx.fillStyle = moonReflect;
-            ctx.beginPath();
-            ctx.ellipse(moonX, height * 0.65, 70, height * 0.28, 0, 0, Math.PI * 2);
-            ctx.fill();
+            // 6. BÓNG TRĂNG DÁT VÀNG DI CHUYỂN SỐNG ĐỘNG TRÊN SÓNG NƯỚC (DYNAMIC MOON RIVER CAUSTICS)
+            // 6.1. Hào quang trăng tự nhiên loãng mềm mại không có cạnh thô
+            for (let layer = 0; layer < 3; layer++) {
+                const spread = (layer + 1) * 45;
+                const softGlow = ctx.createRadialGradient(moonX, horizonY + 60, 10, moonX, horizonY + 160, 220 + layer * 70);
+                softGlow.addColorStop(0, 'rgba(255, 238, 160, 0.24)');
+                softGlow.addColorStop(0.4, 'rgba(255, 215, 100, 0.1)');
+                softGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = softGlow;
+                ctx.fillRect(moonX - 250, horizonY, 500, height - horizonY);
+            }
 
-            // Sóng nước lăn tăn
-            const time = Date.now() * 0.001;
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            // 6.2. Hàng trăm dải sóng dát vàng bạc lấp lánh mềm mại uốn lượn tự nhiên
+            for (let y = horizonY + 3; y < height; y += 4.2) {
+                const progress = (y - horizonY) / (height - horizonY); // 0 (chân trời) -> 1 (đáy màn hình)
+                
+                // Độ rộng vệt trăng loang theo sóng tự nhiên (không dùng hình tam giác cứng)
+                const organicSpread = Math.sin(y * 0.03 + time * 1.5) * 15;
+                const bandWidth = (20 + Math.pow(progress, 0.8) * 190) + organicSpread;
+                
+                // Sóng uốn lượn di chuyển nhịp nhàng theo thời gian thực (Fluid Undulating Wave Shift)
+                const waveShift = Math.sin(y * 0.035 - time * 2.2) * (10 + progress * 28)
+                                + Math.cos(y * 0.015 + time * 1.4) * 14;
+                
+                const currentCenterX = moonX + waveShift;
+                
+                // Độ lấp lánh kim quang (Glinting Shimmer)
+                const shimmer = Math.sin(y * 0.22 + time * 3.2) * 0.5 + 0.5;
+                const alpha = (0.22 + shimmer * 0.68) * Math.max(0.15, 1 - Math.pow(progress, 1.4) * 0.65);
+                
+                const glintGrad = ctx.createLinearGradient(
+                    currentCenterX - bandWidth / 2, y,
+                    currentCenterX + bandWidth / 2, y
+                );
+                glintGrad.addColorStop(0, 'rgba(255, 235, 150, 0)');
+                glintGrad.addColorStop(0.25, `rgba(255, 220, 130, ${alpha * 0.45})`);
+                glintGrad.addColorStop(0.5, `rgba(255, 255, 245, ${alpha * 0.95})`); // Lõi trăng trắng bạc dát vàng
+                glintGrad.addColorStop(0.75, `rgba(255, 220, 130, ${alpha * 0.45})`);
+                glintGrad.addColorStop(1, 'rgba(255, 235, 150, 0)');
+                
+                ctx.fillStyle = glintGrad;
+                ctx.fillRect(currentCenterX - bandWidth / 2, y, bandWidth, 2.0);
+            }
+
+            // 7. Gợn sóng lăn tăn toàn mặt sông
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
             ctx.lineWidth = 1;
-            for (let y = height * 0.46; y < height; y += 18) {
+            for (let y = horizonY + 12; y < height; y += 20) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
                 for (let x = 0; x < width; x += 40) {
