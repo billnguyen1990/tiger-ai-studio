@@ -777,8 +777,35 @@
 
     .chart-container {
       position: relative;
-      height: 280px;
+      height: 290px;
       width: 100%;
+    }
+
+    /* DASHBOARD ROW (2 BIỂU ĐỒ CHUNG HÀNG NGANG) */
+    .dashboard-row {
+      display: grid;
+      grid-template-columns: 1.62fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .dashboard-row > .content-box {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard-row .chart-container {
+      flex: 1;
+      height: 290px;
+      min-height: 290px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* TABLE */
