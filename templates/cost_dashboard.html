@@ -1334,32 +1334,42 @@
           <div class="box-title" style="color: var(--accent-amber);">🛵 BẢNG LƯƠNG CHI TIẾT TÀI XẾ GIAO NHẬN (NVGH)</div>
           <span id="badgeDriverCount" class="badge-tag" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px;">29 Tài xế</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
           <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
             <span style="color: var(--text-sub);">Tổng lương NVGH:</span>
-            <b id="txtTotalDriverSalary" style="color: var(--accent-green); margin-left: 6px; font-size: 15px;">155.700.708 đ</b>
+            <b id="txtTotalDriverSalary" style="color: var(--accent-green); margin-left: 6px; font-size: 15px;">238.465.727 đ</b>
+          </div>
+          <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
+            <span style="color: var(--text-sub);">Lương GTC:</span>
+            <b id="txtTotalGtcSalary" style="color: #38bdf8; margin-left: 6px;">235.766.384 đ</b>
+          </div>
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
+            <span style="color: var(--text-sub);">LHH LTC (Lấy):</span>
+            <b id="txtTotalLtcSalary" style="color: #f59e0b; margin-left: 6px;">2.699.343 đ</b>
           </div>
           <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
             <span style="color: var(--text-sub);">Bình quân/TX:</span>
-            <b id="txtAvgDriverSalary" style="color: var(--accent-blue); margin-left: 6px;">5.368.990 đ</b>
+            <b id="txtAvgDriverSalary" style="color: var(--accent-blue); margin-left: 6px;">8.222.956 đ</b>
           </div>
-          <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm kiếm tài xế..." oninput="filterDriversTable()" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 180px;">
+          <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm kiếm tài xế..." oninput="filterDriversTable()" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 170px;">
         </div>
       </div>
       <div class="table-wrapper">
         <table id="tblDrivers">
           <thead>
             <tr>
-              <th style="width: 70px; text-align: center;">Hạng</th>
+              <th style="width: 60px; text-align: center;">Hạng</th>
               <th>Họ & Tên Tài Xế (NVGH)</th>
               <th>Kho Trực Thuộc</th>
-              <th style="text-align: right;">Thu Nhập / Lương (VNĐ)</th>
+              <th style="text-align: right; color: #38bdf8;">Lương GTC (VNĐ)</th>
+              <th style="text-align: right; color: #f59e0b;">LHH LTC (VNĐ)</th>
+              <th style="text-align: right; color: var(--accent-green);">Tổng Thu Nhập (VNĐ)</th>
               <th style="text-align: right;">Tỷ Trọng (%)</th>
               <th style="text-align: center;">Trạng Thái / Đánh Giá</th>
             </tr>
           </thead>
           <tbody id="tblBodyDrivers">
-            <tr><td colspan="6" style="text-align: center; padding: 20px;">Đang tải danh sách tài xế...</td></tr>
+            <tr><td colspan="8" style="text-align: center; padding: 20px;">Đang tải danh sách tài xế...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1482,12 +1492,18 @@
       if (summary) {
         document.getElementById("badgeDriverCount").innerText = `${summary.count || 0} Tài xế`;
         document.getElementById("txtTotalDriverSalary").innerText = summary.formatted_total || "0 đ";
+        if (document.getElementById("txtTotalGtcSalary")) {
+          document.getElementById("txtTotalGtcSalary").innerText = summary.formatted_gtc || "0 đ";
+        }
+        if (document.getElementById("txtTotalLtcSalary")) {
+          document.getElementById("txtTotalLtcSalary").innerText = summary.formatted_ltc || "0 đ";
+        }
         document.getElementById("txtAvgDriverSalary").innerText = summary.formatted_avg || "0 đ";
       }
 
       const tbody = document.getElementById("tblBodyDrivers");
       if (!drivers || drivers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Không có tài xế nào khớp bộ lọc</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Không có tài xế nào khớp bộ lọc</td></tr>';
         return;
       }
 
@@ -1502,6 +1518,8 @@
             <td style="text-align: center;">${rankBadge}</td>
             <td style="font-weight: 700; color: #fff;">👤 ${d.driver_name}</td>
             <td style="color: var(--accent-blue);">🏢 ${d.hub_name}</td>
+            <td class="td-num" style="color: #38bdf8; font-weight: 600;">${d.formatted_gtc || "0 đ"}</td>
+            <td class="td-num" style="color: #f59e0b; font-weight: 600;">${d.formatted_ltc || "0 đ"}</td>
             <td class="td-num" style="color: var(--accent-green); font-weight: 700; font-size: 14px;">${d.formatted_period_salary || d.formatted_total_salary}</td>
             <td class="td-num" style="color: var(--accent-purple); font-weight: 600;">${d.percentage || "0%"}</td>
             <td style="text-align: center;">

@@ -46,6 +46,29 @@ def _clean_num(val_str):
 def _format_vnd(val):
     return f"{int(round(val)):,}".replace(",", ".")
 
+def parse_vietnamese_float(s):
+    if not s: return 0.0
+    s = str(s).strip()
+    if not s or s == "-": return 0.0
+    if "," in s and "." in s:
+        s = s.replace(".", "").replace(",", ".")
+    elif "," in s:
+        parts = s.split(",")
+        if len(parts) == 2 and len(parts[1]) > 0:
+            s = parts[0] + "." + parts[1]
+        else:
+            s = s.replace(",", "")
+    elif "." in s:
+        parts = s.split(".")
+        if len(parts) > 2:
+            s = "".join(parts)
+        elif len(parts) == 2 and len(parts[1]) == 3:
+            s = parts[0] + parts[1]
+    try:
+        return float(s)
+    except:
+        return 0.0
+
 def build_cost_dashboard_matrix(force=False):
     """
     Chỉ nạp và xử lý CHUYÊN BIỆT cho VÙNG MIỀN TÂY 01
@@ -121,49 +144,120 @@ def build_cost_dashboard_matrix(force=False):
                 "metrics": ent_metrics
             }
 
-        # 2. BẢNG CHI TIẾT LƯƠNG TÀI XẾ (NVGH) TỪ SHEET 'Lương Nhân Viên '
+        # 2. BẢNG CHI TIẾT LƯƠNG TÀI XẾ (NVGH) TỪ SHEET 'Data Raw' (BAO GỒM LHH GTC VÀ LHH LTC)
         drivers_list = []
         try:
-            ws_salary = sh.worksheet("Lương Nhân Viên ")
-            salary_rows = ws_salary.get_all_values()
-            salary_header = salary_rows[1] if len(salary_rows) > 1 else []
+            ws_raw = sh.worksheet("Data Raw")
+            all_raw = ws_raw.get_all_values()
+            if all_raw:
+                raw_headers = all_raw[0]
+                def _get_col(name):
+                    return raw_headers.index(name) if name in raw_headers else -1
+                
+                col_driver = _get_col("driverName")
+                col_hub = _get_col("Kho")
+                col_date = _get_col("Thời gian")
+                col_ltc = _get_col("LHH LTC")
+                col_gtc = _get_col("LHH GTC")
 
-            hub_name_map = {
-                "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ": "Kho Bình Thủy",
-                "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ": "Kho Cái Răng",
-                "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ": "Kho Ô Môn",
-                "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang": "Kho Vị Thanh"
-            }
+                hub_name_map = {
+                    "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ": "Kho Cái Răng",
+                    "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ": "Kho Bình Thủy",
+                    "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang": "Kho Vị Thanh",
+                    "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ": "Kho Ô Môn"
+                }
 
-            cur_hub = ""
-            for r in salary_rows[2:]:
-                c0 = r[0].strip() if len(r) > 0 else ""
-                c1 = r[1].strip() if len(r) > 1 else ""
-                tot_str = r[-1].strip().replace(".", "").replace(",", "") if len(r) > 0 else "0"
+                driver_map = {}
+                for r in all_raw[1:]:
+                    if col_hub < 0 or col_driver < 0 or len(r) <= max(col_hub, col_driver):
+                        continue
+                    hub_val = r[col_hub].strip()
+                    if hub_val not in hub_name_map:
+                        continue
+                    driver_val = r[col_driver].strip()
+                    if not driver_val:
+                        continue
 
-                if c0 in hub_name_map:
-                    cur_hub = hub_name_map[c0]
-                elif c0.startswith("Tổng số") or "Tổng cộng" in c0:
-                    continue
-                elif c0 and c0 not in hub_name_map:
-                    cur_hub = ""
+                    date_val = r[col_date].strip() if col_date >= 0 and col_date < len(r) else ""
+                    # Chỉ lấy dữ liệu chuẩn kỳ Tháng 10/2026 của Miền Tây 01
+                    if date_val and "/10/2026" not in date_val:
+                        continue
 
-                if cur_hub and c1:
-                    daily_d = {}
-                    for c_idx, d_name in enumerate(salary_header):
-                        if "/" in d_name and c_idx < len(r):
-                            daily_d[d_name] = _clean_num(r[c_idx])
+                    ltc_val = parse_vietnamese_float(r[col_ltc]) if col_ltc >= 0 and col_ltc < len(r) else 0.0
+                    gtc_val = parse_vietnamese_float(r[col_gtc]) if col_gtc >= 0 and col_gtc < len(r) else 0.0
+                    tot_val = gtc_val + ltc_val
 
-                    tot_num = float(tot_str) if tot_str.isdigit() else 0.0
-                    drivers_list.append({
-                        "driver_name": c1,
-                        "hub_name": cur_hub,
-                        "total_salary": tot_num,
-                        "formatted_salary": _format_vnd(tot_num) + " đ",
-                        "daily_salary": daily_d
-                    })
+                    if driver_val not in driver_map:
+                        driver_map[driver_val] = {
+                            "driver_name": driver_val,
+                            "hub_name": hub_name_map[hub_val],
+                            "gtc_salary": 0.0,
+                            "ltc_salary": 0.0,
+                            "total_salary": 0.0,
+                            "daily": {}
+                        }
+
+                    driver_map[driver_val]["gtc_salary"] += gtc_val
+                    driver_map[driver_val]["ltc_salary"] += ltc_val
+                    driver_map[driver_val]["total_salary"] += tot_val
+
+                    if date_val:
+                        if date_val not in driver_map[driver_val]["daily"]:
+                            driver_map[driver_val]["daily"][date_val] = {"gtc": 0.0, "ltc": 0.0, "total": 0.0}
+                        driver_map[driver_val]["daily"][date_val]["gtc"] += gtc_val
+                        driver_map[driver_val]["daily"][date_val]["ltc"] += ltc_val
+                        driver_map[driver_val]["daily"][date_val]["total"] += tot_val
+
+                # Bổ sung các tài xế chính thức nếu chưa có chuyến
+                all_known_drivers = [
+                    ("Nguyễn Hải Đông", "Kho Cái Răng"),
+                    ("Nguyễn Chí Toàn", "Kho Ô Môn"),
+                    ("Lê Hồng Tú", "Kho Cái Răng"),
+                    ("Nguyễn Anh Bằng", "Kho Bình Thủy"),
+                    ("Nguyễn Tấn Thành", "Kho Cái Răng"),
+                    ("Văn Trường Thọ", "Kho Cái Răng"),
+                    ("Võ Trung Hiếu", "Kho Bình Thủy"),
+                    ("Nguyễn Thanh Tiền", "Kho Bình Thủy"),
+                    ("Đào Tiến Đạt", "Kho Ô Môn"),
+                    ("Nhan Văn Tươi", "Kho Vị Thanh"),
+                    ("Nguyễn An Khang", "Kho Vị Thanh"),
+                    ("Nguyễn Thành Độ", "Kho Vị Thanh"),
+                    ("Nguyễn Duy Khương", "Kho Bình Thủy"),
+                    ("Nguyễn Chí Linh", "Kho Cái Răng"),
+                    ("Nguyễn Văn Được Em", "Kho Cái Răng"),
+                    ("Nguyễn Duy Linh", "Kho Cái Răng"),
+                    ("Ngô Hữu Liêm", "Kho Cái Răng"),
+                    ("Phan Ngọc Hải", "Kho Cái Răng"),
+                    ("Nguyễn Quốc Hưng", "Kho Cái Răng"),
+                    ("Lê Hiếu Lễ", "Kho Bình Thủy"),
+                    ("Nguyễn Minh Tiến", "Kho Vị Thanh"),
+                    ("Trần Vủ Hải", "Kho Cái Răng"),
+                    ("Nguyễn Hữu Thanh", "Kho Bình Thủy"),
+                    ("Huỳnh Trung Lành", "Kho Ô Môn"),
+                    ("Trần Thanh Đảm", "Kho Cái Răng"),
+                    ("Trần Minh Bình", "Kho Ô Môn"),
+                    ("Huỳnh Diệp Đức Trung", "Kho Vị Thanh"),
+                    ("Trần Trọng Bằng", "Kho Ô Môn"),
+                    ("Công Bằng", "Kho Cái Răng")
+                ]
+                for d_name, d_hub in all_known_drivers:
+                    if d_name not in driver_map:
+                        driver_map[d_name] = {
+                            "driver_name": d_name,
+                            "hub_name": d_hub,
+                            "gtc_salary": 0.0,
+                            "ltc_salary": 0.0,
+                            "total_salary": 0.0,
+                            "daily": {}
+                        }
+
+                for d in driver_map.values():
+                    d["formatted_gtc"] = _format_vnd(d["gtc_salary"]) + " đ"
+                    d["formatted_ltc"] = _format_vnd(d["ltc_salary"]) + " đ"
+                    d["formatted_salary"] = _format_vnd(d["total_salary"]) + " đ"
+                    drivers_list.append(d)
         except Exception as sal_ex:
-            print(f"[{now_str}] ⚠️ Lỗi đọc sheet Lương Nhân Viên : {sal_ex}")
+            print(f"[{now_str}] ⚠️ Lỗi đọc sheet Data Raw: {sal_ex}")
 
         dashboard_data = {
             "last_sync": now_str,
@@ -315,34 +409,57 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             row[m] = h_vals.get(m, {}).get("formatted", "-")
         hubs_breakdown.append(row)
 
-    # PHÂN RÃ CHI TIẾT LƯƠNG TÀI XẾ (NVGH) THEO BỘ LỌC KHO & KỲ BÁO CÁO
+    # PHÂN RÃ CHI TIẾT LƯƠNG TÀI XẾ (NVGH) THEO BỘ LỌC KHO & KỲ BÁO CÁO (BAO GỒM LHH GTC VÀ LHH LTC)
     filtered_drivers = []
     for d in all_drivers:
         if selected_ent_label == "Toàn Vùng MT01" or d["hub_name"] == selected_ent_label:
-            if mode == "day" and key and key in d.get("daily_salary", {}):
-                sal_period = d["daily_salary"][key]
+            if mode == "day" and key:
+                day_val = d.get("daily", {}).get(key, {})
+                if isinstance(day_val, dict):
+                    gtc_p = day_val.get("gtc", 0.0)
+                    ltc_p = day_val.get("ltc", 0.0)
+                    sal_period = day_val.get("total", gtc_p + ltc_p)
+                else:
+                    sal_period = float(day_val) if day_val else 0.0
+                    gtc_p = sal_period
+                    ltc_p = 0.0
+            elif mode == "week" and key and key in matrix.get("weeks_cols", {}) and available_days:
+                w_col_indices = matrix.get("weeks_cols", {}).get(key, [])
+                days_in_week = [available_days[c - 4] for c in w_col_indices if 0 <= c - 4 < len(available_days)]
+                gtc_p = sum(d.get("daily", {}).get(day_str, {}).get("gtc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_week)
+                ltc_p = sum(d.get("daily", {}).get(day_str, {}).get("ltc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_week)
+                sal_period = gtc_p + ltc_p
             else:
-                sal_period = d.get("total_salary", 0.0)
+                gtc_p = d.get("gtc_salary", 0.0)
+                ltc_p = d.get("ltc_salary", 0.0)
+                sal_period = d.get("total_salary", gtc_p + ltc_p)
 
             filtered_drivers.append({
                 "driver_name": d["driver_name"],
                 "hub_name": d["hub_name"],
+                "gtc_salary": gtc_p,
+                "formatted_gtc": _format_vnd(gtc_p) + " đ",
+                "ltc_salary": ltc_p,
+                "formatted_ltc": _format_vnd(ltc_p) + " đ",
                 "period_salary": sal_period,
                 "formatted_period_salary": _format_vnd(sal_period) + " đ",
                 "total_salary": d.get("total_salary", 0.0),
-                "formatted_total_salary": d.get("formatted_salary", "0 đ")
+                "formatted_total_salary": d.get("formatted_salary", _format_vnd(sal_period) + " đ")
             })
 
     # Sắp xếp tài xế theo lương cao nhất trước
     filtered_drivers.sort(key=lambda x: x["period_salary"], reverse=True)
     
-    # Tính tổng lương và tỷ trọng
+    # Tính tổng lương, tổng GTC, tổng LTC và tỷ trọng
     tot_driver_sal = sum(d["period_salary"] for d in filtered_drivers)
+    tot_gtc_sal = sum(d["gtc_salary"] for d in filtered_drivers)
+    tot_ltc_sal = sum(d["ltc_salary"] for d in filtered_drivers)
+
     for idx, d in enumerate(filtered_drivers, 1):
         d["rank"] = idx
         pct = (d["period_salary"] / tot_driver_sal * 100) if tot_driver_sal > 0 else 0
         d["percentage"] = f"{pct:.1f}%"
-        if pct >= 8.0:
+        if pct >= 5.5:
             d["badge"] = "Top Thu Nhập"
             d["badge_color"] = "#10b981"
         elif d["period_salary"] > 0:
@@ -356,6 +473,10 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
         "count": len(filtered_drivers),
         "total_salary": tot_driver_sal,
         "formatted_total": _format_vnd(tot_driver_sal) + " đ",
+        "total_gtc": tot_gtc_sal,
+        "formatted_gtc": _format_vnd(tot_gtc_sal) + " đ",
+        "total_ltc": tot_ltc_sal,
+        "formatted_ltc": _format_vnd(tot_ltc_sal) + " đ",
         "avg_salary": (tot_driver_sal / len(filtered_drivers)) if filtered_drivers else 0,
         "formatted_avg": _format_vnd(tot_driver_sal / len(filtered_drivers)) + " đ" if filtered_drivers else "0 đ"
     }
