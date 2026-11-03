@@ -14,6 +14,85 @@ BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 CHAT_ID = "-1003940889949"
 TOPIC_IDS = [506]  # CHỈ gửi vào Topic 506 (📅 Đơn Tạo), KHÔNG gửi vào Topic 2690 (🔥 Báo Cáo)
 
+from datetime import datetime
+import time
+
+def trigger_sheet_filter_via_cdp():
+    """Tự động kích hoạt lọc và tạo bảng thống kê nếu ThongKe chưa cập nhật ngày hôm nay."""
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.connect_over_cdp('http://127.0.0.1:9223')
+            ctx = browser.contexts[0]
+            pages = [pg for pg in ctx.pages if '1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI' in pg.url]
+            if not pages:
+                print("⚠️ Không tìm thấy tab Google Sheets Đơn Tạo trên Chrome CDP 9223!")
+                return False
+            page = pages[0]
+            page.bring_to_front()
+
+            def click_menu(menu_txt, sub_txt):
+                page.keyboard.press("Escape")
+                time.sleep(0.3)
+                page.keyboard.press("Escape")
+                time.sleep(0.3)
+                btn = page.evaluate("""(mName) => {
+                    const bar = document.querySelector('#docs-menubar');
+                    if (!bar) return null;
+                    const items = Array.from(bar.querySelectorAll('.menu-button'));
+                    const target = items.find(el => el.innerText && el.innerText.trim() === mName);
+                    if (target) {
+                        const r = target.getBoundingClientRect();
+                        return { x: r.x + r.width/2, y: r.y + r.height/2 };
+                    }
+                    return null;
+                }""", menu_txt)
+                if not btn:
+                    return False
+                page.mouse.click(btn['x'], btn['y'])
+                time.sleep(1.2)
+                sub = page.evaluate("""(sName) => {
+                    const items = Array.from(document.querySelectorAll('.goog-menuitem')).filter(e => e.offsetParent !== null);
+                    const target = items.find(e => e.innerText && e.innerText.trim().includes(sName));
+                    if (target) {
+                        const r = target.getBoundingClientRect();
+                        return { x: r.x + r.width/2, y: r.y + r.height/2 };
+                    }
+                    return null;
+                }""", sub_txt)
+                if not sub:
+                    page.keyboard.press("Escape")
+                    return False
+                page.mouse.click(sub['x'], sub['y'])
+                return True
+
+            def wait_script():
+                saw = False
+                for _ in range(60):
+                    time.sleep(1.5)
+                    bar = page.evaluate("""() => {
+                        const b = document.querySelector('.docs-butterbar-container, .docs-butterbar-message, .jfk-butterbar');
+                        return b && b.offsetParent !== null ? b.innerText.trim() : '';
+                    }""")
+                    if "Đang chạy tập lệnh" in bar:
+                        saw = True
+                    elif saw and ("Đã kết thúc" in bar or not bar):
+                        break
+
+            print("🔄 [Tự động khắc phục] Kích hoạt Bước 1: 'Chạy lọc -> Ketqua'...")
+            if click_menu("Lọc dữ liệu", "Chạy lọc -> Ketqua"):
+                wait_script()
+                time.sleep(3)
+
+            print("🔄 [Tự động khắc phục] Kích hoạt Bước 2: 'Tạo bảng thống kê -> ThongKe'...")
+            if click_menu("Lọc dữ liệu", "Tạo bảng thống kê"):
+                wait_script()
+                time.sleep(5)
+                return True
+    except Exception as ex:
+        print(f"⚠️ Lỗi trigger qua Chrome CDP: {ex}")
+    return False
+
 def run_b2b_report(send_telegram=True):
     print("=" * 60)
     print("🚀 BẮT ĐẦU QUY TRÌNH BÁO CÁO ĐƠN TẠO MT01 (18:00)")
@@ -28,6 +107,27 @@ def run_b2b_report(send_telegram=True):
     sh = client.open_by_key('1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI')
     tk = sh.worksheet('ThongKe')
     all_rows = tk.get_all_values()
+
+    # Kiểm tra tính cập nhật của ngày hôm nay
+    now = datetime.now()
+    expected_today = [
+        f"{now.day}/{now.month}/{now.year}",
+        f"{now.day:02d}/{now.month:02d}/{now.year}",
+        f"{now.day}/{now.month:02d}/{now.year}",
+        now.strftime("%d/%m/%Y")
+    ]
+    cur_header1 = all_rows[1] if len(all_rows) > 1 else []
+    cur_dates = [c for c in cur_header1 if '/' in c]
+    latest_in_sheet = cur_dates[-1] if cur_dates else ""
+    
+    if latest_in_sheet not in expected_today:
+        print(f"⚠️ Cột ngày mới nhất trong ThongKe ({latest_in_sheet}) chưa khớp ngày hôm nay ({expected_today[0]})!")
+        if trigger_sheet_filter_via_cdp():
+            all_rows = tk.get_all_values()
+            print("✓ Đã tải lại dữ liệu mới nhất sau khi tự động kích hoạt lọc!")
+        else:
+            print("⚠️ Chưa thể làm mới tự động, vẫn tiếp tục với dữ liệu sẵn có...")
+
 
     # Table 1: Count of mã đơn (Phòng 1: 5 kho)
     t1 = []
@@ -177,8 +277,8 @@ def run_b2b_report(send_telegram=True):
 
     cap2 = f"""📊 <b>Data Đơn Tạo Miền Tây 01 (CÂN NẶNG)</b>
 - TỔNG CÂN NẶNG : Ngày {today_str}
-- Hôm nay: <b>{can_nang_today}</b> g
-- Tổng cộng: <b>{can_nang_total}</b> g"""
+- Hôm nay: <b>{can_nang_today}</b> kg
+- Tổng cộng: <b>{can_nang_total}</b> kg"""
 
     success_topics = []
     for top_id in TOPIC_IDS:
