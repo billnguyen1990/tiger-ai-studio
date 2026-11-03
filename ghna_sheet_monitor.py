@@ -259,25 +259,29 @@ def run_check(force_send=False, silent_if_empty=True):
     has_changes = (len(new_rows) > 0 or len(updated_rows) > 0)
     telegram_res = None
 
-    if has_changes or force_send:
-        if has_changes:
-            msg = format_alert_message(new_rows, updated_rows)
-        else:
-            # Thông điệp kiểm tra định kỳ không có biến động
-            now_str = get_now_str()
-            msg = (
-                "🐯 <b>[TIGER AI • KIỂM TRA ĐỊNH KỲ TAB GHNa]</b>\n"
-                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"⏰ <b>Thời điểm kiểm tra:</b> <code>{now_str}</code>\n"
-                f"📋 <b>Hiện trạng:</b> Tab <b>GHNa</b> hiện có <b>{len(current_data_rows)} dòng dữ liệu</b>.\n"
-                "✅ <i>Chưa phát sinh dữ liệu mới hoặc ghi chú vi phạm mới từ bưu cục. Tiger AI sẽ tiếp tục rà soát ca kế tiếp!</i> 🍻\n\n"
-                "📊 <b>Link vào ngay tab GHNa:</b>\n"
-                f"👉 <a href='{SHEET_VIEW_URL}'>{SHEET_VIEW_URL}</a>"
-            )
-        print("[GHNa Monitor] Gửi thông báo đến Telegram...")
+    # CHỈ GỬI THÔNG BÁO TELEGRAM KHI CÓ NGƯỜI NHẬP LIỆU MỚI HOẶC GIẢI TRÌNH CẬP NHẬT!
+    # Nếu tab GHNa trống (0 dòng) hoặc chưa ai nhập liệu:
+    # -> Âm thầm chạy check, tuyệt đối không gửi tin nhắn lên room làm phiền.
+    if has_changes:
+        msg = format_alert_message(new_rows, updated_rows)
+        print(f"[{get_now_str()}] [GHNa Monitor] Có {len(new_rows)} dòng mới, {len(updated_rows)} giải trình cập nhật! Gửi Telegram...")
+        telegram_res = send_telegram_alert(msg)
+    elif force_send and not silent_if_empty:
+        # Chỉ khi ép buộc gửi thông điệp định kỳ bằng tay với flag riêng
+        now_str = get_now_str()
+        msg = (
+            "🐯 <b>[TIGER AI • KIỂM TRA ĐỊNH KỲ TAB GHNa]</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"⏰ <b>Thời điểm kiểm tra:</b> <code>{now_str}</code>\n"
+            f"📋 <b>Hiện trạng:</b> Tab <b>GHNa</b> hiện có <b>{len(current_data_rows)} dòng dữ liệu</b>.\n"
+            "✅ <i>Chưa phát sinh dữ liệu mới hoặc ghi chú vi phạm mới từ bưu cục. Tiger AI sẽ tiếp tục rà soát ca kế tiếp!</i> 🍻\n\n"
+            "📊 <b>Link vào ngay tab GHNa:</b>\n"
+            f"👉 <a href='{SHEET_VIEW_URL}'>{SHEET_VIEW_URL}</a>"
+        )
+        print("[GHNa Monitor] Ép gửi thông báo kiểm tra định kỳ (force_send)...")
         telegram_res = send_telegram_alert(msg)
     else:
-        print(f"[{get_now_str()}] [GHNa Monitor] Không có dữ liệu mới. Im lặng theo dõi.")
+        print(f"[{get_now_str()}] [GHNa Monitor] Tab GHNa có {len(current_data_rows)} dòng. Chưa có ai nhập liệu. Âm thầm theo dõi, không gửi tin nhắn lên room.")
 
     return {
         "status": "success",
@@ -290,7 +294,8 @@ def run_check(force_send=False, silent_if_empty=True):
     }
 
 if __name__ == "__main__":
-    force = "--send" in sys.argv or "--force" in sys.argv
-    res = run_check(force_send=force, silent_if_empty=not force)
+    # Chỉ khi dùng --force-empty mới ép gửi tin '0 dòng'
+    force_empty = "--force-empty" in sys.argv
+    res = run_check(force_send=force_empty, silent_if_empty=not force_empty)
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
