@@ -4023,7 +4023,15 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     # - Hoặc gõ lệnh bắt đầu bằng dấu gạch chéo (/)
     # - Ngoại lệ duy nhất: Đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
     # =========================================================================
-    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat
+    reply_msg_raw = (msg_obj.get("reply_to_message") or {}) if isinstance(msg_obj, dict) else {}
+    reply_from_raw = reply_msg_raw.get("from") or {}
+    is_reply_to_bot = bool(
+        entry.get("is_reply_to_bot") or
+        reply_from_raw.get("is_bot") or
+        (reply_from_raw.get("username", "").lower() in ["aiagentmt_bot", "aiagentmt"])
+    )
+
+    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat or is_reply_to_bot
     is_slash_cmd = lower_text.startswith("/")
     is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
         "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock"
@@ -4044,6 +4052,59 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
 
     order_codes = extract_ghn_order_codes(text)
     is_tag_or_cmd = is_tagged or is_slash_cmd
+
+    # 0.00a NHẬN DIỆN LỆNH GIAO VIỆC / CANH ĐƠN HÀNG ĐẶC BIỆT (WATCHDOG ORDER DISPATCH)
+    is_watchdog_cmd = any(lower_text.strip().startswith(cmd) for cmd in ["/canhdon", "/watchlist", "/ds_canh"]) or (
+        is_tagged and any(k in lower_text for k in ["danh sách canh", "danh sách theo dõi", "các đơn đang canh"])
+    )
+    if is_watchdog_cmd:
+        from order_watchdog_service import format_watchlist_status
+        rep = format_watchlist_status()
+        _send_telegram_group_message(rep, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
+        return
+
+    is_watchdog_assign = order_codes and any(k in lower_text for k in [
+        "âm thầm", "check đơn", "canh đơn", "theo dõi", "khi nào thấy", "báo lên room", "lấy thành công", "kho trung chuyển", "1908", "báo lên", "báo lại"
+    ])
+    if is_watchdog_assign:
+        from order_watchdog_service import add_orders_to_watchlist
+        target_status = "Lấy Thành Công"
+        target_hub_kw = "1908" if "1908" in lower_text else ("cần thơ" if "cần thơ" in lower_text else "1908")
+        target_hub_name = "1908 - Kho Trung Chuyển Cần Thơ"
+        
+        added = add_orders_to_watchlist(
+            order_codes=order_codes,
+            target_status=target_status,
+            target_hub=target_hub_kw,
+            target_hub_name=target_hub_name,
+            topic_id=topic_id,
+            reply_to_id=msg_id,
+            created_by=entry.get("sender_name", "Chủ Tịch")
+        )
+        
+        ack_reply = (
+            f"🫡 <b>BÁO CÁO CHỦ TỊCH / ANH LỘC: ĐÃ TIẾP NHẬN & GHI NHỚ NHIỆM VỤ ĐẶC BIỆT!</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🏢 <b>Đơn vị thi hành:</b> 📞 Phòng CSKH & 🛠️ Phòng Kỹ Thuật (Watchdog Daemon)\n\n"
+            f"📦 <b>Danh sách {len(added)} đơn đã nạp vào bộ nhớ canh ngầm:</b>\n"
+            + "\n".join([f"  • <code>{c}</code>" for c in added]) + "\n\n"
+            f"🎯 <b>Bộ điều kiện giám sát 24/7:</b>\n"
+            f"1️⃣ Trạng thái khách hàng: <b>{target_status}</b>\n"
+            f"2️⃣ Kho hiện tại: <b>{target_hub_name}</b>\n\n"
+            f"⚡ <b>Cơ chế phản ứng:</b>\n"
+            f"• Robot sẽ âm thầm rà soát dữ liệu định kỳ mỗi 3 phút.\n"
+            f"• Ngay khi đơn hàng chuyển sang 'Lấy Thành Công' và về đến Kho 1908, bot sẽ phát cảnh báo khẩn cấp tức thì lên room này!\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"<i>Chủ Tịch có thể gõ <code>/canhdon</code> bất kỳ lúc nào để xem tiến độ canh đơn!</i>"
+        )
+        _send_telegram_group_message(ack_reply, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
+        
+        try:
+            from order_watchdog_service import run_watchdog_check
+            threading.Thread(target=run_watchdog_check, kwargs={"send_fn": _send_telegram_group_message}, daemon=True).start()
+        except Exception:
+            pass
+        return
 
     # 0.00b LỆNH SOI TIẾN TRÌNH & ĐIỀU PHỐI LỖI (/soilloi, /tientrinh, /nhatky, /warroom, /audit)
     is_trace_cmd = any(lower_text.strip().startswith(cmd) for cmd in ["/soilloi", "/tientrinh", "/nhatky", "/warroom", "/audit"]) or (
@@ -4675,6 +4736,11 @@ def _process_single_telegram_update(upd):
     topic_name = TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung")
 
     reply_msg = msg.get("reply_to_message") or {}
+    reply_from = reply_msg.get("from") or {}
+    is_reply_to_bot = bool(
+        reply_from.get("is_bot") or
+        (reply_from.get("username", "").lower() in ["aiagentmt_bot", "aiagentmt"])
+    )
     reply_text = ""
     if reply_msg and not reply_msg.get("forum_topic_created"):
         reply_text = (reply_msg.get("text") or reply_msg.get("caption") or "")[:160]
@@ -4697,6 +4763,7 @@ def _process_single_telegram_update(upd):
         "topic_name": topic_name,
         "text": text,
         "reply_to_text": reply_text,
+        "is_reply_to_bot": is_reply_to_bot,
         "is_explanation": is_explanation,
         "timestamp": msg_dt.strftime("%H:%M:%S %d/%m/%Y")
     }
@@ -4798,6 +4865,12 @@ def _start_local_order_relay_daemon():
         threading.Thread(target=_loop, daemon=True).start()
 
 _start_local_order_relay_daemon()
+try:
+    from order_watchdog_service import start_order_watchdog_daemon
+    start_order_watchdog_daemon(_send_telegram_group_message)
+except Exception as _w_err:
+    print(f"[Watchdog Daemon Init Error] {_w_err}")
+
 
 @app.route("/api/telegram-bridge/messages", methods=["GET"])
 def get_telegram_bridge_messages():

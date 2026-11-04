@@ -1,0 +1,47 @@
+[
+  {
+    "order_code": "GYMEUX74",
+    "target_status": "Lấy Thành Công",
+    "target_hub_keyword": "1908",
+    "target_hub_name": "1908 - Kho Trung Chuyển Cần Thơ",
+    "created_by": "Chủ Tịch",
+    "created_at": "15:25:45 04/11/2026",
+    "topic_id": 2690,
+    "reply_to_id": 9999,
+    "alerted": false,
+    "last_checked": "15:25:46 04/11/2026",
+    "last_status": "READY_TO_PICK",
+    "last_hub": "22873000- Kho B2B - Đức Hòa - Long An",
+    "updated_at": "15:28:02 04/11/2026"
+  },
+  {
+    "order_code": "GYMEUX7H",
+    "target_status": "Lấy Thành Công",
+    "target_hub_keyword": "1908",
+    "target_hub_name": "1908 - Kho Trung Chuyển Cần Thơ",
+    "created_by": "Chủ Tịch",
+    "created_at": "15:25:45 04/11/2026",
+    "topic_id": 2690,
+    "reply_to_id": 9999,
+    "alerted": false,
+    "last_checked": "15:25:46 04/11/2026",
+    "last_status": "READY_TO_PICK",
+    "last_hub": "22873000- Kho B2B - Đức Hòa - Long An",
+    "updated_at": "15:28:02 04/11/2026"
+  },
+  {
+    "order_code": "GYMEUXGM",
+    "target_status": "Lấy Thành Công",
+    "target_hub_keyword": "1908",
+    "target_hub_name": "1908 - Kho Trung Chuyển Cần Thơ",
+    "created_by": "Chủ Tịch",
+    "created_at": "15:25:45 04/11/2026",
+    "topic_id": 2690,
+    "reply_to_id": 9999,
+    "alerted": false,
+    "last_checked": "15:25:46 04/11/2026",
+    "last_status": "READY_TO_PICK",
+    "last_hub": "22873000- Kho B2B - Đức Hòa - Long An",
+    "updated_at": "15:28:02 04/11/2026"
+  }
+]
