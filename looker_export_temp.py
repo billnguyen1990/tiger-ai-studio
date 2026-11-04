@@ -798,9 +798,14 @@ def run_looker_export_pipeline(max_retries=3):
                 # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 & 2690)
                 print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 & Topic 2690)...")
                 try:
-                    from tiger_b2b_thongke_reporter import run_b2b_report
-                    rep_res = run_b2b_report(send_telegram=True)
-                    print(f"  ✓ Kết quả bắn ảnh báo cáo Telegram: {rep_res}")
+                    import subprocess
+                    reporter_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tiger_b2b_thongke_reporter.py")
+                    p_rep = subprocess.run([sys.executable, reporter_script], capture_output=True, text=True, timeout=120)
+                    print(f"  ✓ Đã chạy xong tiger_b2b_thongke_reporter (code: {p_rep.returncode})")
+                    if p_rep.stdout:
+                        print("  " + "\n  ".join([line for line in p_rep.stdout.splitlines() if "✓" in line or "Kết quả" in line]))
+                    if p_rep.returncode != 0 and p_rep.stderr:
+                        print(f"  ⚠️ Stderr: {p_rep.stderr[:300]}")
                 except Exception as ex_rep:
                     print(f"  ⚠️ Lỗi khi chạy tiger_b2b_thongke_reporter: {ex_rep}")
 
