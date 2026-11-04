@@ -7,7 +7,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const TIGER_VER = '2026.11.04.v100_no_fastlog';
+            const TIGER_VER = '2026.11.04.v101_light_mode_responsive';
             if (localStorage.getItem('TIGER_VER') !== TIGER_VER) {
                 localStorage.setItem('TIGER_VER', TIGER_VER);
                 if ('caches' in window) {
@@ -1700,8 +1700,254 @@
             color: var(--text-main) !important;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             -webkit-tap-highlight-color: transparent !important;
+        
+        /* ==========================================================================
+           MODERN MOBILE VIEWPORT & SEAMLESS LIGHT/DARK THEME SYSTEM
+           ========================================================================== */
+        * {
+            box-sizing: border-box !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        /* DEFAULT: LIGHT THEME */
+        body:not(.dark-theme) {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .app-viewport {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%) !important;
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .app-top-fixed {
+            background: rgba(255, 255, 255, 0.94) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        body:not(.dark-theme) .brand-title {
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .top-icon-btn {
+            background: #f1f5f9 !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+
+        body:not(.dark-theme) .overview-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .overview-greeting .name {
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .overview-greeting .time {
+            color: #64748b !important;
+        }
+
+        body:not(.dark-theme) .stat-box {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        body:not(.dark-theme) .stat-box .label {
+            color: #64748b !important;
+        }
+
+        body:not(.dark-theme) .piggy-guardian-card {
+            background: #ffffff !important;
+            border: 1px solid #d1fae5 !important;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.08) !important;
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .piggy-guardian-card .p-title {
+            color: #059669 !important;
+        }
+
+        body:not(.dark-theme) .piggy-guardian-card .p-desc {
+            color: #475569 !important;
+        }
+
+        body:not(.dark-theme) .app-bottom-fixed {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-top: 1px solid #e2e8f0 !important;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        body:not(.dark-theme) .q-tag {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        body:not(.dark-theme) .input-controls {
+            background: #f8fafc !important;
+            border: 1.5px solid #cbd5e1 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        body:not(.dark-theme) .input-controls input {
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .input-controls input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        body:not(.dark-theme) .bottom-nav {
+            border-top: 1px solid #f1f5f9 !important;
+        }
+
+        body:not(.dark-theme) .bottom-nav .nav-item {
+            color: #64748b !important;
+        }
+
+        body:not(.dark-theme) .bottom-nav .nav-item.active {
+            color: #059669 !important;
+        }
+
+        body:not(.dark-theme) .feed-item {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #0f172a !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        body:not(.dark-theme) .feed-item .item-title {
+            color: #0f172a !important;
+        }
+
+        body:not(.dark-theme) .feed-item .item-sub {
+            color: #64748b !important;
+        }
+
+        /* DARK THEME */
+        body.dark-theme {
+            background-color: #060a14 !important;
+            color: #f8fafc !important;
+        }
+
+        body.dark-theme .app-viewport {
+            background: radial-gradient(circle at 50% 0%, #111a2e 0%, #060a14 70%) !important;
+            color: #f8fafc !important;
+        }
+
+        body.dark-theme .app-top-fixed {
+            background: rgba(11, 18, 33, 0.94) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        body.dark-theme .brand-title {
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .top-icon-btn {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .overview-card {
+            background: rgba(18, 27, 44, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .overview-greeting .name {
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .overview-greeting .time {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .stat-box {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        body.dark-theme .stat-box .label {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .piggy-guardian-card {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border: 1px solid rgba(16, 185, 129, 0.25) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .piggy-guardian-card .p-title {
+            color: #34d399 !important;
+        }
+
+        body.dark-theme .piggy-guardian-card .p-desc {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .app-bottom-fixed {
+            background: rgba(11, 18, 33, 0.95) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        body.dark-theme .q-tag {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #f8fafc !important;
+        }
+
+        body.dark-theme .input-controls {
+            background: rgba(255, 255, 255, 0.06) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+
+        body.dark-theme .input-controls input {
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .input-controls input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .bottom-nav {
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        body.dark-theme .bottom-nav .nav-item {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .bottom-nav .nav-item.active {
+            color: #10b981 !important;
+        }
+
+        body.dark-theme .feed-item {
+            background: rgba(18, 27, 44, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #ffffff !important;
+        }
+
+        /* 3-ZONE LAYOUT & RESPONSIVE COMPACT SIZING */
         .app-viewport {
             height: 100% !important;
             height: 100dvh !important;
@@ -1711,27 +1957,50 @@
             width: 100% !important;
             margin: 0 auto !important;
             position: relative !important;
-            background: radial-gradient(circle at 50% 0%, #111a2e 0%, #060a14 70%) !important;
             overflow: hidden !important;
             box-sizing: border-box !important;
+            transition: background 0.3s ease, color 0.3s ease !important;
         }
 
-        /* 1. TRƯỜNG PHÍA TRÊN CỐ ĐỊNH */
+        @media (max-width: 600px) {
+            .app-viewport {
+                max-width: 100vw !important;
+                width: 100vw !important;
+                height: 100dvh !important;
+                margin: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+        }
+
+        @media (min-width: 601px) {
+            body.dark-theme {
+                background-color: #030611 !important;
+            }
+            body:not(.dark-theme) {
+                background-color: #e2e8f0 !important;
+            }
+            .app-viewport {
+                border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+                border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+                box-shadow: 0 0 50px rgba(0, 0, 0, 0.25) !important;
+            }
+        }
+
+        /* ZONE 1: TOP FIXED (COMPACT & BALANCED) */
         .app-top-fixed {
             flex-shrink: 0 !important;
             z-index: 100 !important;
-            background: rgba(11, 18, 33, 0.94) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-            padding-top: max(14px, env(safe-area-inset-top)) !important;
-            padding-left: 14px !important;
-            padding-right: 14px !important;
-            padding-bottom: 12px !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            padding-top: max(6px, env(safe-area-inset-top)) !important;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            padding-bottom: 8px !important;
             display: flex !important;
             flex-direction: column !important;
-            gap: 10px !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+            gap: 6px !important;
             box-sizing: border-box !important;
             width: 100% !important;
         }
@@ -1744,100 +2013,101 @@
         }
 
         .brand-logo-icon {
-            width: 34px !important;
-            height: 34px !important;
-            border-radius: 11px !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 9px !important;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-size: 1.15rem !important;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3) !important;
+            font-size: 1rem !important;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
         }
 
         .brand-title {
             margin: 0 !important;
-            font-size: 1.08rem !important;
+            font-size: 1rem !important;
             font-weight: 800 !important;
-            letter-spacing: -0.3px !important;
-            color: #fff !important;
-            line-height: 1.2 !important;
+            letter-spacing: -0.2px !important;
+            line-height: 1.15 !important;
         }
 
         .brand-subtitle {
-            font-size: 0.62rem !important;
-            color: var(--primary) !important;
+            font-size: 0.58rem !important;
+            color: #10b981 !important;
             font-weight: 700 !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.8px !important;
+            letter-spacing: 0.6px !important;
             display: flex !important;
             align-items: center !important;
             gap: 3px !important;
         }
 
         .top-icon-btn {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            color: #fff !important;
-            width: 34px !important;
-            height: 34px !important;
+            width: 32px !important;
+            height: 32px !important;
             border-radius: 50% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             cursor: pointer !important;
-            font-size: 1rem !important;
+            font-size: 0.92rem !important;
             backdrop-filter: blur(10px) !important;
-            transition: transform 0.2s !important;
+            transition: transform 0.15s !important;
         }
 
         .top-icon-btn.fortune {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.3) 100%) !important;
             border: 1px solid rgba(245, 158, 11, 0.5) !important;
-            color: #fde68a !important;
+            color: #f59e0b !important;
         }
 
-        /* Thẻ tổng quan đồng bộ trong top fixed */
         .overview-card {
-            background: rgba(18, 27, 44, 0.75) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 16px !important;
-            padding: 12px 14px !important;
+            border-radius: 14px !important;
+            padding: 10px 12px !important;
             margin: 0 !important;
             width: 100% !important;
             box-sizing: border-box !important;
-            box-shadow: none !important;
         }
 
-        /* 2. NỘI DUNG Ở GIỮA TRƯỢT LÊN XUỐNG */
+        .overview-header {
+            margin-bottom: 8px !important;
+        }
+
+        .overview-stats {
+            gap: 8px !important;
+        }
+
+        .stat-box {
+            padding: 8px 10px !important;
+            border-radius: 12px !important;
+        }
+
+        .stat-box .amount {
+            font-size: 1.18rem !important;
+            font-weight: 800 !important;
+        }
+
+        /* ZONE 2: MIDDLE SCROLLABLE */
         .app-middle-scroll {
             flex: 1 !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch !important;
-            padding: 12px 14px 20px 14px !important;
+            padding: 10px 12px 16px 12px !important;
             display: flex !important;
             flex-direction: column !important;
-            gap: 12px !important;
+            gap: 10px !important;
             scroll-behavior: smooth !important;
             box-sizing: border-box !important;
             width: 100% !important;
         }
 
-        .lucky-corner-widget {
-            width: 100% !important;
-            margin-bottom: 2px !important;
-            box-sizing: border-box !important;
-        }
-
         .piggy-guardian-card {
-            background: rgba(16, 185, 129, 0.08) !important;
-            border: 1px solid rgba(16, 185, 129, 0.25) !important;
-            border-radius: 16px !important;
-            padding: 10px 14px !important;
+            border-radius: 14px !important;
+            padding: 8px 12px !important;
             display: flex !important;
             align-items: center !important;
-            gap: 12px !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            gap: 10px !important;
             box-sizing: border-box !important;
             width: 100% !important;
         }
@@ -1845,24 +2115,21 @@
         .feed-container {
             display: flex !important;
             flex-direction: column !important;
-            gap: 10px !important;
+            gap: 8px !important;
             width: 100% !important;
             box-sizing: border-box !important;
             min-height: 40px !important;
         }
 
-        /* 3. TRƯỜNG PHÍA DƯỚI CỐ ĐỊNH */
+        /* ZONE 3: BOTTOM FIXED DOCK */
         .app-bottom-fixed {
             flex-shrink: 0 !important;
             z-index: 100 !important;
-            background: rgba(11, 18, 33, 0.95) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
             display: flex !important;
             flex-direction: column !important;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
-            padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+            padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
             box-sizing: border-box !important;
             width: 100% !important;
         }
@@ -1873,21 +2140,39 @@
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
-            padding: 8px 14px 4px 14px !important;
+            padding: 6px 12px 2px 12px !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            gap: 6px !important;
+            gap: 5px !important;
+        }
+
+        .quick-tags {
+            width: 100% !important;
+            margin-bottom: 2px !important;
+        }
+
+        .q-tag {
+            padding: 5px 12px !important;
+            font-size: 0.78rem !important;
+            font-weight: 600 !important;
+            border-radius: 20px !important;
+        }
+
+        .input-controls {
+            width: 100% !important;
+            border-radius: 24px !important;
+            height: 44px !important;
+            padding: 3px 6px 3px 14px !important;
+            box-sizing: border-box !important;
         }
 
         .bottom-nav {
             position: static !important;
             width: 100% !important;
-            height: 54px !important;
+            height: 48px !important;
             background: transparent !important;
-            border: none !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
             box-shadow: none !important;
             display: flex !important;
             justify-content: space-around !important;
@@ -1896,16 +2181,17 @@
             box-sizing: border-box !important;
         }
 
-        @media (min-width: 560px) {
-            body {
-                background-color: #030611 !important;
-            }
-            .app-viewport {
-                border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
-                border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-                box-shadow: 0 0 50px rgba(0, 0, 0, 0.7) !important;
-            }
+        .nav-item {
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+            gap: 3px !important;
         }
+
+        .nav-item .icon {
+            font-size: 1.15rem !important;
+        }
+
+            }
 
 </style>
 </head>
