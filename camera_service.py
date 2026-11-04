@@ -6,7 +6,7 @@ import tempfile
 import json
 import logging
 
-logger = logging.getLogger("CameraGuardian")
+logger = logging.getLogger("PhongKyThuat")
 
 BASE_API = "https://camera-api.ghn.vn/public-api"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -88,7 +88,7 @@ def check_token_health(headers):
 
 def self_heal_camera_token():
     """Bot tự động chữa lỗi Token: Mở Playwright ngầm lấy token mới nhất từ Nhanh GHN"""
-    logger.info("🛡️ [Auto-Healer] Phát hiện Token Camera cần làm mới, tiến hành tự phục hồi...")
+    logger.info("🛡️ [Phòng Kỹ Thuật] Phát hiện Token Camera cần làm mới, tiến hành tự phục hồi...")
     try:
         from playwright.sync_api import sync_playwright
         profile_path = os.path.join(os.path.dirname(SCRIPT_DIR), "ghn_chrome_profile")
@@ -117,10 +117,10 @@ def self_heal_camera_token():
 
             if captured_headers and "authorization" in captured_headers:
                 save_camera_headers(captured_headers)
-                logger.info("🛡️ [Auto-Healer] Tự khắc phục thành công! Đã cập nhật Token Camera mới.")
+                logger.info("🛡️ [Phòng Kỹ Thuật] Tự khắc phục thành công! Đã cập nhật Token Camera mới.")
                 return True, captured_headers
     except Exception as e:
-        logger.error(f"🛡️ [Auto-Healer] Lỗi tự phục hồi token: {e}")
+        logger.error(f"🛡️ [Phòng Kỹ Thuật] Lỗi tự phục hồi token: {e}")
     return False, None
 
 def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, max_retries=2):
@@ -153,7 +153,7 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
     # Pre-flight check token
     is_healthy, _ = check_token_health(headers)
     if not is_healthy:
-        logger.info("🛡️ [Pre-flight] Token hết hạn, kích hoạt tự sửa lỗi...")
+        logger.info("🛡️ [Phòng Kỹ Thuật - Kiểm Tra] Token hết hạn, kích hoạt tự sửa lỗi...")
         ok_heal, new_headers = self_heal_camera_token()
         if ok_heal and new_headers:
             headers = new_headers
@@ -171,7 +171,7 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
 
         # Nếu bị 401 Unauthorized -> Tự chữa lành ngay lập tức
         if r.status_code == 401:
-            logger.warning("🛡️ [Auto-Healer] Gặp lỗi 401, tự động cấp lại Token...")
+            logger.warning("🛡️ [Phòng Kỹ Thuật] Gặp lỗi 401, tự động cấp lại Token...")
             ok_heal, new_headers = self_heal_camera_token()
             if ok_heal and new_headers:
                 headers = new_headers
@@ -209,7 +209,7 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
 
         if not playlist_text:
             if attempt < max_retries:
-                logger.info(f"🛡️ [Auto-Retry] Thử lại lần {attempt+1} cho {hub_name} Cam {cam_id}...")
+                logger.info(f"🛡️ [Phòng Kỹ Thuật - Thử Lại] Thử lại lần {attempt+1} cho {hub_name} Cam {cam_id}...")
                 time.sleep(2)
                 continue
             return False, "Mất tín hiệu kết nối stream từ đầu ghi kho (Vui lòng kiểm tra mạng kho)", None
@@ -271,13 +271,13 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
             return False, "File ảnh chụp rỗng hoặc lỗi ghi đĩa", None
 
         desc = CAM_DESC_MAP.get((vr_id, cam_id), f"Mắt Cam số {cam_id:02d}")
-        logger.info(f"✅ [Quality Guard Verified] {hub_name} Cam {cam_id} đã chụp chuẩn 100%!")
+        logger.info(f"✅ [Phòng Kỹ Thuật - Đã Duyệt 100%] {hub_name} Cam {cam_id} đã chụp chuẩn 100%!")
         return True, f"{hub_name} - {desc}", output_file
 
     return False, "Không thể lấy hình ảnh sau khi đã tự động thử lại nhiều lần", None
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    print("Testing Quality Guard Camera Service...")
+    print("Testing Hệ Thống Phòng Kỹ Thuật Tự Động...")
     ok, msg, snap = capture_camera_snapshot("cr", 2)
     print("Result:", ok, msg, snap)
