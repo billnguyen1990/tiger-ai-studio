@@ -2425,7 +2425,7 @@ def get_briefing_summary():
 GEMINI_CONFIG_FILE = os.path.join(PARENT_DIR, "gemini_config.json")
 # KHÓA BẢO MẬT VĨNH VIỄN - GOOGLE GEMINI API KEY CHỐT CỐ ĐỊNH CHO TIGER AI
 import base64
-_GEMINI_KEY_B64 = "QVEuQWI4Uk42Si1IcTFRUi1pcURTeV9CRGxDMXFmbE84bG5haExCbUNGRzFSamdKeXhuSkE="
+_GEMINI_KEY_B64 = "QVEuQWI4Uk42S2I4VG1mTHhlZEVMSWNCUUlvS0dmMmt5b1dKSndqbUoxT1JBaWtoOGpmX0E="
 HARDCODED_DEFAULT_GEMINI_KEY = base64.b64decode(_GEMINI_KEY_B64).decode("utf-8")
 
 def get_gemini_api_key():
@@ -5189,6 +5189,64 @@ def api_download_cost_excel():
     if os.path.exists(excel_path):
         return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
     return jsonify({"success": False, "error": "Chưa có file Excel đối soát"}), 404
+
+
+
+
+@app.route('/api/gemini', methods=['POST'])
+def proxy_gemini_endpoint():
+    """Proxy endpoint giua frontend Quan Ly Tai Chinh va Google Gemini API"""
+    try:
+        data = request.get_json(silent=True) or {}
+        contents = data.get("contents", [])
+        if not contents:
+            return jsonify({"error": "Invalid contents"}), 400
+        
+        forward = {"contents": contents}
+        if "generationConfig" in data and isinstance(data["generationConfig"], dict):
+            forward["generationConfig"] = data["generationConfig"]
+        
+        api_key = get_gemini_api_key()
+        candidate_models = ["gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-flash-latest"]
+        
+        last_err = "No response from Gemini"
+        for m in candidate_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={api_key}"
+            try:
+                r = requests.post(url, json=forward, timeout=25)
+                if r.status_code == 200:
+                    return jsonify(r.json())
+                else:
+                    last_err = f"Gemini {m} error ({r.status_code}): {r.text[:150]}"
+            except Exception as e:
+                last_err = str(e)
+        
+        return jsonify({"error": last_err}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/tai-chinh')
+@app.route('/expense')
+@app.route('/quan-ly-tai-chinh')
+def view_quan_ly_tai_chinh():
+    """Quan Ly Tai Chinh PWA"""
+    return render_template('quan_ly_tai_chinh.html')
+
+@app.route('/assets/<path:filename>')
+def serve_tai_chinh_assets(filename):
+    return send_from_directory('static/assets', filename)
+
+@app.route('/sw.js')
+def serve_tai_chinh_sw():
+    return send_from_directory('static', 'sw-tai-chinh.js', mimetype='application/javascript')
+
+@app.route('/manifest.json')
+def serve_tai_chinh_manifest():
+    return send_from_directory('static', 'manifest-tai-chinh.json', mimetype='application/json')
+
+@app.route('/app-icon-v56.png')
+def serve_tai_chinh_icon():
+    return send_from_directory('static', 'app-icon-v56.png', mimetype='image/png')
 
 @app.route("/api/ping")
 def ping_service():

@@ -552,9 +552,177 @@
       font-weight: 800;
       box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
     }
-  </style>
+  
+    /* TIKTOK LIVE BRIDGE STYLES */
+    .tiktok-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(18, 12, 6, 0.94);
+      border: 1.5px solid rgba(245, 158, 11, 0.65);
+      border-radius: 30px;
+      padding: 6px 14px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      pointer-events: auto;
+    }
+
+    .tiktok-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #94a3b8;
+      box-shadow: 0 0 6px #94a3b8;
+      transition: all 0.3s;
+    }
+    .tiktok-status-dot.connected {
+      background: #10b981;
+      box-shadow: 0 0 12px #10b981;
+      animation: pulseGreen 1.5s infinite;
+    }
+    .tiktok-status-dot.connecting {
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b;
+      animation: pulseGreen 0.8s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    .tiktok-input {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 12px;
+      width: 140px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .tiktok-input:focus {
+      border-color: var(--gold);
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-tiktok-action {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #111;
+      border: none;
+      border-radius: 20px;
+      font-family: var(--font-body);
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 5px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: transform 0.15s;
+    }
+    .btn-tiktok-action:hover { transform: scale(1.05); }
+
+    /* FLOATING HEARTS ANIMATION */
+    .floating-heart {
+      position: absolute;
+      bottom: 60px;
+      font-size: 24px;
+      pointer-events: none;
+      z-index: 1000;
+      animation: floatHeart 3s ease-out forwards;
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translate(0, 0) scale(0.6);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(var(--rand-x), -220px) scale(1.3);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(var(--rand-x-end), -460px) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* VIP GIFT POPUP MODAL */
+    .vip-gift-banner {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background: linear-gradient(135deg, rgba(30, 20, 10, 0.96), rgba(15, 10, 5, 0.98));
+      border: 2px solid #ffd166;
+      border-radius: 28px;
+      padding: 20px 36px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 0 60px rgba(255, 209, 102, 0.6), inset 0 0 20px rgba(255, 209, 102, 0.2);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    .vip-gift-banner.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .vip-gift-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 3px solid #ffd166;
+      box-shadow: 0 0 15px #ffd166;
+      object-fit: cover;
+    }
+
+    .vip-gift-info h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: #fef08a;
+      margin-bottom: 4px;
+      text-shadow: 0 0 10px rgba(254, 240, 138, 0.5);
+    }
+
+    .vip-gift-info p {
+      font-size: 1.05rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .vip-gift-icon {
+      font-size: 52px;
+      animation: spinGift 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes spinGift {
+      0% { transform: scale(1) rotate(-8deg); }
+      100% { transform: scale(1.18) rotate(8deg); }
+    }
+
+</style>
 </head>
 <body>
+
+    <!-- VIP GIFT POPUP OVERLAY -->
+  <div class="vip-gift-banner" id="vipGiftBanner">
+    <img src="/static/img/hoa_sen_avatar.png" id="vipGiftAvatar" class="vip-gift-avatar" alt="Avatar" onerror="this.src='https://ui-avatars.com/api/?name=TikTok+User&background=f59e0b&color=fff'" />
+    <div class="vip-gift-info">
+      <h3 id="vipGiftUser">Anh Ba Miền Tây</h3>
+      <p id="vipGiftDetail">vừa gửi tặng <b>10x Bông Hoa Hồng</b> 🌹</p>
+    </div>
+    <div class="vip-gift-icon" id="vipGiftIcon">🎁</div>
+  </div>
 
   <!-- MASTER REALISTIC PHOTO BACKDROP -->
   <div class="photo-stage-container">
@@ -636,6 +804,16 @@
     </div>
 
     <div class="actions-right">
+      <!-- TIKTOK LIVE CONNECTOR BAR -->
+      <div class="tiktok-bar" id="tiktokBar">
+        <div class="tiktok-status-dot" id="tiktokDot" title="Trạng thái TikTok Live"></div>
+        <span style="font-size: 11px; font-weight: 700; color: #fef08a;" id="tiktokStatusText">TikTok Live:</span>
+        <input type="text" id="tiktokUsernameInput" class="tiktok-input" placeholder="@username" value="" />
+        <button class="btn-tiktok-action" id="btnConnectTikTok" onclick="toggleTikTokConnection()">
+          ⚡ Kết Nối
+        </button>
+      </div>
+
       <button class="btn-scene-switch" onclick="nextScene()">
         🔄 Góc Quay <span id="sceneNum">1/4</span>
       </button>
@@ -713,10 +891,20 @@
 
     <div class="order-btn-group">
       <button class="btn-dish btn-bunrieu" onclick="triggerAction('bunrieu')">
-        🍜 Gọi Tô Bún Riêu Nóng Hổi (Cô Ba)
+        🍜 Gọi Tô Bún Riêu (Cô Ba)
       </button>
       <button class="btn-dish btn-coffee" onclick="triggerAction('coffee')">
-        ☕ Gọi Cà Phê Vợt Sữa Đá (Chú Bảy)
+        ☕ Gọi Cà Phê Vợt (Chú Bảy)
+      </button>
+      <!-- TIKTOK LIVE DEMO SIMULATION BUTTONS -->
+      <button class="btn-dish" style="background: rgba(239, 68, 68, 0.25); border: 1px solid #ef4444; color: #fca5a5;" onclick="simulateTikTokEvent('like')">
+        💖 Test Thả Tim (x20)
+      </button>
+      <button class="btn-dish" style="background: rgba(245, 158, 11, 0.25); border: 1px solid #f59e0b; color: #fef08a;" onclick="simulateTikTokEvent('gift_rose')">
+        🌹 Test Tặng Quà Hoa Hồng
+      </button>
+      <button class="btn-dish" style="background: rgba(16, 185, 129, 0.25); border: 1px solid #10b981; color: #6ee7b7;" onclick="simulateTikTokEvent('gift_banhtet')">
+        🎋 Test Tặng Bánh Tét VIP
       </button>
       <button class="btn-dish btn-tourist" onclick="triggerAction('tourist')">
         📸 Khách Du Lịch Check-in Áo Phao Cam
@@ -967,6 +1155,256 @@
       if (e.key === 'h' || e.key === 'H') {
         toggleObsMode();
       }
+    });
+
+    
+    // =========================================================================
+    // ⚡ TIKTOK LIVE REAL-TIME CONNECTOR & INTERACTIVE LOGIC
+    // =========================================================================
+    let tiktokSocket = null;
+    let isTikTokConnected = false;
+
+    function initTikTokWebSocket() {
+      const wsUrl = 'ws://localhost:8088';
+      console.log("[TikTok WS] Đang kết nối tới Bridge:", wsUrl);
+
+      tiktokSocket = new WebSocket(wsUrl);
+
+      tiktokSocket.onopen = () => {
+        console.log("✓ [TikTok WS] Đã kết nối với TikTok Live Bridge (Port 8088)");
+      };
+
+      tiktokSocket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          handleTikTokLiveEvent(data);
+        } catch (e) {
+          console.error("[TikTok WS] Lỗi parse JSON:", e);
+        }
+      };
+
+      tiktokSocket.onclose = () => {
+        setTikTokUIStatus('disconnected', 'Mất kết nối Bridge (Đang thử lại...)');
+        setTimeout(initTikTokWebSocket, 3000);
+      };
+
+      tiktokSocket.onerror = (err) => {
+        setTikTokUIStatus('disconnected', 'Bridge chưa chạy (Port 8088)');
+      };
+    }
+
+    function toggleTikTokConnection() {
+      const input = document.getElementById('tiktokUsernameInput');
+      const val = input.value.trim().replace(/^@/, '');
+      if (!val) {
+        alert("Vui lòng nhập TikTok Username (Ví dụ: @ghn_express hoặc tên tài khoản của bạn)!");
+        return;
+      }
+
+      if (isTikTokConnected) {
+        tiktokSocket.send(JSON.stringify({ action: 'disconnect' }));
+      } else {
+        setTikTokUIStatus('connecting', `Đang kết nối @${val}...`);
+        tiktokSocket.send(JSON.stringify({ action: 'connect', username: val }));
+      }
+    }
+
+    function setTikTokUIStatus(state, text) {
+      const dot = document.getElementById('tiktokDot');
+      const stText = document.getElementById('tiktokStatusText');
+      const btn = document.getElementById('btnConnectTikTok');
+
+      dot.className = 'tiktok-status-dot ' + state;
+      stText.innerText = text;
+
+      if (state === 'connected') {
+        isTikTokConnected = true;
+        btn.innerText = '🔴 Ngắt';
+        btn.style.background = 'linear-gradient(135deg, #ef4444, #991b1b)';
+        btn.style.color = '#fff';
+      } else if (state === 'connecting') {
+        isTikTokConnected = false;
+        btn.innerText = '⏳ Đang chờ...';
+        btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+      } else {
+        isTikTokConnected = false;
+        btn.innerText = '⚡ Kết Nối';
+        btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        btn.style.color = '#111';
+      }
+    }
+
+    function handleTikTokLiveEvent(data) {
+      console.log("[TikTok Event]", data);
+
+      if (data.type === 'sys_connected') {
+        setTikTokUIStatus('connected', `@${data.username} (Live)`);
+        speakVietnamese(`Đã kết nối thành công phòng live của ${data.username}! Chào mừng quý khán giả đến với Chợ Nổi Cái Răng Cần Thơ!`);
+      } else if (data.type === 'sys_connecting') {
+        setTikTokUIStatus('connecting', `Đang kết nối @${data.username}...`);
+      } else if (data.type === 'sys_error') {
+        setTikTokUIStatus('disconnected', `Lỗi: ${data.error.slice(0, 25)}...`);
+        alert(`❌ Không thể kết nối TikTok Live: ${data.error}`);
+      } else if (data.type === 'sys_disconnected') {
+        setTikTokUIStatus('disconnected', 'Chưa kết nối TikTok Live');
+      }
+
+      // 1. EVENT: CHAT / BÌNH LUẬN
+      else if (data.type === 'chat') {
+        const comment = (data.comment || '').toLowerCase().trim();
+        const user = data.nickname || data.uniqueId || 'Khán giả';
+
+        // Tự động phân loại lệnh tương tác
+        if (comment.includes('bún riêu') || comment.includes('bun rieu') || comment === '1') {
+          triggerAction('bunrieu', user, data.comment);
+        } else if (comment.includes('cà phê') || comment.includes('cafe') || comment.includes('cf') || comment === '2') {
+          triggerAction('coffee', user, data.comment);
+        } else if (comment.includes('khóm') || comment.includes('dưa') || comment.includes('trái cây') || comment === '3') {
+          triggerAction('fruits', user, data.comment);
+        } else if (comment.includes('chụp hình') || comment.includes('du lịch') || comment.includes('tàu')) {
+          triggerAction('tourist', user, data.comment);
+        } else {
+          // Bình luận tự do -> nổi bong bóng trên sông
+          showFloatingSpeech(
+            window.innerWidth * (0.2 + Math.random() * 0.6),
+            window.innerHeight * (0.35 + Math.random() * 0.35),
+            `💬 ${user}: "${data.comment}"`
+          );
+          addOrderCard(user, "Giao Lưu", "💬", `"${data.comment}"`);
+        }
+      }
+
+      // 2. EVENT: TẶNG QUÀ (GIFT)
+      else if (data.type === 'gift') {
+        const user = data.nickname || data.uniqueId || 'Khán giả';
+        const giftName = data.giftName || 'Món Quà';
+        const count = data.repeatCount || 1;
+        const avatar = data.avatar || '';
+
+        // Hiển thị VIP banner
+        showVipGiftPopup(user, giftName, count, avatar);
+
+        // Kích hoạt âm thanh và hiệu ứng
+        initAudio();
+        playSound('steam');
+        playSound('splash');
+        playSound('engine');
+
+        // Bắn hoa đăng & tim rực rỡ
+        for (let i = 0; i < 15; i++) {
+          setTimeout(spawnFloatingHeart, i * 100);
+        }
+
+        // Đọc giọng AI tiếng Việt
+        speakVietnamese(`Dạ Chợ Nổi Cái Răng cảm ơn bạn ${user} đã gửi tặng ${count} ${giftName}!`);
+        addOrderCard(user, `Tặng ${count}x ${giftName}`, "🎁", `vừa tiếp sức cho buổi họp chợ thêm rộn ràng!`);
+      }
+
+      // 3. EVENT: THẢ TIM (LIKE)
+      else if (data.type === 'like') {
+        const count = Math.min(data.likeCount || 5, 20);
+        for (let i = 0; i < count; i++) {
+          setTimeout(spawnFloatingHeart, i * 60);
+        }
+      }
+
+      // 4. EVENT: FOLLOW
+      else if (data.type === 'follow') {
+        const user = data.nickname || data.uniqueId || 'Khán giả mới';
+        showFloatingSpeech(
+          window.innerWidth * 0.5,
+          window.innerHeight * 0.25,
+          `🎉 Chào mừng ${user} vừa bấm Theo Dõi Chợ Nổi!`
+        );
+        addOrderCard(user, "Follower Mới", "➕", "vừa bấm theo dõi phòng livestream!");
+      }
+    }
+
+    // Hiệu ứng tim bay
+    function spawnFloatingHeart() {
+      const h = document.createElement('div');
+      h.className = 'floating-heart';
+      const emojis = ['💖', '❤️', '🧡', '💛', '🌸', '✨'];
+      h.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      const startX = window.innerWidth * (0.3 + Math.random() * 0.4);
+      h.style.left = `${startX}px`;
+      h.style.setProperty('--rand-x', `${(Math.random() - 0.5) * 120}px`);
+      h.style.setProperty('--rand-x-end', `${(Math.random() - 0.5) * 200}px`);
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 3000);
+    }
+
+    // Hiển thị Popup Quà Tặng VIP
+    let giftPopupTimer = null;
+    function showVipGiftPopup(user, giftName, count, avatar) {
+      const banner = document.getElementById('vipGiftBanner');
+      const uEl = document.getElementById('vipGiftUser');
+      const dEl = document.getElementById('vipGiftDetail');
+      const aEl = document.getElementById('vipGiftAvatar');
+      const iEl = document.getElementById('vipGiftIcon');
+
+      uEl.innerText = user;
+      dEl.innerHTML = `vừa gửi tặng <b>${count}x ${giftName}</b>!`;
+      if (avatar) aEl.src = avatar;
+
+      if (giftName.toLowerCase().includes('rose') || giftName.toLowerCase().includes('hoa')) {
+        iEl.innerText = '🌹';
+      } else if (giftName.toLowerCase().includes('bánh')) {
+        iEl.innerText = '🎋';
+      } else {
+        iEl.innerText = '🎁';
+      }
+
+      banner.classList.add('active');
+      clearTimeout(giftPopupTimer);
+      giftPopupTimer = setTimeout(() => {
+        banner.classList.remove('active');
+      }, 4500);
+    }
+
+    // Bộ đọc Text-to-Speech tiếng Việt (Web Speech API)
+    function speakVietnamese(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel(); // Dừng câu cũ
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'vi-VN';
+      utter.rate = 1.05;
+      utter.pitch = 1.0;
+      
+      const voices = window.speechSynthesis.getVoices();
+      const viVoice = voices.find(v => v.lang.includes('vi') || v.name.includes('Vietnamese') || v.name.includes('An'));
+      if (viVoice) utter.voice = viVoice;
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    // HÀM TEST GIẢ LẬP NHANH
+    function simulateTikTokEvent(type) {
+      initAudio();
+      if (type === 'like') {
+        for (let i = 0; i < 20; i++) setTimeout(spawnFloatingHeart, i * 50);
+      } else if (type === 'gift_rose') {
+        handleTikTokLiveEvent({
+          type: 'gift',
+          nickname: 'Chị Tư Ô Môn',
+          giftName: 'Hoa Hồng Rực Rỡ',
+          repeatCount: 10,
+          avatar: 'https://ui-avatars.com/api/?name=Chi+Tu&background=ef4444&color=fff'
+        });
+      } else if (type === 'gift_banhtet') {
+        handleTikTokLiveEvent({
+          type: 'gift',
+          nickname: 'Anh Ba Bến Tre',
+          giftName: 'Bánh Tét Lá Cẩm VIP',
+          repeatCount: 1,
+          avatar: 'https://ui-avatars.com/api/?name=Anh+Ba&background=10b981&color=fff'
+        });
+      }
+    }
+
+    // Khởi chạy kết nối WebSocket khi tải trang
+    window.addEventListener('load', () => {
+      initTikTokWebSocket();
     });
 
     let autoSim = setInterval(() => {

@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🏆 ĐẠI HỘI ĐUA GHE NGO 4 ĐỘI RỒNG THẦN • TIKTOK LIVE FESTIVAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #0284c7;
+      --blue-light: #38bdf8;
+      --red: #e11d48;
+      --red-light: #fb7185;
+      --gold: #d97706;
+      --gold-light: #fde047;
+      --purple: #9333ea;
+      --purple-light: #c084fc;
+      --gold-glow: #ffd166;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: #020617;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* KHUNG MÀN HÌNH CHUẨN DỌC 9:16 CHO TIKTOK LIVE & OBS */
+    .stream-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 600px;
+      max-height: 1060px;
+      aspect-ratio: 9/16;
+      background: #091322;
+      box-shadow: 0 0 60px rgba(0,0,0,0.95);
+      overflow: hidden;
+    }
+
+    #riverCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* TOP HUD */
+    .top-hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.92));
+      border: 1.5px solid rgba(245, 158, 11, 0.5);
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      padding: 6px 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 10px;
+      animation: pulseRed 1.8s infinite;
+    }
+    @keyframes pulseRed {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .live-dot { width: 5px; height: 5px; background: #fff; border-radius: 50%; }
+
+    .match-title {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #ffd166;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 12px rgba(255, 209, 102, 0.6);
+    }
+
+    .music-controller {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .music-dropdown {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      color: #ffd166;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 6px;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      max-width: 145px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .music-dropdown option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .audio-toggle-btn {
+      background: rgba(245, 158, 11, 0.25);
+      border: 1px solid #f59e0b;
+      color: #ffd166;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .audio-toggle-btn.playing {
+      background: #10b981;
+      border-color: #10b981;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+    }
+
+    /* BẢNG SO KÈ 4 ĐỘI GHE RỒNG */
+    .four-team-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(10, 18, 36, 0.94);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 6px 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .team-box {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .team-box.blue { border-color: rgba(56, 189, 248, 0.4); }
+    .team-box.red { border-color: rgba(251, 113, 133, 0.4); }
+    .team-box.gold { border-color: rgba(253, 224, 71, 0.4); }
+    .team-box.purple { border-color: rgba(192, 132, 252, 0.4); }
+
+    .team-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .team-box.blue .team-box-header { color: var(--blue-light); }
+    .team-box.red .team-box-header { color: var(--red-light); }
+    .team-box.gold .team-box-header { color: var(--gold-light); }
+    .team-box.purple .team-box-header { color: var(--purple-light); }
+
+    .mini-progress-wrap {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .mini-progress-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.2s ease-out;
+    }
+    .mini-progress-fill.blue { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+    .mini-progress-fill.red { background: linear-gradient(90deg, #e11d48, #fb7185); }
+    .mini-progress-fill.gold { background: linear-gradient(90deg, #d97706, #fde047); }
+    .mini-progress-fill.purple { background: linear-gradient(90deg, #9333ea, #c084fc); }
+
+    .team-meters-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      color: #ffd166;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* TIKTOK HUD BAR */
+    .tiktok-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .tiktok-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+    }
+    .tiktok-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+    }
+    .tiktok-dot.offline { background: #ef4444; }
+
+    .tiktok-connect-input {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #fff;
+      padding: 2px 8px;
+      font-size: 10.5px;
+      width: 100px;
+      outline: none;
+    }
+
+    .btn-connect-tt {
+      background: #f59e0b;
+      color: #111;
+      border: none;
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 10.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* VIP NITRO BOOST POPUP */
+    .nitro-popup {
+      position: absolute;
+      top: 36%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.6);
+      background: linear-gradient(135deg, rgba(20, 10, 30, 0.97), rgba(8, 5, 15, 0.99));
+      border: 2.5px solid #ffd166;
+      border-radius: 24px;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 0 60px rgba(255, 209, 102, 0.85);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .nitro-popup.active { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .nitro-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid #ffd166;
+      box-shadow: 0 0 15px #ffd166;
+      object-fit: cover;
+    }
+    .nitro-info h3 {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 1.15rem;
+      color: #ffd166;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .nitro-info p {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* VICTORY MODAL */
+    .victory-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.95);
+      backdrop-filter: blur(14px);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    .victory-modal.active { opacity: 1; pointer-events: auto; }
+    .victory-trophy { font-size: 70px; animation: bounceTrophy 1.2s infinite; }
+    @keyframes bounceTrophy {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-12px) scale(1.15); }
+    }
+    .victory-title {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: #ffd166;
+      text-transform: uppercase;
+      text-shadow: 0 0 30px rgba(255, 209, 102, 0.8);
+      text-align: center;
+    }
+    .victory-sub { font-size: 0.95rem; color: #cbd5e1; font-weight: 700; text-align: center; }
+    .victory-countdown {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      color: #38bdf8;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 5px 14px;
+      border-radius: 16px;
+    }
+
+    /* BOTTOM TEST CONTROLS */
+    .bottom-controls {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .test-actions-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .btn-test {
+      border: none;
+      outline: none;
+      border-radius: 10px;
+      padding: 6px 4px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: transform 0.1s;
+    }
+    .btn-test:active { transform: scale(0.95); }
+
+    .btn-blue { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: 1px solid #38bdf8; }
+    .btn-red { background: linear-gradient(135deg, #e11d48, #be123c); color: #fff; border: 1px solid #fb7185; }
+    .btn-gold { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; border: 1px solid #fde047; }
+    .btn-purple { background: linear-gradient(135deg, #9333ea, #7e22ce); color: #fff; border: 1px solid #c084fc; }
+
+    .obs-hide-btn {
+      align-self: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #94a3b8;
+      padding: 3px 12px;
+      border-radius: 16px;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* FLOATING CHAT */
+    .floating-chat {
+      position: absolute;
+      left: 12px;
+      bottom: 105px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 120px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    .chat-bubble {
+      background: rgba(10, 20, 36, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 3px 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      max-width: 240px;
+      animation: fadeInSlide 0.3s ease-out;
+    }
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stream-stage" id="stage">
+    <!-- CANVAS ĐỒ HỌA 4 CHIẾC GHE NGO RỒNG UỐN LƯỢN -->
+    <canvas id="riverCanvas"></canvas>
+
+    <!-- TOP HUD -->
+    <div class="top-hud" id="topHud">
+      <div class="match-header">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          TIKTOK LIVE
+        </div>
+        <div class="match-title">🏆 ĐUA GHE NGO 4 ĐỘI RỒNG</div>
+        <div class="music-controller">
+          <select id="musicSelect" class="music-dropdown" onchange="changeMusicTrack(this.value)">
+            <option value="/static/audio/trong_hoi_dua_ghe.wav">🥁 Trống Hội (Bass Trầm)</option>
+            <option value="/static/audio/dan_ca_song_nuoc.wav">🌾 Dân Ca Sông Nước</option>
+            <option value="/static/audio/hoi_hoa_dang_zen.mp3">🏮 Hòa Tấu Hoa Đăng</option>
+            <option value="custom">📁 Chọn MP3 của bạn...</option>
+          </select>
+          <input type="file" id="customAudioInput" accept="audio/*" style="display: none;" onchange="handleCustomAudioFile(event)" />
+          <button class="audio-toggle-btn" id="btnAudio" onclick="toggleFestivalMusic()">
+            <span id="audioIcon">▶️</span> <span id="audioStatusText">Bật Nhạc</span>
+          </button>
+        </div>
+      </div>
+      <audio id="bgMusicPlayer" loop preload="auto" src="/static/audio/trong_hoi_dua_ghe.wav"></audio>
+
+      <!-- BẢNG ĐIỂM 4 ĐỘI GHE NGO -->
+      <div class="four-team-board">
+        <!-- ĐỘI 1: RỒNG XANH -->
+        <div class="team-box blue">
+          <div class="team-box-header">
+            <span>🐉 Xanh</span>
+            <small>Chat "1"</small>
+          </div>
+          <div class="mini-progress-wrap">
+            <div class="mini-progress-fill blue" id="bar1"></div>
+          </div>
+          <div class="team-meters-text">
+            <span id="meters1">0m</span>
+            <span>500m</span>
+          </div>
+        </div>
+
+        <!-- ĐỘI 2: RỒNG ĐỎ -->
+        <div class="team-box red">
+          <div class="team-box-header">
+            <span>🐅 Đỏ</span>
+            <small>Chat "2"</small>
+          </div>
+          <div class="mini-progress-wrap">
+            <div class="mini-progress-fill red" id="bar2"></div>
+          </div>
+          <div class="team-meters-text">
+            <span id="meters2">0m</span>
+            <span>500m</span>
+          </div>
+        </div>
+
+        <!-- ĐỘI 3: RỒNG VÀNG -->
+        <div class="team-box gold">
+          <div class="team-box-header">
+            <span>🦅 Vàng</span>
+            <small>Chat "3"</small>
+          </div>
+          <div class="mini-progress-wrap">
+            <div class="mini-progress-fill gold" id="bar3"></div>
+          </div>
+          <div class="team-meters-text">
+            <span id="meters3">0m</span>
+            <span>500m</span>
+          </div>
+        </div>
+
+        <!-- ĐỘI 4: RỒNG TÍM -->
+        <div class="team-box purple">
+          <div class="team-box-header">
+            <span>🔮 Tím</span>
+            <small>Chat "4"</small>
+          </div>
+          <div class="mini-progress-wrap">
+            <div class="mini-progress-fill purple" id="bar4"></div>
+          </div>
+          <div class="team-meters-text">
+            <span id="meters4">0m</span>
+            <span>500m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIKTOK BRIDGE STATUS -->
+      <div class="tiktok-hud" id="tiktokHud">
+        <div class="tiktok-status">
+          <div class="tiktok-dot" id="ttDot"></div>
+          <span id="ttStatus">TikTok Live: Sẵn sàng</span>
+        </div>
+        <div style="display: flex; gap: 5px;">
+          <input type="text" id="ttUsername" class="tiktok-connect-input" placeholder="@username" />
+          <button class="btn-connect-tt" onclick="connectTikTok()">Kết Nối</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KHU VỰC CHAT LIVE -->
+    <div class="floating-chat" id="chatFeed"></div>
+
+    <!-- POPUP NITRO BOOST KHI TẶNG QUÀ -->
+    <div class="nitro-popup" id="nitroPopup">
+      <img src="https://ui-avatars.com/api/?name=VIP&background=ffd166&color=111" id="nitroAvatar" class="nitro-avatar" alt="Avatar">
+      <div class="nitro-info">
+        <h3 id="nitroTeam">🚀 NITRO LƯỚT SÓNG</h3>
+        <p id="nitroDesc">vừa kích hoạt tăng tốc +35 mét!</p>
+      </div>
+    </div>
+
+    <!-- VICTORY MODAL -->
+    <div class="victory-modal" id="victoryModal">
+      <div class="victory-trophy">🏆</div>
+      <div class="victory-title" id="winnerTitle">RỒNG XANH VÔ ĐỊCH!</div>
+      <div class="victory-sub" id="winnerSub">Đã xuất sắc cán mốc 500m đầu tiên trên sông nước miền Tây!</div>
+      <div class="victory-countdown" id="victoryCountdown">Hiệp mới bắt đầu sau 8s...</div>
+    </div>
+
+    <!-- THANH TEST VÀ MENU DƯỚI CÙNG CHO 4 ĐỘI -->
+    <div class="bottom-controls" id="bottomControls">
+      <div class="test-actions-bar">
+        <button class="btn-test btn-blue" onclick="manualBoost(0, 8)">
+          <span>🐉 Chèo Xanh</span>
+          <small>(Chat "1")</small>
+        </button>
+        <button class="btn-test btn-red" onclick="manualBoost(1, 8)">
+          <span>🐅 Chèo Đỏ</span>
+          <small>(Chat "2")</small>
+        </button>
+        <button class="btn-test btn-gold" onclick="manualBoost(2, 8)">
+          <span>🦅 Chèo Vàng</span>
+          <small>(Chat "3")</small>
+        </button>
+        <button class="btn-test btn-purple" onclick="manualBoost(3, 8)">
+          <span>🔮 Chèo Tím</span>
+          <small>(Chat "4")</small>
+        </button>
+      </div>
+      <button class="obs-hide-btn" onclick="toggleOBSMode()">🎥 Bật / Tắt Menu OBS Studio (Phím H)</button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 🎵 HỆ THỐNG ÂM THANH: NHẠC NỀN THU ÂM CHÂN THỰC & HIỆU ỨNG SÔNG NƯỚC (KHÔNG "TĂNG TĂNG")
+    // =========================================================================
+    let audioCtx = null;
+    const bgMusicPlayer = document.getElementById('bgMusicPlayer');
+    let isMusicPlaying = false;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // 1. Phát / Tắt nhạc nền tuyển chọn
+    function toggleFestivalMusic() {
+      initAudioContext();
+      if (!bgMusicPlayer) return;
+
+      if (isMusicPlaying) {
+        bgMusicPlayer.pause();
+        isMusicPlaying = false;
+        document.getElementById('btnAudio').classList.remove('playing');
+        document.getElementById('audioIcon').innerText = '▶️';
+        document.getElementById('audioStatusText').innerText = 'Bật Nhạc';
+      } else {
+        bgMusicPlayer.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('btnAudio').classList.add('playing');
+          document.getElementById('audioIcon').innerText = '⏸️';
+          document.getElementById('audioStatusText').innerText = 'Tắt Nhạc';
+        }).catch(err => {
+          console.warn('Autoplay error:', err);
+        });
+      }
+    }
+
+    // 2. Chuyển đổi giữa các thể loại nhạc
+    function changeMusicTrack(value) {
+      if (value === 'custom') {
+        document.getElementById('customAudioInput').click();
+        return;
+      }
+      bgMusicPlayer.src = value;
+      if (isMusicPlaying) {
+        bgMusicPlayer.play().catch(e => console.warn(e));
+      }
+    }
+
+    // 3. Tự chọn bài hát MP3 từ máy của bạn
+    function handleCustomAudioFile(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const fileUrl = URL.createObjectURL(file);
+        bgMusicPlayer.src = fileUrl;
+        const sel = document.getElementById('musicSelect');
+        const customOpt = sel.querySelector('option[value="custom"]');
+        if (customOpt) customOpt.text = '🎵 ' + file.name.substring(0, 15) + '...';
+        sel.value = 'custom';
+        bgMusicPlayer.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('btnAudio').classList.add('playing');
+          document.getElementById('audioIcon').innerText = '⏸️';
+          document.getElementById('audioStatusText').innerText = 'Tắt Nhạc';
+        }).catch(e => console.warn(e));
+      }
+    }
+
+    // 4. Âm thanh mái chèo quạt nước rẽ sóng ("XOẠP!") chân thực, êm dịu
+    function playPaddleSplash(time) {
+      if (!audioCtx) return;
+      try {
+        const dur = 0.22;
+        const bSize = Math.floor(audioCtx.sampleRate * dur);
+        const buf = audioCtx.createBuffer(1, bSize, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bSize * 0.35));
+        }
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+
+        // Lọc thông thấp sâu loại bỏ hoàn toàn tiếng chói "tăng tăng"
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, time);
+        filter.frequency.exponentialRampToValueAtTime(120, time + dur);
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.3, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        src.start(time);
+      } catch (e) {}
+    }
+
+    // 5. Âm thanh lướt sóng tăng tốc Nitro dâng trào
+    function playNitroSurge(time) {
+      if (!audioCtx) return;
+      try {
+        const dur = 0.65;
+        const bSize = Math.floor(audioCtx.sampleRate * dur);
+        const buf = audioCtx.createBuffer(1, bSize, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bSize * 0.45));
+        }
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(750, time);
+        filter.frequency.exponentialRampToValueAtTime(100, time + dur);
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.5, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        src.start(time);
+      } catch (e) {}
+    }
+
+    // 6. Tiếng reo hò chiến thắng rộn rã
+    function playVictoryCheer() {
+      if (!audioCtx) return;
+      playNitroSurge(audioCtx.currentTime);
+    }
+
+    window.addEventListener('click', () => {
+      initAudioContext();
+    }, { once: true });
+
+    // =========================================================================
+    // 🎨 CANVAS: DÒNG SÔNG PHÙ SA & 4 CHIẾC GHE NGO RỒNG UỐN LƯỢN
+    // =========================================================================
+    const canvas = document.getElementById('riverCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const TOTAL_DISTANCE = 500;
+    // 4 ĐỘI THI ĐẤU (Rồng Xanh màu Cyan sáng rực rỡ nổi bật trên nền sông xanh biếc)
+    const teams = [
+      { name: 'Rồng Xanh', short: '1', color: '#00d2d3', light: '#54a0ff', dist: 0, oarAngle: 0 },
+      { name: 'Rồng Đỏ',   short: '2', color: '#e11d48', light: '#fb7185', dist: 0, oarAngle: 0 },
+      { name: 'Rồng Vàng', short: '3', color: '#f59e0b', light: '#fde047', dist: 0, oarAngle: 0 },
+      { name: 'Rồng Tím',  short: '4', color: '#9333ea', light: '#c084fc', dist: 0, oarAngle: 0 }
+    ];
+
+    let isGameOver = false;
+    let waterWave = 0;
+
+    function resizeCanvas() {
+      const stage = document.getElementById('stage');
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // =========================================================================
+    // 🪷 1. HỆ THỐNG HOA SEN & LÁ SEN BẬP BỀNH TRÊN MẶT NƯỚC SÔNG XANH
+    // =========================================================================
+    const lotuses = [];
+    function initLotuses() {
+      lotuses.length = 0;
+      for (let i = 0; i < 24; i++) {
+        lotuses.push({
+          xRel: 0.11 + Math.random() * 0.78,
+          y: Math.random() * 950,
+          size: 10 + Math.random() * 9,
+          type: Math.random() > 0.45 ? 'flower' : (Math.random() > 0.5 ? 'pad' : 'bud'),
+          petalColor: Math.random() > 0.4 ? '#f472b6' : '#fda4af',
+          sway: Math.random() * Math.PI * 2,
+          speed: 0.3 + Math.random() * 0.35
+        });
+      }
+    }
+    initLotuses();
+
+    function drawLotuses(w, h, time) {
+      lotuses.forEach(lotus => {
+        lotus.y += lotus.speed;
+        if (lotus.y > h + 50) {
+          lotus.y = -40;
+          lotus.xRel = 0.11 + Math.random() * 0.78;
+        }
+
+        const lx = lotus.xRel * w + Math.sin(time * 0.0025 + lotus.sway) * 5;
+        const ly = lotus.y;
+        const r = lotus.size;
+
+        ctx.save();
+        ctx.translate(lx, ly);
+
+        // 1. LÁ SEN XANH MƯỚT (LOTUS PAD)
+        ctx.fillStyle = '#15803d';
+        ctx.beginPath();
+        // Vết khía chữ V đặc trưng của lá sen
+        ctx.arc(0, 0, r, 0.22 * Math.PI, 1.88 * Math.PI);
+        ctx.lineTo(0, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#166534';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Gân lá sen tỏa tròn
+        ctx.strokeStyle = 'rgba(134, 239, 172, 0.55)';
+        ctx.lineWidth = 0.8;
+        for (let a = 0.45 * Math.PI; a < 1.7 * Math.PI; a += 0.38) {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * (r * 0.82), Math.sin(a) * (r * 0.82));
+          ctx.stroke();
+        }
+
+        // Giọt sương lấp lánh đọng trên lá sen
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.beginPath();
+        ctx.arc(r * 0.25, -r * 0.25, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. NẾU LÀ ĐÓA HOA SEN NỞ HOẶC BÚP SEN
+        if (lotus.type === 'flower') {
+          const flowerR = r * 0.78;
+          const petalCount = 8;
+          // Cánh hoa ngoài hồng thắm
+          for (let p = 0; p < petalCount; p++) {
+            const pa = (p / petalCount) * Math.PI * 2;
+            ctx.save();
+            ctx.rotate(pa);
+            ctx.fillStyle = lotus.petalColor;
+            ctx.beginPath();
+            ctx.ellipse(0, flowerR * 0.48, flowerR * 0.32, flowerR * 0.52, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#db2777';
+            ctx.lineWidth = 0.7;
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          // Cánh sen bên trong phớt hồng trắng
+          for (let p = 0; p < 6; p++) {
+            const pa = ((p + 0.5) / 6) * Math.PI * 2;
+            ctx.save();
+            ctx.rotate(pa);
+            ctx.fillStyle = '#fce7f3';
+            ctx.beginPath();
+            ctx.ellipse(0, flowerR * 0.32, flowerR * 0.2, flowerR * 0.35, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+
+          // Nhụy sen vàng tươi & gương sen
+          ctx.fillStyle = '#fde047';
+          ctx.beginPath();
+          ctx.arc(0, 0, flowerR * 0.26, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#ca8a04';
+          ctx.lineWidth = 0.9;
+          ctx.stroke();
+
+          // Hạt gương sen
+          ctx.fillStyle = '#854d0e';
+          for (let s = 0; s < 4; s++) {
+            const sa = (s / 4) * Math.PI * 2;
+            ctx.beginPath();
+            ctx.arc(Math.cos(sa) * 2.5, Math.sin(sa) * 2.5, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        } else if (lotus.type === 'bud') {
+          // Búp sen e ấp vươn lên
+          ctx.fillStyle = '#f472b6';
+          ctx.beginPath();
+          ctx.moveTo(0, -r * 0.6);
+          ctx.quadraticCurveTo(r * 0.35, 0, 0, r * 0.4);
+          ctx.quadraticCurveTo(-r * 0.35, 0, 0, -r * 0.6);
+          ctx.fill();
+          ctx.strokeStyle = '#db2777';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      });
+    }
+
+    // =========================================================================
+    // 👥 2. KHÁN GIẢ ĐỘI NÓN LÁ CẦM CỜ ĐI TỚI ĐI LUI CỔ VŨ 2 BÊN BỜ SÔNG
+    // =========================================================================
+    const crowd = [];
+    function initCrowd() {
+      crowd.length = 0;
+      const shirtColors = ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#eab308'];
+      const flagColors = ['#ef4444', '#fde047', '#3b82f6', '#a855f7', '#10b981'];
+
+      // Bờ trái: x từ 0.02w đến 0.075w
+      for (let i = 0; i < 11; i++) {
+        crowd.push({
+          side: 'left',
+          xRel: 0.025 + (i % 2) * 0.038,
+          y: 80 + i * 85 + (Math.random() * 25),
+          speed: (Math.random() * 0.5 + 0.35) * (i % 2 === 0 ? 1 : -1),
+          shirt: shirtColors[i % shirtColors.length],
+          flag: flagColors[i % flagColors.length],
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+
+      // Bờ phải: x từ 0.925w đến 0.975w
+      for (let i = 0; i < 11; i++) {
+        crowd.push({
+          side: 'right',
+          xRel: 0.935 + (i % 2) * 0.036,
+          y: 80 + i * 85 + (Math.random() * 25),
+          speed: (Math.random() * 0.5 + 0.35) * (i % 2 === 0 ? -1 : 1),
+          shirt: shirtColors[(i + 4) % shirtColors.length],
+          flag: flagColors[(i + 2) % flagColors.length],
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+    initCrowd();
+
+    function drawCrowdAndBanks(w, h, time) {
+      // 1. BỜ KÈ VÀ ĐƯỜNG ĐI DỌC 2 BÊN SÔNG
+      const bankW = w * 0.095;
+
+      // Nền bờ kè cỏ xanh mát
+      ctx.fillStyle = '#14532d';
+      ctx.fillRect(0, 0, bankW, h);
+      ctx.fillRect(w - bankW, 0, bankW, h);
+
+      // Lối đi bờ kè đá lát gạch ven sông
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(bankW - 5, 0, 5, h);
+      ctx.fillRect(w - bankW, 0, 5, h);
+
+      // Cây dừa rợp bóng dọc theo hàng bờ
+      ctx.fillStyle = '#064e3b';
+      for (let y = 30; y < h; y += 65) {
+        ctx.beginPath();
+        ctx.arc(bankW * 0.35, y, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(w - bankW * 0.35, y, 14, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 2. KHÁN GIẢ ĐI LẠI VÀ CỔ VŨ
+      crowd.forEach(p => {
+        // Cập nhật vị trí bước đi tới lui
+        p.y += p.speed;
+        if (p.y > h - 45) {
+          p.y = h - 45;
+          p.speed = -Math.abs(p.speed);
+        } else if (p.y < h * 0.12) {
+          p.y = h * 0.12;
+          p.speed = Math.abs(p.speed);
+        }
+
+        const px = p.xRel * w;
+        const py = p.y;
+        // Nhún nhảy theo bước chân (walking bounce)
+        const walkBounce = Math.abs(Math.sin(time * 0.008 + p.phase)) * 2.8;
+        const legSwing = Math.sin(time * 0.01 + p.phase) * 3;
+
+        ctx.save();
+        ctx.translate(px, py - walkBounce);
+
+        // Chân bước đi (Quần đen)
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(-2, 10);
+        ctx.lineTo(-2 - legSwing, 16);
+        ctx.moveTo(2, 10);
+        ctx.lineTo(2 + legSwing, 16);
+        ctx.stroke();
+
+        // Thân người (Áo bà ba miền Tây rực rỡ)
+        ctx.fillStyle = p.shirt;
+        ctx.beginPath();
+        ctx.roundRect(-5.5, 0, 11, 11, 2.5);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+
+        // Nón lá Việt Nam che nghiêng vành chóp nhọn
+        ctx.fillStyle = '#fef08a';
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, -11); // Chóp nón
+        ctx.lineTo(-8.5, -2);
+        ctx.lineTo(8.5, -2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Vành nón lá cong nhẹ
+        ctx.beginPath();
+        ctx.ellipse(0, -2, 8.5, 2.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Cánh tay cầm cờ vẫy ra mé sông cổ vũ
+        const flagSwing = Math.sin(time * 0.012 + p.phase) * 0.45;
+        const armDir = (p.side === 'left') ? 1 : -1;
+        const handX = armDir * 6;
+        const handY = 4;
+        const flagTipX = handX + armDir * (11 + flagSwing * 4);
+        const flagTipY = handY - 10 + flagSwing * 5;
+
+        // Cán cờ
+        ctx.strokeStyle = '#ffd166';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(handX, handY);
+        ctx.lineTo(flagTipX, flagTipY);
+        ctx.stroke();
+
+        // Lá cờ hội ngũ sắc phấp phới
+        ctx.fillStyle = p.flag;
+        ctx.beginPath();
+        ctx.moveTo(flagTipX, flagTipY);
+        ctx.lineTo(flagTipX + armDir * 9, flagTipY + 4);
+        ctx.lineTo(flagTipX, flagTipY + 8);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      });
+    }
+
+    function renderScene() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const now = performance.now();
+      waterWave += 4.5;
+
+      // 1. DÒNG SÔNG XANH BIẾC MIỀN TÂY (Màu xanh ngọc lam trong lành, lấp lánh sóng nước)
+      const gradRiver = ctx.createLinearGradient(0, 0, w, 0);
+      gradRiver.addColorStop(0, '#0369a1');     // Bờ sông xanh thẫm
+      gradRiver.addColorStop(0.10, '#0284c7');  // Xanh ngọc sông
+      gradRiver.addColorStop(0.32, '#0ea5e9');  // Xanh biếc rạng rỡ
+      gradRiver.addColorStop(0.5, '#38bdf8');   // Giữa dòng xanh biếc ánh nắng
+      gradRiver.addColorStop(0.68, '#0ea5e9');
+      gradRiver.addColorStop(0.90, '#0284c7');
+      gradRiver.addColorStop(1, '#0369a1');     // Bờ sông xanh thẫm
+      ctx.fillStyle = gradRiver;
+      ctx.fillRect(0, 0, w, h);
+
+      // Gợn sóng nước biếc lấp lánh cuộn trôi
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1.6;
+      for (let y = (waterWave % 28); y < h; y += 28) {
+        ctx.beginPath();
+        ctx.moveTo(w * 0.095, y);
+        for (let x = w * 0.095; x < w * 0.905; x += 30) {
+          ctx.quadraticCurveTo(x + 15, y + Math.sin((x + waterWave) * 0.04) * 3.5, x + 30, y);
+        }
+        ctx.stroke();
+      }
+
+      // Ánh sáng kim cương lấp lánh trên mặt sông biếc
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+      for (let i = 0; i < 18; i++) {
+        const sx = w * 0.12 + ((i * 49 + waterWave * 0.6) % (w * 0.76));
+        const sy = ((i * 61 + waterWave * 1.1) % h);
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 2. HOA SEN & LÁ SEN BẬP BỀNH TRÊN MẶT NƯỚC SÔNG
+      drawLotuses(w, h, now);
+
+      // 3. 4 LÀN ĐUA PHÂN CÁCH BẰNG PHAOCỜ NỔI TRÊN NƯỚC
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.setLineDash([8, 12]);
+      ctx.lineWidth = 1.5;
+      const bankW = w * 0.095;
+      const laneWidth = (w - 2 * bankW) / 4;
+      for (let l = 1; l <= 3; l++) {
+        const lx = bankW + l * laneWidth;
+        ctx.beginPath();
+        ctx.moveTo(lx, 0);
+        ctx.lineTo(lx, h);
+        ctx.stroke();
+
+        // Phao tiêu phân làn tròn màu vàng cam nổi bồng bềnh
+        for (let py = (waterWave * 0.3) % 90; py < h; py += 90) {
+          ctx.fillStyle = (py % 180 < 90) ? '#f59e0b' : '#ef4444';
+          ctx.beginPath();
+          ctx.arc(lx, py, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.setLineDash([]);
+
+      // 4. BỜ SÔNG, BỜ KÈ VÀ KHÁN GIẢ ĐI TỚI ĐI LUI CỔ VŨ
+      drawCrowdAndBanks(w, h, now);
+
+      // 5. VẠCH ĐÍCH CỔNG CHÀO
+      drawFinishLine(w, h);
+
+      // 6. VẼ 4 CHIẾC GHE NGO HÌNH RỒNG UỐN LƯỢN
+      const startY = h * 0.84;
+      const finishY = h * 0.18;
+      const trackLength = startY - finishY;
+
+      // Tìm đội đang dẫn đầu
+      const maxDist = Math.max(...teams.map(t => t.dist));
+
+      teams.forEach((t, idx) => {
+        const laneX = bankW + (idx + 0.5) * laneWidth;
+        const boatY = startY - (t.dist / TOTAL_DISTANCE) * trackLength;
+        t.oarAngle += 0.14;
+
+        const isLeading = (t.dist > 0 && t.dist === maxDist);
+        drawDragonBoat(laneX, boatY, t.color, t.light, t.name, t.oarAngle, isLeading);
+      });
+
+      requestAnimationFrame(renderScene);
+    }
+
+    // VẼ CHIẾC GHE NGO RỒNG UỐN LƯỢN ĐẶC SẮC (DRAGON SHAPED BOAT)
+    function drawDragonBoat(x, y, mainColor, lightColor, name, angle, isLeading) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Vệt rẽ sóng trắng xóa sau đuôi thuyền
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+      for (let i = 0; i < 4; i++) {
+        const wx = (Math.random() - 0.5) * 14;
+        const wy = 72 + (i * 9) + Math.random() * 5;
+        ctx.beginPath();
+        ctx.arc(wx, wy, 3 + i, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 1. THÂN THUYỀN RỒNG UỐN LƯỢN DÀI
+      ctx.beginPath();
+      ctx.moveTo(0, -78); // Đỉnh mũi
+      ctx.bezierCurveTo(15, -40, 13, 35, 5, 75); // Mạn phải
+      ctx.bezierCurveTo(2, 82, -2, 82, -5, 75);  // Đáy đuôi
+      ctx.bezierCurveTo(-13, 35, -15, -40, 0, -78); // Mạn trái
+      ctx.fillStyle = mainColor;
+      ctx.fill();
+      ctx.strokeStyle = lightColor;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Hoa văn vảy rồng mạ vàng dọc 2 mạn ghe
+      ctx.strokeStyle = '#ffd166';
+      ctx.lineWidth = 1.2;
+      for (let sy = -50; sy <= 50; sy += 11) {
+        ctx.beginPath();
+        ctx.arc(-5.5, sy, 4, 0.5 * Math.PI, 1.5 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(5.5, sy, 4, -0.5 * Math.PI, 0.5 * Math.PI);
+        ctx.stroke();
+      }
+
+      // Sống lưng ghe dát vàng
+      ctx.strokeStyle = '#ffd166';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(0, -65);
+      ctx.lineTo(0, 65);
+      ctx.stroke();
+
+      // 2. ĐẦU RỒNG THẦN UỐN LƯỢN VƯƠN VỀ PHÍA TRƯỚC (DRAGON HEAD)
+      ctx.save();
+      ctx.translate(0, -78);
+
+      // Mũi rồng & Miệng rồng
+      ctx.beginPath();
+      ctx.moveTo(0, -32);  // Mũi rồng vươn dài
+      ctx.lineTo(6, -24);
+      ctx.lineTo(4, -14);
+      ctx.lineTo(-4, -14);
+      ctx.lineTo(-6, -24);
+      ctx.closePath();
+      ctx.fillStyle = '#ffd166';
+      ctx.fill();
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Mắt rồng đỏ rực lửa
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(-3, -20, 1.8, 0, Math.PI * 2);
+      ctx.arc(3, -20, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sừng rồng cong vút ra sau
+      ctx.strokeStyle = '#ffd166';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(-3, -18);
+      ctx.quadraticCurveTo(-9, -24, -8, -32);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(3, -18);
+      ctx.quadraticCurveTo(9, -24, 8, -32);
+      ctx.stroke();
+
+      // Râu rồng uốn lượn trắng tinh
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-4, -22);
+      ctx.quadraticCurveTo(-11, -25, -9, -15);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(4, -22);
+      ctx.quadraticCurveTo(11, -25, 9, -15);
+      ctx.stroke();
+
+      // Ngọc rồng xanh ngậm trước miệng
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(0, -34, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // 3. ĐUÔI RỒNG UỐN CONG VÚT LÊN (DRAGON TAIL)
+      ctx.save();
+      ctx.translate(0, 75);
+      ctx.strokeStyle = '#ffd166';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(-5, 9, 0, 16);
+      ctx.quadraticCurveTo(6, 21, 0, 26);
+      ctx.stroke();
+      ctx.fillStyle = lightColor;
+      ctx.beginPath();
+      ctx.moveTo(0, 26);
+      ctx.lineTo(-5, 20);
+      ctx.lineTo(0, 16);
+      ctx.lineTo(5, 20);
+      ctx.fill();
+      ctx.restore();
+
+      // 4. CÁC TAY CHÈO CỬ ĐỘNG ĐỒNG LOẠT (8 tay chèo)
+      const rowY = [-45, -24, -3, 18, 39];
+      const swing = Math.sin(angle) * 8;
+
+      rowY.forEach(ry => {
+        drawOar(-7, ry, mainColor, -1, swing);
+        drawOar(7, ry, mainColor, 1, swing);
+      });
+
+      // 5. NGƯỜI CHỈ HUY MŨI GHE
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.arc(0, -62, 3.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 6. BẢNG TÊN & VƯƠNG MIỆN NẾU DẪN ĐẦU
+      if (isLeading) {
+        ctx.font = '14px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('👑', 0, -125);
+      }
+
+      ctx.fillStyle = 'rgba(8, 15, 30, 0.9)';
+      ctx.strokeStyle = lightColor;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.roundRect(-34, -122, 68, 16, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 8.5px "Plus Jakarta Sans"';
+      ctx.textAlign = 'center';
+      ctx.fillText(name, 0, -110);
+
+      ctx.restore();
+    }
+
+    function drawOar(rx, ry, bodyColor, side, swing) {
+      // Đầu người
+      ctx.fillStyle = '#ffedd5';
+      ctx.beginPath();
+      ctx.arc(rx, ry, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cán chèo gỗ mạ vàng
+      const oarTipX = rx + (side * (18 + swing));
+      const oarTipY = ry + 6 - (swing * 0.3);
+
+      ctx.strokeStyle = '#ffd166';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(rx, ry + 1);
+      ctx.lineTo(oarTipX, oarTipY);
+      ctx.stroke();
+
+      // Lưỡi chèo quẫy nước
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath();
+      ctx.ellipse(oarTipX, oarTipY, 3, 1.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawFinishLine(w, h) {
+      const archY = h * 0.16;
+      const bankW = w * 0.095;
+      ctx.strokeStyle = '#ffd166';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(bankW, archY);
+      ctx.lineTo(w - bankW, archY);
+      ctx.stroke();
+
+      // Cờ tam giác vạch đích
+      const colors = ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#ec4899'];
+      const flagCount = 18;
+      const step = (w - 2 * bankW) / (flagCount - 1);
+      for (let i = 0; i < flagCount; i++) {
+        const cx = bankW + (i * step);
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.moveTo(cx - 5, archY);
+        ctx.lineTo(cx + 5, archY);
+        ctx.lineTo(cx, archY + 11);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    // =========================================================================
+    // 🏆 TIẾN ĐỘ 4 ĐỘI & TÍNH NĂNG CHIẾN THẮNG
+    // =========================================================================
+    function boostTeam(teamIdx, meters) {
+      if (isGameOver) return;
+      initAudioContext();
+
+      teams[teamIdx].dist = Math.min(TOTAL_DISTANCE, teams[teamIdx].dist + meters);
+      playPaddleSplash(audioCtx.currentTime);
+
+      updateBoard();
+
+      if (teams[teamIdx].dist >= TOTAL_DISTANCE) {
+        triggerVictory(teams[teamIdx].name);
+      }
+    }
+
+    function updateBoard() {
+      teams.forEach((t, idx) => {
+        const num = idx + 1;
+        document.getElementById(`meters${num}`).innerText = `${Math.floor(t.dist)}m`;
+        const pct = (t.dist / TOTAL_DISTANCE) * 100;
+        document.getElementById(`bar${num}`).style.width = pct + '%';
+      });
+    }
+
+    function triggerVictory(name) {
+      isGameOver = true;
+      playVictoryCheer();
+
+      const modal = document.getElementById('victoryModal');
+      document.getElementById('winnerTitle').innerText = `${name.toUpperCase()} VÔ ĐỊCH!`;
+      document.getElementById('winnerSub').innerText = `Đã xuất sắc chạm đích 500m đầu tiên trước sự reo hò của hàng ngàn khán giả!`;
+      modal.classList.add('active');
+
+      speakVoice(`${name} đã xuất sắc giành chức vô địch đại hội đua ghe ngo!`);
+
+      let count = 8;
+      const cdEl = document.getElementById('victoryCountdown');
+      const ci = setInterval(() => {
+        count--;
+        cdEl.innerText = `Hiệp mới bắt đầu sau ${count}s...`;
+        if (count <= 0) {
+          clearInterval(ci);
+          resetMatch();
+        }
+      }, 1000);
+    }
+
+    function resetMatch() {
+      teams.forEach(t => t.dist = 0);
+      isGameOver = false;
+      updateBoard();
+      document.getElementById('victoryModal').classList.remove('active');
+      speakVoice("Hiệp thi đấu mới của 4 đội Rồng Thần bắt đầu! Bà con hãy gõ 1, 2, 3, hoặc 4 để chèo ghe nào!");
+    }
+
+    // =========================================================================
+    // 💬 TIKTOK LIVE WEBSOCKET CONNECTOR (HỖ TRỢ 4 ĐỘI)
+    // =========================================================================
+    let ttSocket = null;
+    function initWebSocket() {
+      ttSocket = new WebSocket('ws://localhost:8088');
+
+      ttSocket.onopen = () => {
+        setTikTokStatus('connected', 'TikTok Live: Đã kết nối');
+      };
+
+      ttSocket.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          handleLiveEvent(data);
+        } catch (err) {}
+      };
+
+      ttSocket.onclose = () => {
+        setTikTokStatus('disconnected', 'Bridge đang chờ (Port 8088)');
+        setTimeout(initWebSocket, 3000);
+      };
+    }
+
+    function setTikTokStatus(status, text) {
+      const dot = document.getElementById('ttDot');
+      const st = document.getElementById('ttStatus');
+      dot.className = 'tiktok-dot ' + (status === 'connected' ? '' : 'offline');
+      st.innerText = text;
+    }
+
+    function connectTikTok() {
+      const input = document.getElementById('ttUsername');
+      const uname = input.value.trim().replace(/^@/, '');
+      if (!uname) {
+        alert("Vui lòng nhập TikTok username!");
+        return;
+      }
+      ttSocket.send(JSON.stringify({ action: 'connect', username: uname }));
+    }
+
+    function handleLiveEvent(data) {
+      if (data.type === 'chat') {
+        const comment = (data.comment || '').toLowerCase().trim();
+        const user = data.nickname || 'Khán giả';
+
+        addChatBubble(user, data.comment);
+
+        if (comment === '1' || comment.includes('xanh')) boostTeam(0, 4);
+        else if (comment === '2' || comment.includes('đỏ')) boostTeam(1, 4);
+        else if (comment === '3' || comment.includes('vàng')) boostTeam(2, 4);
+        else if (comment === '4' || comment.includes('tím')) boostTeam(3, 4);
+        else {
+          // Comment tự do đẩy ngẫu nhiên 1 đội
+          const randTeam = Math.floor(Math.random() * 4);
+          boostTeam(randTeam, 2);
+        }
+      } else if (data.type === 'like') {
+        // Thả tim tăng tốc ngẫu nhiên
+        const randTeam = Math.floor(Math.random() * 4);
+        boostTeam(randTeam, Math.min(data.likeCount || 2, 6));
+      } else if (data.type === 'gift') {
+        const user = data.nickname || 'Đại gia';
+        const giftName = data.giftName || 'Món Quà';
+        const randTeam = Math.floor(Math.random() * 4);
+        const boostMeters = (data.repeatCount || 1) * 15;
+
+        triggerNitro(user, randTeam, giftName, boostMeters, data.avatar);
+      }
+    }
+
+    function triggerNitro(user, teamIdx, giftName, meters, avatar) {
+      boostTeam(teamIdx, meters);
+      playNitroSurge(audioCtx.currentTime);
+
+      const popup = document.getElementById('nitroPopup');
+      const team = teams[teamIdx];
+      document.getElementById('nitroTeam').innerText = `🚀 ${team.name.toUpperCase()} BỨT TỐC!`;
+      document.getElementById('nitroDesc').innerHTML = `<b>${user}</b> tặng ${giftName} (+${meters}m)`;
+      if (avatar) document.getElementById('nitroAvatar').src = avatar;
+
+      popup.classList.add('active');
+      speakVoice(`Cảm ơn ${user} vừa tặng quà kích hoạt lướt sóng cho ${team.name}!`);
+
+      setTimeout(() => {
+        popup.classList.remove('active');
+      }, 3500);
+    }
+
+    function addChatBubble(user, text) {
+      const feed = document.getElementById('chatFeed');
+      const b = document.createElement('div');
+      b.className = 'chat-bubble';
+      b.innerHTML = `<span style="color: #ffd166;">${user}:</span> ${text}`;
+      feed.appendChild(b);
+      if (feed.children.length > 4) feed.removeChild(feed.firstChild);
+    }
+
+    function speakVoice(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'vi-VN';
+      u.rate = 1.1;
+      window.speechSynthesis.speak(u);
+    }
+
+    function manualBoost(teamIdx, meters) {
+      initAudioContext();
+      boostTeam(teamIdx, meters);
+      addChatBubble('Khán giả Cần Thơ', `Cố lên ${teams[teamIdx].name} ơi!`);
+    }
+
+    function toggleOBSMode() {
+      const topHud = document.getElementById('tiktokHud');
+      const bottom = document.getElementById('bottomControls');
+      const isHidden = bottom.style.display === 'none';
+      topHud.style.display = isHidden ? 'flex' : 'none';
+      bottom.style.display = isHidden ? 'flex' : 'none';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') toggleOBSMode();
+      if (e.key === '1') manualBoost(0, 8);
+      if (e.key === '2') manualBoost(1, 8);
+      if (e.key === '3') manualBoost(2, 8);
+      if (e.key === '4') manualBoost(3, 8);
+    });
+
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      initWebSocket();
+      renderScene();
+    });
+  </script>
+</body>
+</html>
