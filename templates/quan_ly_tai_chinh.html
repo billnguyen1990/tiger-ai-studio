@@ -1900,6 +1900,7 @@
     </div>
 
     
+    <input type="file" id="bgImageInput" accept="image/*" style="display: none;">
     <div class="app-viewport">
         <!-- 1. TRƯỜNG PHÍA TRÊN CỐ ĐỊNH -->
         <header class="app-top-fixed">
@@ -2178,6 +2179,179 @@
         </footer>
     </div>
 
+
+    
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHistory()">✕</button>
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Lịch sử tổng kết</h2>
+            <div id="historyContent"></div>
+        </div>
+    </div>
+
+    <!-- Calendar Modal -->
+    <div class="modal-overlay" id="calendarModal">
+        <div class="modal-content" style="max-width: 420px; transition: all 0.3s ease;">
+            <button class="modal-close" onclick="closeCalendar()">✕</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-right: 25px;">
+                <h2 style="margin: 0; color: var(--primary); font-size: 1.3rem;">Lịch Vạn Niên 📅</h2>
+                <button onclick="openCalendarBgModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); color: inherit; padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                    🖼️ Đổi nền Lịch
+                </button>
+            </div>
+            <div class="calendar-nav">
+                <button onclick="changeMonth(-1)">❮</button>
+                <div id="calMonthYear" style="font-weight: bold; font-size: 1.1rem; color: var(--text-main);"></div>
+                <button onclick="changeMonth(1)">❯</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+    </div>
+
+    <!-- Calendar Background Select Modal -->
+    <div class="modal-overlay" id="calendarBgModal" style="z-index: 2200;">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="modal-close" onclick="closeCalendarBgModal()">✕</button>
+            <h2 style="margin-bottom: 6px; color: var(--primary); text-align:center;">Đổi Ảnh Nền Lịch 🖼️</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-bottom: 18px;">Chọn hình nền lung linh hoặc tải ảnh riêng của bạn</p>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px;">
+                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/cal_aurora.jpg')">
+                    <img src="./assets/cal_aurora.jpg" alt="Cực quang Aurora">
+                    <div class="cal-bg-option-label">🌌 Cực quang Aurora</div>
+                </div>
+                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/cal_sunset.jpg')">
+                    <img src="./assets/cal_sunset.jpg" alt="Hoàng hôn biển">
+                    <div class="cal-bg-option-label">🌅 Hoàng hôn biển</div>
+                </div>
+                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/crypto_astronaut.png')">
+                    <img src="./assets/crypto_astronaut.png" alt="Phi hành gia">
+                    <div class="cal-bg-option-label">👨‍🚀 Vũ trụ Crypto</div>
+                </div>
+                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/gold_bars.png')">
+                    <img src="./assets/gold_bars.png" alt="Thỏi vàng">
+                    <div class="cal-bg-option-label">🏆 Vàng kim phát tài</div>
+                </div>
+                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/money_falling.png')">
+                    <img src="./assets/money_falling.png" alt="Mưa tiền tài lộc">
+                    <div class="cal-bg-option-label">💵 Mưa tiền tài lộc</div>
+                </div>
+                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/trading_chart.png')">
+                    <img src="./assets/trading_chart.png" alt="Biểu đồ tài chính">
+                    <div class="cal-bg-option-label">📈 Biểu đồ tăng trưởng</div>
+                </div>
+            </div>
+
+            <input type="file" id="calendarBgInput" accept="image/*" style="display: none;" onchange="handleCalendarBgUploaded(event)">
+            
+            <button style="width:100%; padding: 13px; border-radius: 12px; border:none; background:var(--primary); color:white; font-size: 0.95rem; font-weight: bold; cursor: pointer; margin-bottom: 8px; box-shadow: 0 4px 15px var(--primary-glow); display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="document.getElementById('calendarBgInput').click()">
+                📁 Tải ảnh nền Lịch từ điện thoại / máy tính
+            </button>
+            <button id="clearCalendarBgBtn" style="width:100%; border:1px solid var(--border-color); color:var(--text-muted); padding:10px; border-radius: 10px; background: transparent; cursor: pointer; font-size: 0.85rem;" onclick="clearCalendarBg(); closeCalendarBgModal();">
+                ❌ Nền mặc định (Màu trơn)
+            </button>
+        </div>
+    </div>
+
+    <!-- Day Detail Modal -->
+    <div class="modal-overlay" id="dayDetailModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closeDayDetail()">✕</button>
+            <h2 id="dayDetailTitle" style="margin-bottom: 20px; color: var(--primary); text-align:center;">Chi tiết ngày
+            </h2>
+
+            <div style="margin-bottom: 20px;">
+                <h3
+                    style="font-size:1rem; margin-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:5px;">
+                    💸 Thu / Chi trong ngày</h3>
+                <div id="dayExpensesList" style="display:flex; flex-direction:column; gap:5px;"></div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <h3
+                    style="font-size:1rem; margin-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:5px; color:var(--warning);">
+                    ⏰ Nhắc nhở / Sự kiện</h3>
+                <div id="dayRemindersList" style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;">
+                </div>
+
+                <div style="display:flex; gap:5px; margin-bottom:5px;">
+                    <input type="time" id="reminderTime"
+                        style="flex:1; padding:8px; border-radius:8px; border:1px solid rgba(0,0,0,0.2);">
+                    <input type="text" id="reminderText" placeholder="Nội dung..."
+                        style="flex:3; padding:8px; border-radius:8px; border:1px solid rgba(0,0,0,0.2);">
+                </div>
+                <button onclick="saveReminder()"
+                    style="width:100%; padding:10px; border-radius:8px; border:none; background:var(--warning); color:white; font-weight:bold; cursor:pointer;">Lưu
+                    Nhắc Nhở</button>
+                <button type="button" onclick="testAlarmSound()"
+                    style="width:100%; margin-top: 8px; padding: 8px; border-radius: 8px; border: 1px dashed var(--warning); background: rgba(245, 158, 11, 0.1); color: var(--warning); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    🔔 Nghe thử chuông báo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alarm Alert Modal (Pops up when reminder hits) -->
+    <div class="modal-overlay" id="alarmAlertModal" style="display: none; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3000;">
+        <div class="modal-content" style="max-width: 360px; text-align: center; padding: 30px 20px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--card-bg); border: 1px solid var(--border-color);">
+            <div style="font-size: 4rem; margin-bottom: 10px; animation: ringBell 1s infinite alternate;">⏰</div>
+            <h2 style="color: var(--warning); margin-bottom: 6px; font-size: 1.3rem;">TỚI GIỜ HẸN RỒI!</h2>
+            <div id="alarmAlertTime" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 12px;"></div>
+            <div id="alarmAlertContent" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: var(--text-main); margin-bottom: 25px; padding: 14px; background: var(--bg); border-radius: 12px; border: 1px dashed var(--warning);"></div>
+            <button onclick="dismissAlarmModal()" style="width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--primary); color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px var(--primary-glow);">
+                ✅ ĐÃ RÕ / TẮT CHUÔNG
+            </button>
+        </div>
+    </div>
+
+    <!-- Color Modal -->
+    <div class="modal-overlay" id="colorModal">
+        <div class="modal-content" style="max-width: 320px;">
+            <button class="modal-close" onclick="closeColorModal()">✕</button>
+            <h2 style="margin-bottom: 20px; color: var(--primary); text-align:center;">Màu Chủ Đề</h2>
+            <div id="colorPalette" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+            </div>
+        </div>
+    </div>
+
+    <!-- BG Select Modal -->
+    <div class="modal-overlay" id="bgSelectModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="modal-close" onclick="closeBgModal()">✕</button>
+            <h2 style="margin-bottom: 20px; color: var(--primary); text-align:center;">Đổi Hình Nền</h2>
+
+            <button
+                style="width:100%; padding: 15px; border-radius: 12px; border:none; background:var(--primary); color:white; font-size: 1.1rem; font-weight: bold; cursor: pointer;"
+                onclick="triggerBgUpload(); closeBgModal();">📁 Tải ảnh từ thiết bị</button>
+            <button class="menu-btn" id="clearBgBtn"
+                style="width:100%; border:1px solid var(--danger); color:var(--danger); display:none; padding:12px;"
+                onclick="clearBgImage(); closeBgModal();">❌ Xóa hình nền (Dùng nền màu)</button>
+        </div>
+    </div>
+
+    <!-- Hidden input to capture or pick photo for debt items -->
+    <input type="file" id="debtItemPhotoInput" accept="image/*" style="display: none;" onchange="handleDebtPhotoUploaded(event)">
+
+    <!-- Fullscreen Image Viewer Modal -->
+    <div class="modal-overlay" id="imageViewerModal" onclick="closeImageViewer()" style="display: none; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 2500;">
+        <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="event.stopPropagation()">
+            <button onclick="closeImageViewer()" style="position: absolute; top: -45px; right: 0; color: #fff; font-size: 1.8rem; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px);">✕</button>
+            <img id="viewerImage" src="" style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 14px; box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.15);">
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <a id="viewerDownloadBtn" href="" download="chung_tu_vay_muon.jpg" style="background: var(--primary); color: white; padding: 9px 18px; border-radius: 10px; text-decoration: none; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px var(--primary-glow);">⬇️ Tải ảnh về</a>
+                <button onclick="closeImageViewer()" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); padding: 9px 18px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullScreenLoader">
+        <div class="spinner"></div>
+        <h2 style="color: var(--primary);">Đã sang tháng mới! 🎉</h2>
+        <p style="color: var(--text-muted); margin-top: 10px;">Chuyên gia AI đang phân tích toàn bộ chi tiêu tháng cũ
+            của bạn để rút ra bài học sâu sắc. Vui lòng chờ vài giây...</p>
+    </div>
 
     <!-- PROFILE MODAL -->
     <div id="profileModal" class="modal-overlay">
