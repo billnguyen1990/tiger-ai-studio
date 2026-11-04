@@ -4289,8 +4289,11 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 results = list(executor.map(_exec_capture, targets))
 
             now_str = get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+            failed_cams = []
+            success_count = 0
             for h_k, c_k, ok, msg, snap_file in results:
                 if ok and snap_file and os.path.exists(snap_file):
+                    success_count += 1
                     caption = (
                         f"📸 <b>{msg.upper()}</b>\n"
                         f"⏰ <b>Thời gian chụp:</b> {now_str}\n"
@@ -4303,10 +4306,15 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                         pass
                     time.sleep(0.5)
                 else:
-                    _send_telegram_group_message(
-                        f"⚠️ <b>Chưa lấy được hình ảnh Camera {h_k.upper()} (Cam {c_k or 'mặc định'}):</b> {msg}",
-                        topic_id=CAM_TOPIC_ID
-                    )
+                    failed_cams.append(f"• <b>{h_k.upper()}</b> (Cam {c_k or 'mặc định'}): {msg}")
+
+            if failed_cams:
+                err_summary = "\n".join(failed_cams)
+                _send_telegram_group_message(
+                    f"⚠️ <b>Thông báo Giám Sát Camera:</b> (Đã chụp thành công {success_count}/{len(results)} mắt camera)\n\n"
+                    f"<b>Chi tiết các mắt camera cần kiểm tra mạng kho:</b>\n{err_summary}",
+                    topic_id=CAM_TOPIC_ID
+                )
             
             if topic_id != CAM_TOPIC_ID and topic_id > 0:
                 _send_telegram_group_message(
