@@ -15,3 +15,5 @@ credentials.json
 debug_dom.html
 
 !static/img/*
+!static/assets/*
+!static/app-icon-v56.png
