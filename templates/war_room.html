@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>TIGER AI • PHÒNG ĐIỀU HÀNH TÁC CHIẾN (WAR ROOM)</title>
-  <link rel="icon" type="image/png" href="/static/img/ghn_tiger_logo.png">
+  <title>TIGER AI • TRUNG TÂM ĐIỀU HÀNH TÁC CHIẾN (WAR ROOM)</title>
+  <link rel="icon" type="image/jpeg" href="/static/img/tiger_avatar.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #070d12;
-      --card: #0d1922;
-      --card-border: rgba(0, 229, 190, 0.2);
+      --card: rgba(13, 25, 34, 0.75);
+      --card-border: rgba(0, 229, 190, 0.22);
       --accent: #00e5be;
-      --accent-glow: rgba(0, 229, 190, 0.3);
+      --accent-glow: rgba(0, 229, 190, 0.4);
       --text: #f1f5f9;
       --muted: #94a3b8;
       --warning: #f59e0b;
@@ -21,7 +21,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: linear-gradient(135deg, rgba(6, 14, 20, 0.85), rgba(8, 18, 26, 0.92)), url('/static/img/tiger_avatar.jpg') no-repeat center center fixed;
+      background: linear-gradient(135deg, rgba(6, 14, 20, 0.86), rgba(8, 18, 26, 0.92)), url('/static/img/tiger_avatar.jpg') no-repeat center center fixed;
       background-size: cover;
       color: var(--text);
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -32,27 +32,39 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
+      padding: 14px 18px;
       border: 1px solid var(--card-border);
       border-radius: 14px;
-      background: rgba(13, 25, 34, 0.75);
+      background: rgba(13, 25, 34, 0.78);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       margin-bottom: 20px;
     }
+    .brand-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 14px var(--accent-glow);
+      flex-shrink: 0;
+    }
+    .title-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .title-box h1 {
-      font-size: 1.25rem;
+      font-size: 1.18rem;
       font-weight: 800;
       color: var(--accent);
       letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      line-height: 1.2;
     }
     .title-box p {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--muted);
-      margin-top: 4px;
+      margin-top: 2px;
     }
     .live-badge {
       display: inline-flex;
@@ -61,10 +73,11 @@
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid var(--success);
       color: var(--success);
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 20px;
       font-size: 0.75rem;
       font-weight: 700;
+      white-space: nowrap;
     }
     .live-dot {
       width: 8px;
@@ -80,6 +93,19 @@
     }
 
     /* DEPARTMENTS RADAR */
+    .radar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .radar-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
     .dept-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -87,20 +113,28 @@
       margin-bottom: 24px;
     }
     .dept-card {
-      background: rgba(13, 25, 34, 0.72);
+      background: rgba(13, 25, 34, 0.75);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 12px;
-      transition: all 0.2s;
+      padding: 12px 14px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s ease;
+      user-select: none;
     }
     .dept-card:hover {
       border-color: var(--accent);
-      box-shadow: 0 4px 16px var(--accent-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--accent-glow);
+      background: rgba(18, 35, 48, 0.85);
     }
-    .dept-icon { font-size: 1.3rem; margin-bottom: 6px; }
-    .dept-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .dept-card:active {
+      transform: scale(0.98);
+    }
+    .dept-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .dept-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; color: #fff; }
     .dept-status {
       font-size: 0.72rem;
       font-weight: 600;
@@ -109,19 +143,51 @@
       gap: 4px;
     }
     .status-ok { color: var(--success); }
-    .status-heal { color: var(--warning); }
+    .dept-tap-hint {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.68rem;
+      color: var(--accent);
+      background: rgba(0, 229, 190, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
 
     /* TIMELINE SECTION */
     .timeline-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
     }
     .refresh-btn {
-      background: rgba(0, 229, 190, 0.1);
+      background: rgba(0, 229, 190, 0.12);
       border: 1px solid var(--accent);
       color: var(--accent);
       padding: 6px 14px;
@@ -129,6 +195,7 @@
       font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s;
     }
     .refresh-btn:hover {
       background: var(--accent);
@@ -141,9 +208,9 @@
       gap: 14px;
     }
     .trace-card {
-      background: rgba(13, 25, 34, 0.75);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(13, 25, 34, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-left: 4px solid var(--accent);
       border-radius: 10px;
       padding: 14px 16px;
@@ -151,18 +218,18 @@
       border-top: 1px solid rgba(255,255,255,0.06);
       border-right: 1px solid rgba(255,255,255,0.06);
       border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.2s;
     }
     .trace-card.is-healing {
       border-left-color: var(--warning);
-      background: rgba(21, 24, 27, 0.82);
+      background: rgba(25, 24, 20, 0.85);
     }
     .trace-card.is-error {
       border-left-color: var(--danger);
-      background: rgba(24, 17, 19, 0.82);
+      background: rgba(28, 16, 18, 0.85);
     }
     .trace-card.is-success {
       border-left-color: var(--success);
-      background: rgba(13, 25, 34, 0.82);
     }
 
     .trace-header {
@@ -190,13 +257,13 @@
     }
     .meta-tag {
       background: rgba(255,255,255,0.06);
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 4px;
     }
 
     /* STEP PROGRESS */
     .step-box {
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.35);
       padding: 8px 12px;
       border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
@@ -209,8 +276,8 @@
 
     /* INCIDENT BOX */
     .incident-box {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px dashed rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px dashed rgba(239, 68, 68, 0.45);
       padding: 10px 12px;
       border-radius: 6px;
       margin-bottom: 10px;
@@ -220,55 +287,188 @@
 
     /* HEALING DISPATCH BOX */
     .healing-box {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.45);
       padding: 10px 12px;
       border-radius: 6px;
       font-size: 0.8rem;
     }
     .healing-box b { color: var(--warning); }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: #0b1a24;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 16px;
+    }
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .close-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .close-btn:hover { background: var(--danger); }
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .act-btn {
+      background: rgba(0, 229, 190, 0.12);
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .act-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .input-row input {
+      flex: 1;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #fff;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .input-row input:focus {
+      border-color: var(--accent);
+    }
+    .modal-result {
+      background: rgba(0,0,0,0.4);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.8rem;
+      max-height: 250px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      display: none;
+      margin-top: 10px;
+    }
+    .snap-preview {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+      border: 1px solid var(--card-border);
+    }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <header class="header">
     <div class="title-box">
-      <h1>🐯 WAR ROOM • TRUNG TÂM ĐIỀU HÀNH TÁC CHIẾN</h1>
-      <p>Giám sát tiến trình từng bước • Bắt lỗi điểm nghẽn • Tự động chữa lành liên phòng ban</p>
+      <img src="/static/img/tiger_avatar.jpg" alt="Tiger AI" class="brand-avatar">
+      <div>
+        <h1>WAR ROOM • TIGER AI</h1>
+        <p>Trung Tâm Tác Chiến & Giám Sát Tiến Trình Từng Bước</p>
+      </div>
     </div>
     <div class="live-badge">
       <div class="live-dot"></div> TRỰC TUYẾN 24/7
     </div>
   </header>
 
-  <!-- PHÒNG BAN RADAR -->
+  <!-- RADAR PHÒNG BAN -->
+  <div class="radar-header">
+    <span class="radar-title">🏢 BỘ MÁY 6 PHÒNG BAN (CHẠM ĐỂ ĐIỀU KHIỂN TRỰC TIẾP)</span>
+  </div>
+
   <section class="dept-grid">
-    <div class="dept-card">
+    <div class="dept-card" onclick="openDeptModal('kythuat')">
+      <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">🛠️</div>
       <div class="dept-name">Phòng Kỹ Thuật</div>
       <div class="dept-status status-ok">● Thường trực / Auto-Heal</div>
     </div>
-    <div class="dept-card">
+    <div class="dept-card" onclick="openDeptModal('vanhanh')">
+      <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">🚚</div>
       <div class="dept-name">Vận Hành - Kho Vận</div>
-      <div class="dept-status status-ok">● 4 Mắt Cam Online</div>
+      <div class="dept-status status-ok">● 4 Mắt Cam Trực Tuyến</div>
     </div>
-    <div class="dept-card">
+    <div class="dept-card" onclick="openDeptModal('ketoan')">
+      <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">💰</div>
       <div class="dept-name">Kế Toán - Tài Chính</div>
       <div class="dept-status status-ok">● Đối soát 365 sẵn sàng</div>
     </div>
-    <div class="dept-card">
+    <div class="dept-card" onclick="openDeptModal('thanhtra')">
+      <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">🔍</div>
       <div class="dept-name">Ban Thanh Tra</div>
       <div class="dept-status status-ok">● Quét hoãn ảo hoạt động</div>
     </div>
-    <div class="dept-card">
+    <div class="dept-card" onclick="openDeptModal('cskh')">
+      <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">📞</div>
       <div class="dept-name">Dịch Vụ Khách Hàng</div>
-      <div class="dept-status status-ok">● Tra cứu đơn GHN thông suốt</div>
+      <div class="dept-status status-ok">● Canh 3 đơn ngầm 24/7</div>
     </div>
-    <div class="dept-card">
+    <div class="dept-card" onclick="openDeptModal('livestudio')">
+      <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">🎬</div>
       <div class="dept-name">Live Studio</div>
       <div class="dept-status status-ok">● Engine tương tác sẵn sàng</div>
@@ -278,36 +478,75 @@
   <!-- TRACE TIMELINE -->
   <section>
     <div class="timeline-title">
-      <span>📡 NHẬT KÝ VẬN HÀNH & ĐIỀU PHỐI SỰ CỐ THEO THỜI GIAN THỰC</span>
-      <button class="refresh-btn" onclick="fetchLiveTraces()">🔄 Làm Mới Tức Thì</button>
+      <span>📡 NHẬT KÝ TIẾN TRÌNH & ĐIỀU PHỐI SỰ CỐ THỜI GIAN THỰC</span>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <div class="filter-tabs">
+          <button class="tab-btn active" onclick="setFilter('ALL', this)">Tất Cả</button>
+          <button class="tab-btn" onclick="setFilter('HEALING', this)">Sự Cố / Chữa Lỗi</button>
+          <button class="tab-btn" onclick="setFilter('SUCCESS', this)">Đã Hoàn Tất</button>
+        </div>
+        <button class="refresh-btn" onclick="fetchLiveTraces()">🔄 Làm Mới</button>
+      </div>
     </div>
 
     <div class="trace-list" id="traceContainer">
-      <!-- Loading state -->
       <div style="text-align: center; color: var(--muted); padding: 30px;">Đang tải nhật ký tác chiến...</div>
     </div>
   </section>
 
+  <!-- ACTION MODAL -->
+  <div class="modal-overlay" id="deptModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">🛠️ TIÊU ĐỀ PHÒNG BAN</h3>
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div id="modalBody">
+        <!-- Dynamic actions injected here -->
+      </div>
+      <img id="modalSnapImg" class="snap-preview" alt="Snapshot Preview">
+      <div id="modalResult" class="modal-result"></div>
+    </div>
+  </div>
+
   <script>
+    let ALL_TRACES = [];
+    let CURRENT_FILTER = 'ALL';
+
     async function fetchLiveTraces() {
       try {
         const res = await fetch('/api/war-room/traces');
         const data = await res.json();
-        renderTraces(data.traces || []);
+        ALL_TRACES = data.traces || [];
+        renderFilteredTraces();
       } catch (e) {
         console.error("Lỗi tải traces:", e);
       }
     }
 
-    function renderTraces(traces) {
+    function setFilter(filterType, btn) {
+      CURRENT_FILTER = filterType;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderFilteredTraces();
+    }
+
+    function renderFilteredTraces() {
       const c = document.getElementById('traceContainer');
-      if (!traces || traces.length === 0) {
-        c.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 30px;">Chưa có sự cố nào phát sinh. Hệ thống đang chạy hoàn hảo 100%!</div>';
+      let filtered = ALL_TRACES;
+      if (CURRENT_FILTER === 'HEALING') {
+        filtered = ALL_TRACES.filter(t => t.status === 'HEALING' || t.status === 'ERROR');
+      } else if (CURRENT_FILTER === 'SUCCESS') {
+        filtered = ALL_TRACES.filter(t => t.status === 'SUCCESS');
+      }
+
+      if (!filtered || filtered.length === 0) {
+        c.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 30px;">Không có sự kiện nào trong danh mục này. Hệ thống đang vận hành ổn định!</div>';
         return;
       }
 
       let html = '';
-      [...traces].reverse().forEach((t, i) => {
+      [...filtered].reverse().forEach((t) => {
         let cardClass = 'trace-card';
         if (t.status === 'HEALING') cardClass += ' is-healing';
         else if (t.status === 'ERROR') cardClass += ' is-error';
@@ -358,10 +597,214 @@
       c.innerHTML = html;
     }
 
-    // Auto refresh every 5 seconds
+    // MODAL CONTROL
+    function openDeptModal(deptKey) {
+      const modal = document.getElementById('deptModal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const result = document.getElementById('modalResult');
+      const snapImg = document.getElementById('modalSnapImg');
+      
+      result.style.display = 'none';
+      result.innerHTML = '';
+      snapImg.style.display = 'none';
+
+      if (deptKey === 'kythuat') {
+        title.innerHTML = '🛠️ ĐIỀU HÀNH PHÒNG KỸ THUẬT';
+        body.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Quản trị máy chủ Cloud 24/7, giám sát mã xác thực Hikvision và cơ chế Tự Chữa Lành.</p>
+          <div class="action-group">
+            <button class="act-btn" onclick="runKythuatCheck()">🔄 Kiểm Tra Sức Khỏe Token Camera <span>▶</span></button>
+            <button class="act-btn" onclick="runKythuatHeal()">🛡️ Kích Hoạt Tự Phục Hồi Token (Auto-Heal) <span>▶</span></button>
+          </div>
+        `;
+      } else if (deptKey === 'vanhanh') {
+        title.innerHTML = '🚚 ĐIỀU HÀNH VẬN HÀNH & KHO VẬN';
+        body.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Mắt thần trực tiếp 4 kho Miền Tây 01. Bấm vào kho để trích xuất ảnh thực tế ngay lập tức:</p>
+          <div class="action-group">
+            <button class="act-btn" onclick="takeCamSnap('cairang', 2)">📸 Chụp Kho Cái Răng (Cam 2) <span>▶</span></button>
+            <button class="act-btn" onclick="takeCamSnap('binhthuy', 6)">📸 Chụp Kho Bình Thủy (Cam 6) <span>▶</span></button>
+            <button class="act-btn" onclick="takeCamSnap('omon', 4)">📸 Chụp Kho Ô Môn (Cam 4) <span>▶</span></button>
+            <button class="act-btn" onclick="takeCamSnap('vithanh', 6)">📸 Chụp Kho Vị Thanh (Cam 6) <span>▶</span></button>
+          </div>
+        `;
+      } else if (deptKey === 'ketoan') {
+        title.innerHTML = '💰 ĐIỀU HÀNH KẾ TOÁN & TÀI CHÍNH';
+        body.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Quản lý chi phí vận tải, định mức xe tải 365, lương nhân viên và xuất file Excel đối soát:</p>
+          <div class="action-group">
+            <a href="/cost-dashboard" target="_blank" class="act-btn" style="text-decoration: none;">📊 Mở Bảng Dashboard Chi Phí & Đối Soát 365 <span>↗</span></a>
+            <button class="act-btn" onclick="syncCostData()">🔄 Đồng Bộ Dữ Liệu Tươi Từ Google Sheet <span>▶</span></button>
+            <a href="/api/cost-analytics/excel" class="act-btn" style="text-decoration: none;">📥 Tải File Excel Báo Cáo Đối Soát <span>⬇</span></a>
+          </div>
+        `;
+      } else if (deptKey === 'thanhtra') {
+        title.innerHTML = '🔍 BAN THANH TRA & KIỂM SOÁT';
+        body.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Thanh tra shipper hoãn ảo, bóc tách cuộc gọi viễn thông và quét bất thường tab GHNa:</p>
+          <div class="input-row">
+            <input type="text" id="shipperOrderInput" placeholder="Nhập mã đơn GHN để soi hoãn...">
+            <button class="refresh-btn" onclick="auditShipper()">Soi Ngay</button>
+          </div>
+          <div class="action-group">
+            <button class="act-btn" onclick="scanGhnaSheet()">📋 Quét Bất Thường Trên Sheet GHNa <span>▶</span></button>
+          </div>
+        `;
+      } else if (deptKey === 'cskh') {
+        title.innerHTML = '📞 PHÒNG DỊCH VỤ KHÁCH HÀNG';
+        body.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Tra cứu tiến độ đơn hàng và xem danh sách các đơn quan trọng đang được âm thầm canh ngầm:</p>
+          <div class="action-group">
+            <button class="act-btn" onclick="loadWatchlist()">📋 Xem 3 Đơn Đang Canh Ngầm (GYMEUX74, 7H, GM) <span>▶</span></button>
+          </div>
+        `;
+      } else if (deptKey === 'livestudio') {
+        title.innerHTML = '🎬 PHÒNG TRUYỀN THÔNG & LIVE STUDIO';
+        body.innerHTML = `
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Hệ thống phát sóng tương tác và studio tự động hóa:</p>
+          <div class="action-group">
+            <a href="/dua-ghe-live" target="_blank" class="act-btn" style="text-decoration: none;">🛶 Mở Studio Đua Ghe Ngo Live <span>↗</span></a>
+            <a href="/cho-noi-live" target="_blank" class="act-btn" style="text-decoration: none;">🚤 Mở Studio Chợ Nổi Live <span>↗</span></a>
+          </div>
+        `;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('deptModal').classList.remove('active');
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target.id === 'deptModal') closeModal();
+    }
+
+    // ACTIONS
+    async function takeCamSnap(hubKey, camId) {
+      const resBox = document.getElementById('modalResult');
+      const snapImg = document.getElementById('modalSnapImg');
+      resBox.style.display = 'block';
+      resBox.innerHTML = `⏳ Đang kết nối đầu ghi Hikvision và trích xuất ảnh ${hubKey.toUpperCase()}... Vui lòng đợi trong giây lát!`;
+      snapImg.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/war-room/cam-snap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hub: hubKey, cam: camId })
+        });
+        const data = await res.json();
+        if (data.success && data.image) {
+          resBox.innerHTML = `✅ <b>Thành công:</b> ${data.message}`;
+          snapImg.src = data.image;
+          snapImg.style.display = 'block';
+        } else {
+          resBox.innerHTML = `⚠️ <b>Lỗi chụp cam:</b> ${data.message || data.error}`;
+        }
+      } catch (err) {
+        resBox.innerHTML = `❌ Lỗi kết nối: ${err.message}`;
+      }
+      fetchLiveTraces();
+    }
+
+    async function runKythuatCheck() {
+      const resBox = document.getElementById('modalResult');
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ Đang kiểm tra token Hikvision...';
+      try {
+        const res = await fetch('/api/war-room/kythuat-check');
+        const data = await res.json();
+        resBox.innerHTML = `<b>Kết quả kiểm định:</b> ${data.is_healthy ? '🟢 HOẠT ĐỘNG TỐT' : '🟡 CẦN LÀM MỚI'}\nChi tiết: ${data.message}`;
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
+    }
+
+    async function runKythuatHeal() {
+      const resBox = document.getElementById('modalResult');
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ Đang kích hoạt Chrome ngầm để tự động lấy lại JWT Token mới...';
+      try {
+        const res = await fetch('/api/war-room/kythuat-heal', { method: 'POST' });
+        const data = await res.json();
+        resBox.innerHTML = `<b>Kết quả chữa lành:</b> ${data.message}`;
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
+    }
+
+    async function syncCostData() {
+      const resBox = document.getElementById('modalResult');
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ Đang đồng bộ ma trận chi phí từ Google Sheet...';
+      try {
+        const res = await fetch('/api/cost-analytics/sync');
+        const data = await res.json();
+        resBox.innerHTML = `✅ ${data.message || 'Đồng bộ thành công!'}`;
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
+    }
+
+    async function auditShipper() {
+      const code = document.getElementById('shipperOrderInput').value.trim();
+      const resBox = document.getElementById('modalResult');
+      if (!code) { alert('Vui lòng nhập mã đơn!'); return; }
+      resBox.style.display = 'block';
+      resBox.innerHTML = `⏳ Đang bóc tách lịch sử viễn thông shipper cho đơn ${code}...`;
+      try {
+        const res = await fetch('/api/war-room/shipper-audit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_code: code })
+        });
+        const data = await res.json();
+        resBox.innerHTML = data.report.replace(/<[^>]*>/g, '');
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
+    }
+
+    async function scanGhnaSheet() {
+      const resBox = document.getElementById('modalResult');
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ Đang quét dữ liệu tab GHNa...';
+      try {
+        const res = await fetch('/api/scan-ghna-sheet?force=true');
+        const data = await res.json();
+        resBox.innerHTML = `✅ Kết quả: Đã quét xong tab GHNa!`;
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
+    }
+
+    async function loadWatchlist() {
+      const resBox = document.getElementById('modalResult');
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ Đang lấy danh sách canh ngầm...';
+      try {
+        const res = await fetch('/api/war-room/watchlist');
+        const data = await res.json();
+        const list = data.watchlist || [];
+        if (list.length === 0) {
+          resBox.innerHTML = 'Hiện không có đơn nào trong danh sách canh ngầm.';
+          return;
+        }
+        let txt = `📋 DANH SÁCH ${list.length} ĐƠN ĐANG CANH NGẦM:\n━━━━━━━━━━━━━━━━━━\n`;
+        list.forEach((it, i) => {
+          txt += `${i+1}. Mã: ${it.order_code}\n   • Trạng thái canh: ${it.target_status}\n   • Kho canh: ${it.target_hub_name}\n   • Hiện tại: ${it.last_status || 'READY_TO_PICK'} | Kho: ${it.last_hub || 'Chưa rõ'}\n──────────────────\n`;
+        });
+        resBox.innerHTML = txt;
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
+    }
+
+    // Auto fetch
     fetchLiveTraces();
     setInterval(fetchLiveTraces, 5000);
   </script>
 </body>
 </html>
-

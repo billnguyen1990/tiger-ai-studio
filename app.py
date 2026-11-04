@@ -5415,6 +5415,70 @@ def serve_tai_chinh_icon():
     return send_from_directory('static', 'app-icon-v56.png', mimetype='image/png')
 
 
+
+@app.route("/api/war-room/cam-snap", methods=["POST"])
+def api_war_room_cam_snap():
+    """Chụp ảnh camera trực tiếp từ War Room và trả về ảnh base64"""
+    from flask import request
+    data = request.get_json(silent=True) or {}
+    hub = data.get("hub", "cairang")
+    cam = data.get("cam")
+    try:
+        from camera_service import capture_camera_snapshot
+        ok, msg, snap_path = capture_camera_snapshot(hub, cam)
+        b64_img = ""
+        if ok and snap_path and os.path.exists(snap_path):
+            with open(snap_path, "rb") as img_f:
+                b64_img = "data:image/jpeg;base64," + base64.b64encode(img_f.read()).decode("utf-8")
+        return jsonify({"success": ok, "message": msg, "image": b64_img, "hub": hub})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/war-room/kythuat-check", methods=["GET", "POST"])
+def api_war_room_kythuat_check():
+    """Kiểm tra sức khỏe token từ War Room"""
+    try:
+        from camera_service import check_token_health, load_camera_headers
+        headers = load_camera_headers()
+        is_healthy, status_msg = check_token_health(headers)
+        return jsonify({"success": True, "is_healthy": is_healthy, "message": status_msg})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/war-room/kythuat-heal", methods=["POST"])
+def api_war_room_kythuat_heal():
+    """Kích hoạt tự phục hồi token từ War Room"""
+    try:
+        from camera_service import self_heal_camera_token
+        new_token = self_heal_camera_token()
+        return jsonify({"success": bool(new_token), "message": "Đã làm mới token thành công" if new_token else "Không thể lấy token mới"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/war-room/shipper-audit", methods=["POST"])
+def api_war_room_shipper_audit():
+    """Soi hoãn ảo shipper từ War Room"""
+    from flask import request
+    data = request.get_json(silent=True) or {}
+    order_code = data.get("order_code", "").strip()
+    if not order_code:
+        return jsonify({"success": False, "error": "Chưa nhập mã đơn"}), 400
+    try:
+        from shipper_delay_auditor import audit_shipper_delay_for_order
+        rep = audit_shipper_delay_for_order(order_code)
+        return jsonify({"success": bool(rep), "report": rep or "Không tìm thấy dữ liệu đối soát"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/war-room/watchlist", methods=["GET"])
+def api_war_room_watchlist():
+    """Lấy danh sách đơn đang canh ngầm"""
+    try:
+        from order_watchdog_service import load_watchlist
+        return jsonify({"success": True, "watchlist": load_watchlist()})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/war-room")
 def view_war_room():
     """Giao diện Trung Tâm Tác Chiến (War Room) soi tiến trình & lỗi liên phòng ban"""
