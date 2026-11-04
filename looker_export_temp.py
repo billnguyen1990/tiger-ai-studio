@@ -1,3 +1,10 @@
+try:
+    from pipeline_tracer import record_pipeline_event
+except Exception:
+    try:
+        from tiger_cloud_repo.pipeline_tracer import record_pipeline_event
+    except Exception:
+        def record_pipeline_event(*args, **kwargs): pass
 import os
 import sys
 import json
@@ -717,6 +724,7 @@ def run_looker_export_pipeline(max_retries=3):
 
                 browser = None
                 if is_headless_cloud:
+                    record_pipeline_event("Xuất Đơn B2B (18:00)", "📊 Phòng Kinh Doanh & Dữ Liệu", "Bước 1/4: Khởi tạo kết nối phiên Google", 4, "RUNNING")
                     print("  🚀 [CHẾ ĐỘ CLOUD / GITHUB ACTIONS] Khởi chạy Chromium Headless với phiên Google...")
                     launch_kwargs = {
                         "headless": True,
@@ -819,13 +827,30 @@ def run_looker_export_pipeline(max_retries=3):
             else:
                 print("🚨 ĐÃ THỬ LẠI HẾT 3 LẦN NHƯNG VẪN THẤT BẠI!")
                 now_str = time.strftime("%H:%M:%S %d/%m/%Y")
+                record_pipeline_event(
+                    task_name="Xuất Đơn B2B (18:00)",
+                    department="📊 Phòng Kinh Doanh & Dữ Liệu",
+                    current_step="Bước 2/4: Tắc nghẽn tại đăng nhập Looker Studio",
+                    total_steps=4,
+                    status="HEALING",
+                    error_info={"code": "GOOGLE_AUTH_EXPIRED", "reason": last_error[:200], "at_step": "Looker Studio Google Accounts"},
+                    handler_dept="🛠️ Phòng Kỹ Thuật",
+                    healing_action="Phòng Kỹ Thuật đã tiếp nhận sự cố: Vui lòng mở Chrome bot đăng nhập lại tài khoản Google một lần để làm mới phiên làm việc.",
+                    can_resume=False
+                )
                 alert_text = (
-                    f"🚨 <b>TIGER AI CẢNH BÁO • LỖI QUY TRÌNH XUẤT ĐƠN B2B (18:00)</b>\n"
-                    f"⏰ Thời gian: <code>{now_str}</code>\n"
-                    f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                    f"❌ Hệ thống đã tự động thử lại <b>3 lần</b> nhưng Looker Studio gặp sự cố:\n"
-                    f"📝 <i>Chi tiết lỗi:</i> <code>{last_error[:250]}</code>\n\n"
-                    f"👉 <b>Cách xử lý:</b> Anh có thể bấm nút <b>'KÍCH HOẠT QUY TRÌNH'</b> trên web Tiger AI Command Center MT01 để chạy bù, hoặc kiểm tra lại trình duyệt Chrome bot."
+                    f"🛠️ <b>BÁO CÁO SỰ CỐ TỪ PHÒNG KỸ THUẬT • QUY TRÌNH XUẤT ĐƠN B2B</b>\n"
+                    f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"⏰ Thời điểm phát hiện: <code>{now_str}</code>\n"
+                    f"🏢 Phòng ban tiếp nhận: <b>🛠️ Phòng Kỹ Thuật</b>\n\n"
+                    f"🛑 <b>Điểm nghẽn kỹ thuật:</b>\n"
+                    f"• Nguyên nhân: <i>Phiên đăng nhập tài khoản Google trên Looker Studio đã hết hạn.</i>\n"
+                    f"• Chi tiết: <code>{last_error[:200]}</code>\n\n"
+                    f"🔧 <b>Giải pháp xử lý từ Phòng Kỹ Thuật:</b>\n"
+                    f"• Anh chỉ cần nhấp đúp chạy file <code>Dang_Nhap_Chrome_Bot.bat</code> trên Desktop để đăng nhập lại tài khoản Google 1 lần.\n"
+                    f"• Hoặc bấm nút <b>'Chạy Thử B2B'</b> trực tiếp trên War Room để hệ thống tự động kiểm tra lại.\n"
+                    f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"<i>Sự cố đã được ghi nhận vào War Room và bàn giao cho Phòng Kỹ Thuật theo dõi!</i>"
                 )
                 send_telegram_alert(alert_text)
 

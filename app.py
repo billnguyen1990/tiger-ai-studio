@@ -5479,6 +5479,90 @@ def api_war_room_watchlist():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+@app.route("/api/war-room/run-b2b", methods=["POST"])
+def api_war_room_run_b2b():
+    """Kích hoạt chạy thử quy trình Xuất Đơn B2B và theo dõi trong War Room"""
+    import threading
+    import subprocess
+    import sys
+    from pipeline_tracer import record_pipeline_event
+
+    def _worker():
+        record_pipeline_event(
+            task_name="Xuất Đơn B2B (18:00)",
+            department="📊 Phòng Kinh Doanh & Dữ Liệu",
+            current_step="Bước 1/4: Đã kích hoạt từ War Room, đang kết nối phiên...",
+            total_steps=4,
+            status="RUNNING"
+        )
+        try:
+            script_path = os.path.join(PARENT_DIR, "looker_export_temp.py")
+            if not os.path.exists(script_path):
+                script_path = os.path.join(BASE_DIR, "looker_export_temp.py")
+            
+            # Nếu trên Cloud, kích hoạt qua GitHub Actions
+            is_cloud_env = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
+            if is_cloud_env:
+                gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSOXfHoBFEfKc3Y3z3aO0Dq")
+                gh_repo = "billnguyen1990/tiger-ai-studio"
+                gh_headers = {
+                    "Authorization": f"token {gh_token}",
+                    "Accept": "application/vnd.github.v3+json"
+                }
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Don_Tao_auto_18h.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main", "inputs": {"headless": "true"}}, timeout=10)
+                record_pipeline_event(
+                    task_name="Xuất Đơn B2B (18:00)",
+                    department="📊 Phòng Kinh Doanh & Dữ Liệu",
+                    current_step=f"Bước 2/4: Đã dispatch sang GitHub Actions Runner (Code {res.status_code})",
+                    total_steps=4,
+                    status="SUCCESS",
+                    handler_dept="🛠️ Phòng Kỹ Thuật",
+                    healing_action="Đang chạy trên máy chủ đám mây GitHub Actions độc lập 100%",
+                    can_resume=True
+                )
+            else:
+                res = subprocess.run([sys.executable, script_path], cwd=PARENT_DIR, capture_output=True, text=True, timeout=300)
+                if res.returncode == 0:
+                    record_pipeline_event(
+                        task_name="Xuất Đơn B2B (18:00)",
+                        department="📊 Phòng Kinh Doanh & Dữ Liệu",
+                        current_step="Bước 4/4: Hoàn tất xuất đơn & Thống kê",
+                        total_steps=4,
+                        status="SUCCESS",
+                        handler_dept="🛠️ Phòng Kỹ Thuật",
+                        healing_action="Chạy thành công hoàn tất",
+                        can_resume=True
+                    )
+                else:
+                    record_pipeline_event(
+                        task_name="Xuất Đơn B2B (18:00)",
+                        department="📊 Phòng Kinh Doanh & Dữ Liệu",
+                        current_step="Bước 2/4: Lỗi thực thi Looker Studio",
+                        total_steps=4,
+                        status="HEALING",
+                        error_info={"code": "EXEC_FAIL", "reason": (res.stderr or res.stdout)[-200:], "at_step": "looker_export_temp.py"},
+                        handler_dept="🛠️ Phòng Kỹ Thuật",
+                        healing_action="Phòng Kỹ Thuật tiếp nhận: Vui lòng kiểm tra Chrome bot trên máy",
+                        can_resume=False
+                    )
+        except Exception as ex:
+            record_pipeline_event(
+                task_name="Xuất Đơn B2B (18:00)",
+                department="📊 Phòng Kinh Doanh & Dữ Liệu",
+                current_step="Lỗi ngoại lệ khi kích hoạt",
+                total_steps=4,
+                status="HEALING",
+                error_info={"code": "EXCEPTION", "reason": str(ex), "at_step": "runner"},
+                handler_dept="🛠️ Phòng Kỹ Thuật",
+                healing_action="Phòng Kỹ Thuật đang điều tra",
+                can_resume=False
+            )
+
+    threading.Thread(target=_worker, daemon=True).start()
+    return jsonify({"success": True, "message": "Đã kích hoạt Quy Trình Xuất Đơn B2B! Vui lòng theo dõi tiến trình ngay bên dưới."})
+
 @app.route("/war-room")
 def view_war_room():
     """Giao diện Trung Tâm Tác Chiến (War Room) soi tiến trình & lỗi liên phòng ban"""

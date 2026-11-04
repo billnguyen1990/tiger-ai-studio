@@ -616,6 +616,7 @@
           <div class="action-group">
             <button class="act-btn" onclick="runKythuatCheck()">🔄 Kiểm Tra Sức Khỏe Token Camera <span>▶</span></button>
             <button class="act-btn" onclick="runKythuatHeal()">🛡️ Kích Hoạt Tự Phục Hồi Token (Auto-Heal) <span>▶</span></button>
+            <button class="act-btn" onclick="runB2BProcess()">🚀 Chạy Thử Quy Trình Xuất Đơn B2B (18:00) <span>▶</span></button>
           </div>
         `;
       } else if (deptKey === 'vanhanh') {
@@ -707,6 +708,20 @@
         resBox.innerHTML = `❌ Lỗi kết nối: ${err.message}`;
       }
       fetchLiveTraces();
+    }
+
+    async function runB2BProcess() {
+      const resBox = document.getElementById('modalResult');
+      resBox.style.display = 'block';
+      resBox.innerHTML = '⏳ Đang kích hoạt Quy trình Xuất Đơn B2B và kết nối War Room...';
+      try {
+        const res = await fetch('/api/war-room/run-b2b', { method: 'POST' });
+        const data = await res.json();
+        resBox.innerHTML = `✅ ${data.message}`;
+        fetchLiveTraces();
+      } catch (e) {
+        resBox.innerHTML = `❌ Lỗi: ${e.message}`;
+      }
     }
 
     async function runKythuatCheck() {
