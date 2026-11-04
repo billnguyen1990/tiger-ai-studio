@@ -8,7 +8,7 @@ import subprocess
 import threading
 import datetime
 import time
-from flask import Flask, render_template, jsonify, request, send_from_directory, redirect
+from flask import Flask, render_template, jsonify, request, send_from_directory, redirect, make_response
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import urllib.parse
@@ -5232,7 +5232,11 @@ def proxy_gemini_endpoint():
 @app.route('/tai-chinh/index.html')
 def view_quan_ly_tai_chinh():
     """Quan Ly Tai Chinh PWA"""
-    return render_template('quan_ly_tai_chinh.html')
+    resp = make_response(render_template('quan_ly_tai_chinh.html'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
 
 @app.route('/assets/<path:filename>')
 def serve_tai_chinh_assets(filename):
@@ -5240,7 +5244,11 @@ def serve_tai_chinh_assets(filename):
 
 @app.route('/sw.js')
 def serve_tai_chinh_sw():
-    return send_from_directory('static', 'sw-tai-chinh.js', mimetype='application/javascript')
+    resp = make_response(send_from_directory('static', 'sw-tai-chinh.js', mimetype='application/javascript'))
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
 
 @app.route('/manifest.json')
 def serve_tai_chinh_manifest():

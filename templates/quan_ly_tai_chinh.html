@@ -2,6 +2,25 @@
 <html lang="vi">
 
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        (function() {
+            const TIGER_VER = '2026.11.04.v100_no_fastlog';
+            if (localStorage.getItem('TIGER_VER') !== TIGER_VER) {
+                localStorage.setItem('TIGER_VER', TIGER_VER);
+                if ('caches' in window) {
+                    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+                }
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(regs => {
+                        for (let r of regs) r.unregister();
+                    });
+                }
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#059669">
