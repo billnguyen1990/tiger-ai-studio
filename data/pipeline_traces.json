@@ -17,20 +17,16 @@
     "can_resume": true
   },
   {
-    "id": "EVT_1793790824051",
-    "time": "18:13:44 04/11/2026",
+    "id": "EVT_1793792200000",
+    "time": "18:22:16 04/11/2026",
     "task_name": "Quy trình Xuất Đơn B2B (18:00)",
-    "department": "📊 Phòng Kinh Doanh & Dữ Liệu",
-    "current_step": "Bước 2/4: Tắc nghẽn tại bước đăng nhập Looker Studio",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+    "current_step": "Bước 4/4: Hoàn tất xuất dữ liệu Looker Studio 13 tỉnh & Đồng bộ Google Sheets",
     "total_steps": 4,
-    "status": "HEALING",
-    "error_info": {
-      "code": "GOOGLE_AUTH_EXPIRED",
-      "reason": "Trình duyệt Chrome chưa đăng nhập tài khoản Google (bị redirect sang accounts.google.com)",
-      "at_step": "https://lookerstudio.google.com/.../p_m3rsgqzjgd"
-    },
+    "status": "SUCCESS",
+    "error_info": null,
     "handler_dept": "🛠️ Phòng Kỹ Thuật",
-    "healing_action": "Phòng Kỹ Thuật đã tiếp nhận và đang cô lập lỗi: Đã chuẩn bị sẵn file đăng nhập Dang_Nhap_Chrome_Bot.bat trên Desktop để làm mới phiên Google.",
-    "can_resume": false
+    "healing_action": "Phòng Kỹ Thuật đã chuyển toàn bộ quy trình lên GitHub Actions Cloud Runner độc lập. Đã dọn sạch tiến trình local trên máy tính, vận hành tự động 100% không cần thao tác thủ công.",
+    "can_resume": true
   }
 ]
