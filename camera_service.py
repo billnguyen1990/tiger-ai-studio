@@ -1,3 +1,7 @@
+try:
+    from pipeline_tracer import record_pipeline_event
+except Exception:
+    def record_pipeline_event(*args, **kwargs): pass
 import requests
 import cv2
 import os
@@ -210,6 +214,17 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
         if not playlist_text:
             if attempt < max_retries:
                 logger.info(f"🛡️ [Phòng Kỹ Thuật - Thử Lại] Thử lại lần {attempt+1} cho {hub_name} Cam {cam_id}...")
+                record_pipeline_event(
+                    f"Chụp Camera {hub_name} (Cam {cam_id})",
+                    "🚚 Phòng Vận Hành & Kho Vận",
+                    f"Bước 2/4: Thử lại luồng video lần {attempt+1}",
+                    4,
+                    status="HEALING",
+                    error_info={"code": "STREAM_RETRY", "reason": "Playlist HLS cần làm mới hoặc đường truyền trễ", "at_step": "stream/liveview"},
+                    handler_dept="🛠️ Phòng Kỹ Thuật",
+                    healing_action=f"Tự động đồng bộ và thử lại lần {attempt+1}",
+                    can_resume=True
+                )
                 time.sleep(2)
                 continue
             return False, "Mất tín hiệu kết nối stream từ đầu ghi kho (Vui lòng kiểm tra mạng kho)", None
@@ -272,6 +287,16 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
 
         desc = CAM_DESC_MAP.get((vr_id, cam_id), f"Mắt Cam số {cam_id:02d}")
         logger.info(f"✅ [Phòng Kỹ Thuật - Đã Duyệt 100%] {hub_name} Cam {cam_id} đã chụp chuẩn 100%!")
+        record_pipeline_event(
+            f"Chụp Camera {hub_name} (Cam {cam_id})",
+            "🚚 Phòng Vận Hành & Kho Vận",
+            "Bước 4/4: Kiểm định OpenCV Hoàn Tất",
+            4,
+            status="SUCCESS",
+            handler_dept="🛠️ Phòng Kỹ Thuật",
+            healing_action="Đạt chuẩn 100% - Đã đóng dấu xuất xưởng",
+            can_resume=True
+        )
         return True, f"{hub_name} - {desc}", output_file
 
     return False, "Không thể lấy hình ảnh sau khi đã tự động thử lại nhiều lần", None

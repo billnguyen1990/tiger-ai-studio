@@ -4037,6 +4037,19 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     order_codes = extract_ghn_order_codes(text)
     is_tag_or_cmd = is_tagged or is_slash_cmd
 
+    # 0.00b LỆNH SOI TIẾN TRÌNH & ĐIỀU PHỐI LỖI (/soilloi, /tientrinh, /nhatky, /warroom, /audit)
+    is_trace_cmd = any(lower_text.strip().startswith(cmd) for cmd in ["/soilloi", "/tientrinh", "/nhatky", "/warroom", "/audit"]) or (
+        is_tagged and any(k in lower_text for k in ["soi lỗi", "tiến trình", "nhật ký", "chạy đến đâu", "bị lỗi gì", "war room", "ai xử lý"])
+    )
+    if is_trace_cmd:
+        try:
+            from pipeline_tracer import generate_telegram_trace_report
+            trace_rep = generate_telegram_trace_report()
+            _send_telegram_group_message(trace_rep, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
+        except Exception as ex:
+            _send_telegram_group_message(f"❌ <b>Lỗi tra cứu nhật ký tác chiến:</b> {ex}", topic_id=topic_id, reply_to_message_id=msg_id)
+        return
+
     # 0.00 SƠ ĐỒ BỘ MÁY PHÒNG BAN DOANH NGHIỆP SỐ TIGER AI (/phongban, /sodotochuc, /tochuc)
     is_org_cmd = any(lower_text.strip() == cmd for cmd in ["/phongban", "/sodotochuc", "/tochuc", "/bocamay", "/cautruc"]) or (
         is_tagged and any(k in lower_text for k in ["phòng ban", "sơ đồ tổ chức", "bộ máy", "cơ cấu công ty", "các phòng"])
@@ -5197,6 +5210,18 @@ def api_download_cost_excel():
     if os.path.exists(excel_path):
         return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
     return jsonify({"success": False, "error": "Chưa có file Excel đối soát"}), 404
+
+
+@app.route("/war-room")
+def view_war_room():
+    """Giao diện Trung Tâm Tác Chiến (War Room) soi tiến trình & lỗi liên phòng ban"""
+    return render_template("war_room.html")
+
+@app.route("/api/war-room/traces")
+def api_get_war_room_traces():
+    """API lấy nhật ký tiến trình thời gian thực"""
+    from pipeline_tracer import get_live_traces
+    return jsonify({"success": True, "traces": get_live_traces()})
 
 @app.route("/api/ping")
 def ping_service():

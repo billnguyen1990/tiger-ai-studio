@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TIGER AI • PHÒNG ĐIỀU HÀNH TÁC CHIẾN (WAR ROOM)</title>
+  <link rel="icon" type="image/png" href="/static/img/ghn_tiger_logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070d12;
+      --card: #0d1922;
+      --card-border: rgba(0, 229, 190, 0.2);
+      --accent: #00e5be;
+      --accent-glow: rgba(0, 229, 190, 0.3);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 20px;
+    }
+    .title-box h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title-box p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    /* DEPARTMENTS RADAR */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .dept-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      transition: all 0.2s;
+    }
+    .dept-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .dept-icon { font-size: 1.3rem; margin-bottom: 6px; }
+    .dept-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .dept-status {
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-ok { color: var(--success); }
+    .status-heal { color: var(--warning); }
+
+    /* TIMELINE SECTION */
+    .timeline-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .refresh-btn {
+      background: rgba(0, 229, 190, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .refresh-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .trace-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .trace-card {
+      background: var(--card);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      padding: 14px 16px;
+      position: relative;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .trace-card.is-healing {
+      border-left-color: var(--warning);
+      background: #15181b;
+    }
+    .trace-card.is-error {
+      border-left-color: var(--danger);
+      background: #181113;
+    }
+    .trace-card.is-success {
+      border-left-color: var(--success);
+    }
+
+    .trace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .task-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .task-time {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .task-meta {
+      display: flex;
+      gap: 10px;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .meta-tag {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* STEP PROGRESS */
+    .step-box {
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* INCIDENT BOX */
+    .incident-box {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px dashed rgba(239, 68, 68, 0.4);
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+    }
+    .incident-box b { color: var(--danger); }
+
+    /* HEALING DISPATCH BOX */
+    .healing-box {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+    .healing-box b { color: var(--warning); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="title-box">
+      <h1>🐯 WAR ROOM • TRUNG TÂM ĐIỀU HÀNH TÁC CHIẾN</h1>
+      <p>Giám sát tiến trình từng bước • Bắt lỗi điểm nghẽn • Tự động chữa lành liên phòng ban</p>
+    </div>
+    <div class="live-badge">
+      <div class="live-dot"></div> TRỰC TUYẾN 24/7
+    </div>
+  </header>
+
+  <!-- PHÒNG BAN RADAR -->
+  <section class="dept-grid">
+    <div class="dept-card">
+      <div class="dept-icon">🛠️</div>
+      <div class="dept-name">Phòng Kỹ Thuật</div>
+      <div class="dept-status status-ok">● Thường trực / Auto-Heal</div>
+    </div>
+    <div class="dept-card">
+      <div class="dept-icon">🚚</div>
+      <div class="dept-name">Vận Hành - Kho Vận</div>
+      <div class="dept-status status-ok">● 4 Mắt Cam Online</div>
+    </div>
+    <div class="dept-card">
+      <div class="dept-icon">💰</div>
+      <div class="dept-name">Kế Toán - Tài Chính</div>
+      <div class="dept-status status-ok">● Đối soát 365 sẵn sàng</div>
+    </div>
+    <div class="dept-card">
+      <div class="dept-icon">🔍</div>
+      <div class="dept-name">Ban Thanh Tra</div>
+      <div class="dept-status status-ok">● Quét hoãn ảo hoạt động</div>
+    </div>
+    <div class="dept-card">
+      <div class="dept-icon">📞</div>
+      <div class="dept-name">Dịch Vụ Khách Hàng</div>
+      <div class="dept-status status-ok">● Tra cứu đơn GHN thông suốt</div>
+    </div>
+    <div class="dept-card">
+      <div class="dept-icon">🎬</div>
+      <div class="dept-name">Live Studio</div>
+      <div class="dept-status status-ok">● Engine tương tác sẵn sàng</div>
+    </div>
+  </section>
+
+  <!-- TRACE TIMELINE -->
+  <section>
+    <div class="timeline-title">
+      <span>📡 NHẬT KÝ VẬN HÀNH & ĐIỀU PHỐI SỰ CỐ THEO THỜI GIAN THỰC</span>
+      <button class="refresh-btn" onclick="fetchLiveTraces()">🔄 Làm Mới Tức Thì</button>
+    </div>
+
+    <div class="trace-list" id="traceContainer">
+      <!-- Loading state -->
+      <div style="text-align: center; color: var(--muted); padding: 30px;">Đang tải nhật ký tác chiến...</div>
+    </div>
+  </section>
+
+  <script>
+    async function fetchLiveTraces() {
+      try {
+        const res = await fetch('/api/war-room/traces');
+        const data = await res.json();
+        renderTraces(data.traces || []);
+      } catch (e) {
+        console.error("Lỗi tải traces:", e);
+      }
+    }
+
+    function renderTraces(traces) {
+      const c = document.getElementById('traceContainer');
+      if (!traces || traces.length === 0) {
+        c.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 30px;">Chưa có sự cố nào phát sinh. Hệ thống đang chạy hoàn hảo 100%!</div>';
+        return;
+      }
+
+      let html = '';
+      [...traces].reverse().forEach((t, i) => {
+        let cardClass = 'trace-card';
+        if (t.status === 'HEALING') cardClass += ' is-healing';
+        else if (t.status === 'ERROR') cardClass += ' is-error';
+        else if (t.status === 'SUCCESS') cardClass += ' is-success';
+
+        let errHtml = '';
+        if (t.error_info) {
+          errHtml = `
+            <div class="incident-box">
+              <b>🛑 Điểm tắc nghẽn & Nguyên nhân dừng:</b><br>
+              • Mã lỗi: <code>${t.error_info.code || 'UNKNOWN'}</code><br>
+              • Lý do: <i>${t.error_info.reason || 'Không xác định'}</i><br>
+              • Điểm dừng: <code>${t.error_info.at_step || 'API Gateway'}</code>
+            </div>
+          `;
+        }
+
+        let healHtml = '';
+        if (t.handler_dept) {
+          healHtml = `
+            <div class="healing-box">
+              <b>🛠️ Đơn vị tiếp nhận giải quyết: ${t.handler_dept}</b><br>
+              • Hành động khắc phục: <i>${t.healing_action || 'Đang phân tích & xử lý'}</i><br>
+              • Khả năng tiếp tục vận hành: <b>${t.can_resume ? '✅ CÓ THỂ TIẾP TỤC 100%' : '⚠️ ĐANG CHỜ CAN THIỆP'}</b>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="${cardClass}">
+            <div class="trace-header">
+              <div class="task-name">${t.task_name}</div>
+              <div class="task-time">${t.time}</div>
+            </div>
+            <div class="task-meta">
+              <span class="meta-tag">🏢 ${t.department}</span>
+              <span class="meta-tag">⚙️ Trạng thái: <b>${t.status}</b></span>
+            </div>
+            <div class="step-box">
+              <span>📍 Tiến độ: <b>${t.current_step}</b></span>
+              <span>Tổng: ${t.total_steps} bước</span>
+            </div>
+            ${errHtml}
+            ${healHtml}
+          </div>
+        `;
+      });
+      c.innerHTML = html;
+    }
+
+    // Auto refresh every 5 seconds
+    fetchLiveTraces();
+    setInterval(fetchLiveTraces, 5000);
+  </script>
+</body>
+</html>

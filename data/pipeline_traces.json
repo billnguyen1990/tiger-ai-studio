@@ -1,0 +1,19 @@
+[
+  {
+    "id": "EVT_1793779729803",
+    "time": "15:08:49 04/11/2026",
+    "task_name": "Trích xuất Camera Cái Răng (Cam 2)",
+    "department": "🚚 Phòng Vận Hành & Kho Vận",
+    "current_step": "Bước 2/4: Gọi API liveview",
+    "total_steps": 4,
+    "status": "HEALING",
+    "error_info": {
+      "code": "HTTP 401 Unauthorized",
+      "reason": "JWT Token Hikvision hết hạn",
+      "at_step": "https://camera-api.ghn.vn/public-api/stream/liveview"
+    },
+    "handler_dept": "🛠️ Phòng Kỹ Thuật",
+    "healing_action": "Đã kích hoạt Auto-Healer trích xuất Token mới qua Headless Chrome -> Khởi động lại luồng thành công!",
+    "can_resume": true
+  }
+]
