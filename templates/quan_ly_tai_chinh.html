@@ -1853,6 +1853,15 @@
                 <div class="settings-item" onclick="openHistory(); closeSettingsModal();">
                     <span class="icon">📜</span> Lịch sử giao dịch
                 </div>
+                <div class="settings-item" onclick="exportExpensesToExcel(); closeSettingsModal();">
+                    <span class="icon">📊</span> Xuất Báo Cáo Excel / CSV
+                </div>
+                <div class="settings-item" onclick="openBackupModal(); closeSettingsModal();">
+                    <span class="icon">💾</span> Sao Lưu & Khôi Phục Dữ Liệu
+                </div>
+                <div class="settings-item" onclick="getAIAdvisorAnalysis(); closeSettingsModal();">
+                    <span class="icon">💡</span> Cố Vấn Tài Chính AI (Đánh giá)
+                </div>
                 <div class="settings-item" onclick="openApiKeyModal(); closeSettingsModal();">
                     <span class="icon">🔑</span> Khóa Google Gemini API
                 </div>
@@ -1885,6 +1894,48 @@
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
                 <button onclick="resetDefaultApiKey()" style="padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer; font-size: 13px;">Dùng mặc định</button>
                 <button onclick="testAndSaveApiKey()" style="padding: 10px 16px; border-radius: 8px; border: none; background: var(--primary); color: #000; font-weight: 700; cursor: pointer; font-size: 13px;">⚡ Kiểm tra & Lưu</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal Sao Lưu & Khôi Phục Dữ Liệu -->
+    <div id="backupModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 440px;">
+            <button class="modal-close" onclick="closeBackupModal()">X</button>
+            <h2 style="margin-bottom: 12px; color: var(--primary);">💾 Sao Lưu & Khôi Phục</h2>
+            <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5;">
+                Bảo vệ toàn bộ lịch sử chi tiêu, hạn mức ngân sách và cài đặt của bạn. Không lo mất dữ liệu khi đổi điện thoại!
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">1. Tải bản sao lưu về máy</div>
+                    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px;">Lưu toàn bộ sổ chi tiêu vào file dự phòng (.json)</div>
+                    <button onclick="downloadBackupFile()" style="width: 100%; padding: 10px; background: var(--primary); color: #000; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-size: 13px;">⬇️ Tải Về File Sao Lưu (.JSON)</button>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">2. Phục hồi dữ liệu từ file</div>
+                    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px;">Chọn file (.json) đã sao lưu trước đó để nạp lại</div>
+                    <input type="file" id="restoreFileInput" accept=".json" style="display: none;" onchange="handleRestoreFile(event)">
+                    <button onclick="document.getElementById('restoreFileInput').click()" style="width: 100%; padding: 10px; background: transparent; color: #fff; border: 1px solid var(--primary); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">⬆️ Chọn File Phục Hồi</button>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <button onclick="closeBackupModal()" style="padding: 9px 18px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer; font-size: 13px;">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cố Vấn Tài Chính AI -->
+    <div id="advisorModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 440px;">
+            <button class="modal-close" onclick="closeAdvisorModal()">X</button>
+            <h2 style="margin-bottom: 12px; color: var(--primary);">💡 Cố Vấn Tài Chính AI</h2>
+            <div id="advisorBody" style="font-size: 14px; line-height: 1.6; color: #e0e0e0; min-height: 100px; padding: 12px; background: rgba(0, 230, 118, 0.08); border: 1px solid rgba(0, 230, 118, 0.25); border-radius: 10px;">
+                Đang nạp phân tích...
+            </div>
+            <div style="margin-top: 16px; text-align: right;">
+                <button onclick="closeAdvisorModal()" style="padding: 10px 20px; border-radius: 8px; border: none; background: var(--primary); color: #000; font-weight: 700; cursor: pointer; font-size: 13px;">Đã hiểu</button>
             </div>
         </div>
     </div>
@@ -3174,7 +3225,144 @@ Viết bài tổng kết chuyến đi/sự kiện này (khoảng 150 chữ). Khe
             }
         }
 
-        /* --- API KEY MANAGEMENT MODAL LOGIC --- */
+        
+        /* --- TÍNH NĂNG XUẤT EXCEL / CSV TIẾNG VIỆT CHUẨN --- */
+        function exportExpensesToExcel() {
+            if (!expenses || expenses.length === 0) {
+                alert("Bạn chưa có khoản chi tiêu nào để xuất!");
+                return;
+            }
+            // Thêm UTF-8 BOM \uFEFF để Excel mở tiếng Việt không bị lỗi font
+            let csv = "\uFEFFNgày;Nội dung / Món;Danh mục;Loại;Số tiền (VNĐ);Lời nhắn AI\n";
+            expenses.forEach(e => {
+                const d = e.date ? new Date(e.date).toLocaleDateString('vi-VN') : "";
+                const item = (e.item || e.title || "Chi tiêu").replace(/;/g, ",");
+                const cat = (e.category || "Ăn uống").replace(/;/g, ",");
+                const type = (e.type || "Cố định").replace(/;/g, ",");
+                const amount = Math.abs(e.amount || 0);
+                const advice = (e.advice || "").replace(/;/g, ",").replace(/\n/g, " ");
+                csv += `"${d}";"${item}";"${cat}";"${type}";"${amount}";"${advice}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `QuanLyTaiChinh_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        /* --- TÍNH NĂNG SAO LƯU & KHÔI PHỤC DỮ LIỆU JSON --- */
+        function openBackupModal() {
+            const m = document.getElementById('backupModal');
+            if (m) m.classList.add('active');
+        }
+
+        function closeBackupModal() {
+            const m = document.getElementById('backupModal');
+            if (m) m.classList.remove('active');
+        }
+
+        function downloadBackupFile() {
+            const dataToBackup = {
+                appName: "Quản Lý Tài Chính 💎",
+                author: "Lộc Miền Tây - Tiger AI",
+                backupDate: new Date().toISOString(),
+                expenses: expenses,
+                history: history,
+                reminders: reminders,
+                tabBudgets: tabBudgets,
+                monthlyBudget: localStorage.getItem('monthlyBudget'),
+                userName: localStorage.getItem('userName'),
+                userAvatar: localStorage.getItem('userAvatar')
+            };
+            const jsonStr = JSON.stringify(dataToBackup, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const link = document.createElement("a");
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `QuanLyTaiChinh_Backup_${dateStr}.json`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleRestoreFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.expenses && Array.isArray(parsed.expenses)) {
+                        localStorage.setItem('expenses', JSON.stringify(parsed.expenses));
+                        if (parsed.history) localStorage.setItem('historyData', JSON.stringify(parsed.history));
+                        if (parsed.reminders) localStorage.setItem('reminders', JSON.stringify(parsed.reminders));
+                        if (parsed.tabBudgets) localStorage.setItem('tabBudgets', JSON.stringify(parsed.tabBudgets));
+                        if (parsed.monthlyBudget) localStorage.setItem('monthlyBudget', parsed.monthlyBudget);
+                        if (parsed.userName) localStorage.setItem('userName', parsed.userName);
+                        alert("🎉 Khôi phục dữ liệu thành công! Ứng dụng sẽ tự động làm mới.");
+                        window.location.reload();
+                    } else {
+                        alert("File không đúng cấu trúc sao lưu của ứng dụng!");
+                    }
+                } catch(err) {
+                    alert("Lỗi khi đọc file sao lưu: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        /* --- TÍNH NĂNG CỐ VẤN TÀI CHÍNH AI (AI FINANCIAL ADVISOR) --- */
+        function openAdvisorModal() {
+            const m = document.getElementById('advisorModal');
+            if (m) m.classList.add('active');
+        }
+
+        function closeAdvisorModal() {
+            const m = document.getElementById('advisorModal');
+            if (m) m.classList.remove('active');
+        }
+
+        async function getAIAdvisorAnalysis() {
+            openAdvisorModal();
+            const bodyEl = document.getElementById('advisorBody');
+            bodyEl.innerHTML = '<div style="text-align:center; padding: 20px;"><div class="spinner" style="margin:0 auto 10px auto;"></div><span>Tiger AI đang phân tích toàn bộ sổ thu chi của bạn...</span></div>';
+            
+            const total = expenses.reduce((s, e) => s + (parseInt(e.amount) || 0), 0);
+            const count = expenses.length;
+            const recent = expenses.slice(-10).map(e => `- ${e.item}: ${formatMoney(e.amount)} (${e.category || 'Khác'})`).join('\n');
+            
+            const prompt = `
+            Bạn là Cố Vấn Tài Chính AI thân thiện, gần gũi phong cách Miền Tây của app Quản Lý Tài Chính Lộc Miền Tây.
+            Dữ liệu sổ chi tiêu của người dùng hiện tại:
+            - Tổng số giao dịch: ${count} khoản
+            - Tổng tiền đã chi: ${formatMoney(total)}
+            - Các khoản chi gần đây:
+            ${recent || 'Chưa có nhiều chi tiêu'}
+            
+            Hãy đưa ra lời nhận xét và tư vấn ngắn gọn (khoảng 3-4 câu):
+            1. Đánh giá xem chi tiêu như vậy có hợp lý không, khoản nào chiếm nhiều nhất.
+            2. Lời khuyên tiết kiệm thực tế, vui vẻ, động viên bằng phong cách Miền Tây thân thiết.
+            Trả về văn bản thuần túy không dùng markdown phức tạp.
+            `;
+
+            try {
+                const reply = await callGemini(prompt, false);
+                if (reply) {
+                    bodyEl.innerHTML = '<div style="font-size:15px; color:#fff; line-height:1.7;">' + reply.replace(/\n/g, '<br>') + '</div>';
+                } else {
+                    bodyEl.innerHTML = "Không thể lấy lời khuyên lúc này, bạn thử lại sau ít phút nhé!";
+                }
+            } catch(e) {
+                bodyEl.innerHTML = "Lỗi kết nối: " + e.message;
+            }
+        }
+
+/* --- API KEY MANAGEMENT MODAL LOGIC --- */
         function openApiKeyModal() {
             const modal = document.getElementById('apiKeyModal');
             if (!modal) return;
@@ -3569,17 +3757,19 @@ Trường hợp 2: Nếu xin lời khuyên mua sắm (chưa mua)
                 document.getElementById('loading').innerText = 'Đang quét hóa đơn...';
 
                 const promptText = `
-                Dưới đây là hình ảnh một hóa đơn/bill thanh toán. Hãy phân tích và trích xuất:
-                1. Tổng số tiền thanh toán (bỏ qua tiền thừa/tiền khách đưa).
-                2. Tên nơi mua hoặc tóm tắt các món hàng (ví dụ: Đi Lotte Mart, hoặc Ăn lẩu Hadilao).
+                Dưới đây là hình ảnh một HÓA ĐƠN/BILL MUA HÀNG hoặc ẢNH CHỤP MÀN HÌNH CHUYỂN KHOẢN NGÂN HÀNG (Vietcombank, MB Bank, Techcombank, Momo, ZaloPay, VietQR, v.v.).
+                Hãy phân tích kỹ hình ảnh và trích xuất:
+                1. Tổng số tiền thanh toán hoặc số tiền chuyển khoản (dạng số nguyên, bỏ qua tiền thừa).
+                2. Tên nơi mua hàng, tên người nhận hoặc nội dung chuyển tiền (ví dụ: Chuyển khoản Anh Ba, Siêu thị WinMart, Cà phê Highlands).
+                3. Phân loại phù hợp: Ăn uống / Di chuyển / Mua sắm / Chuyển khoản / Tiện ích / Khác.
                 
                 TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON NHƯ SAU (KHÔNG giải thích thêm):
                 {
                   "intent": "LOG_EXPENSE",
-                  "item": "<Tên nơi mua hoặc danh sách đồ mua tóm tắt>",
+                  "item": "<Tên nơi nhận, món mua hoặc nội dung chuyển tiền>",
                   "amount": <tổng tiền dạng số nguyên>,
-                  "category": "Ăn uống/Siêu thị/Mua sắm",
-                  "response_message": "<Nhận xét vui vẻ, động viên về số tiền này. Dưới 40 chữ.>"
+                  "category": "Ăn uống/Siêu thị/Mua sắm/Chuyển tiền",
+                  "response_message": "<Nhận xét vui vẻ, động viên dưới 35 chữ>"
                 }
                 `;
 
