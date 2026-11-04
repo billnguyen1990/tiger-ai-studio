@@ -125,7 +125,7 @@
             flex-direction: column;
             min-width: 140px;
             overflow: hidden;
-            z-index: 100;
+            z-index: 99999;
         }
 
         .dropdown-menu.active {
@@ -167,11 +167,14 @@
         }
 
         .dashboard {
-            padding: 20px;
+            padding: 15px 15px 260px 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
         }
 
         .budget-setup {
@@ -288,7 +291,7 @@
 
         .feed-container {
             flex: 1;
-            padding: 10px 20px 140px 20px;
+            padding: 10px 15px 280px 15px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -680,7 +683,7 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
-            z-index: 100;
+            z-index: 99999;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -1667,6 +1670,100 @@
             z-index: 10000;
         }
 
+
+        /* --- BẢN QUYỀN GIAO DIỆN CHUẨN QUỐC TẾ (MOBILE-FIRST DESKTOP CONTAINER) --- */
+        @media (min-width: 560px) {
+            body {
+                background-color: #040814 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                padding-bottom: 20px;
+            }
+            header, .dashboard, .feed-container, .input-area, .bottom-nav {
+                max-width: 480px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            header {
+                border-radius: 0 0 16px 16px;
+                border-left: 1px solid rgba(255,255,255,0.08);
+                border-right: 1px solid rgba(255,255,255,0.08);
+            }
+            .input-area {
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                right: auto !important;
+                border-radius: 20px 20px 0 0;
+                border-left: 1px solid rgba(255,255,255,0.08);
+                border-right: 1px solid rgba(255,255,255,0.08);
+            }
+            .bottom-nav {
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                right: auto !important;
+                border-radius: 0 0 20px 20px;
+                border-left: 1px solid rgba(255,255,255,0.08);
+                border-right: 1px solid rgba(255,255,255,0.08);
+            }
+        }
+
+        /* --- STYLING WIDGET ICON BUTTONS --- */
+        .widget-icon-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .widget-icon-btn:hover {
+            background: var(--primary);
+            color: #000;
+            transform: scale(1.08);
+        }
+        .widget-icon-btn.fortune-btn {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #fde68a;
+        }
+        .widget-icon-btn.fortune-btn:hover {
+            background: #f59e0b;
+            color: #000;
+        }
+
+        /* --- OVERVIEW CARD BEAUTIFICATION --- */
+        .overview-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+            padding: 18px !important;
+            width: 100% !important;
+            max-width: 480px !important;
+            margin-bottom: 0 !important;
+        }
+
+        /* --- PIGGY GUARDIAN CARD OVERHAUL --- */
+        .piggy-guardian-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
+            border: 1px solid rgba(255, 215, 0, 0.25) !important;
+            backdrop-filter: blur(15px);
+            border-radius: 18px !important;
+            padding: 12px 14px !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+        }
+
 </style>
 </head>
 
@@ -1678,33 +1775,28 @@
         <button onclick="applyAppUpdate()">Cập nhật ngay</button>
     </div>
 
-    <header style="flex-direction: row; justify-content: space-between; align-items: center;">
-        <div style="display:flex; flex-direction:column; gap:2px;">
-            <h1 style="margin:0;">Quản Lý Tài Chính 💎</h1>
-            <span
-                style="font-size: 0.6rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display:flex; align-items:center; gap: 3px; opacity: 0.9;">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-                Bản quyền: Lộc Miền Tây
-            </span>
+    <header>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); display:flex; align-items:center; justify-content:center; font-size:1.2rem; box-shadow:0 4px 10px rgba(16,185,129,0.3);">
+                💎
+            </div>
+            <div>
+                <h1 style="margin:0; font-size:1.15rem; font-weight:800; letter-spacing:-0.3px; color:#fff;">Quản Lý Tài Chính</h1>
+                <span style="font-size: 0.65rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display:flex; align-items:center; gap: 3px;">
+                    Bản quyền: Lộc Miền Tây
+                </span>
+            </div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
             <button id="soundToggleBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh"
-                style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; backdrop-filter:blur(10px);">
+                style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.05rem; backdrop-filter:blur(10px); transition:transform 0.2s;">
                 🔊
             </button>
+            <button onclick="openFortuneModal()" title="Lắc quẻ tài lộc"
+                style="background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.3) 100%); border: 1px solid rgba(245,158,11,0.5); color:#fde68a; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem; backdrop-filter:blur(10px); transition:transform 0.2s;">
+                🎋
+            </button>
         </div>
-        <h1 style="margin:0;">Quản Lý Tài Chính 💎</h1>
-        <span
-            style="font-size: 0.6rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display:flex; align-items:center; gap: 3px; opacity: 0.9;">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-            Bản quyền: Lộc Miền Tây
-        </span>
     </header>
 
     <input type="file" id="bgImageInput" accept="image/*" style="display: none;">
@@ -1755,35 +1847,7 @@
             </div>
 
 
-            <!-- HEAL / PIGGY GUARDIAN 3D MASCOT -->
-            <div class="piggy-guardian-card" onclick="interactWithPiggy()" title="Bấm vào để nghe Heo Tài Lộc tư vấn">
-                <div class="piggy-avatar-wrap">
-                    <div class="piggy-mascot" id="piggyMascot">🐷</div>
-                    <div class="piggy-mood-badge" id="piggyBadge">Rực Rỡ 🌟</div>
-                </div>
-                <div class="piggy-speech-wrap">
-                    <div class="piggy-name">
-                        <span>Heo Tài Lộc</span>
-                        <span style="font-size:0.65rem; opacity:0.8; font-weight:500;">(Chạm để trò chuyện)</span>
-                    </div>
-                    <div class="piggy-quote" id="piggyQuote">"Lúa gạo đầy bồ, tiền bạc rủng rỉnh nha bậu!"</div>
-                </div>
-                <button class="piggy-voice-btn" onclick="event.stopPropagation(); readAloudTodaySummary();" title="Nghe báo cáo nhanh hôm nay">
-                    🗣️
-                </button>
-            </div>
-
-            <!-- BANNER LẮC QUẺ TÀI LỘC HÔM NAY -->
-            <div class="fortune-entry-banner" onclick="openFortuneModal()">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1.4rem;">🎋</span>
-                    <div>
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #fff;">Lắc Quẻ Tài Lộc Hôm Nay</div>
-                        <div style="font-size: 0.68rem; color: #fef08a;" id="fortuneBannerStatus">Chạm để lắc quẻ phong thủy chi tiêu</div>
-                    </div>
-                </div>
-                <span class="fortune-tag-badge" id="fortuneTagBadge">Lắc Ngay</span>
-            </div>
+            
 
             <div class="overview-stats">
                 <div class="stat-box" id="spentBox">
@@ -1822,14 +1886,38 @@
                 </div>
                 <div class="vc-progress-wrapper" style="margin-top: 0; height: 5px; border-radius: 5px;">
             </div>
-        </div>
-    </div>
+                </div>
 
-    <div class="feed-container" id="feed"></div>
+        <!-- WIDGET GÓC TÀI LỘC & TRỢ LÝ HEO 3D (ĐỘC LẬP, GỌN GÀNG, SANG TRỌNG) -->
+        <div class="lucky-corner-widget" style="width:100%; max-width:480px; margin-bottom:14px;">
+            <div class="piggy-guardian-card" onclick="interactWithPiggy()" title="Chạm để tương tác với Heo Tài Lộc">
+                <div class="piggy-avatar-wrap">
+                    <div class="piggy-mascot" id="piggyMascot">🐷</div>
+                    <div class="piggy-mood-badge" id="piggyBadge">Rực Rỡ 🌟</div>
+                </div>
+                <div class="piggy-speech-wrap">
+                    <div class="piggy-name">
+                        <span>Trợ Lý Heo Tài Lộc</span>
+                        <span style="font-size:0.62rem; color:var(--text-dim); font-weight:500;">(Chạm để trò chuyện)</span>
+                    </div>
+                    <div class="piggy-quote" id="piggyQuote">"Lúa gạo đầy bồ, tiền bạc rủng rỉnh nha bậu!"</div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:4px; flex-shrink:0;">
+                    <button class="widget-icon-btn" onclick="event.stopPropagation(); readAloudTodaySummary();" title="Nghe đọc báo cáo">
+                        🗣️
+                    </button>
+                    <button class="widget-icon-btn fortune-btn" onclick="event.stopPropagation(); openFortuneModal();" title="Lắc quẻ phong thủy">
+                        🎋
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed-container" id="feed"></div>
 
     <div class="input-area">
         <div id="loading">Bot đang suy nghĩ...</div>
-        <div class="quick-tags" id="expenseTags">
+        <div class="quick-tags" id="expenseTags" style="display:none !important;">
             <button class="q-tag" onclick="useQuickTag('☕ Cà phê ')">☕ Cà phê</button>
             <button class="q-tag" onclick="useQuickTag('🍜 Ăn sáng ')">🍜 Ăn sáng</button>
             <button class="q-tag" onclick="useQuickTag('⛽ Đổ xăng ')">⛽ Đổ xăng</button>
@@ -2791,7 +2879,6 @@
             });
         }
 
-        async 
         /* ==========================================================================
            1. WEB AUDIO API SOUND ENGINE (100% OFFLINE, ZERO EXTERNAL MP3S)
            ========================================================================== */
@@ -3150,7 +3237,7 @@
 
         function openFortuneModal() {
             const m = document.getElementById('fortuneModal');
-            if (m) m.classList.add('active');
+            if (m) m.style.display = 'flex';
             
             // Check if already drawn today
             const todayStr = new Date().toDateString();
@@ -3165,7 +3252,7 @@
 
         function closeFortuneModal() {
             const m = document.getElementById('fortuneModal');
-            if (m) m.classList.remove('active');
+            if (m) m.style.display = 'none';
         }
 
         function shakeFortuneTube() {
@@ -3262,7 +3349,7 @@
         }
 
 
-        function initApp() {
+        async function initApp() {
             if (savedMonthYear !== actualMonthYear && expenses.length > 0) {
                 await processMonthTransition(savedMonthYear);
             }
@@ -4077,12 +4164,12 @@ Viết bài tổng kết chuyến đi/sự kiện này (khoảng 150 chữ). Khe
         /* --- TÍNH NĂNG SAO LƯU & KHÔI PHỤC DỮ LIỆU JSON --- */
         function openBackupModal() {
             const m = document.getElementById('backupModal');
-            if (m) m.classList.add('active');
+            if (m) m.style.display = 'flex';
         }
 
         function closeBackupModal() {
             const m = document.getElementById('backupModal');
-            if (m) m.classList.remove('active');
+            if (m) m.style.display = 'none';
         }
 
         function downloadBackupFile() {
@@ -4139,12 +4226,12 @@ Viết bài tổng kết chuyến đi/sự kiện này (khoảng 150 chữ). Khe
         /* --- TÍNH NĂNG CỐ VẤN TÀI CHÍNH AI (AI FINANCIAL ADVISOR) --- */
         function openAdvisorModal() {
             const m = document.getElementById('advisorModal');
-            if (m) m.classList.add('active');
+            if (m) m.style.display = 'flex';
         }
 
         function closeAdvisorModal() {
             const m = document.getElementById('advisorModal');
-            if (m) m.classList.remove('active');
+            if (m) m.style.display = 'none';
         }
 
         async function getAIAdvisorAnalysis() {
@@ -4201,12 +4288,12 @@ Viết bài tổng kết chuyến đi/sự kiện này (khoảng 150 chữ). Khe
                     status.style.borderColor = 'var(--primary)';
                 }
             }
-            modal.classList.add('active');
+            modal.style.display = 'flex';
         }
 
         function closeApiKeyModal() {
             const modal = document.getElementById('apiKeyModal');
-            if (modal) modal.classList.remove('active');
+            if (modal) modal.style.display = 'none';
         }
 
         function resetDefaultApiKey() {
