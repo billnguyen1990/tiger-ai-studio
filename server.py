@@ -4063,23 +4063,23 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             target_hub_name=target_hub_name,
             topic_id=topic_id,
             reply_to_id=msg_id,
-            created_by=entry.get("sender_name", "Chủ Tịch")
+            created_by=entry.get("sender_name", "anh Lộc")
         )
         
+        sender_disp = "anh Lộc" if ("lộc" in str(entry.get("sender_name", "")).lower()) else (entry.get("sender_name") or "anh")
         ack_reply = (
-            f"🫡 <b>BÁO CÁO CHỦ TỊCH / ANH LỘC: ĐÃ TIẾP NHẬN & GHI NHỚ NHIỆM VỤ ĐẶC BIỆT!</b>\n"
+            f"🫡 <b>Dạ {sender_disp} ơi, em đã nhận lệnh và đang âm thầm canh đơn rồi nha!</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"🏢 <b>Đơn vị thi hành:</b> 📞 Phòng CSKH & 🛠️ Phòng Kỹ Thuật (Watchdog Daemon)\n\n"
-            f"📦 <b>Danh sách {len(added)} đơn đã nạp vào bộ nhớ canh ngầm:</b>\n"
+            f"📦 <b>Đã lưu {len(added)} đơn vào danh sách theo dõi:</b>\n"
             + "\n".join([f"  • <code>{c}</code>" for c in added]) + "\n\n"
-            f"🎯 <b>Bộ điều kiện giám sát 24/7:</b>\n"
-            f"1️⃣ Trạng thái khách hàng: <b>{target_status}</b>\n"
-            f"2️⃣ Kho hiện tại: <b>{target_hub_name}</b>\n\n"
-            f"⚡ <b>Cơ chế phản ứng:</b>\n"
-            f"• Robot sẽ âm thầm rà soát dữ liệu định kỳ mỗi 3 phút.\n"
-            f"• Ngay khi đơn hàng chuyển sang 'Lấy Thành Công' và về đến Kho 1908, bot sẽ phát cảnh báo khẩn cấp tức thì lên room này!\n"
+            f"🎯 <b>Điều kiện anh dặn:</b>\n"
+            f"1️⃣ Trạng thái: <b>{target_status}</b>\n"
+            f"2️⃣ Về tới kho: <b>{target_hub_name}</b>\n\n"
+            f"⚡ <b>Cách em canh:</b>\n"
+            f"• Cứ mỗi 3 phút em sẽ tự động check dữ liệu một lần.\n"
+            f"• Khi nào đơn vừa 'Lấy Thành Công' và cập bến Kho 1908 Cần Thơ, em báo ngay lên room này cho anh liền!\n"
             f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"<i>Chủ Tịch có thể gõ <code>/canhdon</code> bất kỳ lúc nào để xem tiến độ canh đơn!</i>"
+            f"<i>💡 Anh có thể gõ <code>/canhdon</code> bất kỳ lúc nào để xem lại tiến độ nha!</i>"
         )
         _send_telegram_group_message(ack_reply, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
         
@@ -4112,7 +4112,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             "🏢 <b>HỆ THỐNG PHÒNG BAN DOANH NGHIỆP SỐ TIGER AI</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "👑 <b>BAN LÃNH ĐẠO TỐI CAO:</b>\n"
-            "• <b>Chủ Tịch Hội Đồng Quản Trị:</b> Chủ Tịch (Quyết sách & Chỉ đạo tối cao)\n"
+            "• <b>Phụ trách điều hành:</b> Anh Lộc (Quản lý MT01)\n"
             "• <b>Tổng Điều Hành AI (CEO Tiger AI):</b> Tiếp nhận khẩu lệnh & điều phối liên phòng ban\n\n"
             "🏬 <b>CƠ CẤU CÁC PHÒNG BAN CHUYÊN TRÁCH:</b>\n\n"
             "🛠️ <b>1. PHÒNG KỸ THUẬT & CÔNG NGHỆ:</b>\n"
@@ -4133,7 +4133,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             "🎬 <b>6. PHÒNG TRUYỀN THÔNG & LIVE STUDIO:</b>\n"
             "• <i>Nhiệm vụ:</i> Vận hành luồng livestream TikTok tương tác trực tiếp (Chợ Nổi, Đua Ghe Ngo).\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "<i>Mọi phòng ban hoạt động đồng bộ 24/7 dưới sự chỉ đạo của Chủ Tịch!</i>"
+            "<i>Hệ thống hỗ trợ anh em MT01 hoạt động liên tục 24/7!</i>"
         )
         _send_telegram_group_message(org_html, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
         return

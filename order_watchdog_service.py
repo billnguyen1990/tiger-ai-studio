@@ -25,7 +25,7 @@ def save_watchlist(items):
     except Exception as e:
         print(f"[Watchdog] Lỗi lưu watchlist: {e}")
 
-def add_orders_to_watchlist(order_codes, target_status="Lấy Thành Công", target_hub="1908", target_hub_name="Kho Trung Chuyển Cần Thơ", topic_id=0, reply_to_id=None, created_by="Chủ Tịch"):
+def add_orders_to_watchlist(order_codes, target_status="Lấy Thành Công", target_hub="1908", target_hub_name="Kho Trung Chuyển Cần Thơ", topic_id=0, reply_to_id=None, created_by="anh Lộc"):
     items = load_watchlist()
     now_str = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
     added_codes = []
@@ -145,16 +145,14 @@ def run_watchdog_check(send_fn=None):
                 it["alerted_at"] = now_str
 
                 alert_msg = (
-                    f"🚨 <b>BÁO CÁO KHẨN CẤP TỪ TIGER AI • ĐƠN QUAN TRỌNG ĐÃ VỀ KHO!</b>\n"
+                    f"🚨 <b>Dạ anh Lộc ơi, có đơn quan trọng đã về đến kho rồi nè!</b>\n"
                     f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                    f"🫡 <i>Báo cáo Chủ Tịch & Bộ phận Điều Phối, đơn hàng theo dõi đã thỏa mãn điều kiện:</i>\n\n"
                     f"📦 <b>Mã đơn hàng:</b> <code>{code}</code>\n"
                     f"✅ <b>Trạng thái:</b> <b>{cust_status or status_text} (ĐÃ LẤY THÀNH CÔNG)</b>\n"
-                    f"📍 <b>Vị trí hiện tại:</b> <b>{current_hub}</b>\n"
-                    f"⏰ <b>Thời điểm phát hiện:</b> {now_str}\n"
-                    f"👤 <b>Lệnh từ:</b> {it.get('created_by', 'Chủ Tịch')}\n"
+                    f"📍 <b>Kho hiện tại:</b> <b>{current_hub}</b>\n"
+                    f"⏰ <b>Thời điểm cập nhật:</b> {now_str}\n"
                     f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                    f"👉 <i>Đơn vị phụ trách:</i> <b>📞 Phòng Dịch Vụ Khách Hàng & 🚚 Phòng Vận Hành</b>"
+                    f"<i>Em đã kiểm tra đúng 2 điều kiện anh dặn và báo ngay lên đây cho anh rồi nha!</i>"
                 )
 
                 if send_fn:
@@ -198,3 +196,4 @@ def start_order_watchdog_daemon(send_fn=None):
     t = threading.Thread(target=_daemon, daemon=True)
     t.start()
     return t
+
