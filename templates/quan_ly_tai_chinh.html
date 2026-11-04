@@ -1670,190 +1670,222 @@
         }
 
 
-        /* --- BẢN QUYỀN GIAO DIỆN CHUẨN QUỐC TẾ (MOBILE-FIRST & DESKTOP) --- */
-        body {
-            background-color: #070d19 !important;
-            color: var(--text-main) !important;
+        /* --- BẢN QUYỀN GIAO DIỆN 3 PHÂN VÙNG: CỐ ĐỊNH TRÊN/DƯỚI, CUỘN TRƯỢT Ở GIỮA --- */
+        html, body {
+            height: 100% !important;
+            height: 100dvh !important;
             margin: 0 !important;
             padding: 0 !important;
-            min-height: 100vh !important;
-            min-height: -webkit-fill-available !important;
-            overflow-x: hidden !important;
+            background-color: #060a14 !important;
+            overflow: hidden !important;
+            color: var(--text-main) !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
-        header {
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 50 !important;
+        .app-viewport {
+            height: 100% !important;
+            height: 100dvh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            max-width: 480px !important;
             width: 100% !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px) !important;
-            background: rgba(11, 18, 33, 0.88) !important;
+            margin: 0 auto !important;
+            position: relative !important;
+            background: radial-gradient(circle at 50% 0%, #111a2e 0%, #060a14 70%) !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+        /* 1. TRƯỜNG PHÍA TRÊN CỐ ĐỊNH */
+        .app-top-fixed {
+            flex-shrink: 0 !important;
+            z-index: 100 !important;
+            background: rgba(11, 18, 33, 0.94) !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-            padding: 12px 18px !important;
+            padding-top: max(14px, env(safe-area-inset-top)) !important;
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+            padding-bottom: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+        }
+
+        .header-brand-row {
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
-            box-sizing: border-box !important;
+            width: 100% !important;
         }
 
-        .dashboard {
+        .brand-logo-icon {
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 11px !important;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1.15rem !important;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3) !important;
+        }
+
+        .brand-title {
+            margin: 0 !important;
+            font-size: 1.08rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.3px !important;
+            color: #fff !important;
+            line-height: 1.2 !important;
+        }
+
+        .brand-subtitle {
+            font-size: 0.62rem !important;
+            color: var(--primary) !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.8px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 3px !important;
+        }
+
+        .top-icon-btn {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+            width: 34px !important;
+            height: 34px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            font-size: 1rem !important;
+            backdrop-filter: blur(10px) !important;
+            transition: transform 0.2s !important;
+        }
+
+        .top-icon-btn.fortune {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.3) 100%) !important;
+            border: 1px solid rgba(245, 158, 11, 0.5) !important;
+            color: #fde68a !important;
+        }
+
+        /* Thẻ tổng quan đồng bộ trong top fixed */
+        .overview-card {
+            background: rgba(18, 27, 44, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 16px !important;
+            padding: 12px 14px !important;
+            margin: 0 !important;
             width: 100% !important;
-            max-width: 480px !important;
-            margin: 0 auto !important;
-            padding: 14px 14px calc(250px + env(safe-area-inset-bottom)) 14px !important;
             box-sizing: border-box !important;
+            box-shadow: none !important;
+        }
+
+        /* 2. NỘI DUNG Ở GIỮA TRƯỢT LÊN XUỐNG */
+        .app-middle-scroll {
+            flex: 1 !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding: 12px 14px 20px 14px !important;
             display: flex !important;
             flex-direction: column !important;
             gap: 12px !important;
-        }
-
-        .overview-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-radius: 20px !important;
-            backdrop-filter: blur(20px) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
-            padding: 18px !important;
-            width: 100% !important;
+            scroll-behavior: smooth !important;
             box-sizing: border-box !important;
-            margin-bottom: 0 !important;
+            width: 100% !important;
         }
 
         .lucky-corner-widget {
             width: 100% !important;
-            max-width: 480px !important;
+            margin-bottom: 2px !important;
             box-sizing: border-box !important;
-            margin-top: 10px !important;
-            margin-bottom: 12px !important;
+        }
+
+        .piggy-guardian-card {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border: 1px solid rgba(16, 185, 129, 0.25) !important;
+            border-radius: 16px !important;
+            padding: 10px 14px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+        }
+
+        .feed-container {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            min-height: 40px !important;
+        }
+
+        /* 3. TRƯỜNG PHÍA DƯỚI CỐ ĐỊNH */
+        .app-bottom-fixed {
+            flex-shrink: 0 !important;
+            z-index: 100 !important;
+            background: rgba(11, 18, 33, 0.95) !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
+            padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
         }
 
         .input-area {
-            position: fixed !important;
-            bottom: calc(65px + env(safe-area-inset-bottom)) !important;
-            left: 0 !important;
-            right: 0 !important;
+            position: static !important;
             width: 100% !important;
-            background: rgba(11, 18, 33, 0.94) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-            padding: 10px 14px !important;
-            z-index: 100 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 8px 14px 4px 14px !important;
             box-sizing: border-box !important;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35) !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            gap: 10px !important;
+            gap: 6px !important;
         }
 
         .bottom-nav {
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
+            position: static !important;
             width: 100% !important;
-            height: calc(65px + env(safe-area-inset-bottom)) !important;
-            background: rgba(8, 14, 26, 0.96) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            height: 54px !important;
+            background: transparent !important;
+            border: none !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: none !important;
             display: flex !important;
             justify-content: space-around !important;
             align-items: center !important;
-            padding-bottom: env(safe-area-inset-bottom) !important;
-            z-index: 99 !important;
+            padding: 0 !important;
             box-sizing: border-box !important;
         }
 
         @media (min-width: 560px) {
             body {
-                background-color: #030712 !important;
+                background-color: #030611 !important;
             }
-            header {
-                max-width: 480px !important;
-                margin: 0 auto !important;
-                border-radius: 0 0 16px 16px !important;
-                border-left: 1px solid rgba(255,255,255,0.08) !important;
-                border-right: 1px solid rgba(255,255,255,0.08) !important;
+            .app-viewport {
+                border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+                border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+                box-shadow: 0 0 50px rgba(0, 0, 0, 0.7) !important;
             }
-            .dashboard {
-                max-width: 480px !important;
-                margin: 0 auto !important;
-            }
-            .input-area {
-                max-width: 480px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                right: auto !important;
-                border-radius: 20px 20px 0 0 !important;
-                border: 1px solid rgba(255,255,255,0.08) !important;
-                border-bottom: none !important;
-            }
-            .bottom-nav {
-                max-width: 480px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                right: auto !important;
-                border-radius: 0 0 20px 20px !important;
-                border: 1px solid rgba(255,255,255,0.08) !important;
-            }
-        }
-        
-        /* --- STYLING WIDGET ICON BUTTONS --- */
-        .widget-icon-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .widget-icon-btn:hover {
-            background: var(--primary);
-            color: #000;
-            transform: scale(1.08);
-        }
-        .widget-icon-btn.fortune-btn {
-            background: rgba(245, 158, 11, 0.15);
-            border-color: rgba(245, 158, 11, 0.4);
-            color: #fde68a;
-        }
-        .widget-icon-btn.fortune-btn:hover {
-            background: #f59e0b;
-            color: #000;
-        }
-
-        /* --- OVERVIEW CARD BEAUTIFICATION --- */
-        .overview-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            backdrop-filter: blur(20px) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
-            padding: 18px !important;
-            width: 100% !important;
-            max-width: 480px !important;
-            margin-bottom: 0 !important;
-        }
-
-        /* --- PIGGY GUARDIAN CARD OVERHAUL --- */
-        .piggy-guardian-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
-            border: 1px solid rgba(255, 215, 0, 0.25) !important;
-            backdrop-filter: blur(15px);
-            border-radius: 18px !important;
-            padding: 12px 14px !important;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
         }
 
 </style>
@@ -1867,34 +1899,25 @@
         <button onclick="applyAppUpdate()">Cập nhật ngay</button>
     </div>
 
-    <header>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div style="width:36px; height:36px; border-radius:12px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); display:flex; align-items:center; justify-content:center; font-size:1.2rem; box-shadow:0 4px 10px rgba(16,185,129,0.3);">
-                💎
+    
+    <div class="app-viewport">
+        <!-- 1. TRƯỜNG PHÍA TRÊN CỐ ĐỊNH -->
+        <header class="app-top-fixed">
+            
+        <div class="header-brand-row">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="brand-logo-icon">💎</div>
+                <div>
+                    <h1 class="brand-title">Quản Lý Tài Chính</h1>
+                    <span class="brand-subtitle">Bản quyền: Lộc Miền Tây</span>
+                </div>
             </div>
-            <div>
-                <h1 style="margin:0; font-size:1.15rem; font-weight:800; letter-spacing:-0.3px; color:#fff;">Quản Lý Tài Chính</h1>
-                <span style="font-size: 0.65rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display:flex; align-items:center; gap: 3px;">
-                    Bản quyền: Lộc Miền Tây
-                </span>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button id="soundToggleBtn" onclick="toggleSound()" class="top-icon-btn" title="Bật/Tắt âm thanh">🔊</button>
+                <button onclick="openFortuneModal()" class="top-icon-btn fortune" title="Lắc quẻ tài lộc">🎋</button>
             </div>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-            <button id="soundToggleBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh"
-                style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.05rem; backdrop-filter:blur(10px); transition:transform 0.2s;">
-                🔊
-            </button>
-            <button onclick="openFortuneModal()" title="Lắc quẻ tài lộc"
-                style="background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(217,119,6,0.3) 100%); border: 1px solid rgba(245,158,11,0.5); color:#fde68a; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem; backdrop-filter:blur(10px); transition:transform 0.2s;">
-                🎋
-            </button>
-        </div>
-    </header>
-
-    <input type="file" id="bgImageInput" accept="image/*" style="display: none;">
-
-    <div class="dashboard">
-        <div class="overview-card" style="position: relative; overflow: visible;">
+            <div class="overview-card" style="position: relative; overflow: visible;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
                 <div class="overview-header" onclick="openProfileModal()" style="margin-bottom: 0;">
                     <div class="vc-avatar" id="vcAvatar">H</div>
@@ -1979,11 +2002,12 @@
                 <div class="vc-progress-wrapper" style="margin-top: 0; height: 5px; border-radius: 5px;">
             </div>
                 </div>
-        </div> <!-- KẾT THÚC THẺ TỔNG QUAN (OVERVIEW CARD) -->
+        </div>
+        </header>
 
-
-        <!-- WIDGET GÓC TÀI LỘC & TRỢ LÝ HEO 3D (ĐỘC LẬP, GỌN GÀNG, SANG TRỌNG) -->
-        <div class="lucky-corner-widget" style="width:100%; max-width:480px; margin-bottom:14px;">
+        <!-- 2. NỘI DUNG Ở GIỮA TRƯỢT LÊN XUỐNG -->
+        <main class="app-middle-scroll">
+            <div class="lucky-corner-widget" style="width:100%; max-width:480px; margin-bottom:14px;">
             <div class="piggy-guardian-card" onclick="interactWithPiggy()" title="Chạm để tương tác với Heo Tài Lộc">
                 <div class="piggy-avatar-wrap">
                     <div class="piggy-mascot" id="piggyMascot">🐷</div>
@@ -2007,11 +2031,13 @@
             </div>
         </div>
 
-        <div class="feed-container" id="feed"></div>
-    </div> <!-- KẾT THÚC DASHBOARD -->
+        
+            <div class="feed-container" id="feed"></div>
+        </main>
 
-
-    <div class="input-area">
+        <!-- 3. TRƯỜNG PHÍA DƯỚI CỐ ĐỊNH -->
+        <footer class="app-bottom-fixed">
+            <div class="input-area">
         <div id="loading">Bot đang suy nghĩ...</div>
         <div class="quick-tags" id="expenseTags" style="display:none !important;">
             <button class="q-tag" onclick="useQuickTag('☕ Cà phê ')">☕ Cà phê</button>
@@ -2131,179 +2157,7 @@
             </button>
         </div>
     </div>
-
-    <!-- History Modal -->
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeHistory()">✕</button>
-            <h2 style="margin-bottom: 20px; color: var(--primary);">Lịch sử tổng kết</h2>
-            <div id="historyContent"></div>
-        </div>
-    </div>
-
-    <!-- Calendar Modal -->
-    <div class="modal-overlay" id="calendarModal">
-        <div class="modal-content" style="max-width: 420px; transition: all 0.3s ease;">
-            <button class="modal-close" onclick="closeCalendar()">✕</button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-right: 25px;">
-                <h2 style="margin: 0; color: var(--primary); font-size: 1.3rem;">Lịch Vạn Niên 📅</h2>
-                <button onclick="openCalendarBgModal()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); color: inherit; padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; backdrop-filter: blur(8px); display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                    🖼️ Đổi nền Lịch
-                </button>
-            </div>
-            <div class="calendar-nav">
-                <button onclick="changeMonth(-1)">❮</button>
-                <div id="calMonthYear" style="font-weight: bold; font-size: 1.1rem; color: var(--text-main);"></div>
-                <button onclick="changeMonth(1)">❯</button>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-        </div>
-    </div>
-
-    <!-- Calendar Background Select Modal -->
-    <div class="modal-overlay" id="calendarBgModal" style="z-index: 2200;">
-        <div class="modal-content" style="max-width: 480px;">
-            <button class="modal-close" onclick="closeCalendarBgModal()">✕</button>
-            <h2 style="margin-bottom: 6px; color: var(--primary); text-align:center;">Đổi Ảnh Nền Lịch 🖼️</h2>
-            <p style="text-align: center; color: var(--text-muted); font-size: 0.82rem; margin-bottom: 18px;">Chọn hình nền lung linh hoặc tải ảnh riêng của bạn</p>
-
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px;">
-                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/cal_aurora.jpg')">
-                    <img src="./assets/cal_aurora.jpg" alt="Cực quang Aurora">
-                    <div class="cal-bg-option-label">🌌 Cực quang Aurora</div>
-                </div>
-                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/cal_sunset.jpg')">
-                    <img src="./assets/cal_sunset.jpg" alt="Hoàng hôn biển">
-                    <div class="cal-bg-option-label">🌅 Hoàng hôn biển</div>
-                </div>
-                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/crypto_astronaut.png')">
-                    <img src="./assets/crypto_astronaut.png" alt="Phi hành gia">
-                    <div class="cal-bg-option-label">👨‍🚀 Vũ trụ Crypto</div>
-                </div>
-                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/gold_bars.png')">
-                    <img src="./assets/gold_bars.png" alt="Thỏi vàng">
-                    <div class="cal-bg-option-label">🏆 Vàng kim phát tài</div>
-                </div>
-                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/money_falling.png')">
-                    <img src="./assets/money_falling.png" alt="Mưa tiền tài lộc">
-                    <div class="cal-bg-option-label">💵 Mưa tiền tài lộc</div>
-                </div>
-                <div class="cal-bg-option" onclick="selectCalendarPreset('./assets/trading_chart.png')">
-                    <img src="./assets/trading_chart.png" alt="Biểu đồ tài chính">
-                    <div class="cal-bg-option-label">📈 Biểu đồ tăng trưởng</div>
-                </div>
-            </div>
-
-            <input type="file" id="calendarBgInput" accept="image/*" style="display: none;" onchange="handleCalendarBgUploaded(event)">
-            
-            <button style="width:100%; padding: 13px; border-radius: 12px; border:none; background:var(--primary); color:white; font-size: 0.95rem; font-weight: bold; cursor: pointer; margin-bottom: 8px; box-shadow: 0 4px 15px var(--primary-glow); display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="document.getElementById('calendarBgInput').click()">
-                📁 Tải ảnh nền Lịch từ điện thoại / máy tính
-            </button>
-            <button id="clearCalendarBgBtn" style="width:100%; border:1px solid var(--border-color); color:var(--text-muted); padding:10px; border-radius: 10px; background: transparent; cursor: pointer; font-size: 0.85rem;" onclick="clearCalendarBg(); closeCalendarBgModal();">
-                ❌ Nền mặc định (Màu trơn)
-            </button>
-        </div>
-    </div>
-
-    <!-- Day Detail Modal -->
-    <div class="modal-overlay" id="dayDetailModal">
-        <div class="modal-content" style="max-width: 400px;">
-            <button class="modal-close" onclick="closeDayDetail()">✕</button>
-            <h2 id="dayDetailTitle" style="margin-bottom: 20px; color: var(--primary); text-align:center;">Chi tiết ngày
-            </h2>
-
-            <div style="margin-bottom: 20px;">
-                <h3
-                    style="font-size:1rem; margin-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:5px;">
-                    💸 Thu / Chi trong ngày</h3>
-                <div id="dayExpensesList" style="display:flex; flex-direction:column; gap:5px;"></div>
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <h3
-                    style="font-size:1rem; margin-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:5px; color:var(--warning);">
-                    ⏰ Nhắc nhở / Sự kiện</h3>
-                <div id="dayRemindersList" style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;">
-                </div>
-
-                <div style="display:flex; gap:5px; margin-bottom:5px;">
-                    <input type="time" id="reminderTime"
-                        style="flex:1; padding:8px; border-radius:8px; border:1px solid rgba(0,0,0,0.2);">
-                    <input type="text" id="reminderText" placeholder="Nội dung..."
-                        style="flex:3; padding:8px; border-radius:8px; border:1px solid rgba(0,0,0,0.2);">
-                </div>
-                <button onclick="saveReminder()"
-                    style="width:100%; padding:10px; border-radius:8px; border:none; background:var(--warning); color:white; font-weight:bold; cursor:pointer;">Lưu
-                    Nhắc Nhở</button>
-                <button type="button" onclick="testAlarmSound()"
-                    style="width:100%; margin-top: 8px; padding: 8px; border-radius: 8px; border: 1px dashed var(--warning); background: rgba(245, 158, 11, 0.1); color: var(--warning); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    🔔 Nghe thử chuông báo
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Alarm Alert Modal (Pops up when reminder hits) -->
-    <div class="modal-overlay" id="alarmAlertModal" style="display: none; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 3000;">
-        <div class="modal-content" style="max-width: 360px; text-align: center; padding: 30px 20px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--card-bg); border: 1px solid var(--border-color);">
-            <div style="font-size: 4rem; margin-bottom: 10px; animation: ringBell 1s infinite alternate;">⏰</div>
-            <h2 style="color: var(--warning); margin-bottom: 6px; font-size: 1.3rem;">TỚI GIỜ HẸN RỒI!</h2>
-            <div id="alarmAlertTime" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 12px;"></div>
-            <div id="alarmAlertContent" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: var(--text-main); margin-bottom: 25px; padding: 14px; background: var(--bg); border-radius: 12px; border: 1px dashed var(--warning);"></div>
-            <button onclick="dismissAlarmModal()" style="width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--primary); color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 20px var(--primary-glow);">
-                ✅ ĐÃ RÕ / TẮT CHUÔNG
-            </button>
-        </div>
-    </div>
-
-    <!-- Color Modal -->
-    <div class="modal-overlay" id="colorModal">
-        <div class="modal-content" style="max-width: 320px;">
-            <button class="modal-close" onclick="closeColorModal()">✕</button>
-            <h2 style="margin-bottom: 20px; color: var(--primary); text-align:center;">Màu Chủ Đề</h2>
-            <div id="colorPalette" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
-            </div>
-        </div>
-    </div>
-
-    <!-- BG Select Modal -->
-    <div class="modal-overlay" id="bgSelectModal">
-        <div class="modal-content" style="max-width: 450px;">
-            <button class="modal-close" onclick="closeBgModal()">✕</button>
-            <h2 style="margin-bottom: 20px; color: var(--primary); text-align:center;">Đổi Hình Nền</h2>
-
-            <button
-                style="width:100%; padding: 15px; border-radius: 12px; border:none; background:var(--primary); color:white; font-size: 1.1rem; font-weight: bold; cursor: pointer;"
-                onclick="triggerBgUpload(); closeBgModal();">📁 Tải ảnh từ thiết bị</button>
-            <button class="menu-btn" id="clearBgBtn"
-                style="width:100%; border:1px solid var(--danger); color:var(--danger); display:none; padding:12px;"
-                onclick="clearBgImage(); closeBgModal();">❌ Xóa hình nền (Dùng nền màu)</button>
-        </div>
-    </div>
-
-    <!-- Hidden input to capture or pick photo for debt items -->
-    <input type="file" id="debtItemPhotoInput" accept="image/*" style="display: none;" onchange="handleDebtPhotoUploaded(event)">
-
-    <!-- Fullscreen Image Viewer Modal -->
-    <div class="modal-overlay" id="imageViewerModal" onclick="closeImageViewer()" style="display: none; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 2500;">
-        <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="event.stopPropagation()">
-            <button onclick="closeImageViewer()" style="position: absolute; top: -45px; right: 0; color: #fff; font-size: 1.8rem; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px);">✕</button>
-            <img id="viewerImage" src="" style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 14px; box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.15);">
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <a id="viewerDownloadBtn" href="" download="chung_tu_vay_muon.jpg" style="background: var(--primary); color: white; padding: 9px 18px; border-radius: 10px; text-decoration: none; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px var(--primary-glow);">⬇️ Tải ảnh về</a>
-                <button onclick="closeImageViewer()" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); padding: 9px 18px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">Đóng</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="fullScreenLoader">
-        <div class="spinner"></div>
-        <h2 style="color: var(--primary);">Đã sang tháng mới! 🎉</h2>
-        <p style="color: var(--text-muted); margin-top: 10px;">Chuyên gia AI đang phân tích toàn bộ chi tiêu tháng cũ
-            của bạn để rút ra bài học sâu sắc. Vui lòng chờ vài giây...</p>
-    </div>
-
-    <div class="bottom-nav">
+            <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('home')">
             <div class="nav-icon">🏠</div>
             <div>Nhập liệu</div>
@@ -2321,6 +2175,9 @@
             <div>Cài đặt</div>
         </div>
     </div>
+        </footer>
+    </div>
+
 
     <!-- PROFILE MODAL -->
     <div id="profileModal" class="modal-overlay">
