@@ -21,7 +21,8 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
+      background: linear-gradient(135deg, rgba(6, 14, 20, 0.85), rgba(8, 18, 26, 0.92)), url('/static/img/tiger_avatar.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: var(--text);
       font-family: 'Plus Jakarta Sans', sans-serif;
       padding: 16px;
@@ -31,8 +32,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--card-border);
+      padding: 16px 20px;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      background: rgba(13, 25, 34, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       margin-bottom: 20px;
     }
     .title-box h1 {
@@ -82,7 +87,9 @@
       margin-bottom: 24px;
     }
     .dept-card {
-      background: var(--card);
+      background: rgba(13, 25, 34, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 12px;
@@ -134,25 +141,28 @@
       gap: 14px;
     }
     .trace-card {
-      background: var(--card);
+      background: rgba(13, 25, 34, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-left: 4px solid var(--accent);
       border-radius: 10px;
       padding: 14px 16px;
       position: relative;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      border-right: 1px solid rgba(255,255,255,0.05);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .trace-card.is-healing {
       border-left-color: var(--warning);
-      background: #15181b;
+      background: rgba(21, 24, 27, 0.82);
     }
     .trace-card.is-error {
       border-left-color: var(--danger);
-      background: #181113;
+      background: rgba(24, 17, 19, 0.82);
     }
     .trace-card.is-success {
       border-left-color: var(--success);
+      background: rgba(13, 25, 34, 0.82);
     }
 
     .trace-header {
