@@ -2033,7 +2033,42 @@
         </div>
 
         
-            <div class="feed-container" id="feed"></div>
+            
+        <!-- BÀN PHÍM CHI NHANH 1 CHẠM (NẰM TRONG VÙNG CUỘN Ở GIỮA, KHÔNG CHE KHUẤT TẦM NHÌN) -->
+        <div class="fast-log-container" id="fastLogWidget" style="background: rgba(18, 27, 44, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 8px 12px; margin-bottom: 8px; box-sizing: border-box;">
+            <div class="fast-log-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 0.75rem; font-weight: 800; color: #fff; letter-spacing: 0.3px;">⚡ Chi Nhanh 1 Chạm</span>
+                    <span style="font-size: 0.65rem; color: var(--text-dim); cursor: pointer; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.06);" onclick="toggleFastLogCollapse()" id="fastLogToggleBtn">Thu gọn ▲</span>
+                </div>
+                <span style="font-size: 0.68rem; color: var(--primary); cursor: pointer; font-weight: 700;" onclick="addCustomFastPill()">+ Thêm món</span>
+            </div>
+            <div class="fast-pills-scroll" id="fastPillsContainer" style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 6px 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+                <div class="fast-pill" onclick="logFastExpense('☕ Cà phê', 20000, 'Ăn uống')">
+                    <span>☕ Cà phê</span> <span class="pill-price">20k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🍜 Ăn sáng', 30000, 'Ăn uống')">
+                    <span>🍜 Ăn sáng</span> <span class="pill-price">30k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('⛽ Đổ xăng', 50000, 'Di chuyển')">
+                    <span>⛽ Đổ xăng</span> <span class="pill-price">50k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🛒 Đi chợ', 100000, 'Ăn uống')">
+                    <span>🛒 Đi chợ</span> <span class="pill-price">100k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🥤 Trà sữa', 35000, 'Ăn uống')">
+                    <span>🥤 Trà sữa</span> <span class="pill-price">35k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🍺 Nhậu lai rai', 200000, 'Ăn uống')">
+                    <span>🍺 Nhậu</span> <span class="pill-price">200k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('⚡ Điện nước', 300000, 'Cố định')">
+                    <span>⚡ Điện nước</span> <span class="pill-price">300k</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed-container" id="feed"></div>
         </main>
 
         <!-- 3. TRƯỜNG PHÍA DƯỚI CỐ ĐỊNH -->
@@ -2069,37 +2104,7 @@
             <button class="q-tag" onclick="useQuickTag('Việc gấp ')">⚡ Việc gấp</button>
         </div>
 
-        <!-- BÀN PHÍM CHI NHANH 1 CHẠM -->
-        <div class="fast-log-container">
-            <div class="fast-log-header">
-                <span>⚡ Chi Nhanh 1 Chạm</span>
-                <span style="font-size:0.65rem; color:var(--primary); cursor:pointer;" onclick="addCustomFastPill()">+ Thêm món</span>
-            </div>
-            <div class="fast-pills-scroll" id="fastPillsContainer">
-                <div class="fast-pill" onclick="logFastExpense('☕ Cà phê', 20000, 'Ăn uống')">
-                    <span>☕ Cà phê</span> <span class="pill-price">20k</span>
-                </div>
-                <div class="fast-pill" onclick="logFastExpense('🍜 Ăn sáng', 30000, 'Ăn uống')">
-                    <span>🍜 Ăn sáng</span> <span class="pill-price">30k</span>
-                </div>
-                <div class="fast-pill" onclick="logFastExpense('⛽ Đổ xăng', 50000, 'Di chuyển')">
-                    <span>⛽ Đổ xăng</span> <span class="pill-price">50k</span>
-                </div>
-                <div class="fast-pill" onclick="logFastExpense('🛒 Đi chợ', 100000, 'Ăn uống')">
-                    <span>🛒 Đi chợ</span> <span class="pill-price">100k</span>
-                </div>
-                <div class="fast-pill" onclick="logFastExpense('🥤 Trà sữa', 35000, 'Ăn uống')">
-                    <span>🥤 Trà sữa</span> <span class="pill-price">35k</span>
-                </div>
-                <div class="fast-pill" onclick="logFastExpense('🍺 Nhậu lai rai', 200000, 'Ăn uống')">
-                    <span>🍺 Nhậu</span> <span class="pill-price">200k</span>
-                </div>
-                <div class="fast-pill" onclick="logFastExpense('⚡ Điện nước', 300000, 'Cố định')">
-                    <span>⚡ Điện nước</span> <span class="pill-price">300k</span>
-                </div>
-            </div>
-        </div>
-
+        
         <div class="input-controls">
             <input type="file" id="billImageInput" accept="image/*" style="display: none;"
                 onchange="handleImageScan(event)">
@@ -2504,6 +2509,19 @@
     </div>
 
     <script>
+        function toggleFastLogCollapse() {
+            const container = document.getElementById('fastPillsContainer');
+            const btn = document.getElementById('fastLogToggleBtn');
+            if (!container || !btn) return;
+            if (container.style.display === 'none') {
+                container.style.display = 'flex';
+                btn.innerText = 'Thu gọn ▲';
+            } else {
+                container.style.display = 'none';
+                btn.innerText = 'Mở ra ▼';
+            }
+        }
+    
 
         const MODEL_URL = '/api/gemini'; // Bản công khai: key nằm an toàn trên server
         const BACKUP_KEYS_B64 = [];
