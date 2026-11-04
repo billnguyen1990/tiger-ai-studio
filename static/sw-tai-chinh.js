@@ -1,4 +1,4 @@
-const CACHE_NAME = 'finance-app-v102-nocache';
+const CACHE_NAME = 'finance-app-v103-nocache';
 const urlsToCache = [
   '/tai-chinh',
   '/manifest.json',

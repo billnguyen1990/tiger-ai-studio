@@ -1701,6 +1701,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             -webkit-tap-highlight-color: transparent !important;
         
+        
         /* ==========================================================================
            MODERN MOBILE VIEWPORT & SEAMLESS LIGHT/DARK THEME SYSTEM
            ========================================================================== */
@@ -1785,7 +1786,7 @@
         }
 
         body:not(.dark-theme) .app-bottom-fixed {
-            background: rgba(255, 255, 255, 0.95) !important;
+            background: rgba(255, 255, 255, 0.96) !important;
             border-top: 1px solid #e2e8f0 !important;
             box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05) !important;
         }
@@ -1818,7 +1819,7 @@
         }
 
         body:not(.dark-theme) .bottom-nav {
-            border-top: 1px solid #f1f5f9 !important;
+            border-top: 1px solid #e2e8f0 !important;
         }
 
         body:not(.dark-theme) .bottom-nav .nav-item {
@@ -1911,7 +1912,7 @@
         }
 
         body.dark-theme .app-bottom-fixed {
-            background: rgba(11, 18, 33, 0.95) !important;
+            background: rgba(11, 18, 33, 0.96) !important;
             border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
         }
@@ -1942,7 +1943,7 @@
         }
 
         body.dark-theme .bottom-nav {
-            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
 
         body.dark-theme .bottom-nav .nav-item {
@@ -2133,7 +2134,7 @@
             min-height: 40px !important;
         }
 
-        /* ZONE 3: BOTTOM FIXED DOCK */
+        /* ZONE 3: BOTTOM FIXED DOCK (NO CLUTTER, NO OVERLAP) */
         .app-bottom-fixed {
             flex-shrink: 0 !important;
             z-index: 100 !important;
@@ -2141,7 +2142,6 @@
             -webkit-backdrop-filter: blur(20px) !important;
             display: flex !important;
             flex-direction: column !important;
-            padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
             box-sizing: border-box !important;
             width: 100% !important;
         }
@@ -2152,12 +2152,12 @@
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
-            padding: 6px 12px 2px 12px !important;
+            padding: 8px 14px 14px 14px !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            gap: 5px !important;
+            gap: 6px !important;
         }
 
         .quick-tags {
@@ -2191,7 +2191,7 @@
             display: flex !important;
             align-items: center !important;
             border-radius: 24px !important;
-            height: 44px !important;
+            height: 42px !important;
             padding: 0 4px 0 14px !important;
             box-sizing: border-box !important;
             transition: all 0.2s ease !important;
@@ -2218,9 +2218,9 @@
         }
 
         .input-more-btn {
-            width: 42px !important;
-            height: 42px !important;
-            min-width: 42px !important;
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
             border-radius: 50% !important;
             display: flex !important;
             align-items: center !important;
@@ -2233,9 +2233,9 @@
         }
 
         .send-btn {
-            width: 42px !important;
-            height: 42px !important;
-            min-width: 42px !important;
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
             border-radius: 50% !important;
             background: #10b981 !important;
             color: #ffffff !important;
@@ -2258,14 +2258,14 @@
         .bottom-nav {
             position: static !important;
             width: 100% !important;
-            height: 52px !important;
+            height: 56px !important;
             background: transparent !important;
             box-shadow: none !important;
             display: flex !important;
             justify-content: space-around !important;
             align-items: center !important;
-            padding-top: 4px !important;
-            padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
+            padding-top: 8px !important;
+            padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
             box-sizing: border-box !important;
         }
 
