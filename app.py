@@ -4045,27 +4045,67 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     order_codes = extract_ghn_order_codes(text)
     is_tag_or_cmd = is_tagged or is_slash_cmd
 
-    # 0.0 TRỢ GIÚP & MENU LỆNH (/help, /menu, /trogiup)
+    # 0.00 SƠ ĐỒ BỘ MÁY PHÒNG BAN DOANH NGHIỆP SỐ TIGER AI (/phongban, /sodotochuc, /tochuc)
+    is_org_cmd = any(lower_text.strip() == cmd for cmd in ["/phongban", "/sodotochuc", "/tochuc", "/bocamay", "/cautruc"]) or (
+        is_tagged and any(k in lower_text for k in ["phòng ban", "sơ đồ tổ chức", "bộ máy", "cơ cấu công ty", "các phòng"])
+    )
+    if is_org_cmd:
+        org_html = (
+            "🏢 <b>HỆ THỐNG PHÒNG BAN DOANH NGHIỆP SỐ TIGER AI</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "👑 <b>BAN LÃNH ĐẠO TỐI CAO:</b>\n"
+            "• <b>Chủ Tịch Hội Đồng Quản Trị:</b> Chủ Tịch (Quyết sách & Chỉ đạo tối cao)\n"
+            "• <b>Tổng Điều Hành AI (CEO Tiger AI):</b> Tiếp nhận khẩu lệnh & điều phối liên phòng ban\n\n"
+            "🏬 <b>CƠ CẤU CÁC PHÒNG BAN CHUYÊN TRÁCH:</b>\n\n"
+            "🛠️ <b>1. PHÒNG KỸ THUẬT & CÔNG NGHỆ:</b>\n"
+            "• <i>Nhiệm vụ:</i> Giám sát sức khỏe server, tự động làm mới Token, OpenCV duyệt 100%, chống lỗi hệ thống.\n"
+            "• <i>Lệnh điều hành:</i> <code>/kythuat</code>, <code>/phongkythuat</code>\n\n"
+            "🚚 <b>2. PHÒNG VẬN HÀNH & KHO VẬN:</b>\n"
+            "• <i>Nhiệm vụ:</i> Giám sát camera trực tiếp 4 kho (Cái Răng, Bình Thủy, Ô Môn, Vị Thanh), soi xe tải bốc dỡ, dock hàng.\n"
+            "• <i>Lệnh điều hành:</i> <code>/cam</code>, <code>/camera</code>, <code>/soikho</code>, <code>/auditcam</code>\n\n"
+            "💰 <b>3. PHÒNG KẾ TOÁN & TÀI CHÍNH:</b>\n"
+            "• <i>Nhiệm vụ:</i> Quản lý dòng tiền, theo dõi thu - chi, đối soát chi phí xe tải cố định, hạch toán lương tài xế.\n"
+            "• <i>Lệnh điều hành:</i> <code>/chiphi</code>, <code>/doisoat365</code>, <code>/doisoat</code>, <code>/luongnv</code>, <code>/xetai</code>\n\n"
+            "🔍 <b>4. BAN THANH TRA & KIỂM SOÁT NỘI BỘ:</b>\n"
+            "• <i>Nhiệm vụ:</i> Thanh tra shipper hoãn ảo, bóc tách cuộc gọi nhá máy, quét bất thường trên Google Sheet GHNa.\n"
+            "• <i>Lệnh điều hành:</i> <code>/hoanao [mã đơn]</code>, <code>/ghna</code>, <code>/scanghna</code>\n\n"
+            "📞 <b>5. PHÒNG DỊCH VỤ KHÁCH HÀNG & ĐIỀU PHỐI ĐƠN:</b>\n"
+            "• <i>Nhiệm vụ:</i> Tra cứu tiến độ đơn hàng thời gian thực, định vị bưu cục gửi hàng gần nhất.\n"
+            "• <i>Lệnh điều hành:</i> <code>/tra [mã đơn]</code>, <code>/check [mã đơn]</code>, <code>/store [vị trí]</code>\n\n"
+            "🎬 <b>6. PHÒNG TRUYỀN THÔNG & LIVE STUDIO:</b>\n"
+            "• <i>Nhiệm vụ:</i> Vận hành luồng livestream TikTok tương tác trực tiếp (Chợ Nổi, Đua Ghe Ngo).\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "<i>Mọi phòng ban hoạt động đồng bộ 24/7 dưới sự chỉ đạo của Chủ Tịch!</i>"
+        )
+        _send_telegram_group_message(org_html, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
+        return
+
+    # 0.0 TRỢ GIÚP & MENU LỆNH THEO PHÒNG BAN (/help, /menu, /trogiup)
     is_help_cmd = any(lower_text.strip() == cmd for cmd in ["/help", "/menu", "/trogiup", "/huongdan"]) or (
         is_tagged and any(k in lower_text for k in ["làm được gì", "tính năng", "chức năng", "hướng dẫn", "giúp đỡ"])
     )
     if is_help_cmd:
         help_html = (
-            "🐯 <b>TIGER AI 2.0 • DANH MỤC TRỢ LÝ ĐIỀU HÀNH THÔNG MINH</b>\n"
+            "🐯 <b>TIGER AI • DANH MỤC LỆNH ĐIỀU HÀNH CÁC PHÒNG BAN</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "🎙️ <b>1. BỘ ĐÀM ĐIỀU HÀNH GIỌNG NÓI:</b>\n"
-            "• Gửi tin nhắn thoại (Voice Note) trực tiếp vào nhóm.\n"
-            "• Tiger AI tự động dịch giọng nói sang văn bản và thực thi khẩu lệnh tức thì.\n\n"
-            "👁️ <b>2. MẮT THẦN CANH KHO (VISION AI):</b>\n"
-            "• Lệnh: <code>/soikho</code> hoặc <code>/soikho [cairang/binhthuy/omon/vithanh]</code>\n"
-            "• Toàn bộ hình ảnh & phân tích tự động chuyển về đúng Topic 3365 (📸 Camera Giám Sát Kho).\n\n"
-            "🕵️ <b>3. THÁM TỬ ĐỐI SOÁT HOÃN ẢO:</b>\n"
-            "• Lệnh: <code>/hoanao [mã đơn]</code>\n"
-            "• Bóc tách lịch sử cuộc gọi shipper, phát hiện ngay báo hoãn láo, nhá máy.\n\n"
-            "📦 <b>4. TRA CỨU ĐƠN & BÁO CÁO VẬN HÀNH:</b>\n"
-            "• Lệnh: <code>/tra [mã đơn]</code> hoặc <code>/check [mã đơn]</code>\n"
-            "• Lệnh: <code>/kpi</code> hoặc <code>/ton</code> để xem số liệu KPI và tồn kho tức thì.\n\n"
-            "<i>Lưu ý: Để tránh làm phiền cuộc trao đổi của anh em, Tiger AI chỉ phản hồi khi được gọi đích danh bằng lệnh <code>/</code> hoặc tag <code>@AiAgentMT_bot</code>!</i>"
+            "🏢 <b>1. SƠ ĐỒ DOANH NGHIỆP:</b> <code>/phongban</code> (Xem toàn bộ cơ cấu & chức năng)\n\n"
+            "🛠️ <b>2. PHÒNG KỸ THUẬT & CÔNG NGHỆ:</b>\n"
+            "• Lệnh: <code>/kythuat</code> hoặc <code>/phongkythuat</code>\n"
+            "• Kiểm tra sức khỏe máy chủ, camera token và cơ chế tự chữa lành.\n\n"
+            "🚚 <b>3. PHÒNG VẬN HÀNH & KHO VẬN:</b>\n"
+            "• Lệnh: <code>/cam [kho]</code> hoặc <code>/soikho [kho]</code> (Cái Răng, Bình Thủy, Ô Môn, Vị Thanh)\n"
+            "• Lệnh: <code>/auditcam</code> (Phân tích hiện trường bãi xe, dock xuất nhập)\n\n"
+            "💰 <b>4. PHÒNG KẾ TOÁN & TÀI CHÍNH:</b>\n"
+            "• Lệnh: <code>/chiphi</code>, <code>/doisoat365</code> (Đối soát xe tải & chi phí vận tải)\n"
+            "• Lệnh: <code>/luongnv</code> (Bảng lương nhân sự & lái xe)\n\n"
+            "🔍 <b>5. BAN THANH TRA & KIỂM SOÁT:</b>\n"
+            "• Lệnh: <code>/hoanao [mã đơn]</code> (Bóc tách cuộc gọi shipper, bắt hoãn ảo)\n"
+            "• Lệnh: <code>/ghna</code> (Quét bất thường cảnh báo trên Sheet GHNa)\n\n"
+            "📞 <b>6. PHÒNG DỊCH VỤ KHÁCH HÀNG:</b>\n"
+            "• Lệnh: <code>/tra [mã đơn]</code> hoặc <code>/check [mã đơn]</code> (Hành trình đơn)\n"
+            "• Lệnh: <code>/store [tên/địa chỉ]</code> (Tìm bưu cục gửi hàng)\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "<i>💡 Bạn có thể gửi tin nhắn thoại (Voice) trực tiếp, Tiger AI sẽ tự động điều phối về đúng phòng ban xử lý!</i>"
         )
         _send_telegram_group_message(help_html, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
         return

@@ -293,7 +293,7 @@ def generate_quick_cost_telegram_report():
     nvgh_info = data.get("salary_nvgh", {})
 
     lines = [
-        "💰 <b>TIGER AI • BÁO CÁO NHANH CHI PHÍ & ĐỐI SOÁT VẬN TẢI MT01</b>",
+        "💰 <b>BÁO CÁO TỪ PHÒNG KẾ TOÁN - TÀI CHÍNH TIGER AI</b>\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n<i>(Đã thẩm tra & hạch toán tự động bởi Kế Toán Trưởng Heo Tài Lộc)</i>",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━",
         f"📅 <i>Đồng bộ lần cuối: {data.get('last_sync', 'Mới nhất')}</i>\n",
         "🚚 <b>1. XE CỐ ĐỊNH & ĐỐI SOÁT NCC 365 (26/09 - 25/10):</b>",

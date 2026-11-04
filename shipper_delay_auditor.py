@@ -109,7 +109,7 @@ def audit_shipper_delay_for_order(order_code):
         evidence = f"Tài xế đã gọi cho khách {len(real_calls)} cuộc thực tế (cuộc gọi thành công, thời lượng hợp lệ)."
 
     report = (
-        f"🕵️ <b>TIGER AI • HỒ SƠ ĐỐI SOÁT SHIPPER HOÃN ĐƠN</b>\n"
+        f"🔍 <b>BÁO CÁO TỪ BAN THANH TRA & KIỂM SOÁT NỘI BỘ</b>\n<i>(Hồ sơ điều tra độc lập được thẩm tra bởi Thanh Tra Trưởng Tiger AI)</i>\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
         f"📦 <b>Mã đơn:</b> <code>{order_code}</code>\n"
         f"🛍️ <b>Sản phẩm:</b> {prod_name[:40]}\n"
