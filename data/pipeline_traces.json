@@ -45,5 +45,18 @@
     "handler_dept": "🛠️ Phòng Kỹ Thuật",
     "healing_action": "Phòng Kỹ Thuật đã tiếp nhận sự cố: Vui lòng mở Chrome bot đăng nhập lại tài khoản Google một lần để làm mới phiên làm việc.",
     "can_resume": false
+  },
+  {
+    "id": "EVT_1793801544979",
+    "time": "21:12:24 04/11/2026",
+    "task_name": "Quy trình Xuất Đơn B2B (18:00)",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+    "current_step": "Bước 4/4: Hoàn tất 100% xuất đơn 37,086 dòng, tính toán ThongKe & Gửi ảnh sang Telegram",
+    "total_steps": 4,
+    "status": "SUCCESS",
+    "error_info": null,
+    "handler_dept": "🛠️ Phòng Kỹ Thuật",
+    "healing_action": "Phòng Kỹ Thuật đã xử lý dứt điểm 100%: Tự động kích hoạt phiên ngầm headless, đồng bộ 37,086 dòng và Apps Script đã gửi ảnh báo cáo lên Telegram thành công mỹ mãn trong 215.3s!",
+    "can_resume": true
   }
 ]
