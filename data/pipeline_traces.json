@@ -28,5 +28,22 @@
     "handler_dept": "🛠️ Phòng Kỹ Thuật",
     "healing_action": "Phòng Kỹ Thuật đã chuyển toàn bộ quy trình lên GitHub Actions Cloud Runner độc lập. Đã dọn sạch tiến trình local trên máy tính, vận hành tự động 100% không cần thao tác thủ công.",
     "can_resume": true
+  },
+  {
+    "id": "EVT_1793801240781",
+    "time": "21:07:20 04/11/2026",
+    "task_name": "Xuất Đơn B2B (18:00)",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu",
+    "current_step": "Bước 2/4: Tắc nghẽn tại đăng nhập Looker Studio",
+    "total_steps": 4,
+    "status": "HEALING",
+    "error_info": {
+      "code": "GOOGLE_AUTH_EXPIRED",
+      "reason": "Không thể mở menu Lọc dữ liệu -> Chạy lọc -> Ketqua",
+      "at_step": "Looker Studio Google Accounts"
+    },
+    "handler_dept": "🛠️ Phòng Kỹ Thuật",
+    "healing_action": "Phòng Kỹ Thuật đã tiếp nhận sự cố: Vui lòng mở Chrome bot đăng nhập lại tài khoản Google một lần để làm mới phiên làm việc.",
+    "can_resume": false
   }
 ]

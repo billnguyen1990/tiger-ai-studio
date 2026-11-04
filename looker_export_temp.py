@@ -494,11 +494,15 @@ def copy_export_and_paste_to_master(context, export_page):
 
 
 def click_google_sheets_menu(page, menu_name, submenu_name):
-    """Mở menu custom Apps Script của Google Sheets siêu tốc và ổn định 100% bằng DOM JS."""
+    """Mở menu custom Apps Script của Google Sheets siêu tốc và ổn định 100% bằng event dispatch."""
     print(f"  ⏳ Đang đợi menu '{menu_name}' xuất hiện (Apps Script đang tải)...")
     
-    menu_found = False
-    for attempt in range(40):
+    page.keyboard.press("Escape")
+    time.sleep(0.5)
+    page.keyboard.press("Escape")
+    time.sleep(0.5)
+
+    for _ in range(40):
         menu_found = page.evaluate("""(mName) => {
             const menubar = document.querySelector('#docs-menubar') || document;
             const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
@@ -507,29 +511,8 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
         if menu_found:
             break
         time.sleep(1.0)
-        
-    if not menu_found:
-        print(f"  ! Sau 40s chưa thấy menu '{menu_name}', đang thử reload lại trang master sheet...")
-        try:
-            page.reload(wait_until="domcontentloaded", timeout=30000)
-        except Exception:
-            pass
-        time.sleep(10)
-        for _ in range(25):
-            menu_found = page.evaluate("""(mName) => {
-                const menubar = document.querySelector('#docs-menubar') || document;
-                const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
-                return items.some(el => el.innerText && el.innerText.trim() === mName);
-            }""", menu_name)
-            if menu_found:
-                break
-            time.sleep(1.0)
 
-    if not menu_found:
-        raise RuntimeError(f"Không tìm thấy menu {menu_name} trên Google Sheets sau thời gian chờ đợi!")
-
-    for attempt in range(5):
-        # 1. Click menu cha
+    for attempt in range(8):
         page.evaluate("""(mName) => {
             const menubar = document.querySelector('#docs-menubar') || document;
             const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
@@ -542,7 +525,6 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
         }""", menu_name)
         time.sleep(1.5)
 
-        # 2. Click submenu con
         clicked_sub = page.evaluate("""(sName) => {
             const subitems = Array.from(document.querySelectorAll('.goog-menuitem, div[role="menuitem"], span'));
             const target = subitems.find(el => el.innerText && el.innerText.trim().includes(sName));
@@ -558,11 +540,7 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
         if clicked_sub:
             print(f"  ✓ Đã kích hoạt menu '{menu_name}' -> '{submenu_name}' thành công!")
             return True
-
-        print(f"  ! Chưa click được submenu '{submenu_name}', thử lại lần {attempt + 1}...")
-        page.keyboard.press("Escape")
         time.sleep(1.0)
-
     raise RuntimeError(f"Không thể mở menu {menu_name} -> {submenu_name}")
 
 
