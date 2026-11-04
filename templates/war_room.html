@@ -467,11 +467,11 @@
       <div class="dept-name">Dịch Vụ Khách Hàng</div>
       <div class="dept-status status-ok">● Canh 3 đơn ngầm 24/7</div>
     </div>
-    <div class="dept-card" onclick="openDeptModal('livestudio')">
+    <div class="dept-card" onclick="openDeptModal('b2b')">
       <span class="dept-tap-hint">Bấm mở</span>
-      <div class="dept-icon">🎬</div>
-      <div class="dept-name">Live Studio</div>
-      <div class="dept-status status-ok">● Engine tương tác sẵn sàng</div>
+      <div class="dept-icon">📊</div>
+      <div class="dept-name">Kinh Doanh & Dữ Liệu</div>
+      <div class="dept-status status-ok">● Xuất đơn B2B (18:00)</div>
     </div>
   </section>
 
@@ -616,7 +616,6 @@
           <div class="action-group">
             <button class="act-btn" onclick="runKythuatCheck()">🔄 Kiểm Tra Sức Khỏe Token Camera <span>▶</span></button>
             <button class="act-btn" onclick="runKythuatHeal()">🛡️ Kích Hoạt Tự Phục Hồi Token (Auto-Heal) <span>▶</span></button>
-            <button class="act-btn" onclick="runB2BProcess()">🚀 Chạy Thử Quy Trình Xuất Đơn B2B (18:00) <span>▶</span></button>
           </div>
         `;
       } else if (deptKey === 'vanhanh') {
@@ -660,13 +659,14 @@
             <button class="act-btn" onclick="loadWatchlist()">📋 Xem 3 Đơn Đang Canh Ngầm (GYMEUX74, 7H, GM) <span>▶</span></button>
           </div>
         `;
-      } else if (deptKey === 'livestudio') {
-        title.innerHTML = '🎬 PHÒNG TRUYỀN THÔNG & LIVE STUDIO';
+      } else if (deptKey === 'b2b') {
+        title.innerHTML = '📊 PHÒNG KINH DOANH & DỮ LIỆU B2B';
         body.innerHTML = `
-          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Hệ thống phát sóng tương tác và studio tự động hóa:</p>
+          <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">Quản trị quy trình tự động xuất đơn B2B (18:00), thống kê đơn tạo và đồng bộ Google Sheets:</p>
           <div class="action-group">
-            <a href="/dua-ghe-live" target="_blank" class="act-btn" style="text-decoration: none;">🛶 Mở Studio Đua Ghe Ngo Live <span>↗</span></a>
-            <a href="/cho-noi-live" target="_blank" class="act-btn" style="text-decoration: none;">🚤 Mở Studio Chợ Nổi Live <span>↗</span></a>
+            <button class="act-btn" onclick="runB2BProcess()">🚀 Kích Hoạt Xuất Đơn B2B (18:00) <span>▶</span></button>
+            <button class="act-btn" onclick="runB2BReportSend()">📈 Gửi Báo Cáo Đơn Tạo MT01 Lên Telegram <span>▶</span></button>
+            <a href="https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit" target="_blank" class="act-btn" style="text-decoration: none;">📋 Mở Google Sheet Master Data B2B <span>↗</span></a>
           </div>
         `;
       }

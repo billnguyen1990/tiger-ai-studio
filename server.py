@@ -4130,8 +4130,8 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             "📞 <b>5. PHÒNG DỊCH VỤ KHÁCH HÀNG & ĐIỀU PHỐI ĐƠN:</b>\n"
             "• <i>Nhiệm vụ:</i> Tra cứu tiến độ đơn hàng thời gian thực, định vị bưu cục gửi hàng gần nhất.\n"
             "• <i>Lệnh điều hành:</i> <code>/tra [mã đơn]</code>, <code>/check [mã đơn]</code>, <code>/store [vị trí]</code>\n\n"
-            "🎬 <b>6. PHÒNG TRUYỀN THÔNG & LIVE STUDIO:</b>\n"
-            "• <i>Nhiệm vụ:</i> Vận hành luồng livestream TikTok tương tác trực tiếp (Chợ Nổi, Đua Ghe Ngo).\n"
+            "📊 <b>6. PHÒNG KINH DOANH & DỮ LIỆU B2B:</b>\n"
+            "• <i>Nhiệm vụ:</i> Quản trị luồng tự động xuất đơn B2B (18:00), thống kê sản lượng đơn tạo 13 tỉnh ĐBSCL và đồng bộ Google Sheets.\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "<i>Hệ thống hỗ trợ anh em MT01 hoạt động liên tục 24/7!</i>"
         )
