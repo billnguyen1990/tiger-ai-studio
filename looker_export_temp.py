@@ -621,6 +621,28 @@ def run_thongke_and_wait_telegram_modal(master_page):
 # 🚀 HÀM THỰC THI CHÍNH
 # =============================================================================
 
+def ensure_service_account_credentials():
+    """Tự động khôi phục credentials.json từ google_auth_storage.json nếu chưa tồn tại."""
+    dir_name = os.path.dirname(os.path.abspath(__file__))
+    creds_path = os.path.join(dir_name, "credentials.json")
+    if not os.path.exists(creds_path):
+        auth_storage = os.path.join(dir_name, "google_auth_storage.json")
+        if os.path.exists(auth_storage):
+            try:
+                with open(auth_storage, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if "service_account" in data and isinstance(data["service_account"], dict):
+                    with open(creds_path, "w", encoding="utf-8") as f:
+                        json.dump(data["service_account"], f, indent=2)
+                    print("  🔑 [Auto-Recovery] Đã trích xuất Service Account credentials.json từ google_auth_storage.json!")
+                    sub_creds = os.path.join(dir_name, "tool_11h_bao_cao_telegram", "credentials.json")
+                    os.makedirs(os.path.dirname(sub_creds), exist_ok=True)
+                    with open(sub_creds, "w", encoding="utf-8") as f:
+                        json.dump(data["service_account"], f, indent=2)
+            except Exception as e:
+                print(f"  ⚠️ Lỗi khi trích xuất credentials: {e}")
+
+
 def check_chrome_ready():
     """Kiểm tra xem Chrome đã mở remote debugging ở port 9223 chưa."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -683,6 +705,7 @@ def run_looker_export_pipeline(max_retries=3):
             print("=======================================================")
 
             start_total = time.time()
+            ensure_service_account_credentials()
             
             with sync_playwright() as p:
                 storage_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "google_auth_storage.json")
@@ -771,6 +794,15 @@ def run_looker_export_pipeline(max_retries=3):
 
                 # 7. Tạo bảng thống kê -> ThongKe và đợi Telegram modal load xong & tự đóng
                 run_thongke_and_wait_telegram_modal(master_page)
+
+                # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 & 2690)
+                print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 & Topic 2690)...")
+                try:
+                    from tiger_b2b_thongke_reporter import run_b2b_report
+                    rep_res = run_b2b_report(send_telegram=True)
+                    print(f"  ✓ Kết quả bắn ảnh báo cáo Telegram: {rep_res}")
+                except Exception as ex_rep:
+                    print(f"  ⚠️ Lỗi khi chạy tiger_b2b_thongke_reporter: {ex_rep}")
 
                 total_elapsed = round(time.time() - start_total, 1)
                 print("\n=======================================================")

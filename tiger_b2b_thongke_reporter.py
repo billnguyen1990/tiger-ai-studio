@@ -8,11 +8,25 @@ from playwright.sync_api import sync_playwright
 DIR_NAME = os.path.dirname(os.path.abspath(__file__))
 CREDS_FILE = os.path.join(DIR_NAME, "credentials.json")
 if not os.path.exists(CREDS_FILE):
-    CREDS_FILE = os.path.join(os.path.dirname(DIR_NAME), "tool_11h_bao_cao_telegram", "credentials.json")
+    sub_creds = os.path.join(os.path.dirname(DIR_NAME), "tool_11h_bao_cao_telegram", "credentials.json")
+    if os.path.exists(sub_creds):
+        CREDS_FILE = sub_creds
+    else:
+        auth_file = os.path.join(DIR_NAME, "google_auth_storage.json")
+        if os.path.exists(auth_file):
+            try:
+                import json
+                with open(auth_file, "r", encoding="utf-8") as f_auth:
+                    sa_data = json.load(f_auth)
+                if "service_account" in sa_data and isinstance(sa_data["service_account"], dict):
+                    with open(CREDS_FILE, "w", encoding="utf-8") as f_out:
+                        json.dump(sa_data["service_account"], f_out, indent=2)
+            except Exception:
+                pass
 
 BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 CHAT_ID = "-1003940889949"
-TOPIC_IDS = [506]  # CHỈ gửi vào Topic 506 (📅 Đơn Tạo), KHÔNG gửi vào Topic 2690 (🔥 Báo Cáo)
+TOPIC_IDS = [506, 2690]  # Gửi đồng thời Topic 506 (📅 Đơn Tạo) & Topic 2690 (🔥 Báo Cáo / War Room)
 
 from datetime import datetime
 import time
