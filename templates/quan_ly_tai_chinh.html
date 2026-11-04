@@ -1399,7 +1399,275 @@
         .settings-item .icon {
             font-size: 1.5rem;
         }
-    </style>
+    
+        /* --- TÍNH NĂNG 1: HEO ĐẤT TÀI LỘC 3D MASCOT --- */
+        .piggy-guardian-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        .piggy-guardian-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.25);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+        .piggy-avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .piggy-mascot {
+            font-size: 2.2rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            animation: piggyFloat 3s ease-in-out infinite;
+            user-select: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .piggy-mascot.bounce {
+            animation: piggyBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes piggyFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(3deg); }
+        }
+        @keyframes piggyBounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.3) rotate(-10deg); }
+            60% { transform: scale(0.9) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .piggy-mood-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: rgba(255, 215, 0, 0.25);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            margin-top: -2px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .piggy-speech-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+        .piggy-name {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .piggy-quote {
+            font-size: 0.82rem;
+            color: #ffffff;
+            opacity: 0.95;
+            line-height: 1.35;
+            margin-top: 2px;
+            font-style: italic;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .piggy-voice-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .piggy-voice-btn:hover {
+            background: var(--primary);
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        /* --- TÍNH NĂNG 2: BÀN PHÍM CHI NHANH 1 CHẠM --- */
+        .fast-log-container {
+            width: 100%;
+            margin-bottom: 6px;
+        }
+        .fast-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4px 5px 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .fast-pills-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 2px 2px 8px 2px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .fast-pills-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .fast-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 6px 12px;
+            white-space: nowrap;
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .fast-pill:active {
+            transform: scale(0.92);
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+        .fast-pill .pill-price {
+            background: rgba(0, 230, 118, 0.2);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        /* --- TÍNH NĂNG 3: LẮC QUẺ TÀI LỘC BANNER & MODAL --- */
+        .fortune-entry-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(220, 38, 38, 0.25) 0%, rgba(217, 119, 6, 0.25) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin-top: 10px;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .fortune-entry-banner:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        .fortune-tag-badge {
+            background: #f59e0b;
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+        .bamboo-tube-container {
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+        }
+        .bamboo-tube {
+            font-size: 4.5rem;
+            display: inline-block;
+            transition: transform 0.1s;
+            cursor: pointer;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+        }
+        .bamboo-tube.shaking {
+            animation: tubeShake 0.4s infinite;
+        }
+        @keyframes tubeShake {
+            0% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(-15deg) translateY(-8px); }
+            50% { transform: rotate(15deg) translateY(-4px); }
+            75% { transform: rotate(-10deg) translateY(-8px); }
+            100% { transform: rotate(0deg) translateY(0); }
+        }
+        .fortune-stick-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            color: #78350f;
+            border: 2px solid #d97706;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 10px;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- TOAST THÔNG BÁO GHI NHANH XỊN XÒ --- */
+        .fast-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--primary);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.3);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        .fast-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* --- CONFETTI CANVAS --- */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+</style>
 </head>
 
 <body class="dark-theme">
@@ -1410,7 +1678,24 @@
         <button onclick="applyAppUpdate()">Cập nhật ngay</button>
     </div>
 
-    <header style="flex-direction: column; align-items: flex-start; gap: 2px;">
+    <header style="flex-direction: row; justify-content: space-between; align-items: center;">
+        <div style="display:flex; flex-direction:column; gap:2px;">
+            <h1 style="margin:0;">Quản Lý Tài Chính 💎</h1>
+            <span
+                style="font-size: 0.6rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display:flex; align-items:center; gap: 3px; opacity: 0.9;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Bản quyền: Lộc Miền Tây
+            </span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <button id="soundToggleBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh"
+                style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; backdrop-filter:blur(10px);">
+                🔊
+            </button>
+        </div>
         <h1 style="margin:0;">Quản Lý Tài Chính 💎</h1>
         <span
             style="font-size: 0.6rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display:flex; align-items:center; gap: 3px; opacity: 0.9;">
@@ -1467,6 +1752,37 @@
                         <div id="debtFilterDropdown" class="debt-filter-dropdown" style="display: none;"></div>
                     </div>
                 </div>
+            </div>
+
+
+            <!-- HEAL / PIGGY GUARDIAN 3D MASCOT -->
+            <div class="piggy-guardian-card" onclick="interactWithPiggy()" title="Bấm vào để nghe Heo Tài Lộc tư vấn">
+                <div class="piggy-avatar-wrap">
+                    <div class="piggy-mascot" id="piggyMascot">🐷</div>
+                    <div class="piggy-mood-badge" id="piggyBadge">Rực Rỡ 🌟</div>
+                </div>
+                <div class="piggy-speech-wrap">
+                    <div class="piggy-name">
+                        <span>Heo Tài Lộc</span>
+                        <span style="font-size:0.65rem; opacity:0.8; font-weight:500;">(Chạm để trò chuyện)</span>
+                    </div>
+                    <div class="piggy-quote" id="piggyQuote">"Lúa gạo đầy bồ, tiền bạc rủng rỉnh nha bậu!"</div>
+                </div>
+                <button class="piggy-voice-btn" onclick="event.stopPropagation(); readAloudTodaySummary();" title="Nghe báo cáo nhanh hôm nay">
+                    🗣️
+                </button>
+            </div>
+
+            <!-- BANNER LẮC QUẺ TÀI LỘC HÔM NAY -->
+            <div class="fortune-entry-banner" onclick="openFortuneModal()">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.4rem;">🎋</span>
+                    <div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #fff;">Lắc Quẻ Tài Lộc Hôm Nay</div>
+                        <div style="font-size: 0.68rem; color: #fef08a;" id="fortuneBannerStatus">Chạm để lắc quẻ phong thủy chi tiêu</div>
+                    </div>
+                </div>
+                <span class="fortune-tag-badge" id="fortuneTagBadge">Lắc Ngay</span>
             </div>
 
             <div class="overview-stats">
@@ -1541,6 +1857,38 @@
             <button class="q-tag" onclick="useQuickTag('Tiền nhà ')">🏠 Tiền nhà</button>
             <button class="q-tag" onclick="useQuickTag('Việc gấp ')">⚡ Việc gấp</button>
         </div>
+
+        <!-- BÀN PHÍM CHI NHANH 1 CHẠM -->
+        <div class="fast-log-container">
+            <div class="fast-log-header">
+                <span>⚡ Chi Nhanh 1 Chạm</span>
+                <span style="font-size:0.65rem; color:var(--primary); cursor:pointer;" onclick="addCustomFastPill()">+ Thêm món</span>
+            </div>
+            <div class="fast-pills-scroll" id="fastPillsContainer">
+                <div class="fast-pill" onclick="logFastExpense('☕ Cà phê', 20000, 'Ăn uống')">
+                    <span>☕ Cà phê</span> <span class="pill-price">20k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🍜 Ăn sáng', 30000, 'Ăn uống')">
+                    <span>🍜 Ăn sáng</span> <span class="pill-price">30k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('⛽ Đổ xăng', 50000, 'Di chuyển')">
+                    <span>⛽ Đổ xăng</span> <span class="pill-price">50k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🛒 Đi chợ', 100000, 'Ăn uống')">
+                    <span>🛒 Đi chợ</span> <span class="pill-price">100k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🥤 Trà sữa', 35000, 'Ăn uống')">
+                    <span>🥤 Trà sữa</span> <span class="pill-price">35k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('🍺 Nhậu lai rai', 200000, 'Ăn uống')">
+                    <span>🍺 Nhậu</span> <span class="pill-price">200k</span>
+                </div>
+                <div class="fast-pill" onclick="logFastExpense('⚡ Điện nước', 300000, 'Cố định')">
+                    <span>⚡ Điện nước</span> <span class="pill-price">300k</span>
+                </div>
+            </div>
+        </div>
+
         <div class="input-controls">
             <input type="file" id="billImageInput" accept="image/*" style="display: none;"
                 onchange="handleImageScan(event)">
@@ -2443,7 +2791,478 @@
             });
         }
 
-        async function initApp() {
+        async 
+        /* ==========================================================================
+           1. WEB AUDIO API SOUND ENGINE (100% OFFLINE, ZERO EXTERNAL MP3S)
+           ========================================================================== */
+        let isSoundMuted = localStorage.getItem('TIGER_SOUND_MUTED') === 'true';
+
+        function updateSoundToggleBtn() {
+            const btn = document.getElementById('soundToggleBtn');
+            if (btn) btn.innerHTML = isSoundMuted ? '🔇' : '🔊';
+        }
+
+        function toggleSound() {
+            isSoundMuted = !isSoundMuted;
+            localStorage.setItem('TIGER_SOUND_MUTED', isSoundMuted ? 'true' : 'false');
+            updateSoundToggleBtn();
+            if (!isSoundMuted) soundEngine.coin();
+        }
+
+        const soundEngine = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            coin() {
+                if (isSoundMuted) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    const now = this.ctx.currentTime;
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(987.77, now); // B5
+                    osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } catch(e) {}
+            },
+            cash() {
+                if (isSoundMuted) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                        gain.gain.setValueAtTime(0.2, now + idx * 0.06);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.5);
+                        osc.start(now + idx * 0.06);
+                        osc.stop(now + idx * 0.06 + 0.5);
+                    });
+                } catch(e) {}
+            },
+            bamboo() {
+                if (isSoundMuted) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    for (let i = 0; i < 4; i++) {
+                        const now = this.ctx.currentTime + i * 0.08;
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(220 + Math.random() * 200, now);
+                        gain.gain.setValueAtTime(0.3, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+                        osc.start(now);
+                        osc.stop(now + 0.06);
+                    }
+                } catch(e) {}
+            },
+            win() {
+                if (isSoundMuted) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                    notes.forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.07);
+                        gain.gain.setValueAtTime(0.25, now + i * 0.07);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.6);
+                        osc.start(now + i * 0.07);
+                        osc.stop(now + i * 0.07 + 0.6);
+                    });
+                } catch(e) {}
+            },
+            piggy() {
+                if (isSoundMuted) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, now);
+                    osc.frequency.exponentialRampToValueAtTime(750, now + 0.15);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } catch(e) {}
+            }
+        };
+
+        /* ==========================================================================
+           2. CELEBRATORY CONFETTI ENGINE (CANVAS BASED, ZERO LIB)
+           ========================================================================== */
+        function launchConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#ffd700', '#00e676', '#f43f5e', '#38bdf8', '#fbbf24', '#c084fc'];
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: canvas.width * 0.5 + (Math.random() - 0.5) * 150,
+                    y: canvas.height * 0.4 + (Math.random() - 0.5) * 100,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 1.5) * 12,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rot: Math.random() * 360,
+                    vrot: (Math.random() - 0.5) * 15,
+                    opacity: 1
+                });
+            }
+
+            let animId;
+            const startTime = Date.now();
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const elapsed = Date.now() - startTime;
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.35; // gravity
+                    p.rot += p.vrot;
+                    if (elapsed > 1500) p.opacity -= 0.02;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rot * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(0, p.opacity);
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                    ctx.restore();
+                });
+
+                if (elapsed < 2500) {
+                    animId = requestAnimationFrame(draw);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animId);
+                }
+            }
+            draw();
+        }
+
+        /* ==========================================================================
+           3. TOAST NOTIFICATION UTILITY
+           ========================================================================== */
+        function showFastToast(icon, message) {
+            const toast = document.getElementById('fastToast');
+            const iconEl = document.getElementById('fastToastIcon');
+            const msgEl = document.getElementById('fastToastMsg');
+            if (!toast) return;
+            iconEl.innerHTML = icon || '⚡';
+            msgEl.innerHTML = message || 'Đã ghi nhận!';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        /* ==========================================================================
+           4. HEO ĐẤT TÀI LỘC 3D MASCOT LOGIC (TIẾT KIỆM & CẢNH BÁO THÔNG MINH)
+           ========================================================================== */
+        const PIGGY_TIPS = [
+            "Bậu nhớ nghen: Ăn chắc mặc bền, có dư thì dồn lại mua đất cất nhà!",
+            "Uống cà phê sáng lai rai thôi, để dành chiều đưa vợ đi chợ nghen!",
+            "Hôm nay bậu chi tiêu ngăn nắp dữ dội, tui chấm 10 điểm!",
+            "Muốn giàu thì phải chịu khó bóp mồm bóp miệng mấy món lặt vặt!",
+            "Tiền bạc phân minh, ái tình dứt khoát nha anh Lộc ơi!",
+            "Mỗi ngày dư 50 cành, cuối năm gom lại cả chục triệu ăn Tết thả ga!"
+        ];
+
+        function updatePiggyMascotState() {
+            const mascot = document.getElementById('piggyMascot');
+            const badge = document.getElementById('piggyBadge');
+            const quote = document.getElementById('piggyQuote');
+            if (!mascot || !badge || !quote) return;
+
+            const spent = expenses.reduce((s, e) => s + (parseInt(e.amount) || 0), 0);
+            const currentTab = document.getElementById('expenseType') ? document.getElementById('expenseType').value : 'Cố định';
+            const budget = getTabBudget(currentTab);
+
+            if (budget <= 0) {
+                mascot.innerHTML = '🐷';
+                badge.innerHTML = 'Chưa cài trần 🔒';
+                badge.style.color = '#38bdf8';
+                badge.style.borderColor = '#38bdf8';
+                quote.innerHTML = '"Chưa cài hạn mức ngân sách, bậu bấm cài để tui canh tiền giùm nha!"';
+                return;
+            }
+
+            const ratio = spent / budget;
+            if (ratio < 0.5) {
+                mascot.innerHTML = '😎🐷';
+                badge.innerHTML = 'Rực Rỡ 🌟';
+                badge.style.color = '#ffd700';
+                badge.style.borderColor = '#ffd700';
+                quote.innerHTML = '"Lúa gạo đầy bồ, tiền còn rủng rỉnh tha hồ sắm sửa nha bậu!"';
+            } else if (ratio < 0.8) {
+                mascot.innerHTML = '🧐🐷';
+                badge.innerHTML = 'Ổn Định ⚖️';
+                badge.style.color = '#00e676';
+                badge.style.borderColor = '#00e676';
+                quote.innerHTML = '"Đang xài nửa túi tiền rồi, giữ vững phong độ cần kiệm nghen!"';
+            } else if (ratio <= 1.0) {
+                mascot.innerHTML = '😰🐷';
+                badge.innerHTML = 'Cảnh Báo ⚠️';
+                badge.style.color = '#f59e0b';
+                badge.style.borderColor = '#f59e0b';
+                quote.innerHTML = '"Đã chạm 80% ngân sách rồi, tém tém lại nghen anh Lộc!"';
+            } else {
+                mascot.innerHTML = '😱🐷';
+                badge.innerHTML = 'Bội Chi 🚨';
+                badge.style.color = '#f43f5e';
+                badge.style.borderColor = '#f43f5e';
+                quote.innerHTML = '"Lố ngân sách rồi anh Lộc ơi, cứu tui cứu tui với!"';
+            }
+        }
+
+        function interactWithPiggy() {
+            soundEngine.piggy();
+            const mascot = document.getElementById('piggyMascot');
+            if (mascot) {
+                mascot.classList.add('bounce');
+                setTimeout(() => mascot.classList.remove('bounce'), 600);
+            }
+            const randTip = PIGGY_TIPS[Math.floor(Math.random() * PIGGY_TIPS.length)];
+            const quote = document.getElementById('piggyQuote');
+            if (quote) quote.innerHTML = `"${randTip}"`;
+            showFastToast('🐷', 'Heo Tài Lộc gửi bạn lời khuyên!');
+        }
+
+        /* ==========================================================================
+           5. BÀN PHÍM CHI NHANH 1 CHẠM (1-TOUCH FAST EXPENSE LOG)
+           ========================================================================== */
+        function logFastExpense(item, amount, category) {
+            soundEngine.coin();
+            if ('vibrate' in navigator) navigator.vibrate(25);
+
+            const expenseType = document.getElementById('expenseType') ? document.getElementById('expenseType').value : 'Biến động';
+            const newExp = {
+                id: Date.now(),
+                item: item,
+                amount: parseInt(amount) || 0,
+                type: expenseType,
+                category: category || 'Ăn uống',
+                advice: `Đã ghi nhanh ${item} (${formatMoney(amount)})`,
+                date: new Date().toISOString()
+            };
+
+            expenses.push(newExp);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            updateDashboard();
+            renderFeed();
+            updatePiggyMascotState();
+            showFastToast('⚡', `Đã ghi nhanh: <b>${item}</b> (-${formatMoney(amount)})`);
+        }
+
+        function addCustomFastPill() {
+            const name = prompt("Nhập tên món chi tiêu nhanh (ví dụ: Ăn trưa, Mua vé, Cắt tóc):");
+            if (!name || !name.trim()) return;
+            const costStr = prompt("Nhập số tiền (VNĐ):", "30000");
+            const cost = parseInt(costStr);
+            if (isNaN(cost) || cost <= 0) {
+                alert("Số tiền không hợp lệ!");
+                return;
+            }
+
+            const container = document.getElementById('fastPillsContainer');
+            if (container) {
+                const kText = cost >= 1000 ? Math.round(cost / 1000) + 'k' : cost + 'đ';
+                const newPill = document.createElement('div');
+                newPill.className = 'fast-pill';
+                newPill.onclick = () => logFastExpense(name.trim(), cost, 'Khác');
+                newPill.innerHTML = `<span>${name.trim()}</span> <span class="pill-price">${kText}</span>`;
+                container.prepend(newPill);
+                showFastToast('✨', `Đã thêm phím tắt cho "${name.trim()}"!`);
+            }
+        }
+
+        /* ==========================================================================
+           6. LẮC QUẺ TÀI LỘC & PHONG THỦY CHI TIÊU ĐẦU NGÀY
+           ========================================================================== */
+        const FORTUNE_DATABASE = [
+            {
+                type: "Quẻ Thượng Thượng 🌟",
+                title: "Kim Ngân Mãn Đường",
+                detail: "Tài lộc hanh thông, quý nhân phù trợ! Rất thuận lợi cho việc mua bán, ký hợp đồng làm ăn và giao dịch tiền bạc.",
+                lucky: "68 - 86"
+            },
+            {
+                type: "Quẻ Đại Cát 💰",
+                title: "Tiền Vô Như Nước",
+                detail: "Hôm nay dòng tiền thuận lợi, buôn may bán đắt. Chi tiêu cho gia đình và bản thân đều mang lại vượng khí tốt lành.",
+                lucky: "39 - 79"
+            },
+            {
+                type: "Quẻ Trung Bình ⚖️",
+                title: "Cần Kiệm An Khang",
+                detail: "Tiền vào vừa đủ tiêu, chớ vội mua sắm lúc đói bụng hay bốc đồng lướt mạng. Giữ vững kỷ luật chi tiêu là phát tài.",
+                lucky: "18 - 81"
+            },
+            {
+                type: "Quẻ Hòa Vi Quý 🤝",
+                title: "Lộc Bất Tận Hưởng",
+                detail: "Nên mời bạn bè ly cà phê thắt chặt tình nghĩa. Cởi mở sẻ chia sẽ mang về cơ hội kiếm tiền lớn trong tương lai gần.",
+                lucky: "24 - 42"
+            },
+            {
+                type: "Quẻ Thận Trọng 🛡️",
+                title: "Giữ Chặt Túi Tiền",
+                detail: "Hôm nay kỵ cho vay mượn bừa bãi hoặc chi tiền ngoài kế hoạch. Cứ ghi chép chi tiêu đầy đủ là tai qua nạn khỏi.",
+                lucky: "09 - 90"
+            }
+        ];
+
+        function openFortuneModal() {
+            const m = document.getElementById('fortuneModal');
+            if (m) m.classList.add('active');
+            
+            // Check if already drawn today
+            const todayStr = new Date().toDateString();
+            const savedFortune = localStorage.getItem('TIGER_FORTUNE_' + todayStr);
+            if (savedFortune) {
+                try {
+                    const f = JSON.parse(savedFortune);
+                    displayFortuneResult(f, false);
+                } catch(e) {}
+            }
+        }
+
+        function closeFortuneModal() {
+            const m = document.getElementById('fortuneModal');
+            if (m) m.classList.remove('active');
+        }
+
+        function shakeFortuneTube() {
+            const tube = document.getElementById('bambooTube');
+            const tip = document.getElementById('shakeTip');
+            if (!tube) return;
+
+            soundEngine.bamboo();
+            if ('vibrate' in navigator) navigator.vibrate([40, 60, 40, 60, 80]);
+            tube.classList.add('shaking');
+            if (tip) tip.innerHTML = "Đang lắc xăm... Xin một quẻ đại lợi!";
+
+            setTimeout(() => {
+                tube.classList.remove('shaking');
+                const randomFortune = FORTUNE_DATABASE[Math.floor(Math.random() * FORTUNE_DATABASE.length)];
+                
+                // Save for today
+                const todayStr = new Date().toDateString();
+                localStorage.setItem('TIGER_FORTUNE_' + todayStr, JSON.stringify(randomFortune));
+
+                displayFortuneResult(randomFortune, true);
+            }, 1200);
+        }
+
+        function displayFortuneResult(f, isNew) {
+            const resultCard = document.getElementById('fortuneResultCard');
+            const typeEl = document.getElementById('fortuneType');
+            const titleEl = document.getElementById('fortuneTitle');
+            const detailEl = document.getElementById('fortuneDetail');
+            const luckyEl = document.getElementById('fortuneLuckyNum');
+            const tip = document.getElementById('shakeTip');
+            const reBtn = document.getElementById('reShakeBtn');
+            const tag = document.getElementById('fortuneTagBadge');
+            const bannerStatus = document.getElementById('fortuneBannerStatus');
+
+            if (typeEl) typeEl.innerHTML = f.type;
+            if (titleEl) titleEl.innerHTML = f.title;
+            if (detailEl) detailEl.innerHTML = f.detail;
+            if (luckyEl) luckyEl.innerHTML = f.lucky;
+            if (resultCard) resultCard.style.display = 'block';
+            if (tip) tip.innerHTML = "🎋 Quẻ của bạn đã lộ diện!";
+            if (reBtn) reBtn.style.display = 'inline-block';
+            if (tag) tag.innerHTML = 'Đã Lắc ✅';
+            if (bannerStatus) bannerStatus.innerHTML = `Quẻ hôm nay: ${f.title} (${f.lucky})`;
+
+            if (isNew) {
+                soundEngine.win();
+                launchConfetti();
+            }
+        }
+
+        /* ==========================================================================
+           7. GIỌNG ĐỌC BÁO CÁO AI (TEXT-TO-SPEECH)
+           ========================================================================== */
+        function speakVietnamese(text) {
+            if (!('speechSynthesis' in window)) {
+                alert("Thiết bị của bạn không hỗ trợ Text-to-Speech.");
+                return;
+            }
+            window.speechSynthesis.cancel(); // Stop previous
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'vi-VN';
+            utter.rate = 1.0;
+            utter.pitch = 1.0;
+
+            // Try to find a good Vietnamese voice
+            const voices = window.speechSynthesis.getVoices();
+            const viVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VN'));
+            if (viVoice) utter.voice = viVoice;
+
+            window.speechSynthesis.speak(utter);
+        }
+
+        function readAloudTodaySummary() {
+            soundEngine.coin();
+            const spent = expenses.reduce((s, e) => s + (parseInt(e.amount) || 0), 0);
+            const currentTab = document.getElementById('expenseType') ? document.getElementById('expenseType').value : 'Cố định';
+            const budget = getTabBudget(currentTab);
+            const remain = budget > 0 ? (budget - spent) : 0;
+
+            let speech = `Chào anh Lộc! Hôm nay tổng chi tiêu ghi nhận là ${formatMoney(spent)}.`;
+            if (budget > 0) {
+                if (remain >= 0) {
+                    speech += ` Anh còn lại ${formatMoney(remain)} trong ngân sách. Tiết kiệm rất tốt nghen bậu!`;
+                } else {
+                    speech += ` Cảnh báo: Anh đã xài lố ngân sách ${formatMoney(Math.abs(remain))} rồi, tém tém lại nghen!`;
+                }
+            } else {
+                speech += " Chúc anh một ngày tài lộc dồi dào, tiền vô như nước nghen!";
+            }
+
+            speakVietnamese(speech);
+            showFastToast('🗣️', 'Đang đọc to báo cáo tài chính...');
+        }
+
+
+        function initApp() {
             if (savedMonthYear !== actualMonthYear && expenses.length > 0) {
                 await processMonthTransition(savedMonthYear);
             }
@@ -2784,6 +3603,7 @@ Viết bài tổng kết chuyến đi/sự kiện này (khoảng 150 chữ). Khe
         }
 
         function updateDashboard() {
+            setTimeout(updatePiggyMascotState, 50);
             const type = document.getElementById('expenseType').value;
             const currentExpenses = expenses.filter(e => (e.type || 'Biến động') === type);
 
@@ -4540,6 +5360,8 @@ Trường hợp 2: Nếu xin lời khuyên mua sắm (chưa mua)
 
         // Start
         initApp();
+        updateSoundToggleBtn();
+        updatePiggyMascotState();
 
         function showUpdateToast() {
             const toast = document.getElementById('updateToast');
@@ -4591,6 +5413,59 @@ Trường hợp 2: Nếu xin lời khuyên mua sắm (chưa mua)
             });
         }
     </script>
+
+    <!-- CONFETTI CANVAS -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="fastToast" class="fast-toast">
+        <span id="fastToastIcon">⚡</span>
+        <span id="fastToastMsg">Đã ghi nhận giao dịch!</span>
+    </div>
+
+    <!-- MODAL LẮC QUẺ TÀI LỘC & PHONG THỦY CHI TIÊU -->
+    <div id="fortuneModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 420px; background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 1px solid #f59e0b;">
+            <button class="modal-close" onclick="closeFortuneModal()">X</button>
+            <h2 style="color: #f59e0b; text-align: center; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>🎋</span> Quẻ Tài Lộc Hôm Nay
+            </h2>
+            <div style="text-align: center; font-size: 0.75rem; color: #fde68a; margin-bottom: 12px;">Phong thủy thu chi hàng ngày • Lộc Miền Tây</div>
+
+            <div class="bamboo-tube-container" id="tubeContainer">
+                <div class="bamboo-tube" id="bambooTube" onclick="shakeFortuneTube()">🎋</div>
+                <div id="shakeTip" style="font-size: 0.85rem; color: #fff; margin-top: 8px; font-weight: 600;">
+                    Chạm vào ống xăm để LẮC QUẺ!
+                </div>
+            </div>
+
+            <!-- KẾT QUẢ QUẺ XĂM -->
+            <div id="fortuneResultCard" style="display: none;" class="fortune-stick-card">
+                <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #b45309; letter-spacing: 1px;" id="fortuneType">
+                    Quẻ Thượng Thượng
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #92400e; margin: 4px 0 10px 0;" id="fortuneTitle">
+                    Kim Ngân Mãn Đường
+                </h3>
+                <div style="font-size: 0.88rem; line-height: 1.5; color: #451a03; margin-bottom: 12px;" id="fortuneDetail">
+                    Hôm nay tài khí vượng, tiền bạc hanh thông. Rất thích hợp làm ăn, chốt đơn hoặc đầu tư món cần thiết.
+                </div>
+                <div style="background: rgba(217, 119, 6, 0.15); border-radius: 10px; padding: 8px; font-size: 0.8rem; font-weight: 700; color: #92400e;">
+                    Số may mắn hôm nay: <span style="font-size: 1.1rem; color: #b45309;" id="fortuneLuckyNum">68 - 86</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 18px;">
+                <button id="reShakeBtn" onclick="shakeFortuneTube()" style="display: none; padding: 10px 18px; border-radius: 10px; background: transparent; border: 1px solid #f59e0b; color: #f59e0b; font-weight: 700; cursor: pointer;">
+                    🔄 Lắc Lại
+                </button>
+                <button onclick="closeFortuneModal()" style="padding: 10px 22px; border-radius: 10px; background: #f59e0b; border: none; color: #000; font-weight: 800; cursor: pointer;">
+                    🎉 Nhận Lộc
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
