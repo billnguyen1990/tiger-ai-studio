@@ -8,7 +8,7 @@ import subprocess
 import threading
 import datetime
 import time
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, render_template, jsonify, request, send_from_directory, redirect
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import urllib.parse
@@ -5228,6 +5228,8 @@ def proxy_gemini_endpoint():
 @app.route('/tai-chinh')
 @app.route('/expense')
 @app.route('/quan-ly-tai-chinh')
+@app.route('/index.html')
+@app.route('/tai-chinh/index.html')
 def view_quan_ly_tai_chinh():
     """Quan Ly Tai Chinh PWA"""
     return render_template('quan_ly_tai_chinh.html')

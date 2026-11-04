@@ -1,14 +1,16 @@
 {
-  "name": "Quản Lý Tài Chính",
+  "name": "Quản Lý Tài Chính 💎",
   "short_name": "Tài Chính",
-  "description": "Ứng dụng quản lý tài chính cá nhân",
-  "start_url": "./index.html",
+  "description": "Ứng dụng quản lý tài chính cá nhân Lộc Miền Tây",
+  "start_url": "/tai-chinh",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f7f6",
-  "theme_color": "#059669",
+  "orientation": "portrait",
+  "background_color": "#070d19",
+  "theme_color": "#070d19",
   "icons": [
     {
-      "src": "app-icon-v56.png",
+      "src": "/app-icon-v56.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

@@ -1,16 +1,8 @@
-const CACHE_NAME = 'finance-app-v66';
+const CACHE_NAME = 'finance-app-v70';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './app-icon-v56.png',
-  './assets/trading_chart.png',
-  './assets/crypto_astronaut.png',
-  './assets/money_falling.png',
-  './assets/money_stacks.png',
-  './assets/gold_bars.png',
-  './assets/cal_aurora.jpg',
-  './assets/cal_sunset.jpg'
+  '/tai-chinh',
+  '/manifest.json',
+  '/app-icon-v56.png'
 ];
 
 self.addEventListener('install', event => {
@@ -18,7 +10,9 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).catch(err => {
+          console.warn('SW cache addAll warning:', err);
+        });
       })
   );
 });
@@ -38,11 +32,26 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  // Redirect root or index.html to cached /tai-chinh if offline
+  if (url.pathname === '/index.html' || url.pathname === '/') {
+    event.respondWith(
+      caches.match('/tai-chinh').then(cached => {
+        return cached || fetch('/tai-chinh').catch(() => caches.match('/tai-chinh'));
+      })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        return response || fetch(event.request);
+        return response || fetch(event.request).catch(err => {
+          if (event.request.mode === 'navigate') {
+            return caches.match('/tai-chinh');
+          }
+          throw err;
+        });
       })
   );
 });
-
