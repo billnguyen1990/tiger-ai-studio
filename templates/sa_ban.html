@@ -8,11 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-sky: #161936;
-      --bg-ground: #1c2242;
-      --road-color: #23294a;
-      --road-line: rgba(148, 163, 184, 0.35);
-      --hud-bg: rgba(17, 23, 54, 0.92);
+      --bg-sky: #161b33;
+      --hud-bg: rgba(18, 24, 58, 0.92);
       --hud-border: #3b5bdb;
       --hud-text: #f8fafc;
       --accent: #00e5be;
@@ -22,12 +19,9 @@
     }
 
     body.day-mode {
-      --bg-sky: #dceefb;
-      --bg-ground: #e6f2e8;
-      --road-color: #cbd5e1;
-      --road-line: #ffffff;
-      --hud-bg: rgba(255, 255, 255, 0.95);
-      --hud-border: #2563eb;
+      --bg-sky: #b7ebd0;
+      --hud-bg: rgba(255, 255, 255, 0.96);
+      --hud-border: #1e40af;
       --hud-text: #0f172a;
     }
 
@@ -40,10 +34,10 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
-      transition: background 0.4s ease;
+      transition: background 0.45s ease;
     }
 
-    /* ================= TOP HUD BAR (SHO NGUYEN STUDIO STYLE) ================= */
+    /* ================= TOP HUD BAR (EXACT SHO NGUYEN STUDIO LAYOUT) ================= */
     .studio-hud-top {
       position: fixed;
       top: 10px;
@@ -57,7 +51,7 @@
       gap: 8px;
     }
 
-    .hud-left, .hud-center, .hud-right, .light-switch-wrap {
+    .hud-left, .hud-center, .light-switch-wrap {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -70,13 +64,13 @@
       border: 1.5px solid var(--hud-border);
       color: var(--hud-text);
       padding: 7px 12px;
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 800;
       letter-spacing: 0.3px;
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(10px);
       cursor: pointer;
       transition: all 0.2s ease;
@@ -93,7 +87,7 @@
     .hud-box.online-box {
       border-color: #10b981;
       color: #10b981;
-      background: rgba(6, 78, 59, 0.75);
+      background: rgba(6, 78, 59, 0.85);
     }
     body.day-mode .hud-box.online-box {
       background: #ecfdf5;
@@ -118,7 +112,7 @@
       align-items: center;
       background: var(--hud-bg);
       border: 1.5px solid var(--hud-border);
-      border-radius: 6px;
+      border-radius: 4px;
       padding: 3px;
       gap: 4px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.35);
@@ -127,9 +121,9 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 0.76rem;
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: 0.75rem;
       font-weight: 800;
       color: #94a3b8;
       text-decoration: none;
@@ -140,7 +134,8 @@
       color: var(--hud-text);
       background: rgba(59, 91, 219, 0.15);
     }
-    .t-nav-item.active {
+    .t-nav-item.active,
+    body.day-mode .t-nav-item.active {
       background: #2563eb;
       color: #ffffff;
       box-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
@@ -148,18 +143,23 @@
     .t-nav-badge {
       font-size: 0.6rem;
       padding: 1px 5px;
-      border-radius: 4px;
+      border-radius: 3px;
       font-weight: 800;
       background: #f59e0b;
       color: #0f172a;
     }
 
-    /* RIGHT MENU STRIP (CÔNG VIỆC | CAMERA + | BÁO CÁO + | NHÂN SỰ | SKILL) */
+    /* RIGHT MENU STRIP (CÔNG VIỆC | CAMERA + | BÁO CÁO + | NHÂN SỰ | + | 🌙 | SKILL) */
+    .light-switch-wrap {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
     .hud-menu-strip {
       display: inline-flex;
       background: var(--hud-bg);
       border: 1.5px solid var(--hud-border);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
     }
     .hud-menu-btn {
       padding: 7px 12px;
@@ -181,14 +181,13 @@
     }
 
     /* DAY/NIGHT PILL SWITCH UNDER RIGHT MENU */
-    .light-switch-wrap {
+    .pill-switch-row {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
+      align-items: center;
+      gap: 8px;
     }
     .pill-switch {
-      width: 64px;
+      width: 62px;
       height: 28px;
       background: #38bdf8;
       border-radius: 20px;
@@ -196,11 +195,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 6px;
+      padding: 0 7px;
       cursor: pointer;
       position: relative;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      font-size: 0.68rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      font-size: 0.66rem;
       font-weight: 900;
       color: #ffffff;
     }
@@ -218,7 +217,40 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
     body.day-mode .pill-knob {
-      right: 37px;
+      right: 35px;
+    }
+    .pill-label-box {
+      background: var(--hud-bg);
+      border: 1px solid var(--hud-border);
+      color: var(--hud-text);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 4px 8px;
+    }
+
+    /* RIGHT-EDGE VERTICAL TAB "VIỆC ▲" */
+    .right-edge-tab {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--hud-bg);
+      border: 1.5px solid var(--hud-border);
+      border-right: none;
+      color: var(--hud-text);
+      padding: 12px 7px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      z-index: 195;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.35);
+    }
+    .right-edge-tab:hover {
+      background: #2563eb;
+      color: #fff;
     }
 
     /* ================= 3D ISOMETRIC CAMPUS VIEWPORT ================= */
@@ -236,65 +268,109 @@
 
     .iso-scene-wrapper {
       position: relative;
-      width: 1500px;
-      height: 920px;
+      width: 1600px;
+      height: 900px;
       transform-origin: center center;
       transition: transform 0.08s ease-out;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    .iso-svg {
+    /* HIGH-RES 3D ARCHITECTURAL RENDERS (NIGHT & DAY CROSSFADE) */
+    .campus-img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      overflow: visible;
-      filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.45));
+      object-fit: cover;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
     }
-    body.day-mode .iso-svg {
-      filter: drop-shadow(0 20px 30px rgba(15, 23, 42, 0.15));
+    .campus-img.day {
+      opacity: 0;
+    }
+    body.day-mode .campus-img.day {
+      opacity: 1;
     }
 
-    /* SVG ROOM HOVER EFFECTS */
-    .iso-room-group {
+    /* INTERACTIVE ROOM HITBOXES (GLOW ON HOVER) */
+    .iso-overlay-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+    }
+    .room-hitbox {
+      fill: rgba(0, 229, 190, 0.0);
+      stroke: rgba(0, 229, 190, 0.0);
+      stroke-width: 3;
       cursor: pointer;
-      transition: filter 0.25s ease, transform 0.25s ease;
+      transition: all 0.22s ease;
     }
-    .iso-room-group:hover {
-      filter: brightness(1.18) drop-shadow(0 0 16px rgba(0, 229, 190, 0.55));
+    .room-hitbox:hover {
+      fill: rgba(0, 229, 190, 0.14);
+      stroke: rgba(0, 229, 190, 0.9);
+      filter: drop-shadow(0 0 18px rgba(0, 229, 190, 0.65));
     }
 
-    /* FLOATING AGENT NAME TAGS OVER 3D ROOMS (EXACT SHO NGUYEN STUDIO STYLE) */
+    /* HOLOGRAM PULSE RING OVER COMMAND ROOM SPHERE */
+    .holo-pulse {
+      position: absolute;
+      left: 48.7%;
+      top: 22.8%;
+      width: 96px;
+      height: 54px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px solid rgba(56, 189, 248, 0.8);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.85), inset 0 0 15px rgba(56, 189, 248, 0.6);
+      pointer-events: none;
+      z-index: 25;
+      animation: holoRing 2.4s ease-in-out infinite;
+    }
+    @keyframes holoRing {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.7; }
+      50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+    }
+
+    /* FLOATING AGENT NAME TAGS OVER 3D ROOMS (EXACT SHO NGUYEN STUDIO BADGE STYLE) */
     .agent-tag {
       position: absolute;
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: rgba(15, 23, 42, 0.92);
+      background: rgba(15, 23, 42, 0.94);
       border: 2px solid #10b981;
       padding: 4px 10px 4px 5px;
       border-radius: 4px;
       color: #ffffff;
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       font-weight: 800;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.55);
       cursor: pointer;
       z-index: 50;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       white-space: nowrap;
+      transform: translate(-50%, -50%);
     }
     body.day-mode .agent-tag {
       background: rgba(255, 255, 255, 0.96);
       color: #0f172a;
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
     }
     .agent-tag:hover {
-      transform: translateY(-4px) scale(1.06);
-      z-index: 80;
-      box-shadow: 0 10px 24px rgba(0, 229, 190, 0.5);
+      transform: translate(-50%, calc(-50% - 5px)) scale(1.08);
+      z-index: 90;
+      box-shadow: 0 12px 28px rgba(0, 229, 190, 0.65);
     }
     .agent-tag.amber { border-color: #f59e0b; }
     .agent-tag.blue { border-color: #3b82f6; }
     .agent-tag.pink { border-color: #ec4899; }
     .agent-tag.purple { border-color: #8b5cf6; }
     .agent-tag.red { border-color: #ef4444; }
+    .agent-tag.cyan { border-color: #06b6d4; }
 
     .agent-tag-avatar {
       width: 22px;
@@ -306,6 +382,7 @@
       justify-content: center;
       font-size: 0.85rem;
       overflow: hidden;
+      flex-shrink: 0;
     }
     .agent-tag-avatar img {
       width: 100%;
@@ -318,47 +395,48 @@
       border-radius: 50%;
       background: #10b981;
       box-shadow: 0 0 6px #10b981;
+      flex-shrink: 0;
     }
 
-    /* ROOM COUNTER PILL (e.g. [📦 24.8k]) */
+    /* COUNTER PILL (LIKE [🗑️ 0] / [📦 24.878] IN REFERENCE) */
     .room-stat-pill {
       position: absolute;
-      background: rgba(16, 185, 129, 0.92);
-      color: #ffffff;
-      border: 1.5px solid #ffffff;
-      padding: 2px 8px;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      color: #047857;
+      border: 2px solid #10b981;
+      padding: 3px 9px;
       border-radius: 4px;
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       font-weight: 800;
       font-family: 'JetBrains Mono', monospace;
-      z-index: 45;
-      pointer-events: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 48;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.35);
     }
 
-    /* ANIMATED GHN TRUCKS ON THE HIGHWAY */
-    @keyframes driveRight {
-      0% { transform: translate(-220px, -110px); opacity: 0; }
+    /* ANIMATED 3D TRUCKS ON THE BOTTOM-LEFT HIGHWAY */
+    @keyframes driveDownRight {
+      0% { transform: translate(-80px, 535px); opacity: 0; }
       8% { opacity: 1; }
       92% { opacity: 1; }
-      100% { transform: translate(620px, 310px); opacity: 0; }
+      100% { transform: translate(520px, 915px); opacity: 0; }
     }
-    @keyframes driveLeft {
-      0% { transform: translate(620px, 310px); opacity: 0; }
+    @keyframes driveUpLeft {
+      0% { transform: translate(460px, 935px); opacity: 0; }
       8% { opacity: 1; }
       92% { opacity: 1; }
-      100% { transform: translate(-220px, -110px); opacity: 0; }
+      100% { transform: translate(-120px, 565px); opacity: 0; }
     }
-    .truck-anim-1 { animation: driveRight 18s linear infinite; }
-    .truck-anim-2 { animation: driveRight 18s linear infinite 9s; }
-    .truck-anim-3 { animation: driveLeft 22s linear infinite 4s; }
+    .highway-truck-1 { animation: driveDownRight 16s linear infinite; }
+    .highway-truck-2 { animation: driveDownRight 16s linear infinite 8s; }
+    .highway-car-1 { animation: driveUpLeft 19s linear infinite 3s; }
 
-    /* NIGHT HEADLIGHTS */
-    .night-light-beam {
-      opacity: 0.65;
+    .night-headlight {
+      opacity: 0.7;
       transition: opacity 0.4s;
     }
-    body.day-mode .night-light-beam {
+    body.day-mode .night-headlight {
       opacity: 0;
     }
 
@@ -367,11 +445,11 @@
       position: fixed;
       bottom: 14px;
       left: 14px;
-      width: 390px;
+      width: 400px;
       max-width: calc(100vw - 28px);
       background: var(--hud-bg);
       border: 1.5px solid var(--hud-border);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
       z-index: 190;
       backdrop-filter: blur(12px);
       transition: all 0.3s ease;
@@ -385,18 +463,23 @@
       font-size: 0.75rem;
       font-weight: 800;
       cursor: pointer;
+      letter-spacing: 0.4px;
     }
     .chat-header-btn {
       background: transparent;
       border: 1px solid var(--hud-border);
       color: var(--hud-text);
-      padding: 3px 8px;
+      padding: 3px 9px;
       font-size: 0.68rem;
       font-weight: 800;
       cursor: pointer;
     }
+    .chat-header-btn:hover {
+      background: #2563eb;
+      color: #fff;
+    }
     .chat-body {
-      max-height: 175px;
+      max-height: 185px;
       overflow-y: auto;
       padding: 10px 12px;
       display: flex;
@@ -410,8 +493,8 @@
       display: flex;
       gap: 9px;
       font-size: 0.76rem;
-      line-height: 1.38;
-      border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
+      line-height: 1.4;
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.22);
       padding-bottom: 8px;
     }
     .chat-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -425,7 +508,13 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      overflow: hidden;
+    }
+    .chat-item-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .chat-meta {
       font-size: 0.7rem;
@@ -433,7 +522,7 @@
       margin-bottom: 2px;
     }
     body.day-mode .chat-meta { color: #64748b; }
-    .chat-meta b { color: var(--accent); }
+    .chat-meta b { color: #f59e0b; }
     body.day-mode .chat-meta b { color: #2563eb; }
 
     /* ================= BOTTOM-RIGHT ACTION BUTTON (+ TẠO VIỆC) ================= */
@@ -449,12 +538,13 @@
       background: #2563eb;
       color: #ffffff;
       border: 1.5px solid #60a5fa;
-      padding: 10px 18px;
+      padding: 10px 20px;
       font-size: 0.8rem;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
       transition: all 0.2s;
+      letter-spacing: 0.5px;
     }
     .btn-create-task:hover {
       background: #1d4ed8;
@@ -526,7 +616,7 @@
     .cam-preview-box {
       position: relative;
       width: 100%;
-      height: 300px;
+      height: 310px;
       background: #020617;
       border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 8px;
@@ -564,7 +654,7 @@
       padding: 12px;
     }
     .kpi-mini-label { font-size: 0.72rem; color: #94a3b8; margin-bottom: 4px; }
-    .kpi-mini-val { font-size: 1.1rem; font-weight: 800; color: #00e5be; font-family: 'JetBrains Mono', monospace; }
+    .kpi-mini-val { font-size: 1.05rem; font-weight: 800; color: #00e5be; font-family: 'JetBrains Mono', monospace; }
 
     .modal-actions {
       display: flex;
@@ -589,7 +679,7 @@
     .m-btn.blue { background: #2563eb; color: #ffffff; }
     .m-btn.amber { background: #f59e0b; color: #070d12; }
 
-    /* ================= SKILL & CONNECTOR FULL OVERLAY (IMAGE 1 STYLE) ================= */
+    /* ================= SKILL & CONNECTOR FULL OVERLAY (EXACT IMAGE 1 LAYOUT) ================= */
     .skill-drawer {
       position: fixed;
       inset: 0;
@@ -725,11 +815,12 @@
   <header class="studio-hud-top">
     <div class="hud-left">
       <div class="hud-box time-box" id="hudClock">CẬP NHẬT LÚC --:--:--</div>
-      <div class="hud-box" onclick="resetViewport()" title="Về góc nhìn trung tâm">🏠</div>
-      <div class="hud-box" onclick="openRoomModal('cairang')" title="Xem nhanh Camera Kho">📹</div>
+      <div class="hud-box" onclick="resetViewport()" title="Về góc nhìn chuẩn">🏠</div>
+      <div class="hud-box" onclick="openRoomModal('cairang')" title="Mở Camera giám sát">📹</div>
+      <div class="hud-box" onclick="toggleDayNight()" title="Đổi chế độ Sáng/Tối">👁️ CHẾ ĐỘ XEM</div>
       <div class="hud-box online-box">
         <span class="online-dot"></span>
-        <span>4 kho trực tuyến · 9 luồng hôm nay</span>
+        <span>4 đang xem · 9 hôm nay</span>
       </div>
     </div>
 
@@ -756,308 +847,178 @@
         <button class="hud-menu-btn highlight" onclick="openRoomModal('cairang')">CAMERA +</button>
         <button class="hud-menu-btn" onclick="openRoomModal('b2b')">BÁO CÁO +</button>
         <button class="hud-menu-btn" onclick="openRoomModal('kythuat')">NHÂN SỰ</button>
+        <button class="hud-menu-btn" onclick="openSkillDrawer()">+</button>
         <button class="hud-menu-btn" onclick="toggleDayNight()" id="themeIconBtn">🌙</button>
-        <button class="hud-menu-btn" onclick="openSkillDrawer()">SKILL 17</button>
+        <button class="hud-menu-btn" onclick="openSkillDrawer()">SKILL</button>
       </div>
-      <div class="pill-switch" onclick="toggleDayNight()" title="Bật/Tắt đèn Sa Bàn ( Chế độ Ngày / Đêm )">
-        <span>ON</span>
-        <span>OFF</span>
-        <div class="pill-knob"></div>
+      <div class="pill-switch-row">
+        <div class="pill-switch" onclick="toggleDayNight()" title="Bật/Tắt đèn văn phòng (Ngày / Đêm)">
+          <span>ON</span>
+          <span>OFF</span>
+          <div class="pill-knob"></div>
+        </div>
+        <span class="pill-label-box" id="lampStatusLabel">Đèn văn phòng</span>
       </div>
     </div>
   </header>
+
+  <!-- RIGHT EDGE VERTICAL TAB -->
+  <div class="right-edge-tab" onclick="openSkillDrawer()">VIỆC ▲</div>
 
   <!-- ================= 3D ISOMETRIC CAMPUS VIEWPORT ================= -->
   <main class="iso-viewport" id="isoViewport">
     <div class="iso-scene-wrapper" id="isoScene">
 
-      <!-- FLOATING AGENT NAME TAGS (CLICKABLE) -->
-      <div class="agent-tag" style="left: 250px; top: 185px;" onclick="openRoomModal('cairang')">
+      <!-- HIGH-RES 3D ARCHITECTURAL CUTAWAY RENDERS (NIGHT & DAY) -->
+      <img class="campus-img night" src="/static/img/saban_campus_night.jpg" alt="Tiger AI 3D Campus Night">
+      <img class="campus-img day" src="/static/img/saban_campus_day.jpg" alt="Tiger AI 3D Campus Day">
+
+      <!-- HOLOGRAM PULSE OVER THE CENTRAL SPHERE -->
+      <div class="holo-pulse"></div>
+
+      <!-- INTERACTIVE ROOM HITBOXES & ANIMATED 3D HIGHWAY TRUCKS -->
+      <svg class="iso-overlay-svg" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+        <!-- Room 1: Kho Cái Răng (Left 2-story Loft + Conveyor Belt) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('cairang')"
+          points="240,245 535,105 660,315 415,495 245,405">
+          <title>🏢 Kho Cái Răng (Hub 21088000) - NVXL Công Bằng</title>
+        </polygon>
+
+        <!-- Room 2: Trung Tâm Chỉ Huy Tiger AI (Top Center Hologram Room) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('kythuat')"
+          points="560,95 815,20 985,155 775,305 565,190">
+          <title>🛠️ Trung Tâm Chỉ Huy Tiger AI Core (24/7)</title>
+        </polygon>
+
+        <!-- Room 3: Kho Bình Thủy (Top Right Analytics & Wave Screen Room) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('binhthuy')"
+          points="995,160 1285,295 1105,415 880,295">
+          <title>🏢 Kho Bình Thủy (Hub 21985000) - NVXL Bảo Toàn</title>
+        </polygon>
+
+        <!-- Room 4: Phòng Server & Đối Soát ODO 365 (Center Server Racks) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('odo365')"
+          points="725,365 895,295 1135,430 955,535">
+          <title>🚛 Phòng Server & Đối Soát Xe Tải ODO 365 (21 Kho)</title>
+        </polygon>
+
+        <!-- Room 5: Kho Vị Thanh (Far Right Green Warehouse Bay) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('vithanh')"
+          points="1115,415 1295,295 1525,425 1355,575">
+          <title>🏢 Kho Vị Thanh (Hub 22862000) - NVXL Đức Trung</title>
+        </polygon>
+
+        <!-- Room 6: Phòng Dữ Liệu B2B & Đơn Tạo (Lower Left CCTV & Desks) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('b2b')"
+          points="435,515 625,405 785,505 595,645">
+          <title>📊 Phòng Dữ Liệu B2B & Xuất Đơn Tạo 18:00 (Topic 506)</title>
+        </polygon>
+
+        <!-- Room 7: Ban Thanh Tra & Kiểm Soát Cổng Chính (Front Gate Room) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('thanhtra')"
+          points="715,535 885,465 1035,565 875,685">
+          <title>🔍 Ban Thanh Tra & Canh Đơn Hàng VIP 24/7</title>
+        </polygon>
+
+        <!-- Room 8: Kho Ô Môn & Sân Cafe (Bottom Right Cubicles & Patio) -->
+        <polygon class="room-hitbox" onclick="openRoomModal('omon')"
+          points="935,665 1165,525 1435,665 1175,835">
+          <title>🏢 Kho Ô Môn (Hub 22917000) - NVXL Trọng Bằng</title>
+        </polygon>
+      </svg>
+
+      <!-- ================= FLOATING AGENT NAME TAGS (EXACT SHO NGUYEN STUDIO POSITIONS) ================= -->
+      <!-- 1. Kho Cái Răng (Left Loft & Conveyor) -->
+      <div class="agent-tag blue" style="left: 30.5%; top: 20.5%;" onclick="openRoomModal('cairang')">
         <span class="agent-tag-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></span>
-        <span>Công Bằng (Cái Răng)</span>
+        <span>Công Bằng</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag pink" style="left: 155px; top: 255px;" onclick="openRoomModal('cairang')">
+      <div class="agent-tag pink" style="left: 33.5%; top: 26.5%;" onclick="openRoomModal('cairang')">
         <span class="agent-tag-avatar">📹</span>
-        <span>Cam 05 Cái Răng</span>
+        <span>Kho Cái Răng · Cam 05</span>
+        <span class="agent-tag-dot"></span>
+      </div>
+      <div class="agent-tag" style="left: 26.5%; top: 41.5%;" onclick="openRoomModal('cairang')">
+        <span class="agent-tag-avatar">📦</span>
+        <span>Băng Chuyền Cái Răng</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <div class="agent-tag amber" style="left: 525px; top: 135px;" onclick="openRoomModal('kythuat')">
+      <!-- 2. Trung Tâm Chỉ Huy Tiger AI (Top Center Hologram Room) -->
+      <div class="agent-tag amber" style="left: 48.5%; top: 15.5%;" onclick="openRoomModal('kythuat')">
         <span class="agent-tag-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></span>
         <span>Tiger AI Core</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag red" style="left: 430px; top: 215px;" onclick="openRoomModal('kythuat')">
-        <span class="agent-tag-avatar">🛠️</span>
-        <span>Auto-Heal Bot</span>
+      <div class="agent-tag red" style="left: 44.5%; top: 31.5%;" onclick="openRoomModal('kythuat')">
+        <span class="agent-tag-avatar">⚡</span>
+        <span>Cloud Runner 24/7</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <div class="agent-tag blue" style="left: 880px; top: 235px;" onclick="openRoomModal('binhthuy')">
+      <!-- 3. Kho Bình Thủy (Top Right Analytics & Wave Chart Room) -->
+      <div class="agent-tag blue" style="left: 65.5%; top: 29.5%;" onclick="openRoomModal('binhthuy')">
         <span class="agent-tag-avatar">🦁</span>
         <span>Bảo Toàn (Bình Thủy)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag" style="left: 980px; top: 290px;" onclick="openRoomModal('binhthuy')">
+      <div class="agent-tag" style="left: 71.5%; top: 36%;" onclick="openRoomModal('binhthuy')">
         <span class="agent-tag-avatar">📹</span>
         <span>Cam 06 Bình Thủy</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <div class="agent-tag purple" style="left: 640px; top: 350px;" onclick="openRoomModal('odo365')">
+      <!-- 4. Phòng Server & Đối Soát ODO 365 (Center Server Room) -->
+      <div class="agent-tag cyan" style="left: 55.5%; top: 41%;" onclick="openRoomModal('odo365')">
+        <span class="agent-tag-avatar">🛠️</span>
+        <span>Auto-Heal Bot</span>
+        <span class="agent-tag-dot"></span>
+      </div>
+      <div class="agent-tag purple" style="left: 60.5%; top: 48.5%;" onclick="openRoomModal('odo365')">
         <span class="agent-tag-avatar">🚛</span>
-        <span>Agent ODO 365 (21 Kho)</span>
+        <span>ODO 365 (21 Kho)</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <div class="agent-tag blue" style="left: 1125px; top: 380px;" onclick="openRoomModal('vithanh')">
+      <!-- 5. Kho Vị Thanh (Far Right Green Warehouse Bay) -->
+      <div class="agent-tag blue" style="left: 81.5%; top: 44.5%;" onclick="openRoomModal('vithanh')">
         <span class="agent-tag-avatar">🦅</span>
         <span>Đức Trung (Vị Thanh)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag" style="left: 1055px; top: 435px;" onclick="openRoomModal('vithanh')">
+      <div class="agent-tag" style="left: 86.5%; top: 52%;" onclick="openRoomModal('vithanh')">
         <span class="agent-tag-avatar">📹</span>
         <span>Cam 08 Vị Thanh</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <div class="agent-tag amber" style="left: 440px; top: 475px;" onclick="openRoomModal('b2b')">
+      <!-- 6. Phòng Dữ Liệu B2B & Đơn Tạo (Lower Left Office) -->
+      <div class="agent-tag amber" style="left: 36%; top: 55.5%;" onclick="openRoomModal('b2b')">
         <span class="agent-tag-avatar">📊</span>
         <span>Agent B2B (Topic 506)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="room-stat-pill" style="left: 550px; top: 520px;">📦 24.878 đơn</div>
+      <div class="room-stat-pill" style="left: 42%; top: 61%;" onclick="openRoomModal('b2b')">📦 24.878</div>
 
-      <div class="agent-tag red" style="left: 690px; top: 585px;" onclick="openRoomModal('thanhtra')">
+      <!-- 7. Ban Thanh Tra & Cổng Kiểm Soát (Front Security Room next to Vietnam Flag) -->
+      <div class="agent-tag red" style="left: 53.5%; top: 60%;" onclick="openRoomModal('thanhtra')">
         <span class="agent-tag-avatar">🕵️</span>
         <span>Thanh Tra & Watchdog</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <div class="agent-tag amber" style="left: 995px; top: 650px;" onclick="openRoomModal('omon')">
+      <!-- 8. Kho Ô Môn & Sân Trà (Bottom Right Cubicles) -->
+      <div class="agent-tag amber" style="left: 69.5%; top: 66.5%;" onclick="openRoomModal('omon')">
         <span class="agent-tag-avatar">🐺</span>
         <span>Trọng Bằng (Ô Môn)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag" style="left: 1120px; top: 705px;" onclick="openRoomModal('omon')">
+      <div class="agent-tag" style="left: 76.5%; top: 73.5%;" onclick="openRoomModal('omon')">
         <span class="agent-tag-avatar">📹</span>
         <span>Cam 01 Ô Môn</span>
         <span class="agent-tag-dot"></span>
       </div>
-
-      <!-- TRUE ISOMETRIC 3D ARCHITECTURAL SVG CAMPUS -->
-      <svg class="iso-svg" viewBox="0 0 1500 920" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="wallLeft" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#8b9bb4"/>
-            <stop offset="100%" stop-color="#5c6b84"/>
-          </linearGradient>
-          <linearGradient id="wallRight" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#64748b"/>
-            <stop offset="100%" stop-color="#3b4960"/>
-          </linearGradient>
-          <linearGradient id="floorWarm" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#f3e5d0"/>
-            <stop offset="100%" stop-color="#d6be9c"/>
-          </linearGradient>
-          <linearGradient id="floorTech" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#cbd5e1"/>
-            <stop offset="100%" stop-color="#94a3b8"/>
-          </linearGradient>
-          <linearGradient id="floorGreen" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#6ee7b7"/>
-            <stop offset="100%" stop-color="#10b981"/>
-          </linearGradient>
-          <linearGradient id="screenGlow" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#1e3a8a"/>
-            <stop offset="100%" stop-color="#0f172a"/>
-          </linearGradient>
-          <radialGradient id="roomLampGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="rgba(251, 191, 36, 0.35)"/>
-            <stop offset="100%" stop-color="rgba(251, 191, 36, 0)"/>
-          </radialGradient>
-        </defs>
-
-        <!-- CAMPUS OUTER GROUND & FENCE -->
-        <polygon points="560,40 1440,480 880,860 40,420" fill="#232c4b" opacity="0.6" stroke="#38bdf8" stroke-width="2" stroke-dasharray="10,5"/>
-
-        <!-- ================= FRONT 2-LANE HIGHWAY & SIDEWALK ================= -->
-        <polygon points="0,430 820,850 690,920 -100,500" fill="var(--road-color)"/>
-        <line x1="-40" y1="465" x2="755" y2="885" stroke="var(--road-line)" stroke-width="3" stroke-dasharray="18,14"/>
-        <!-- Crosswalk in front of main gate -->
-        <g stroke="#cbd5e1" stroke-width="5" opacity="0.65">
-          <line x1="460" y1="680" x2="500" y2="660"/>
-          <line x1="475" y1="688" x2="515" y2="668"/>
-          <line x1="490" y1="696" x2="530" y2="676"/>
-          <line x1="505" y1="704" x2="545" y2="684"/>
-        </g>
-
-        <!-- CAMPUS SIGN ON SIDEWALK: TIGER AI • GHN MT01 -->
-        <g transform="translate(385, 595) rotate(27)">
-          <text x="0" y="0" fill="#38bdf8" font-size="15" font-weight="900" letter-spacing="2" font-family="JetBrains Mono">TIGER AI • GHN MT01</text>
-        </g>
-
-        <!-- ================= ROOM 2 (TOP CENTER): PHÒNG KỸ THUẬT & TIGER AI CORE ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('kythuat')">
-          <!-- Floor -->
-          <polygon points="550,90 830,230 650,320 370,180" fill="url(#floorWarm)" stroke="#94a3b8" stroke-width="2"/>
-          <!-- Left Back Wall (with Giant Command Screen) -->
-          <polygon points="370,180 550,90 550,18 370,108" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Right Back Wall (with Digital Clock 10:30) -->
-          <polygon points="550,90 830,230 830,158 550,18" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Giant Command Board on Left Back Wall -->
-          <polygon points="410,145 535,82 535,35 410,98" fill="url(#screenGlow)" stroke="#38bdf8" stroke-width="2"/>
-          <line x1="422" y1="102" x2="520" y2="53" stroke="#00e5be" stroke-width="2"/>
-          <line x1="422" y1="115" x2="505" y2="73" stroke="#38bdf8" stroke-width="2"/>
-          <line x1="422" y1="128" x2="525" y2="76" stroke="#f59e0b" stroke-width="2"/>
-          <!-- Wall Clock Display on Right Wall -->
-          <polygon points="690,145 765,182 765,152 690,115" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
-          <text x="702" y="155" fill="#38bdf8" font-size="13" font-weight="800" font-family="JetBrains Mono" transform="skewY(26)">24/7 AI</text>
-          <!-- Center Hologram Round Table -->
-          <ellipse cx="595" cy="215" rx="46" ry="24" fill="#d97706" opacity="0.6"/>
-          <ellipse cx="595" cy="208" rx="40" ry="20" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
-          <circle cx="595" cy="202" r="12" fill="#38bdf8" opacity="0.85"/>
-          <ellipse cx="595" cy="210" rx="95" ry="50" fill="url(#roomLampGlow)"/>
-        </g>
-
-        <!-- ================= ROOM 1 (TOP LEFT): KHO CÁI RĂNG (HUB 21088000) ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('cairang')">
-          <!-- Floor -->
-          <polygon points="340,195 590,320 400,415 150,290" fill="url(#floorWarm)" stroke="#94a3b8" stroke-width="2"/>
-          <!-- Back Left Wall -->
-          <polygon points="150,290 340,195 340,115 150,210" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Back Right Wall -->
-          <polygon points="340,195 590,320 590,240 340,115" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Mezzanine / Upper Loft (2nd Floor like Shif/Amber room in reference) -->
-          <polygon points="230,210 390,290 320,325 160,245" fill="#e2e8f0" opacity="0.9" stroke="#64748b" stroke-width="1.5"/>
-          <!-- Conveyor Belt & Heavy Parcels -->
-          <polygon points="240,305 420,395 450,380 270,290" fill="#334155" stroke="#00e5be" stroke-width="1.5"/>
-          <rect x="290" y="315" width="18" height="14" fill="#f59e0b" rx="2"/>
-          <rect x="335" y="338" width="20" height="15" fill="#f59e0b" rx="2"/>
-          <rect x="380" y="360" width="18" height="14" fill="#38bdf8" rx="2"/>
-          <!-- Wall KPI Screen -->
-          <polygon points="460,245 555,292 555,252 460,205" fill="#0f172a" stroke="#00e5be" stroke-width="1.5"/>
-          <ellipse cx="370" cy="310" rx="110" ry="55" fill="url(#roomLampGlow)"/>
-        </g>
-
-        <!-- ================= ROOM 3 (TOP RIGHT): KHO BÌNH THỦY (HUB 21985000) ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('binhthuy')">
-          <!-- Floor -->
-          <polygon points="860,245 1120,375 950,460 690,330" fill="url(#floorWarm)" stroke="#94a3b8" stroke-width="2"/>
-          <!-- Left Wall -->
-          <polygon points="690,330 860,245 860,175 690,260" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Right Wall with Big Wave Chart Screen -->
-          <polygon points="860,245 1120,375 1120,305 860,175" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="915,255 1075,335 1075,285 915,205" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
-          <polyline points="925,245 955,250 985,275 1015,270 1045,305 1065,300" fill="none" stroke="#00e5be" stroke-width="3"/>
-          <!-- Round Desks & Parcels -->
-          <ellipse cx="895" cy="355" rx="45" ry="24" fill="#cbd5e1" stroke="#3b82f6" stroke-width="2"/>
-          <rect x="810" y="320" width="22" height="16" fill="#f59e0b" rx="2"/>
-          <ellipse cx="905" cy="350" rx="95" ry="50" fill="url(#roomLampGlow)"/>
-        </g>
-
-        <!-- ================= ROOM 4 (CENTER): TRẠM ĐỐI SOÁT XE TẢI ODO 365 (21 KHO) ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('odo365')">
-          <polygon points="650,345 910,475 740,560 480,430" fill="url(#floorTech)" stroke="#94a3b8" stroke-width="2"/>
-          <polygon points="480,430 650,345 650,285 480,370" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="650,345 910,475 910,415 650,285" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Fleet Control Consoles -->
-          <polygon points="620,435 710,480 740,465 650,420" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
-          <polygon points="680,405 770,450 800,435 710,390" fill="#1e293b" stroke="#00e5be" stroke-width="1.5"/>
-          <ellipse cx="695" cy="450" rx="90" ry="45" fill="url(#roomLampGlow)"/>
-        </g>
-
-        <!-- ================= ROOM 5 (RIGHT MIDDLE - GREEN FLOOR): KHO VỊ THANH (HUB 22862000) ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('vithanh')">
-          <polygon points="1145,390 1375,505 1215,585 985,470" fill="url(#floorGreen)" stroke="#10b981" stroke-width="2"/>
-          <polygon points="985,470 1145,390 1145,325 985,405" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="1145,390 1375,505 1375,440 1145,325" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
-          <!-- Sorting Pallets in Vi Thanh -->
-          <rect x="1140" y="475" width="26" height="18" fill="#f59e0b" rx="2"/>
-          <rect x="1180" y="495" width="26" height="18" fill="#f59e0b" rx="2"/>
-          <rect x="1220" y="465" width="26" height="18" fill="#ffffff" rx="2"/>
-        </g>
-
-        <!-- ================= ROOM 6 (LOWER LEFT): PHÒNG DỮ LIỆU B2B & LOOKER STUDIO (18:00) ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('b2b')">
-          <polygon points="455,445 695,565 535,645 295,525" fill="url(#floorWarm)" stroke="#94a3b8" stroke-width="2"/>
-          <polygon points="295,525 455,445 455,380 295,460" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="455,445 695,565 695,500 455,380" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Looker Studio Wall Board -->
-          <polygon points="320,500 435,442 435,395 320,453" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
-          <!-- B2B Data Workstation -->
-          <polygon points="440,535 510,570 535,555 465,520" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5"/>
-          <ellipse cx="495" cy="545" rx="85" ry="45" fill="url(#roomLampGlow)"/>
-        </g>
-
-        <!-- ================= ROOM 7 (FRONT GATE): BAN THANH TRA & CANH ĐƠN VIP ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('thanhtra')">
-          <polygon points="710,575 890,665 760,730 580,640" fill="url(#floorWarm)" stroke="#94a3b8" stroke-width="2"/>
-          <polygon points="580,640 710,575 710,505 580,570" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="710,575 890,665 890,595 710,505" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <!-- Watchdog Radar Ring -->
-          <ellipse cx="735" cy="650" rx="42" ry="22" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="2"/>
-          <circle cx="735" cy="645" r="8" fill="#ef4444"/>
-        </g>
-
-        <!-- ================= ROOM 8 (LOWER RIGHT): KHO Ô MÔN (HUB 22917000) ================= -->
-        <g class="iso-room-group" onclick="openRoomModal('omon')">
-          <polygon points="1095,605 1375,745 1215,825 935,685" fill="url(#floorWarm)" stroke="#94a3b8" stroke-width="2"/>
-          <polygon points="935,685 1095,605 1095,540 935,620" fill="url(#wallLeft)" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="1095,605 1375,745 1375,680 1095,540" fill="url(#wallRight)" stroke="#475569" stroke-width="1.5"/>
-          <!-- O Mon Sorting Bays (4 Cubicles like bottom-right of reference image) -->
-          <line x1="1015" y1="645" x2="1155" y2="715" stroke="#64748b" stroke-width="4"/>
-          <line x1="1085" y1="610" x2="1225" y2="680" stroke="#64748b" stroke-width="4"/>
-          <rect x="1040" y="685" width="24" height="16" fill="#f59e0b" rx="2"/>
-          <rect x="1115" y="720" width="24" height="16" fill="#f59e0b" rx="2"/>
-          <rect x="1190" y="755" width="24" height="16" fill="#38bdf8" rx="2"/>
-          <ellipse cx="1155" cy="715" rx="110" ry="55" fill="url(#roomLampGlow)"/>
-        </g>
-
-        <!-- ================= COURTYARD & VIETNAM FLAG 🇻🇳 (EXACT CENTER-BOTTOM POSITION) ================= -->
-        <g transform="translate(835, 765)">
-          <!-- Circular Courtyard Plaza -->
-          <ellipse cx="0" cy="0" rx="58" ry="30" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="6,4"/>
-          <ellipse cx="0" cy="0" rx="34" ry="18" fill="rgba(56, 189, 248, 0.15)" stroke="#38bdf8" stroke-width="1.5"/>
-          <!-- Flagpole -->
-          <line x1="0" y1="0" x2="0" y2="-85" stroke="#e2e8f0" stroke-width="3.5"/>
-          <!-- Red Flag with Yellow Star -->
-          <polygon points="0,-85 44,-75 40,-50 0,-60" fill="#ef4444" stroke="#fca5a5" stroke-width="1"/>
-          <polygon points="21,-74 23,-68 29,-68 24,-64 26,-58 21,-62 16,-58 18,-64 13,-68 19,-68" fill="#fde047"/>
-        </g>
-
-        <!-- ================= ANIMATED GHN TRUCKS ON THE ROAD ================= -->
-        <!-- Truck 1 -->
-        <g class="truck-anim-1" transform="translate(220, 560)">
-          <polygon points="0,0 55,28 35,38 -20,10" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="0,-24 55,4 55,28 0,0" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
-          <polygon points="-20,-14 35,14 55,4 0,-24" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
-          <text x="5" y="5" fill="#f97316" font-size="10" font-weight="900" transform="skewY(26)">GHN</text>
-          <!-- Truck Cabin -->
-          <polygon points="55,10 75,20 75,36 55,28" fill="#f97316"/>
-          <!-- Headlight Beam (Night Mode) -->
-          <polygon class="night-light-beam" points="75,30 135,55 110,75 65,38" fill="rgba(253, 224, 71, 0.45)"/>
-        </g>
-
-        <!-- Truck 2 -->
-        <g class="truck-anim-2" transform="translate(220, 560)">
-          <polygon points="0,0 55,28 35,38 -20,10" fill="#38bdf8" stroke="#1e3a8a" stroke-width="1.5"/>
-          <polygon points="0,-24 55,4 55,28 0,0" fill="#0284c7" stroke="#1e3a8a" stroke-width="1.5"/>
-          <polygon points="-20,-14 35,14 55,4 0,-24" fill="#7dd3fc" stroke="#1e3a8a" stroke-width="1.5"/>
-          <polygon points="55,10 75,20 75,36 55,28" fill="#f59e0b"/>
-          <polygon class="night-light-beam" points="75,30 135,55 110,75 65,38" fill="rgba(253, 224, 71, 0.45)"/>
-        </g>
-
-        <!--Surrounding Isometric Trees -->
-        <g fill="#334155" stroke="#475569" stroke-width="1.5">
-          <circle cx="110" cy="180" r="22"/><line x1="110" y1="202" x2="110" y2="220" stroke-width="3"/>
-          <circle cx="260" cy="105" r="18"/><line x1="260" y1="123" x2="260" y2="138" stroke-width="3"/>
-          <circle cx="960" cy="135" r="22"/><line x1="960" y1="157" x2="960" y2="175" stroke-width="3"/>
-          <circle cx="1270" cy="270" r="24"/><line x1="1270" y1="294" x2="1270" y2="312" stroke-width="3"/>
-          <circle cx="1410" cy="610" r="22"/><line x1="1410" y1="632" x2="1410" y2="650" stroke-width="3"/>
-        </g>
-      </svg>
 
     </div>
   </main>
@@ -1070,7 +1031,7 @@
     </div>
     <div class="chat-body" id="chatBodyList">
       <div class="chat-item">
-        <div class="chat-item-avatar">📊</div>
+        <div class="chat-item-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></div>
         <div>
           <div class="chat-meta"><b>Agent B2B 18h</b> → Anh Lộc · Vừa xong</div>
           <div>Đã lọc trực tiếp 24.878 đơn từ Data sang Ketqua (5 giây) và bắn báo cáo về đúng Topic 506 (Đơn Tạo).</div>
@@ -1079,14 +1040,14 @@
       <div class="chat-item">
         <div class="chat-item-avatar">🛠️</div>
         <div>
-          <div class="chat-meta"><b>Phòng Kỹ Thuật</b> → Anh Lộc · Hôm nay</div>
+          <div class="chat-meta"><b>Auto-Heal Bot</b> → Anh Lộc · Hôm nay</div>
           <div>Đã thu hồi tin nhắn rác 8:45 AM và đồng bộ chuẩn múi giờ Việt Nam (UTC+7) trên toàn hệ thống.</div>
         </div>
       </div>
       <div class="chat-item">
         <div class="chat-item-avatar">🏢</div>
         <div>
-          <div class="chat-meta"><b>Công Bằng (Cái Răng)</b> → Anh Lộc · Trực tuyến</div>
+          <div class="chat-meta"><b>Công Bằng</b> → Anh Lộc · Trực tuyến</div>
           <div>Camera 05 Kho Cái Răng & 4 kho MT01 đang kết nối ổn định. Bấm vào từng phòng trên Sa Bàn để soi trực tiếp!</div>
         </div>
       </div>
@@ -1095,7 +1056,7 @@
 
   <!-- ================= BOTTOM-RIGHT ACTION BUTTON (+ TẠO VIỆC) ================= -->
   <div class="studio-fab-right">
-    <button class="btn-create-task" onclick="openSkillDrawer()">⚡ + GIAO VIỆC / KHO SKILL</button>
+    <button class="btn-create-task" onclick="openSkillDrawer()">+ TẠO VIỆC</button>
   </div>
 
   <!-- ================= ROOM / HUB INSPECTOR MODAL ================= -->
@@ -1141,7 +1102,7 @@
         <div class="skill-subtitle">TIGER AI STUDIO · KHO SKILL & CONNECTOR MIỀN TÂY 01</div>
         <h1 class="skill-main-title">Skill & Connector của team</h1>
       </div>
-      <button class="btn-back-studio" onclick="closeSkillDrawer()">← VỀ SA BÀN 3D</button>
+      <button class="btn-back-studio" onclick="closeSkillDrawer()">← VỀ STUDIO</button>
     </div>
 
     <div class="skill-tabs">
@@ -1253,12 +1214,13 @@
       document.body.classList.toggle('day-mode');
       const isDay = document.body.classList.contains('day-mode');
       document.getElementById('themeIconBtn').textContent = isDay ? '☀️' : '🌙';
+      document.getElementById('lampStatusLabel').textContent = isDay ? 'Ánh sáng ban ngày' : 'Đèn văn phòng';
     }
 
     // 3. PAN & ZOOM FOR 3D ISOMETRIC CAMPUS
     const viewport = document.getElementById('isoViewport');
     const scene = document.getElementById('isoScene');
-    let scale = Math.min(window.innerWidth / 1480, window.innerHeight / 920, 1.05);
+    let scale = Math.max(window.innerWidth / 1600, window.innerHeight / 900);
     let panX = 0, panY = 0;
     let isDragging = false, startX = 0, startY = 0;
 
@@ -1266,15 +1228,19 @@
       scene.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
     applyTransform();
+    window.addEventListener('resize', () => {
+      scale = Math.max(window.innerWidth / 1600, window.innerHeight / 900);
+      applyTransform();
+    });
 
     function resetViewport() {
-      scale = Math.min(window.innerWidth / 1480, window.innerHeight / 920, 1.05);
+      scale = Math.max(window.innerWidth / 1600, window.innerHeight / 900);
       panX = 0; panY = 0;
       applyTransform();
     }
 
     viewport.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.agent-tag') || e.target.closest('.iso-room-group')) return;
+      if (e.target.closest('.agent-tag') || e.target.closest('.room-stat-pill')) return;
       isDragging = true;
       startX = e.clientX - panX;
       startY = e.clientY - panY;
@@ -1289,7 +1255,7 @@
     viewport.addEventListener('wheel', (e) => {
       e.preventDefault();
       const delta = e.deltaY < 0 ? 0.08 : -0.08;
-      scale = Math.min(Math.max(0.45, scale + delta), 1.8);
+      scale = Math.min(Math.max(0.55, scale + delta), 2.2);
       applyTransform();
     }, { passive: false });
 
