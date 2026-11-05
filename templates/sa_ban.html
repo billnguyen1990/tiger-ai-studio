@@ -1373,7 +1373,7 @@
       100% { transform: translateY(4px); }
     }
 
-    /* MOVING 3D ISOMETRIC GHN TRUCKS */
+    /* MOVING 3D ISOMETRIC GHN TRUCKS - AUTONOMOUS ON-ROAD FLEET */
     .moving-ghn-truck {
       position: absolute;
       width: 68px;
@@ -1382,8 +1382,22 @@
       z-index: 54;
       pointer-events: auto;
       cursor: pointer;
-      transition: left 2.6s linear, top 2.6s linear;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.65));
+      will-change: left, top;
+    }
+    .moving-ghn-truck.is-docking .truck-plate-tag {
+      background: rgba(185, 28, 28, 0.95) !important;
+      border-color: #facc15 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.7) !important;
+      animation: dockTagPulse 0.8s ease-in-out infinite alternate !important;
+    }
+    @keyframes dockTagPulse {
+      0% { transform: translateX(-50%) scale(1); }
+      100% { transform: translateX(-50%) scale(1.05); }
+    }
+    .moving-ghn-truck.is-docking .truck-headlight-beam {
+      animation: hazardBlink 0.35s steps(2, start) infinite !important;
     }
     .moving-ghn-truck.flip-x .truck-svg-inner {
       transform: scaleX(-1);
@@ -2950,8 +2964,8 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-cairang -->
-      <div class="moving-ghn-truck" id="truck-cairang" style="left: 23.5%; top: 67.5%;" onclick="openRoomModal('cairang')" title="Bấm để mở Phòng Giám Sát Tải">
-        <div class="truck-plate-tag" id="tag-truck-cairang">🚛 65C-188.92 • Vào Kho Cái Răng</div>
+      <div class="moving-ghn-truck is-docking" id="truck-cairang" style="left: 19.5%; top: 32.0%;" onclick="openRoomModal('cairang')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-cairang">📦 [ĐANG BỐC HÀNG] Bãi Cửa Cuốn Kho Cái Răng • 56 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
             <!-- Headlight Glow Beams -->
@@ -2987,8 +3001,8 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-omon -->
-      <div class="moving-ghn-truck" id="truck-omon" style="left: 43.8%; top: 74.0%;" onclick="openRoomModal('omon')" title="Bấm để mở Phòng Giám Sát Tải">
-        <div class="truck-plate-tag" id="tag-truck-omon">🚛 65C-209.45 • Vào Kho Ô Môn</div>
+      <div class="moving-ghn-truck is-docking" id="truck-omon" style="left: 20.5%; top: 63.0%;" onclick="openRoomModal('omon')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-omon">📦 [ĐANG BỐC DỠ] Bãi Cửa Cuốn Kho Ô Môn • 42 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
             <!-- Headlight Glow Beams -->
@@ -3024,8 +3038,8 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-vithanh -->
-      <div class="moving-ghn-truck" id="truck-vithanh" style="left: 56.2%; top: 67.5%;" onclick="openRoomModal('vithanh')" title="Bấm để mở Phòng Giám Sát Tải">
-        <div class="truck-plate-tag" id="tag-truck-vithanh">🚛 95C-086.19 • Xuất Kho Vị Thanh</div>
+      <div class="moving-ghn-truck is-docking" id="truck-vithanh" style="left: 64.0%; top: 19.0%;" onclick="openRoomModal('vithanh')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-vithanh">📦 [ĐANG BỐC HÀNG] Bãi Nhận Cụm Kho Vị Thanh • 38 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
             <!-- Headlight Glow Beams -->
@@ -3061,8 +3075,8 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-highway -->
-      <div class="moving-ghn-truck" id="truck-highway" style="left: 6.2%; top: 62.0%;" onclick="openRoomModal('giamsattai')" title="Bấm để mở Phòng Giám Sát Tải">
-        <div class="truck-plate-tag" id="tag-truck-highway">🚛 65H-365.01 • Chạy Ra Quốc Lộ</div>
+      <div class="moving-ghn-truck is-docking" id="truck-highway" style="left: 24.5%; top: 20.0%;" onclick="openRoomModal('giamsattai')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-highway">📦 [ĐANG BỐC HÀNG] Bãi Nhận Cụm Kho Bình Thủy • 68 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
             <!-- Headlight Glow Beams -->
@@ -3876,100 +3890,209 @@
         }, 2150);
       }
     }, 2800);
+    // =========================================================================
+    // 1C. AUTONOMOUS 3D GHN TRUCK FLEET (STRICTLY ON ASPHALT ROADS & DOCKS)
+    //     + REALISTIC LOADING DOCK STOPS, HAZARD BLINKERS & PARK JOGGER
+    // =========================================================================
+    const TRUCK_CRUISING_SPEED = 7.5; // percent canvas per second (~35-40 km/h)
 
-    // =========================================================================
-    // 1C. AUTONOMOUS 3D GHN TRUCK FLEET (DRIVING IN/OUT OF DOCKS & ONTO HIGHWAY)
-    //     + PARK JOGGER RUNNING ALONG THE RIVERSIDE GREEN TRACK
-    // =========================================================================
-    const TRUCK_ROUTES = {
-      'truck-cairang': [
-        { left: '18.0%', top: '26.0%', label: '📦 65C-188.92 • Bốc hàng Kho Cái Răng (Góc trên trái)' },
-        { left: '26.5%', top: '24.0%', label: '🚛 65C-188.92 • Chạy vào Đường Vành Đai Bắc' },
-        { left: '49.0%', top: '23.0%', label: '🚛 65C-188.92 • Đi ngang mặt sau Khối Văn Phòng' },
-        { left: '71.5%', top: '24.0%', label: '🚛 65C-188.92 • Qua Cụm Kho Vị Thanh' },
-        { left: '73.0%', top: '50.0%', label: '🚛 65C-188.92 • Vòng qua Đường Vành Đai Đông' },
-        { left: '50.0%', top: '65.0%', label: '🚛 65C-188.92 • Vòng về mặt trước Khối Văn Phòng' },
-        { left: '26.0%', top: '50.0%', label: '🚛 65C-188.92 • Đường Vành Đai Tây' },
-        { left: '18.0%', top: '26.0%', label: '🚛 65C-188.92 • Cập bến Kho Cái Răng' }
-      ],
+    const TRUCK_NAV_ROUTES = {
       'truck-omon': [
-        { left: '16.0%', top: '68.0%', label: '📦 65C-209.45 • Nhận tải Kho Ô Môn (Góc dưới trái)' },
-        { left: '26.0%', top: '65.0%', label: '🚛 65C-209.45 • Xuất bến ra Vòng Xuyến Trung Tâm' },
-        { left: '27.0%', top: '80.0%', label: '🧋 65C-209.45 • Chạy ngang Quán Starbucks' },
-        { left: '46.0%', top: '86.0%', label: '🛣️ 65C-209.45 • Qua Cổng Kiểm Soát ra Đại Lộ' },
-        { left: '15.0%', top: '96.0%', label: '🛣️ 65C-209.45 • Giao hàng Tuyến Quốc Lộ 91' },
-        { left: '46.0%', top: '86.0%', label: '🚛 65C-209.45 • Về lại Cổng Kho MT01' },
-        { left: '16.0%', top: '68.0%', label: '🚛 65C-209.45 • Cập bến Kho Ô Môn' }
+        { x: 20.5, y: 63.0, label: '📦 [ĐANG BỐC DỠ] Bãi Cửa Cuốn Kho Ô Môn • 42 kiện', pause: 4200, loading: true },
+        { x: 25.5, y: 61.5, label: '🚛 65C-209.45 • Rời bãi Kho Ô Môn ra Vành Đai' },
+        { x: 25.5, y: 64.5, label: '🚛 65C-209.45 • Về lại Góc Tây Nam' },
+        { x: 28.5, y: 67.0, label: '🚛 65C-209.45 • Vào Đường Mặt Tiền Văn Phòng' },
+        { x: 38.0, y: 67.0, label: '🚛 65C-209.45 • Hướng về Ngã 3 Trung Tâm' },
+        { x: 48.8, y: 67.0, label: '🚛 65C-209.45 • Rẽ phải ra Đại Lộ Cổng Chính' },
+        { x: 48.8, y: 75.0, label: '🚛 65C-209.45 • Chạy ra hướng Cổng MT01' },
+        { x: 48.8, y: 84.0, label: '🎫 65C-209.45 • Trạm Cổng: Xuất bến thành công', pause: 1400 },
+        { x: 48.8, y: 94.0, label: '🛣️ 65C-209.45 • Rẽ ra Quốc Lộ 91 đi giao hàng' },
+        { x: 28.0, y: 94.0, label: '🛣️ 65C-209.45 • Lưu thông trên Quốc Lộ 91 (Hướng Tây)' },
+        { x: 8.0, y: 94.0, label: '🛣️ 65C-209.45 • Tuyến giao hàng Ô Môn - Cần Thơ' },
+        { x: 28.0, y: 94.0, label: '🧋 65C-209.45 • Đi ngang góc Quán Starbucks' },
+        { x: 48.8, y: 94.0, label: '🚛 65C-209.45 • Rẽ vào lối vào Cổng Chính MT01' },
+        { x: 48.8, y: 84.0, label: '🎫 65C-209.45 • Trạm Cổng: Quét thẻ RFID & Cân tải tự động', pause: 1800 },
+        { x: 48.8, y: 75.0, label: '🚛 65C-209.45 • Đi qua Trục đường Cột Cờ' },
+        { x: 48.8, y: 67.0, label: '🚛 65C-209.45 • Đến Ngã 3 Trung Tâm, rẽ trái' },
+        { x: 38.0, y: 67.0, label: '🚛 65C-209.45 • Đường Mặt Tiền Văn Phòng (Nhánh Tây)' },
+        { x: 28.5, y: 67.0, label: '🚛 65C-209.45 • Vào Cua Góc Tây Nam' },
+        { x: 25.5, y: 64.5, label: '🚛 65C-209.45 • Rẽ vào Đường Vành Đai Tây' },
+        { x: 25.5, y: 61.5, label: '🚛 65C-209.45 • Nhánh rẽ Bãi Nhận Kho Ô Môn' }
+      ],
+      'truck-cairang': [
+        { x: 19.5, y: 32.0, label: '📦 [ĐANG BỐC HÀNG] Bãi Cửa Cuốn Kho Cái Răng • 56 kiện', pause: 4200, loading: true },
+        { x: 25.5, y: 32.0, label: '🚛 65C-188.92 • Xuất bến ra Đường Vành Đai Tây' },
+        { x: 25.5, y: 25.5, label: '🚛 65C-188.92 • Tiến về Góc Tây Bắc' },
+        { x: 27.0, y: 23.5, label: '🚛 65C-188.92 • Vào cua Góc Tây Bắc' },
+        { x: 30.0, y: 22.5, label: '🚛 65C-188.92 • Vào Đường Vành Đai Bắc (Sau VP)' },
+        { x: 40.0, y: 22.5, label: '🚛 65C-188.92 • Chạy sau Phòng Vận Hành' },
+        { x: 49.0, y: 22.5, label: '🚛 65C-188.92 • Chạy sau AI Core & Server' },
+        { x: 60.0, y: 22.5, label: '🚛 65C-188.92 • Chạy sau Phòng Camera' },
+        { x: 70.5, y: 22.5, label: '🚛 65C-188.92 • Tiến vào Góc Đông Bắc' },
+        { x: 72.5, y: 23.5, label: '🚛 65C-188.92 • Cua qua Góc Đông Bắc' },
+        { x: 73.8, y: 25.5, label: '🚛 65C-188.92 • Xuống Đường Vành Đai Đông' },
+        { x: 73.8, y: 38.0, label: '🌳 65C-188.92 • Dọc Công Viên Cây Xanh' },
+        { x: 73.8, y: 52.0, label: '🎣 65C-188.92 • Ngang Bến Câu Cá Ven Sông' },
+        { x: 73.8, y: 64.5, label: '☕ 65C-188.92 • Góc Quán Garden Coffee' },
+        { x: 72.5, y: 66.5, label: '🚛 65C-188.92 • Cua qua Góc Đông Nam' },
+        { x: 68.0, y: 67.0, label: '🍜 65C-188.92 • Ngang Quán Ăn Nhân Viên' },
+        { x: 60.0, y: 67.0, label: '🚛 65C-188.92 • Đường Mặt Tiền Văn Phòng' },
+        { x: 48.8, y: 67.0, label: '🚛 65C-188.92 • Ngã 3 Trung Tâm & Cột Cờ' },
+        { x: 38.0, y: 67.0, label: '🧋 65C-188.92 • Ngang Quán Trà Sữa Starbucks' },
+        { x: 28.5, y: 67.0, label: '🚛 65C-188.92 • Cua qua Góc Tây Nam' },
+        { x: 25.5, y: 64.5, label: '🚛 65C-188.92 • Lên Đường Vành Đai Tây' },
+        { x: 25.5, y: 52.0, label: '🚛 65C-188.92 • Ngang qua Cửa Kho Ô Môn' },
+        { x: 25.5, y: 36.0, label: '🚛 65C-188.92 • Đến Nhánh rẽ Kho Cái Răng' }
       ],
       'truck-vithanh': [
-        { left: '64.0%', top: '16.5%', label: '📦 95C-086.19 • Bốc hàng Kho Vị Thanh (Góc trên phải)' },
-        { left: '72.0%', top: '30.0%', label: '🚛 95C-086.19 • Chạy dọc Đường Vành Đai Đông' },
-        { left: '72.0%', top: '60.0%', label: '🌳 95C-086.19 • Chạy ngang Công Viên Cây Xanh' },
-        { left: '56.0%', top: '65.0%', label: '🚛 95C-086.19 • Mặt trước Khối Văn Phòng' },
-        { left: '47.0%', top: '86.0%', label: '🛣️ 95C-086.19 • Ra Cổng Lớn đi Hậu Giang' },
-        { left: '47.0%', top: '86.0%', label: '🚛 95C-086.19 • Về Cổng Kiểm Soát' },
-        { left: '64.0%', top: '16.5%', label: '📦 95C-086.19 • Lùi vào bến Kho Vị Thanh' }
+        { x: 64.0, y: 19.0, label: '📦 [ĐANG BỐC HÀNG] Bãi Nhận Cụm Kho Vị Thanh • 38 kiện', pause: 4500, loading: true },
+        { x: 64.0, y: 22.5, label: '🚛 95C-086.19 • Rời bãi Kho Vị Thanh ra Đường Bắc' },
+        { x: 60.0, y: 22.5, label: '🚛 95C-086.19 • Chạy sau Phòng Camera & Server' },
+        { x: 49.0, y: 22.5, label: '🚛 95C-086.19 • Chạy sau AI Core & Server' },
+        { x: 38.0, y: 22.5, label: '🚛 95C-086.19 • Chạy sau Phòng Vận Hành' },
+        { x: 30.0, y: 22.5, label: '🚛 95C-086.19 • Góc Tây Bắc' },
+        { x: 27.0, y: 23.5, label: '🚛 95C-086.19 • Cua qua Góc Tây Bắc' },
+        { x: 25.5, y: 25.5, label: '🚛 95C-086.19 • Xuống Đường Vành Đai Tây' },
+        { x: 25.5, y: 36.0, label: '🚛 95C-086.19 • Ngang Kho Cái Răng' },
+        { x: 25.5, y: 52.0, label: '🚛 95C-086.19 • Ngang Kho Ô Môn' },
+        { x: 25.5, y: 64.5, label: '🚛 95C-086.19 • Góc Tây Nam' },
+        { x: 28.5, y: 67.0, label: '🚛 95C-086.19 • Vào Đường Mặt Tiền' },
+        { x: 38.0, y: 67.0, label: '🧋 95C-086.19 • Ngang Quán Starbucks' },
+        { x: 48.8, y: 67.0, label: '🚛 95C-086.19 • Ngã 3 Trung Tâm, rẽ ra Cổng' },
+        { x: 48.8, y: 75.0, label: '🚛 95C-086.19 • Trục đường Cột Cờ ra Cổng MT01' },
+        { x: 48.8, y: 84.0, label: '🎫 95C-086.19 • Cổng MT01: Xuất bến đi Vị Thanh', pause: 1400 },
+        { x: 48.8, y: 94.0, label: '🛣️ 95C-086.19 • Ra Quốc Lộ 91 đi giao hàng' },
+        { x: 63.0, y: 94.0, label: '🛣️ 95C-086.19 • Hướng thẳng Quốc Lộ về Vị Thanh' },
+        { x: 48.8, y: 94.0, label: '🚛 95C-086.19 • Về Cổng Chính MT01' },
+        { x: 48.8, y: 84.0, label: '🎫 95C-086.19 • Cổng: Quét RFID & Kiểm tra lệnh tải', pause: 1800 },
+        { x: 48.8, y: 75.0, label: '🚛 95C-086.19 • Tiến vào Đường Cột Cờ' },
+        { x: 48.8, y: 67.0, label: '🚛 95C-086.19 • Ngã 3 Trung Tâm, rẽ phải' },
+        { x: 60.0, y: 67.0, label: '🍜 95C-086.19 • Ngang Quán Ăn Nhân Viên' },
+        { x: 68.0, y: 67.0, label: '☕ 95C-086.19 • Ngang Quán Garden Coffee' },
+        { x: 72.5, y: 66.5, label: '🚛 95C-086.19 • Cua qua Góc Đông Nam' },
+        { x: 73.8, y: 64.5, label: '🚛 95C-086.19 • Lên Đường Vành Đai Đông' },
+        { x: 73.8, y: 52.0, label: '🎣 95C-086.19 • Ven Bờ Sông & Bến Câu Cá' },
+        { x: 73.8, y: 38.0, label: '🌳 95C-086.19 • Dọc Công Viên Cây Xanh' },
+        { x: 73.8, y: 25.5, label: '🚛 95C-086.19 • Góc Đông Bắc' },
+        { x: 72.5, y: 23.5, label: '🚛 95C-086.19 • Cua vào Đường Vành Đai Bắc' },
+        { x: 65.0, y: 22.5, label: '🚛 95C-086.19 • Nhánh rẽ Bãi Nhận Kho Vị Thanh' }
       ],
       'truck-highway': [
-        { left: '8.0%', top: '96.0%', label: '🛣️ 65H-365.01 • Chạy dọc Đại Lộ Miền Tây' },
-        { left: '28.0%', top: '96.0%', label: '🧋 65H-365.01 • Qua góc Quán Starbucks' },
-        { left: '48.0%', top: '86.0%', label: '🚛 65H-365.01 • Ghé Cổng Kiểm Soát lấy phiếu tải' },
-        { left: '60.0%', top: '86.0%', label: '🍜 65H-365.01 • Đi ngang Quán Ăn & Garden Coffee' },
-        { left: '70.0%', top: '65.0%', label: '🚛 65H-365.01 • Rẽ vào Đường Vành Đai Nội Bộ' },
-        { left: '26.0%', top: '50.0%', label: '📦 65H-365.01 • Giao hàng liên kho Bình Thủy - Ô Môn' },
-        { left: '8.0%', top: '96.0%', label: '🛣️ 65H-365.01 • Tiếp tục lộ trình Liên Tỉnh ĐBSCL' }
+        { x: 24.5, y: 20.0, label: '📦 [ĐANG BỐC HÀNG] Bãi Nhận Cụm Kho Bình Thủy • 68 kiện', pause: 4500, loading: true },
+        { x: 25.5, y: 22.5, label: '🚛 65H-365.01 • Xuất bến Kho Bình Thủy ra Vành Đai' },
+        { x: 25.5, y: 36.0, label: '🚛 65H-365.01 • Xuống Đường Vành Đai Tây' },
+        { x: 25.5, y: 52.0, label: '🚛 65H-365.01 • Qua khu vực Kho Cái Răng - Ô Môn' },
+        { x: 25.5, y: 64.5, label: '🚛 65H-365.01 • Góc Tây Nam' },
+        { x: 28.5, y: 67.0, label: '🚛 65H-365.01 • Rẽ vào Đường Mặt Tiền Văn Phòng' },
+        { x: 38.0, y: 67.0, label: '🧋 65H-365.01 • Ngang Quán Trà Sữa Starbucks' },
+        { x: 48.8, y: 67.0, label: '🚛 65H-365.01 • Ngã 3 Trung Tâm, hướng ra Cổng' },
+        { x: 48.8, y: 75.0, label: '🚛 65H-365.01 • Trục đường Cột Cờ' },
+        { x: 48.8, y: 84.0, label: '🎫 65H-365.01 • Cổng MT01: Xuất bến xe tải nặng', pause: 1500 },
+        { x: 48.8, y: 94.0, label: '🛣️ 65H-365.01 • Rẽ ra Đại Lộ Quốc Lộ 91' },
+        { x: 28.0, y: 94.0, label: '🛣️ 65H-365.01 • Đại Lộ Miền Tây (Hướng Tây)' },
+        { x: 8.0, y: 94.0, label: '🛣️ 65H-365.01 • Tuyến xe liên tỉnh ĐBSCL đi An Giang' },
+        { x: 28.0, y: 94.0, label: '🛣️ 65H-365.01 • Về lại Quốc Lộ trước cổng MT01' },
+        { x: 48.8, y: 94.0, label: '🚛 65H-365.01 • Rẽ vào Cổng Chính MT01' },
+        { x: 48.8, y: 84.0, label: '🎫 65H-365.01 • Cổng: Quét RFID nhập bến trung chuyển', pause: 1500 },
+        { x: 48.8, y: 75.0, label: '🚛 65H-365.01 • Vào đại lộ nội bộ' },
+        { x: 48.8, y: 67.0, label: '🚛 65H-365.01 • Ngã 3 Trung Tâm, rẽ trái' },
+        { x: 38.0, y: 67.0, label: '🚛 65H-365.01 • Đường Mặt Tiền Tây' },
+        { x: 28.5, y: 67.0, label: '🚛 65H-365.01 • Góc Tây Nam' },
+        { x: 25.5, y: 64.5, label: '🚛 65H-365.01 • Lên Đường Vành Đai Tây' },
+        { x: 25.5, y: 52.0, label: '🚛 65H-365.01 • Lên phía Bắc' },
+        { x: 25.5, y: 36.0, label: '🚛 65H-365.01 • Qua Kho Cái Răng' },
+        { x: 25.5, y: 22.5, label: '🚛 65H-365.01 • Góc Tây Bắc' }
       ]
     };
-    const truckStepIdx = {
-      'truck-cairang': 0,
-      'truck-omon': 2,
-      'truck-vithanh': 4,
-      'truck-highway': 0
-    };
 
+    function startAutonomousTruck(truckId, startIndex = 0) {
+      const el = document.getElementById(truckId);
+      const tagEl = document.getElementById('tag-' + truckId);
+      const route = TRUCK_NAV_ROUTES[truckId];
+      if (!el || !route || route.length === 0) return;
+
+      let idx = startIndex % route.length;
+      const initial = route[idx];
+      el.style.transition = 'none';
+      el.style.left = initial.x + '%';
+      el.style.top = initial.y + '%';
+      if (tagEl && initial.label) tagEl.textContent = initial.label;
+
+      async function navigateStep() {
+        const cur = route[idx];
+        const nextIdx = (idx + 1) % route.length;
+        const nxt = route[nextIdx];
+
+        // Handle pause at loading dock or gate barrier
+        if (cur.pause && cur.pause > 0) {
+          if (cur.loading) el.classList.add('is-docking');
+          if (tagEl && cur.label) tagEl.textContent = cur.label;
+          await new Promise(res => setTimeout(res, cur.pause));
+          el.classList.remove('is-docking');
+        }
+
+        const dx = nxt.x - cur.x;
+        const dy = nxt.y - cur.y;
+        const dist = Math.hypot(dx, dy);
+        const durationSec = Math.max(0.65, dist / TRUCK_CRUISING_SPEED);
+
+        // Turn cab left or right
+        if (Math.abs(dx) > 0.35) {
+          el.classList.toggle('flip-x', dx < 0);
+        }
+
+        // Smooth on-road transition
+        el.style.transition = `left ${durationSec.toFixed(2)}s linear, top ${durationSec.toFixed(2)}s linear`;
+        el.style.left = nxt.x + '%';
+        el.style.top = nxt.y + '%';
+        if (tagEl && nxt.label) tagEl.textContent = nxt.label;
+
+        idx = nextIdx;
+        setTimeout(navigateStep, Math.round(durationSec * 1000));
+      }
+
+      // Stagger initial departures so they don't all move at the same split-second
+      setTimeout(navigateStep, 800 + (startIndex * 1200));
+    }
+
+    // Launch all 4 trucks from their respective docks/positions
+    startAutonomousTruck('truck-omon', 0);     // Starts at Kho Ô Môn Dock
+    startAutonomousTruck('truck-cairang', 0);  // Starts at Kho Cái Răng Dock
+    startAutonomousTruck('truck-vithanh', 0);  // Starts at Kho Vị Thanh Dock
+    startAutonomousTruck('truck-highway', 0);  // Starts at Kho Bình Thủy Dock
+
+    // 2. Scenic Riverside Park Jogger
     const PARK_JOG_ROUTE = [
-      { left: '88.5%', top: '26.0%' },
-      { left: '91.8%', top: '46.0%' },
-      { left: '94.2%', top: '63.0%' },
-      { left: '88.0%', top: '70.5%' },
-      { left: '77.5%', top: '73.5%' },
-      { left: '88.0%', top: '70.5%' },
-      { left: '94.2%', top: '63.0%' },
-      { left: '91.8%', top: '46.0%' }
+      { left: '84.0%', top: '22.0%' },
+      { left: '84.0%', top: '35.0%' },
+      { left: '84.5%', top: '48.0%' },
+      { left: '86.5%', top: '62.0%' },
+      { left: '82.0%', top: '74.0%' },
+      { left: '74.0%', top: '80.0%' },
+      { left: '68.0%', top: '90.0%' },
+      { left: '74.0%', top: '80.0%' },
+      { left: '82.0%', top: '74.0%' },
+      { left: '86.5%', top: '62.0%' },
+      { left: '84.5%', top: '48.0%' },
+      { left: '84.0%', top: '35.0%' }
     ];
     let parkJogIdx = 0;
-
     setInterval(() => {
-      // 1. Move all 4 3D GHN Trucks along their dock <-> gate <-> highway routes
-      Object.keys(TRUCK_ROUTES).forEach(tId => {
-        const el = document.getElementById(tId);
-        if (!el) return;
-        const route = TRUCK_ROUTES[tId];
-        const prevLeft = parseFloat(el.style.left) || 50;
-        truckStepIdx[tId] = (truckStepIdx[tId] + 1) % route.length;
-        const wp = route[truckStepIdx[tId]];
-        const newLeft = parseFloat(wp.left) || 50;
-        if (Math.abs(newLeft - prevLeft) > 0.5) {
-          el.classList.toggle('flip-x', newLeft < prevLeft);
-        }
-        el.style.left = wp.left;
-        el.style.top = wp.top;
-        const tagEl = document.getElementById('tag-' + tId);
-        if (tagEl && wp.label) tagEl.textContent = wp.label;
-      });
-
-      // 2. Move the Park Jogger along the scenic riverside jogging path
       const jogEl = document.getElementById('park-jogger-1');
       if (jogEl) {
-        const prevX = parseFloat(jogEl.style.left) || 90;
+        const prevX = parseFloat(jogEl.style.left) || 84;
         parkJogIdx = (parkJogIdx + 1) % PARK_JOG_ROUTE.length;
         const jwp = PARK_JOG_ROUTE[parkJogIdx];
-        const nextX = parseFloat(jwp.left) || 90;
+        const nextX = parseFloat(jwp.left) || 84;
         jogEl.classList.toggle('facing-left', nextX < prevX);
         jogEl.style.left = jwp.left;
         jogEl.style.top = jwp.top;
       }
-    }, 2700);
+    }, 2400);
+
+
+
+
 
 
     // =========================================================================
