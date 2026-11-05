@@ -1271,6 +1271,35 @@
       .studio-chat-panel { width: 320px; }
       .skill-drawer { padding: 16px; }
     }
+
+    .dept-zone-sign {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 58, 138, 0.88));
+      border: 1.2px solid rgba(56, 189, 248, 0.85);
+      color: #e0f2fe;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 0.60rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.65);
+      z-index: 46;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+    .dept-zone-sign:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #00e5be;
+      color: #ffffff;
+    }
+    .dept-zone-sign.warn-sign {
+      border-color: #fb923c;
+      color: #fed7aa;
+      background: linear-gradient(135deg, rgba(67, 20, 7, 0.94), rgba(154, 52, 18, 0.88));
+    }
+
   </style>
 </head>
 <body>
@@ -1336,17 +1365,30 @@
     <div class="iso-scene-wrapper" id="isoScene">
 
       <!-- HIGH-RES 3D ARCHITECTURAL CUTAWAY RENDERS (NIGHT & DAY) -->
-      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=mega4kho" alt="Tiger AI 3D Campus Night">
-      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=mega4kho" alt="Tiger AI 3D Campus Day">
+      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=megadepts1" alt="Tiger AI 3D Campus Night">
+      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=megadepts1" alt="Tiger AI 3D Campus Day">
 
       <!-- HOLOGRAM PULSE OVER THE CENTRAL SPHERE -->
       <div class="holo-pulse"></div>
 
-            <!-- BẢNG TÊN 4 CỤM KHO HÀNG NẶNG RIÊNG BIỆT & 3 PHÒNG BAN CHUYÊN TRÁCH -->
-      <div class="warehouse-zone-sign" style="left: 21.5%; top: 24.8%;" onclick="openRoomModal('cairang')">🏭 CỤM KHO CÁI RĂNG</div>
-      <div class="warehouse-zone-sign" style="left: 40.5%; top: 24.8%;" onclick="openRoomModal('omon')">🏭 CỤM KHO Ô MÔN</div>
-      <div class="warehouse-zone-sign" style="left: 59.5%; top: 24.8%;" onclick="openRoomModal('vithanh')">🏭 CỤM KHO VỊ THANH</div>
-      <div class="warehouse-zone-sign" style="left: 78.5%; top: 24.8%;" onclick="openRoomModal('binhthuy')">🏭 CỤM KHO BÌNH THỦY</div>
+      <!-- TẦNG 1 (TRÊN CÙNG): BẢNG TÊN 4 PHÒNG BAN TRUNG TÂM -->
+      <div class="dept-zone-sign" style="left: 20.5%; top: 8.2%;" onclick="openRoomModal('vanhanh')">🎯 PHÒNG VẬN HÀNH (KPI)</div>
+      <div class="dept-zone-sign" style="left: 33.0%; top: 8.2%;" onclick="openRoomModal('b2b')">📊 PHÒNG DỮ LIỆU B2B</div>
+      <div class="dept-zone-sign" style="left: 50.0%; top: 5.2%;" onclick="openRoomModal('kythuat')">🌐 TRUNG TÂM CHỈ HUY & SERVER AI</div>
+      <div class="dept-zone-sign" style="left: 79.8%; top: 8.2%;" onclick="openRoomModal('phongcam')">📹 PHÒNG CHUYÊN CAMERA 4 KHO</div>
+
+      <!-- TẦNG 2 (TẦNG LỬNG): BẢNG TÊN 5 PHÒNG BAN NGHIỆP VỤ -->
+      <div class="dept-zone-sign" style="left: 22.5%; top: 23.2%;" onclick="openRoomModal('nhansu')">👥 PHÒNG NHÂN SỰ</div>
+      <div class="dept-zone-sign warn-sign" style="left: 40.8%; top: 23.2%;" onclick="openRoomModal('ccdc')">🧰 PHÒNG THIẾT BỊ CCDC (NHẮC FILE)</div>
+      <div class="dept-zone-sign" style="left: 58.8%; top: 23.2%;" onclick="openRoomModal('giamsattai')">🚛 PHÒNG GIÁM SÁT TẢI</div>
+      <div class="dept-zone-sign" style="left: 72.5%; top: 23.2%;" onclick="openRoomModal('ketoan')">💼 PHÒNG KẾ TOÁN</div>
+      <div class="dept-zone-sign" style="left: 82.5%; top: 23.2%;" onclick="openRoomModal('thuquy')">💰 PHÒNG THỦ QUỸ</div>
+
+      <!-- TẦNG 3 (SÀN KHO CÔNG NGHIỆP): BẢNG TÊN 4 CỤM KHO HÀNG NẶNG RIÊNG BIỆT -->
+      <div class="warehouse-zone-sign" style="left: 21.0%; top: 38.2%;" onclick="openRoomModal('cairang')">🏭 CỤM KHO CÁI RĂNG</div>
+      <div class="warehouse-zone-sign" style="left: 40.5%; top: 38.2%;" onclick="openRoomModal('omon')">🏭 CỤM KHO Ô MÔN</div>
+      <div class="warehouse-zone-sign" style="left: 59.5%; top: 38.2%;" onclick="openRoomModal('vithanh')">🏭 CỤM KHO VỊ THANH</div>
+      <div class="warehouse-zone-sign" style="left: 78.5%; top: 38.2%;" onclick="openRoomModal('binhthuy')">🏭 CỤM KHO BÌNH THỦY</div>
 
       <!-- HIỆU ỨNG BỐC XẾP KIỆN HÀNG TẠI CỬA BẾN XE TẢI 4 CỤM KHO -->
       <div class="dock-loading-fx" style="left: 15.6%; top: 61.5%;" title="Bãi xuất nhập Kho Cái Răng">📦</div>
@@ -1356,7 +1398,7 @@
       <div class="dock-loading-fx" style="left: 84.4%; top: 61.5%; animation-delay: 1.1s;" title="Bãi xuất nhập Kho Bình Thủy">📦</div>
 
       <!-- 1. Công Bằng (Kho Cái Răng) -->
-      <div class="agent-tag pose-work" id="agent-cairang" style="left: 22.5%; top: 43.0%;" onclick="openRoomModal('cairang')">
+      <div class="agent-tag pose-work" id="agent-cairang" style="left: 21.0%; top: 52.0%;" onclick="openRoomModal('cairang')">
         <div class="agent-bubble" id="bubble-cairang">🐯 Công Bằng (Cái Răng) • ⚡ Đang trực</div>
         <div class="chibi-nameplate">NVXL: Công Bằng</div>
         
@@ -1536,7 +1578,7 @@
       </div>
 
       <!-- 3. Bảo Toàn (Kho Bình Thủy) -->
-      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 78.5%; top: 43.0%;" onclick="openRoomModal('binhthuy')">
+      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 78.5%; top: 52.0%;" onclick="openRoomModal('binhthuy')">
         <div class="agent-bubble" id="bubble-binhthuy">🦁 Bảo Toàn (Bình Thủy) • 📈 KPI 91.6%</div>
         <div class="chibi-nameplate">NVXL: Bảo Toàn</div>
         
@@ -1702,7 +1744,7 @@
     
       </div>
       <!-- 6. Đức Trung (Kho Vị Thanh) -->
-      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 59.5%; top: 43.0%;" onclick="openRoomModal('vithanh')">
+      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 59.5%; top: 52.0%;" onclick="openRoomModal('vithanh')">
         <div class="agent-bubble" id="bubble-vithanh">🦅 Đức Trung (Vị Thanh) • 📦 Điều phối kho</div>
         <div class="chibi-nameplate">NVXL: Đức Trung</div>
         
@@ -1965,7 +2007,7 @@
       </div>
 
       <!-- 9. Trọng Bằng (Kho Ô Môn) -->
-      <div class="agent-tag pose-work" id="agent-omon" style="left: 40.5%; top: 43.0%;" onclick="openRoomModal('omon')">
+      <div class="agent-tag pose-work" id="agent-omon" style="left: 40.5%; top: 52.0%;" onclick="openRoomModal('omon')">
         <div class="agent-bubble" id="bubble-omon">🐺 Trọng Bằng (Ô Môn) • ⚡ Đang trực</div>
         <div class="chibi-nameplate">NVXL: Trọng Bằng</div>
         
@@ -2054,6 +2096,433 @@
         <div class="cam-tip">Cam 01 Ô Môn (Bấm chụp)</div>
       </div>
 
+      <!-- Chibi Agent: vanhanh (Phòng Vận Hành) -->
+      <div class="agent-tag pose-work" id="agent-vanhanh" style="left: 20.5%; top: 17.5%;" onclick="openRoomModal('vanhanh')">
+        <div class="agent-bubble" id="bubble-vanhanh">🎯 Phòng Vận Hành • Quản lý Đơn Gán, GTC, GTB, Tỉ lệ, Chi phí</div>
+        <div class="chibi-nameplate dept-plate">Phòng Vận Hành</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🎯</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#1e40af" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#38bdf8"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#1e40af" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#1e40af" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#0f172a"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <path d="M16,22 C15,10 49,10 48,22" fill="none" stroke="#38bdf8" stroke-width="2.2"/>
+          <circle cx="15.5" cy="23" r="3.2" fill="#38bdf8"/>
+          <circle cx="48.5" cy="23" r="3.2" fill="#38bdf8"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#38bdf8" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Chibi Agent: phongcam (Phòng Camera (5S)) -->
+      <div class="agent-tag pose-work" id="agent-phongcam" style="left: 79.8%; top: 17.5%;" onclick="openRoomModal('phongcam')">
+        <div class="agent-bubble" id="bubble-phongcam">📹 Phòng Camera • Check 5S & Chất xếp sáng/cuối ngày</div>
+        <div class="chibi-nameplate dept-plate">Phòng Camera (5S)</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">📹</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#2dd4bf"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#2dd4bf"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#0f766e" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#2dd4bf"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#0f766e" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#0f766e" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <path d="M16,22 C15,10 49,10 48,22" fill="none" stroke="#2dd4bf" stroke-width="2.2"/>
+          <circle cx="15.5" cy="23" r="3.2" fill="#2dd4bf"/>
+          <circle cx="48.5" cy="23" r="3.2" fill="#2dd4bf"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#2dd4bf" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#2dd4bf" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Chibi Agent: nhansu (Phòng Nhân Sự) -->
+      <div class="agent-tag pose-work" id="agent-nhansu" style="left: 22.5%; top: 33.5%;" onclick="openRoomModal('nhansu')">
+        <div class="agent-bubble" id="bubble-nhansu">👥 Phòng Nhân Sự • Quân số 4 kho, Đúng giờ & Nghỉ phép</div>
+        <div class="chibi-nameplate dept-plate">Phòng Nhân Sự</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">👥</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#f472b6"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#f472b6"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#9d174d" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#f472b6"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#9d174d" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#9d174d" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#451a03"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <rect x="20" y="20" width="10" height="6" rx="2" fill="none" stroke="#f472b6" stroke-width="1.6"/>
+          <rect x="34" y="20" width="10" height="6" rx="2" fill="none" stroke="#f472b6" stroke-width="1.6"/>
+          <line x1="30" y1="23" x2="34" y2="23" stroke="#f472b6" stroke-width="1.6"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#f472b6" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#f472b6" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Chibi Agent: ccdc (Phòng CCDC (Nhắc File)) -->
+      <div class="agent-tag pose-walk" id="agent-ccdc" style="left: 40.8%; top: 33.5%;" onclick="openRoomModal('ccdc')">
+        <div class="agent-bubble" id="bubble-ccdc">🧰 Phòng CCDC • Quản lý thiết bị (Nhắc anh Lộc bổ sung file)</div>
+        <div class="chibi-nameplate dept-plate">Phòng CCDC (Nhắc File)</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🧰</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#fb923c"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#fb923c"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#c2410c" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#fb923c"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#c2410c" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#c2410c" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <path d="M16,18 C16,7 48,7 48,18 Z" fill="#fb923c" stroke="#7c2d12" stroke-width="1.2"/>
+          <rect x="14" y="16" width="36" height="3.5" rx="1.8" fill="#fb923c"/>
+          <rect x="28" y="9" width="8" height="7" rx="1.5" fill="#fde047"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#fb923c" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#fb923c" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Chibi Agent: giamsattai (Phòng Giám Sát Tải) -->
+      <div class="agent-tag pose-work" id="agent-giamsattai" style="left: 58.8%; top: 33.5%;" onclick="openRoomModal('giamsattai')">
+        <div class="agent-bubble" id="bubble-giamsattai">🚛 Phòng Giám Sát Tải • Chi phí tải, Xe cố định & Tuyến OFF</div>
+        <div class="chibi-nameplate dept-plate">Phòng Giám Sát Tải</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🚛</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#c084fc"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#c084fc"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#6b21a8" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#c084fc"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#6b21a8" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#6b21a8" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#0f172a"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <path d="M17,17 C17,7 47,7 47,17 Z" fill="#c084fc" stroke="#0f172a" stroke-width="1"/>
+          <path d="M28,15 L51,18 C49,20 38,20 28,17 Z" fill="#c084fc"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#c084fc" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#c084fc" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Chibi Agent: ketoan (Phòng Kế Toán) -->
+      <div class="agent-tag pose-work" id="agent-ketoan" style="left: 72.5%; top: 33.5%;" onclick="openRoomModal('ketoan')">
+        <div class="agent-bubble" id="bubble-ketoan">💼 Phòng Kế Toán • Theo dõi lương NVXL kho & Shipper</div>
+        <div class="chibi-nameplate dept-plate">Phòng Kế Toán</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">💼</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#0369a1" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#38bdf8"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#0369a1" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#0369a1" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <rect x="20" y="20" width="10" height="6" rx="2" fill="none" stroke="#38bdf8" stroke-width="1.6"/>
+          <rect x="34" y="20" width="10" height="6" rx="2" fill="none" stroke="#38bdf8" stroke-width="1.6"/>
+          <line x1="30" y1="23" x2="34" y2="23" stroke="#38bdf8" stroke-width="1.6"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#38bdf8" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Chibi Agent: thuquy (Phòng Thủ Quỹ) -->
+      <div class="agent-tag pose-work" id="agent-thuquy" style="left: 82.5%; top: 33.5%;" onclick="openRoomModal('thuquy')">
+        <div class="agent-bubble" id="bubble-thuquy">💰 Phòng Thủ Quỹ • Đảm bảo thu chi từng việc Sếp Lộc duyệt</div>
+        <div class="chibi-nameplate dept-plate">Phòng Thủ Quỹ</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">💰</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#fde047"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#fde047"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#854d0e" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#fde047"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#854d0e" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#854d0e" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#451a03"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                
+          <rect x="20" y="20" width="10" height="6" rx="2" fill="none" stroke="#fde047" stroke-width="1.6"/>
+          <rect x="34" y="20" width="10" height="6" rx="2" fill="none" stroke="#fde047" stroke-width="1.6"/>
+          <line x1="30" y1="23" x2="34" y2="23" stroke="#fde047" stroke-width="1.6"/>
+        
+              </g>
+              <g class="chibi-desk-prop" style="transition: all 0.25s;">
+                <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#fde047" stroke-width="1.4"/>
+                <rect x="21" y="41" width="22" height="10" rx="1" fill="#fde047" opacity="0.35"/>
+                <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -2083,23 +2552,32 @@
 
     <!-- 1-CLICK COMMAND CHIPS -->
     <div class="chat-quick-bar">
-      <button class="quick-chip" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Chụp Cam 05 Kho Cái Răng')">📸 Chụp Cam Cái Răng</button>
-      <button class="quick-chip" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Lọc 24.878 đơn sang Ketqua & bắn Topic 506')">📊 Lọc Ketqua B2B</button>
-      <button class="quick-chip" onclick="dispatchAgentTask('binhthuy', 'kpi_scan', 'Quét KPI thực tế Kho Bình Thủy')">🎯 Quét KPI Kho</button>
-      <button class="quick-chip" onclick="dispatchAgentTask('kythuat', 'kythuat_heal', 'Đi tuần tra & kiểm tra Token 4 kho')">🛠️ Tuần Tra Token</button>
+      <button class="quick-chip" onclick="openRoomModal('vanhanh')">🎯 Phòng Vận Hành</button>
+      <button class="quick-chip" onclick="openRoomModal('nhansu')">👥 Phòng Nhân Sự</button>
+      <button class="quick-chip" onclick="openRoomModal('ccdc')">🧰 Phòng CCDC</button>
+      <button class="quick-chip" onclick="openRoomModal('giamsattai')">🚛 Giám Sát Tải</button>
+      <button class="quick-chip" onclick="openRoomModal('phongcam')">📹 Phòng Camera</button>
+      <button class="quick-chip" onclick="openRoomModal('ketoan')">💼 Phòng Kế Toán</button>
+      <button class="quick-chip" onclick="openRoomModal('thuquy')">💰 Phòng Thủ Quỹ</button>
+      <button class="quick-chip" onclick="openRoomModal('b2b')">📊 Đơn Tạo B2B</button>
     </div>
 
     <!-- 2-WAY DIRECT COMMAND INPUT -->
     <form class="chat-input-row" onsubmit="handleChatCommandSubmit(event)">
       <select class="chat-agent-select" id="chatTargetAgent">
         <option value="auto">@Tự động</option>
-        <option value="cairang">@Công Bằng</option>
-        <option value="binhthuy">@Bảo Toàn</option>
-        <option value="vithanh">@Đức Trung</option>
-        <option value="omon">@Trọng Bằng</option>
+        <option value="vanhanh">@Phòng Vận Hành</option>
+        <option value="nhansu">@Phòng Nhân Sự</option>
+        <option value="ccdc">@Phòng CCDC</option>
+        <option value="giamsattai">@Giám Sát Tải</option>
+        <option value="phongcam">@Phòng Camera</option>
+        <option value="ketoan">@Phòng Kế Toán</option>
+        <option value="thuquy">@Phòng Thủ Quỹ</option>
+        <option value="cairang">@Công Bằng (Cái Răng)</option>
+        <option value="omon">@Trọng Bằng (Ô Môn)</option>
+        <option value="vithanh">@Đức Trung (Vị Thanh)</option>
+        <option value="binhthuy">@Bảo Toàn (Bình Thủy)</option>
         <option value="b2b">@Agent B2B</option>
-        <option value="kythuat">@Auto-Heal</option>
-        <option value="thanhtra">@Thanh Tra</option>
       </select>
       <input type="text" class="chat-text-input" id="chatCommandInput" placeholder="Ra lệnh cho Agent (VD: chụp cam Cái Răng, lọc B2B...)" autocomplete="off">
       <button type="submit" class="chat-send-btn">GỬI ➤</button>
@@ -2293,32 +2771,81 @@
     // =========================================================================
     const AGENT_STATE = {
       cairang: {
-        name: 'NVXL Công Bằng (Kho Cái Răng)',
-        workPos: { left: '22.5%', top: '43.0%', room: 'Cụm Kho 1: Kho Cái Răng' },
+        name: 'NVXL: Công Bằng (Kho Cái Răng)',
+        workPos: { left: '21.0%', top: '52.0%', room: 'Cụm Kho 1: Kho Cái Răng' },
         idlePos: { left: '64.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
         status: 'WORKING',
         taskText: '📦 Kho Cái Răng • Đang điều phối xuất nhập'
       },
       omon: {
-        name: 'NVXL Trọng Bằng (Kho Ô Môn)',
-        workPos: { left: '40.5%', top: '43.0%', room: 'Cụm Kho 2: Kho Ô Môn' },
+        name: 'NVXL: Trọng Bằng (Kho Ô Môn)',
+        workPos: { left: '40.5%', top: '52.0%', room: 'Cụm Kho 2: Kho Ô Môn' },
         idlePos: { left: '66.5%', top: '87.5%', room: 'Sân Cafe Dù Ngoài Trời' },
         status: 'WORKING',
         taskText: '📦 Kho Ô Môn • Đang điều phối xuất nhập'
       },
       vithanh: {
-        name: 'NVXL Đức Trung (Kho Vị Thanh)',
-        workPos: { left: '59.5%', top: '43.0%', room: 'Cụm Kho 3: Kho Vị Thanh' },
+        name: 'NVXL: Đức Trung (Kho Vị Thanh)',
+        workPos: { left: '59.5%', top: '52.0%', room: 'Cụm Kho 3: Kho Vị Thanh' },
         idlePos: { left: '68.5%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
         status: 'WORKING',
         taskText: '📦 Kho Vị Thanh • Đang điều phối xuất nhập'
       },
       binhthuy: {
-        name: 'NVXL Bảo Toàn (Kho Bình Thủy)',
-        workPos: { left: '78.5%', top: '43.0%', room: 'Cụm Kho 4: Kho Bình Thủy' },
+        name: 'NVXL: Bảo Toàn (Kho Bình Thủy)',
+        workPos: { left: '78.5%', top: '52.0%', room: 'Cụm Kho 4: Kho Bình Thủy' },
         idlePos: { left: '65.0%', top: '88.5%', room: 'Sân Cafe Dù Ngoài Trời' },
         status: 'WORKING',
         taskText: '📈 Kho Bình Thủy • KPI 91.6% (Dẫn đầu)'
+      },
+      vanhanh: {
+        name: 'Phòng Vận Hành (Quản Lý KPI)',
+        workPos: { left: '20.5%', top: '17.5%', room: 'Phòng Vận Hành (Đơn Gán, GTC, GTB, Tỉ Lệ, Chi Phí)' },
+        idlePos: { left: '63.5%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '🎯 Phòng Vận Hành • Quản lý KPI Đơn Gán, GTC, GTB, Chi phí'
+      },
+      nhansu: {
+        name: 'Phòng Nhân Sự (Quân Số & Chấm Công)',
+        workPos: { left: '22.5%', top: '33.5%', room: 'Phòng Nhân Sự (Quân số 4 kho, Đúng giờ & Nghỉ phép)' },
+        idlePos: { left: '65.5%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '👥 Phòng Nhân Sự • Quản lý quân số 4 kho & Chấm công 07:35'
+      },
+      ccdc: {
+        name: 'Phòng Thiết Bị CCDC Vận Hành',
+        workPos: { left: '40.8%', top: '33.5%', room: 'Phòng Thiết Bị CCDC Vận Hành (Chờ anh Lộc bổ sung file)' },
+        idlePos: { left: '67.5%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '🧰 Phòng CCDC • Nhắc anh Lộc bổ sung file CCDC vận hành'
+      },
+      giamsattai: {
+        name: 'Phòng Giám Sát Tải (Xe Cố Định & Tuyến OFF)',
+        workPos: { left: '58.8%', top: '33.5%', room: 'Phòng Giám Sát Tải (Chi phí tải, Xe chạy, Tuyến OFF)' },
+        idlePos: { left: '64.5%', top: '88.0%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '🚛 Phòng Giám Sát Tải • Kiểm tra xe cố định & tuyến OFF'
+      },
+      phongcam: {
+        name: 'Phòng Chuyên Camera 4 Kho (5S & Chất Xếp)',
+        workPos: { left: '79.8%', top: '17.5%', room: 'Phòng Chuyên Camera (Check Sáng & Cuối Ngày)' },
+        idlePos: { left: '68.0%', top: '88.0%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '📹 Phòng Camera • Check vệ sinh 5S & chất xếp hàng 4 kho'
+      },
+      ketoan: {
+        name: 'Phòng Kế Toán (Lương NVXL & Giao Hàng)',
+        workPos: { left: '72.5%', top: '33.5%', room: 'Phòng Kế Toán (Theo dõi lương NVXL kho & Shipper)' },
+        idlePos: { left: '66.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '💼 Phòng Kế Toán • Đảm bảo & theo dõi lương NVXL + Shipper'
+      },
+      thuquy: {
+        name: 'Phòng Thủ Quỹ (Thu Chi Sếp Duyệt)',
+        workPos: { left: '82.5%', top: '33.5%', room: 'Phòng Thủ Quỹ (Thu chi từng việc Sếp Lộc duyệt)' },
+        idlePos: { left: '69.0%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '💰 Phòng Thủ Quỹ • Đảm bảo thu chi từng việc Sếp Lộc duyệt'
       },
       tigercore: {
         name: 'Tiger AI Core',
@@ -2429,58 +2956,95 @@
     // =========================================================================
     const CHIBI_PATROL_ROUTES = {
       cairang: [
-        { left: '22.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi giữa 2 dãy kệ pallet Kho Cái Răng
-        { left: '16.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải Kho Cái Răng kiểm hàng
-        { left: '26.8%', top: '36.0%', pose: 'pose-walk', fx: '📋' }, // Lên đầu dãy kệ Kho Cái Răng
-        { left: '15.0%', top: '46.5%', pose: 'pose-work', fx: '⚡' }  // Kiểm tra băng chuyền Kho Cái Răng
+        { left: '21.0%', top: '52.0%', pose: 'pose-walk', fx: '📦' },
+        { left: '16.5%', top: '56.5%', pose: 'pose-work', fx: '🚛' },
+        { left: '25.5%', top: '46.5%', pose: 'pose-walk', fx: '📋' },
+        { left: '15.0%', top: '50.5%', pose: 'pose-work', fx: '⚡' }
       ],
       omon: [
-        { left: '40.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi dọc hành lang kệ pallet Kho Ô Môn
-        { left: '36.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải số 1 Kho Ô Môn
-        { left: '44.0%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Qua cửa bến xe tải số 2 Kho Ô Môn
-        { left: '40.5%', top: '34.5%', pose: 'pose-walk', fx: '📋' }  // Kiểm tra khu phân loại Kho Ô Môn
+        { left: '40.5%', top: '52.0%', pose: 'pose-walk', fx: '📦' },
+        { left: '36.5%', top: '56.5%', pose: 'pose-work', fx: '🚛' },
+        { left: '44.0%', top: '56.5%', pose: 'pose-work', fx: '🚛' },
+        { left: '40.5%', top: '46.5%', pose: 'pose-walk', fx: '📋' }
       ],
       vithanh: [
-        { left: '59.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi dọc dãy kệ pallet Kho Vị Thanh
-        { left: '63.8%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến đón xe tải Kho Vị Thanh
-        { left: '55.5%', top: '35.5%', pose: 'pose-walk', fx: '📋' }, // Kiểm tra xe nâng Kho Vị Thanh
-        { left: '62.5%', top: '48.5%', pose: 'pose-work', fx: '📦' }  // Kiểm tra băng chuyền Kho Vị Thanh
+        { left: '59.5%', top: '52.0%', pose: 'pose-walk', fx: '📦' },
+        { left: '63.8%', top: '56.5%', pose: 'pose-work', fx: '🚛' },
+        { left: '55.5%', top: '46.5%', pose: 'pose-walk', fx: '📋' },
+        { left: '62.5%', top: '51.5%', pose: 'pose-work', fx: '📦' }
       ],
       binhthuy: [
-        { left: '78.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi giữa dãy kệ pallet Kho Bình Thủy
-        { left: '83.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải Kho Bình Thủy
-        { left: '74.5%', top: '35.0%', pose: 'pose-walk', fx: '📈' }, // Kiểm tra đầu băng chuyền Bình Thủy
-        { left: '84.5%', top: '45.5%', pose: 'pose-work', fx: '⚡' }  // Kiểm tra cửa xuất bên hông phải
+        { left: '78.5%', top: '52.0%', pose: 'pose-walk', fx: '📦' },
+        { left: '83.5%', top: '56.5%', pose: 'pose-work', fx: '🚛' },
+        { left: '74.5%', top: '46.5%', pose: 'pose-walk', fx: '📈' },
+        { left: '84.5%', top: '50.5%', pose: 'pose-work', fx: '⚡' }
+      ],
+      vanhanh: [
+        { left: '20.5%', top: '17.5%', pose: 'pose-work', fx: '🎯' },
+        { left: '18.0%', top: '17.0%', pose: 'pose-walk', fx: '📊' },
+        { left: '23.0%', top: '17.0%', pose: 'pose-work', fx: '📈' }
+      ],
+      nhansu: [
+        { left: '22.5%', top: '33.5%', pose: 'pose-work', fx: '👥' },
+        { left: '18.5%', top: '33.0%', pose: 'pose-walk', fx: '⏰' },
+        { left: '26.5%', top: '33.0%', pose: 'pose-work', fx: '📋' }
+      ],
+      ccdc: [
+        { left: '40.8%', top: '33.5%', pose: 'pose-walk', fx: '🧰' },
+        { left: '36.5%', top: '33.0%', pose: 'pose-work', fx: '🔧' },
+        { left: '45.0%', top: '33.5%', pose: 'pose-walk', fx: '📦' }
+      ],
+      giamsattai: [
+        { left: '58.8%', top: '33.5%', pose: 'pose-work', fx: '🚛' },
+        { left: '54.5%', top: '33.0%', pose: 'pose-walk', fx: '🗺️' },
+        { left: '63.0%', top: '33.0%', pose: 'pose-work', fx: '⛽' }
+      ],
+      phongcam: [
+        { left: '79.8%', top: '17.5%', pose: 'pose-work', fx: '📹' },
+        { left: '77.0%', top: '17.0%', pose: 'pose-walk', fx: '🧹' },
+        { left: '82.5%', top: '17.0%', pose: 'pose-work', fx: '📦' }
+      ],
+      ketoan: [
+        { left: '72.5%', top: '33.5%', pose: 'pose-work', fx: '💼' },
+        { left: '70.2%', top: '33.0%', pose: 'pose-walk', fx: '💵' },
+        { left: '74.5%', top: '33.5%', pose: 'pose-work', fx: '📊' }
+      ],
+      thuquy: [
+        { left: '82.5%', top: '33.5%', pose: 'pose-work', fx: '💰' },
+        { left: '84.8%', top: '32.5%', pose: 'pose-walk', fx: '🔐' },
+        { left: '80.5%', top: '33.5%', pose: 'pose-work', fx: '🧾' }
       ],
       tigercore: [
-        { left: '50.0%', top: '14.5%', pose: 'pose-work', fx: '🌐' }, // Trực quả cầu Hologram Trung Tâm Chỉ Huy
+        { left: '50.0%', top: '14.5%', pose: 'pose-work', fx: '🌐' },
         { left: '46.0%', top: '13.5%', pose: 'pose-walk', fx: '⚡' },
         { left: '54.0%', top: '13.5%', pose: 'pose-walk', fx: '🛰️' },
         { left: '50.0%', top: '14.5%', pose: 'pose-work', fx: '🌐' }
       ],
       kythuat: [
-        { left: '67.0%', top: '16.5%', pose: 'pose-work', fx: '🛠️' }, // Tuần tra Phòng Server Kỹ Thuật
+        { left: '67.0%', top: '16.5%', pose: 'pose-work', fx: '🛠️' },
         { left: '63.0%', top: '15.5%', pose: 'pose-walk', fx: '🛡️' },
         { left: '71.0%', top: '16.5%', pose: 'pose-walk', fx: '⚡' },
         { left: '67.0%', top: '16.5%', pose: 'pose-work', fx: '💻' }
       ],
       b2b: [
-        { left: '33.0%', top: '17.5%', pose: 'pose-work', fx: '📊' }, // Ngồi bàn máy tính chính Phòng Dữ Liệu B2B
-        { left: '29.0%', top: '17.0%', pose: 'pose-work', fx: '📑' }, // Qua bàn máy trạm trái kiểm tra Looker Studio
-        { left: '36.8%', top: '17.0%', pose: 'pose-walk', fx: '📈' }, // Qua bàn máy trạm phải đồng bộ Ketqua & ThongKe
+        { left: '33.0%', top: '17.5%', pose: 'pose-work', fx: '📊' },
+        { left: '29.0%', top: '17.0%', pose: 'pose-work', fx: '📑' },
+        { left: '36.8%', top: '17.0%', pose: 'pose-walk', fx: '📈' },
         { left: '33.0%', top: '17.5%', pose: 'pose-work', fx: '📊' }
       ],
       thanhtra: [
-        { left: '52.5%', top: '86.0%', pose: 'pose-walk', fx: '🔎' }, // Trực bốt gác Cổng Kiểm Soát Xe Tải
-        { left: '45.5%', top: '86.5%', pose: 'pose-walk', fx: '🛡️' }, // Kiểm tra thanh chắn barrier cổng vào
-        { left: '59.5%', top: '83.5%', pose: 'pose-walk', fx: '🚩' }, // Đi tuần qua Cột Cờ Tổ Quốc
+        { left: '52.5%', top: '86.0%', pose: 'pose-walk', fx: '🔎' },
+        { left: '45.5%', top: '86.5%', pose: 'pose-walk', fx: '🛡️' },
+        { left: '59.5%', top: '83.5%', pose: 'pose-walk', fx: '🚩' },
         { left: '52.5%', top: '86.0%', pose: 'pose-work', fx: '🔎' }
       ]
     };
 
     const chibiStepIdx = {
       cairang: 0, tigercore: 0, binhthuy: 0, kythuat: 0,
-      vithanh: 0, b2b: 0, thanhtra: 0, omon: 0
+      vithanh: 0, b2b: 0, thanhtra: 0, omon: 0,
+      vanhanh: 0, nhansu: 0, ccdc: 0, giamsattai: 0,
+      phongcam: 0, ketoan: 0, thuquy: 0
     };
 
     function applyChibiPoseAndDirection(el, oldLeft, newLeft, poseClass, fxIcon) {
@@ -2932,6 +3496,97 @@
         defaultAction: 'shipper_audit',
         wf: 'pda',
         desc: 'Đối chiếu lịch sử cuộc gọi của Shipper với thời điểm báo hoãn giao hàng, phát hiện báo hoãn ảo dưới 3 phút và tự động canh trạng thái đơn VIP.'
+      },
+      vanhanh: {
+        title: '🎯 PHÒNG VẬN HÀNH • QUẢN LÝ KPI ĐƠN GÁN, GTC, GTB, TỈ LỆ & CHI PHÍ',
+        nvxl: 'Phòng Vận Hành (4 Kho MT01)',
+        kpi: 'Đang tổng hợp KPI...',
+        status: '🟢 Trực Điều Hành 4 Kho',
+        camImg: '/static/img/cam_samples/cr_cam05.jpg',
+        camBadge: '🎯 BẢNG ĐIỀU HÀNH KPI 4 CỤM KHO',
+        hubKey: 'vanhanh',
+        hubId: '',
+        defaultAction: 'vanhanh_kpi',
+        wf: 'kpi_gtc',
+        desc: 'Chuyên quản lý và giám sát thời gian thực các chỉ số KPI cốt lõi của 4 cụm kho Miền Tây 01: Đơn Gán, Giao Thành Công (GTC), Giao Thất Bại (GTB), Tỉ Lệ hoàn thành (%) và Chi Phí vận hành.'
+      },
+      nhansu: {
+        title: '👥 PHÒNG NHÂN SỰ • QUẢN LÝ QUÂN SỐ MỖI KHO, ĐÚNG GIỜ & NGHỈ PHÉP',
+        nvxl: 'Phòng Nhân Sự (Chấm Công)',
+        kpi: 'Đang kiểm tra quân số...',
+        status: '🟢 Chốt Ca 07:35 Hàng Ngày',
+        camImg: '/static/img/cam_samples/snap_bt_06.jpg',
+        camBadge: '👥 QUÂN SỐ & CHẤM CÔNG 4 KHO',
+        hubKey: 'nhansu',
+        hubId: '',
+        defaultAction: 'nhansu_check',
+        wf: 'checkin',
+        desc: 'Quản lý số lượng nhân viên đang làm việc thực tế tại mỗi kho (Cái Răng, Ô Môn, Vị Thanh, Bình Thủy), theo dõi chấm công đi làm đúng giờ (<07:35), đi trễ và danh sách nghỉ phép.'
+      },
+      ccdc: {
+        title: '🧰 PHÒNG THIẾT BỊ CCDC VẬN HÀNH • QUẢN LÝ CÔNG CỤ DỤNG CỤ 4 KHO',
+        nvxl: 'Phòng Thiết Bị CCDC',
+        kpi: 'Chờ anh Lộc bổ sung file',
+        status: '🔔 Đã bật nhắc bổ sung file',
+        camImg: '/static/img/cam_samples/vt_cam08.jpg',
+        camBadge: '🧰 DANH MỤC CCDC VẬN HÀNH 4 KHO',
+        hubKey: 'ccdc',
+        hubId: '',
+        defaultAction: 'ccdc_check',
+        wf: 'unassigned',
+        desc: 'Quản lý trang thiết bị, công cụ dụng cụ vận hành tại 4 cụm kho (Xe nâng tay, Cân điện tử, Lồng sắt, Pallet, Máy quét PDA). 🔔 Đang chờ anh Lộc gửi file CCDC để đồng bộ chi tiết!'
+      },
+      giamsattai: {
+        title: '🚛 PHÒNG GIÁM SÁT TẢI • CHI PHÍ TẢI, SỐ XE CHẠY, XE CỐ ĐỊNH & TUYẾN OFF',
+        nvxl: 'Phòng Giám Sát Tải',
+        kpi: 'Đang kiểm tra lộ trình tải...',
+        status: '🟢 Giám Sát Xe Cố Định',
+        camImg: '/static/img/cam_samples/om_cam01.jpg',
+        camBadge: '🚛 KIỂM SOÁT ĐỊNH BIÊN XE & TUYẾN OFF',
+        hubKey: 'giamsattai',
+        hubId: '',
+        defaultAction: 'giamsattai_check',
+        wf: 'morning_trips',
+        desc: 'Nắm chi phí tải, số lượng xe chạy mỗi ngày của từng kho, kiểm tra kho ngày hôm đó có chạy đủ xe cố định hay không, và nếu có tuyến OFF thì chỉ rõ tuyến nào OFF ngày hôm đó.'
+      },
+      phongcam: {
+        title: '📹 PHÒNG CHUYÊN CAMERA 4 KHO • CHECK VỆ SINH (5S) & CHẤT XẾP HÀNG HÓA',
+        nvxl: 'Phòng Chuyên Camera',
+        kpi: 'Check Sáng & Cuối Ngày',
+        status: '🟢 4 Luồng Cam Trực Tuyến',
+        camImg: '/static/img/cam_samples/cr_cam05.jpg',
+        camBadge: '📹 CHECK 5S & QUY CHUẨN CHẤT XẾP 4 KHO',
+        hubKey: 'phongcam',
+        hubId: '',
+        defaultAction: 'phongcam_check',
+        wf: 'checkin',
+        desc: 'Đảm nhận việc check Camera của từng kho vào mỗi buổi sáng (07:30) và cuối ngày (20:30) để đảm bảo vệ sinh kho (5S) và hàng hóa có được chất xếp đúng quy chuẩn của kho hay không.'
+      },
+      ketoan: {
+        title: '💼 PHÒNG KẾ TOÁN • ĐẢM BẢO & THEO DÕI LƯƠNG NVXL KHO + NV GIAO HÀNG',
+        nvxl: 'Phòng Kế Toán Tiền Lương',
+        kpi: 'Khớp sản lượng GTC 100%',
+        status: '🟢 Đang theo dõi bảng lương',
+        camImg: '/static/img/cam_samples/snap_bt_06.jpg',
+        camBadge: '💼 BẢNG LƯƠNG NVXL KHO & SHIPPER',
+        hubKey: 'ketoan',
+        hubId: '',
+        defaultAction: 'ketoan_check',
+        wf: 'kpi_gtc',
+        desc: 'Đảm bảo và theo dõi sát sao chế độ lương cơ bản, phụ cấp và thưởng KPI của 4 NVXL kho (Công Bằng, Trọng Bằng, Đức Trung, Bảo Toàn) cùng thu nhập theo đơn của đội ngũ Nhân viên giao hàng.'
+      },
+      thuquy: {
+        title: '💰 PHÒNG THỦ QUỸ • QUẢN LÝ THU CHI ĐƯỢC SẾP LỘC DUYỆT & ĐỐI SOÁT COD',
+        nvxl: 'Phòng Thủ Quỹ Nội Bộ',
+        kpi: '100% Có Duyệt Của Sếp',
+        status: '🟢 Kiểm Soát Thu Chi Chặt Chẽ',
+        camImg: '/static/img/cam_samples/vt_cam08.jpg',
+        camBadge: '💰 SỔ QUỸ THU CHI & PHÊ DUYỆT CỦA SẾP',
+        hubKey: 'thuquy',
+        hubId: '',
+        defaultAction: 'thuquy_check',
+        wf: 'evening_cod',
+        desc: 'Đảm bảo về việc thu chi từng công việc cụ thể chỉ được giải ngân khi có phê duyệt của Sếp Lộc, đồng thời đối soát quỹ tiền mặt COD nộp về cuối mỗi ca.'
       }
     };
 
@@ -2960,6 +3615,40 @@
         box.innerHTML = `
           <button class="m-btn primary" onclick="dispatchAgentTask('thanhtra', 'shipper_audit', 'Kiểm tra danh sách đơn VIP đang canh ngầm 24/7')">🕵️ Tải Danh Sách Canh Đơn VIP</button>
           <a class="m-btn amber" href="/war-room">🛡️ Soi Hoãn Ảo Trên War Room</a>
+        `;
+      } else if (key === 'vanhanh') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('vanhanh', 'vanhanh_kpi', 'Quét KPI Đơn Gán, GTC, GTB, Tỉ lệ, Chi phí của 4 kho')">🎯 Cập Nhật Bảng KPI & Chi Phí 4 Kho</button>
+          <a class="m-btn blue" href="/?wf=kpi_gtc">🧩 Mở Luồng Node KPI 07:00</a>
+        `;
+      } else if (key === 'nhansu') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('nhansu', 'nhansu_check', 'Kiểm tra quân số đang làm việc tại mỗi kho, đúng giờ & nghỉ phép')">👥 Quét Quân Số & Chấm Công 4 Kho</button>
+          <a class="m-btn blue" href="/?wf=checkin">⏰ Mở Luồng Điểm Danh 07:35</a>
+        `;
+      } else if (key === 'ccdc') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('ccdc', 'ccdc_check', 'Kiểm kê thiết bị CCDC vận hành 4 kho')">🧰 Kiểm Kê Thiết Bị CCDC 4 Kho</button>
+          <button class="m-btn amber" onclick="alert('Dạ anh Lộc! Anh Lộc gửi file CCDC vận hành (Excel/CSV/Link Sheet) vào khung chat cho em bất cứ lúc nào để em nạp thẳng vào Phòng Thiết Bị CCDC nha!')">📥 Nạp File CCDC Bổ Sung Của Anh Lộc</button>
+        `;
+      } else if (key === 'giamsattai') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('giamsattai', 'giamsattai_check', 'Kiểm tra chi phí tải, số xe chạy, xe cố định & tuyến OFF hôm nay')">🚛 Kiểm Tra Xe Cố Định & Tuyến OFF</button>
+          <a class="m-btn blue" href="/?wf=morning_trips">🗺️ Mở Luồng Chuyến Xe Sáng</a>
+        `;
+      } else if (key === 'phongcam') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('phongcam', 'phongcam_check', 'Check Camera 4 kho ca sáng & cuối ngày (Vệ sinh 5S & Chất xếp hàng)')">📹 Check Camera 4 Kho (Sáng & Cuối Ngày)</button>
+          <button class="m-btn blue" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Chụp trực tiếp Camera Kho Cái Răng')">📸 Chụp Nhanh Cam Cái Răng</button>
+        `;
+      } else if (key === 'ketoan') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('ketoan', 'ketoan_check', 'Đối soát bảng lương NVXL 4 kho & Nhân viên giao hàng')">💼 Đối Soát Bảng Lương NVXL & Shipper</button>
+        `;
+      } else if (key === 'thuquy') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('thuquy', 'thuquy_check', 'Kiểm tra sổ quỹ Thu - Chi từng việc được Sếp Lộc duyệt')">💰 Kiểm Tra Sổ Thu Chi Sếp Duyệt</button>
+          <a class="m-btn blue" href="/?wf=evening_cod">🌙 Mở Luồng Chốt Quỹ COD 21:00</a>
         `;
       } else {
         box.innerHTML = `
@@ -2999,7 +3688,7 @@
       const liveHtmlBox = document.getElementById('mLiveHtmlBox');
       const camBadge = document.getElementById('mCamBadge');
 
-      if (key === 'b2b' || key === 'odo365' || key === 'kythuat' || key === 'thanhtra') {
+      if (['b2b', 'odo365', 'kythuat', 'thanhtra', 'vanhanh', 'nhansu', 'ccdc', 'giamsattai', 'phongcam', 'ketoan', 'thuquy'].includes(key)) {
         camImg.style.display = 'none';
         camBadge.style.display = 'none';
         liveHtmlBox.style.display = 'block';
