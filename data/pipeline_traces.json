@@ -62,5 +62,18 @@
     "handler_dept": "🛠️ Phòng Kỹ Thuật",
     "healing_action": "Phòng Kỹ Thuật đã tiếp nhận sự cố: Vui lòng mở Chrome bot đăng nhập lại tài khoản Google một lần để làm mới phiên làm việc.",
     "can_resume": false
+  },
+  {
+    "id": "EVT_1793846494000",
+    "time": "09:01:34 05/11/2026",
+    "task_name": "Xuất Đơn B2B (18:00)",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+    "current_step": "Bước 4/4: Đồng bộ 24.878 đơn vào Ketqua & Gửi báo cáo Topic 506 thành công",
+    "total_steps": 4,
+    "status": "SUCCESS",
+    "error_info": null,
+    "handler_dept": "🛠️ Phòng Kỹ Thuật",
+    "healing_action": "Đã đồng bộ trực tiếp qua Google Sheets API siêu tốc (5 giây). Tab Ketqua và báo cáo Topic 506 đã hoàn tất 100%.",
+    "can_resume": true
   }
 ]

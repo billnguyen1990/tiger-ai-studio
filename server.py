@@ -5374,11 +5374,72 @@ def api_war_room_run_b2b():
                     department="📊 Phòng Kinh Doanh & Dữ Liệu B2B",
                     current_step="Bước 2/4: Đã kích hoạt Cloud Runner thành công (Ubuntu Xvfb Headless)",
                     total_steps=4,
-                    status="SUCCESS",
+                    status="RUNNING",
                     handler_dept="🛠️ Phòng Kỹ Thuật",
-                    healing_action="Đang chạy tự động 100% trên Cloud độc lập, không can thiệp máy tính của anh Lộc.",
+                    healing_action="Đang khởi động môi trường máy chủ đám mây độc lập...",
                     can_resume=True
                 )
+
+                # Theo dõi tiến trình máy chủ Cloud Runner theo thời gian thực
+                import time
+                time.sleep(5)
+                runs_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Don_Tao_auto_18h.yml/runs?per_page=1"
+                
+                # Vòng lặp cập nhật tiến độ (tối đa 25 vòng * 8s = ~3.5 phút)
+                for _ in range(25):
+                    time.sleep(8)
+                    try:
+                        r_runs = requests.get(runs_url, headers=gh_headers, timeout=10)
+                        if r_runs.status_code == 200:
+                            data = r_runs.json()
+                            runs = data.get("workflow_runs", [])
+                            if runs:
+                                latest_run = runs[0]
+                                run_status = latest_run.get("status")       # queued, in_progress, completed
+                                run_conclusion = latest_run.get("conclusion") # success, failure, etc.
+
+                                if run_status in ["queued", "in_progress"]:
+                                    record_pipeline_event(
+                                        task_name="Xuất Đơn B2B (18:00)",
+                                        department="📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+                                        current_step="Bước 3/4: Máy chủ Cloud đang mở Looker Studio cào dữ liệu B2B 13 tỉnh...",
+                                        total_steps=4,
+                                        status="RUNNING",
+                                        handler_dept="🛠️ Phòng Kỹ Thuật",
+                                        healing_action="Cloud Runner đang tự động cào và lọc dữ liệu 13 tỉnh ĐBSCL.",
+                                        can_resume=True
+                                    )
+                                elif run_status == "completed":
+                                    if run_conclusion == "success":
+                                        record_pipeline_event(
+                                            task_name="Xuất Đơn B2B (18:00)",
+                                            department="📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+                                            current_step="Bước 4/4: Hoàn tất xuất dữ liệu Looker Studio ➔ Đồng bộ Google Sheets & Bắn báo cáo Topic 506",
+                                            total_steps=4,
+                                            status="SUCCESS",
+                                            handler_dept="🛠️ Phòng Kỹ Thuật",
+                                            healing_action="Quy trình hoàn tất 100% tự động trên Cloud! Dữ liệu đã đồng bộ và báo cáo đã gửi về Topic 506.",
+                                            can_resume=True
+                                        )
+                                    else:
+                                        record_pipeline_event(
+                                            task_name="Xuất Đơn B2B (18:00)",
+                                            department="📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+                                            current_step="Bước 3/4: Tắc nghẽn tại Looker Studio (Cần làm mới phiên Google)",
+                                            total_steps=4,
+                                            status="HEALING",
+                                            error_info={
+                                                "code": "GOOGLE_AUTH_EXPIRED",
+                                                "reason": "Phiên đăng nhập Google của Looker Studio cần làm mới.",
+                                                "at_step": "Looker Studio Google Accounts"
+                                            },
+                                            handler_dept="🛠️ Phòng Kỹ Thuật",
+                                            healing_action="Phòng Kỹ Thuật đã tiếp nhận sự cố: Vui lòng mở Chrome bot đăng nhập lại tài khoản Google một lần để làm mới phiên làm việc.",
+                                            can_resume=False
+                                        )
+                                    break
+                    except Exception as poll_ex:
+                        print(f"[POLL ERROR] {poll_ex}", flush=True)
             else:
                 record_pipeline_event(
                     task_name="Xuất Đơn B2B (18:00)",

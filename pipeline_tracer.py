@@ -12,8 +12,9 @@ MAX_RECORDS = 50
 _TRACES = []
 
 def _get_time_str():
-    now = datetime.datetime.now()
-    # UTC+7
+    # GMT+7 (Giờ Việt Nam)
+    tz_vn = datetime.timezone(datetime.timedelta(hours=7))
+    now = datetime.datetime.now(tz_vn)
     return now.strftime("%H:%M:%S %d/%m/%Y")
 
 def load_traces():
