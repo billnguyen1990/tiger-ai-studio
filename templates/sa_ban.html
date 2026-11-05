@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>TIGER AI • SA BÀN SỐ HÓA KHO VẬN 3D (ISOMETRIC STUDIO MT01)</title>
+  <title>TIGER AI • SA BÀN SỐ HÓA KHO VẬN 3D (MULTI-AGENT OPERATING SYSTEM MT01)</title>
   <link rel="icon" type="image/jpeg" href="/static/img/tiger_avatar.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-sky: #161b33;
-      --hud-bg: rgba(18, 24, 58, 0.92);
+      --hud-bg: rgba(18, 24, 58, 0.94);
       --hud-border: #3b5bdb;
       --hud-text: #f8fafc;
       --accent: #00e5be;
@@ -37,7 +37,7 @@
       transition: background 0.45s ease;
     }
 
-    /* ================= TOP HUD BAR (EXACT SHO NGUYEN STUDIO LAYOUT) ================= */
+    /* ================= TOP HUD BAR ================= */
     .studio-hud-top {
       position: fixed;
       top: 10px;
@@ -149,7 +149,7 @@
       color: #0f172a;
     }
 
-    /* RIGHT MENU STRIP (CÔNG VIỆC | CAMERA + | BÁO CÁO + | NHÂN SỰ | + | 🌙 | SKILL) */
+    /* RIGHT MENU STRIP */
     .light-switch-wrap {
       flex-direction: column;
       align-items: flex-end;
@@ -180,7 +180,7 @@
       color: #ffffff;
     }
 
-    /* DAY/NIGHT PILL SWITCH UNDER RIGHT MENU */
+    /* DAY/NIGHT PILL SWITCH */
     .pill-switch-row {
       display: flex;
       align-items: center;
@@ -203,9 +203,7 @@
       font-weight: 900;
       color: #ffffff;
     }
-    body.day-mode .pill-switch {
-      background: #2563eb;
-    }
+    body.day-mode .pill-switch { background: #2563eb; }
     .pill-knob {
       width: 20px;
       height: 20px;
@@ -216,9 +214,7 @@
       transition: all 0.25s ease;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
-    body.day-mode .pill-knob {
-      right: 35px;
-    }
+    body.day-mode .pill-knob { right: 35px; }
     .pill-label-box {
       background: var(--hud-bg);
       border: 1px solid var(--hud-border);
@@ -234,23 +230,24 @@
       right: 0;
       top: 50%;
       transform: translateY(-50%);
-      background: var(--hud-bg);
-      border: 1.5px solid var(--hud-border);
+      background: #2563eb;
+      border: 1.5px solid #60a5fa;
       border-right: none;
-      color: var(--hud-text);
-      padding: 12px 7px;
+      color: #ffffff;
+      padding: 14px 8px;
       writing-mode: vertical-rl;
       text-orientation: mixed;
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       font-weight: 800;
       letter-spacing: 1px;
       cursor: pointer;
       z-index: 195;
-      box-shadow: -4px 0 15px rgba(0,0,0,0.35);
+      box-shadow: -4px 0 18px rgba(37, 99, 235, 0.5);
+      transition: all 0.2s;
     }
     .right-edge-tab:hover {
-      background: #2563eb;
-      color: #fff;
+      background: #1d4ed8;
+      padding-right: 12px;
     }
 
     /* ================= 3D ISOMETRIC CAMPUS VIEWPORT ================= */
@@ -277,7 +274,6 @@
       overflow: hidden;
     }
 
-    /* HIGH-RES 3D ARCHITECTURAL RENDERS (NIGHT & DAY CROSSFADE) */
     .campus-img {
       position: absolute;
       inset: 0;
@@ -287,14 +283,9 @@
       pointer-events: none;
       transition: opacity 0.45s ease;
     }
-    .campus-img.day {
-      opacity: 0;
-    }
-    body.day-mode .campus-img.day {
-      opacity: 1;
-    }
+    .campus-img.day { opacity: 0; }
+    body.day-mode .campus-img.day { opacity: 1; }
 
-    /* INTERACTIVE ROOM HITBOXES (GLOW ON HOVER) */
     .iso-overlay-svg {
       position: absolute;
       inset: 0;
@@ -307,15 +298,15 @@
       stroke: rgba(0, 229, 190, 0.0);
       stroke-width: 3;
       cursor: pointer;
-      transition: all 0.22s ease;
+      transition: all 0.25s ease;
     }
-    .room-hitbox:hover {
-      fill: rgba(0, 229, 190, 0.14);
-      stroke: rgba(0, 229, 190, 0.9);
-      filter: drop-shadow(0 0 18px rgba(0, 229, 190, 0.65));
+    .room-hitbox:hover,
+    .room-hitbox.active-work {
+      fill: rgba(0, 229, 190, 0.16);
+      stroke: rgba(0, 229, 190, 0.95);
+      filter: drop-shadow(0 0 20px rgba(0, 229, 190, 0.75));
     }
 
-    /* HOLOGRAM PULSE RING OVER COMMAND ROOM SPHERE */
     .holo-pulse {
       position: absolute;
       left: 48.7%;
@@ -335,34 +326,38 @@
       50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
     }
 
-    /* FLOATING AGENT NAME TAGS OVER 3D ROOMS (EXACT SHO NGUYEN STUDIO BADGE STYLE) */
+    /* ================= STATE-DRIVEN MOVING AGENT TAGS ================= */
     .agent-tag {
       position: absolute;
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: rgba(15, 23, 42, 0.94);
+      background: rgba(15, 23, 42, 0.95);
       border: 2px solid #10b981;
       padding: 4px 10px 4px 5px;
-      border-radius: 4px;
+      border-radius: 5px;
       color: #ffffff;
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       font-weight: 800;
       box-shadow: 0 8px 20px rgba(0,0,0,0.55);
       cursor: pointer;
       z-index: 50;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      /* Smooth walking transition when moving between Cafe/Rest Zone and Work Room! */
+      transition: left 1.25s cubic-bezier(0.34, 1.35, 0.64, 1),
+                  top 1.25s cubic-bezier(0.34, 1.35, 0.64, 1),
+                  transform 0.2s ease,
+                  box-shadow 0.2s ease;
       white-space: nowrap;
       transform: translate(-50%, -50%);
     }
     body.day-mode .agent-tag {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.97);
       color: #0f172a;
       box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
     }
     .agent-tag:hover {
-      transform: translate(-50%, calc(-50% - 5px)) scale(1.08);
-      z-index: 90;
+      transform: translate(-50%, calc(-50% - 5px)) scale(1.07);
+      z-index: 95;
       box-shadow: 0 12px 28px rgba(0, 229, 190, 0.65);
     }
     .agent-tag.amber { border-color: #f59e0b; }
@@ -371,6 +366,62 @@
     .agent-tag.purple { border-color: #8b5cf6; }
     .agent-tag.red { border-color: #ef4444; }
     .agent-tag.cyan { border-color: #06b6d4; }
+
+    /* Working state glow */
+    .agent-tag.is-working {
+      border-color: #00e5be !important;
+      box-shadow: 0 0 22px rgba(0, 229, 190, 0.9), 0 8px 20px rgba(0,0,0,0.6) !important;
+      z-index: 92;
+    }
+    /* Resting/Idle at Cafe or Courtyard */
+    .agent-tag.is-idle {
+      opacity: 0.92;
+      border-style: dashed;
+    }
+
+    /* SPEECH / PROGRESS BUBBLE ABOVE AGENT HEAD */
+    .agent-bubble {
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00e5be;
+      color: #070d12;
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 0.66rem;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 229, 190, 0.5);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .agent-bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: #00e5be transparent transparent transparent;
+    }
+    .agent-tag.is-working .agent-bubble,
+    .agent-bubble.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+    .agent-tag.is-idle .agent-bubble {
+      opacity: 1;
+      background: rgba(30, 41, 59, 0.9);
+      color: #fde047;
+      border: 1px solid #f59e0b;
+      box-shadow: none;
+    }
+    .agent-tag.is-idle .agent-bubble::after {
+      border-top-color: #f59e0b;
+    }
 
     .agent-tag-avatar {
       width: 22px;
@@ -397,8 +448,16 @@
       box-shadow: 0 0 6px #10b981;
       flex-shrink: 0;
     }
+    .agent-tag.is-working .agent-tag-dot {
+      background: #00e5be;
+      box-shadow: 0 0 10px #00e5be;
+      animation: pulseDot 0.7s infinite;
+    }
+    .agent-tag.is-idle .agent-tag-dot {
+      background: #f59e0b;
+      box-shadow: 0 0 6px #f59e0b;
+    }
 
-    /* COUNTER PILL (LIKE [🗑️ 0] / [📦 24.878] IN REFERENCE) */
     .room-stat-pill {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -415,44 +474,20 @@
       box-shadow: 0 6px 15px rgba(0,0,0,0.35);
     }
 
-    /* ANIMATED 3D TRUCKS ON THE BOTTOM-LEFT HIGHWAY */
-    @keyframes driveDownRight {
-      0% { transform: translate(-80px, 535px); opacity: 0; }
-      8% { opacity: 1; }
-      92% { opacity: 1; }
-      100% { transform: translate(520px, 915px); opacity: 0; }
-    }
-    @keyframes driveUpLeft {
-      0% { transform: translate(460px, 935px); opacity: 0; }
-      8% { opacity: 1; }
-      92% { opacity: 1; }
-      100% { transform: translate(-120px, 565px); opacity: 0; }
-    }
-    .highway-truck-1 { animation: driveDownRight 16s linear infinite; }
-    .highway-truck-2 { animation: driveDownRight 16s linear infinite 8s; }
-    .highway-car-1 { animation: driveUpLeft 19s linear infinite 3s; }
-
-    .night-headlight {
-      opacity: 0.7;
-      transition: opacity 0.4s;
-    }
-    body.day-mode .night-headlight {
-      opacity: 0;
-    }
-
-    /* ================= BOTTOM-LEFT CHAT BOX (PHÒNG HỘI THOẠI) ================= */
+    /* ================= BOTTOM-LEFT 2-WAY COMMAND & CHAT BOX (PHÒNG HỘI THOẠI) ================= */
     .studio-chat-panel {
       position: fixed;
-      bottom: 14px;
-      left: 14px;
-      width: 400px;
-      max-width: calc(100vw - 28px);
+      bottom: 12px;
+      left: 12px;
+      width: 430px;
+      max-width: calc(100vw - 24px);
       background: var(--hud-bg);
       border: 1.5px solid var(--hud-border);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
       z-index: 190;
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
     }
     .chat-header {
       display: flex;
@@ -474,28 +509,34 @@
       font-weight: 800;
       cursor: pointer;
     }
-    .chat-header-btn:hover {
-      background: #2563eb;
-      color: #fff;
-    }
+    .chat-header-btn:hover { background: #2563eb; color: #fff; }
+
     .chat-body {
-      max-height: 185px;
+      max-height: 175px;
       overflow-y: auto;
       padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
     }
-    .chat-body.collapsed {
+    .chat-panel-collapsed .chat-body,
+    .chat-panel-collapsed .chat-quick-bar,
+    .chat-panel-collapsed .chat-input-row {
       display: none;
     }
+
     .chat-item {
       display: flex;
       gap: 9px;
-      font-size: 0.76rem;
-      line-height: 1.4;
-      border-bottom: 1px dashed rgba(148, 163, 184, 0.22);
-      padding-bottom: 8px;
+      font-size: 0.75rem;
+      line-height: 1.38;
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
+      padding-bottom: 7px;
+      animation: fadeInMsg 0.25s ease;
+    }
+    @keyframes fadeInMsg {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .chat-item:last-child { border-bottom: none; padding-bottom: 0; }
     .chat-item-avatar {
@@ -511,19 +552,84 @@
       font-size: 0.82rem;
       overflow: hidden;
     }
-    .chat-item-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .chat-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .chat-meta {
-      font-size: 0.7rem;
+      font-size: 0.69rem;
       color: #94a3b8;
       margin-bottom: 2px;
     }
     body.day-mode .chat-meta { color: #64748b; }
     .chat-meta b { color: #f59e0b; }
     body.day-mode .chat-meta b { color: #2563eb; }
+    .chat-meta b.boss { color: #00e5be; }
+
+    /* QUICK COMMAND CHIPS IN CHAT PANEL */
+    .chat-quick-bar {
+      display: flex;
+      gap: 5px;
+      padding: 6px 10px;
+      border-top: 1px solid rgba(59, 91, 219, 0.35);
+      overflow-x: auto;
+      background: rgba(15, 23, 42, 0.4);
+    }
+    body.day-mode .chat-quick-bar { background: #f1f5f9; }
+    .quick-chip {
+      background: rgba(37, 99, 235, 0.22);
+      border: 1px solid #3b82f6;
+      color: var(--hud-text);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-chip:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    /* 2-WAY CHAT INPUT ROW */
+    .chat-input-row {
+      display: flex;
+      border-top: 1px solid var(--hud-border);
+      background: rgba(10, 15, 35, 0.75);
+    }
+    body.day-mode .chat-input-row { background: #ffffff; }
+    .chat-agent-select {
+      background: transparent;
+      color: #38bdf8;
+      border: none;
+      border-right: 1px solid var(--hud-border);
+      padding: 7px 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      outline: none;
+      cursor: pointer;
+    }
+    body.day-mode .chat-agent-select { color: #1e40af; }
+    .chat-agent-select option { background: #0f172a; color: #fff; }
+    .chat-text-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--hud-text);
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      outline: none;
+      user-select: text;
+    }
+    .chat-send-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 0 14px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .chat-send-btn:hover { background: #1d4ed8; }
 
     /* ================= BOTTOM-RIGHT ACTION BUTTON (+ TẠO VIỆC) ================= */
     .studio-fab-right {
@@ -550,6 +656,111 @@
       background: #1d4ed8;
       transform: translateY(-2px);
     }
+
+    /* ================= RIGHT SLIDE-OVER TASK DRAWER ("VIỆC ▲" & "+ TẠO VIỆC") ================= */
+    .task-drawer {
+      position: fixed;
+      top: 0;
+      right: -460px;
+      width: 440px;
+      max-width: 94vw;
+      height: 100vh;
+      background: #0f172a;
+      border-left: 2px solid #3b82f6;
+      color: #f8fafc;
+      z-index: 550;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -15px 0 45px rgba(0, 0, 0, 0.75);
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .task-drawer.open { right: 0; }
+    .td-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      background: rgba(30, 41, 59, 0.85);
+      border-bottom: 1px solid rgba(59, 130, 246, 0.35);
+    }
+    .td-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+    .td-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .td-section-title {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+    .td-form-card {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .td-select, .td-input {
+      width: 100%;
+      background: #020617;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 9px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      outline: none;
+    }
+    .td-btn-submit {
+      background: #00e5be;
+      color: #070d12;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .td-btn-submit:hover { filter: brightness(1.1); }
+
+    /* AGENT ROSTER STATUS LIST IN DRAWER */
+    .agent-roster-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .roster-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+    }
+    .roster-status-badge {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+    .roster-status-badge.work { background: rgba(0, 229, 190, 0.18); color: #00e5be; border: 1px solid #00e5be; }
+    .roster-status-badge.idle { background: rgba(245, 158, 11, 0.18); color: #fde047; border: 1px solid #f59e0b; }
 
     /* ================= MODAL: ROOM / HUB LIVE INSPECTOR ================= */
     .modal-backdrop {
@@ -679,7 +890,7 @@
     .m-btn.blue { background: #2563eb; color: #ffffff; }
     .m-btn.amber { background: #f59e0b; color: #070d12; }
 
-    /* ================= SKILL & CONNECTOR FULL OVERLAY (EXACT IMAGE 1 LAYOUT) ================= */
+    /* ================= SKILL & CONNECTOR FULL OVERLAY ================= */
     .skill-drawer {
       position: fixed;
       inset: 0;
@@ -804,7 +1015,7 @@
     }
 
     @media (max-width: 768px) {
-      .studio-chat-panel { width: 300px; }
+      .studio-chat-panel { width: 320px; }
       .skill-drawer { padding: 16px; }
     }
   </style>
@@ -817,10 +1028,12 @@
       <div class="hud-box time-box" id="hudClock">CẬP NHẬT LÚC --:--:--</div>
       <div class="hud-box" onclick="resetViewport()" title="Về góc nhìn chuẩn">🏠</div>
       <div class="hud-box" onclick="openRoomModal('cairang')" title="Mở Camera giám sát">📹</div>
-      <div class="hud-box" onclick="toggleDayNight()" title="Đổi chế độ Sáng/Tối">👁️ CHẾ ĐỘ XEM</div>
+      <div class="hud-box" onclick="toggleShiftSimulation()" id="btnShiftMode" title="Bấm để xem cơ chế Agent di chuyển giữa Phòng Làm Việc và Sân Cafe Nghỉ Ngơi">
+        🏃 DI CHUYỂN CA: TỰ ĐỘNG
+      </div>
       <div class="hud-box online-box">
         <span class="online-dot"></span>
-        <span>4 đang xem · 9 hôm nay</span>
+        <span id="hudOnlineSummary">6 đang làm việc · 2 nghỉ Cafe</span>
       </div>
     </div>
 
@@ -835,7 +1048,7 @@
         </a>
         <a href="/sa-ban" class="t-nav-item active" title="Sa bàn 3D Isometric Kho Vận">
           <span>🎮 Sa Bàn 3D</span>
-          <span class="t-nav-badge">3D</span>
+          <span class="t-nav-badge">LIVE</span>
         </a>
       </nav>
     </div>
@@ -843,11 +1056,11 @@
     <!-- RIGHT ACTION MENU & DAY/NIGHT SWITCH -->
     <div class="light-switch-wrap">
       <div class="hud-menu-strip">
-        <button class="hud-menu-btn" onclick="window.location.href='/war-room'">CÔNG VIỆC</button>
+        <button class="hud-menu-btn" onclick="openTaskDrawer()">CÔNG VIỆC</button>
         <button class="hud-menu-btn highlight" onclick="openRoomModal('cairang')">CAMERA +</button>
-        <button class="hud-menu-btn" onclick="openRoomModal('b2b')">BÁO CÁO +</button>
-        <button class="hud-menu-btn" onclick="openRoomModal('kythuat')">NHÂN SỰ</button>
-        <button class="hud-menu-btn" onclick="openSkillDrawer()">+</button>
+        <button class="hud-menu-btn" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Kiểm tra & đồng bộ Đơn Tạo Ketqua')">BÁO CÁO +</button>
+        <button class="hud-menu-btn" onclick="openTaskDrawer()">NHÂN SỰ</button>
+        <button class="hud-menu-btn" onclick="openTaskDrawer()">+</button>
         <button class="hud-menu-btn" onclick="toggleDayNight()" id="themeIconBtn">🌙</button>
         <button class="hud-menu-btn" onclick="openSkillDrawer()">SKILL</button>
       </div>
@@ -862,8 +1075,8 @@
     </div>
   </header>
 
-  <!-- RIGHT EDGE VERTICAL TAB -->
-  <div class="right-edge-tab" onclick="openSkillDrawer()">VIỆC ▲</div>
+  <!-- RIGHT EDGE VERTICAL TAB "VIỆC ▲" -->
+  <div class="right-edge-tab" onclick="openTaskDrawer()">VIỆC ▲</div>
 
   <!-- ================= 3D ISOMETRIC CAMPUS VIEWPORT ================= -->
   <main class="iso-viewport" id="isoViewport">
@@ -876,145 +1089,129 @@
       <!-- HOLOGRAM PULSE OVER THE CENTRAL SPHERE -->
       <div class="holo-pulse"></div>
 
-      <!-- INTERACTIVE ROOM HITBOXES & ANIMATED 3D HIGHWAY TRUCKS -->
+      <!-- INTERACTIVE ROOM HITBOXES -->
       <svg class="iso-overlay-svg" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
-        <!-- Room 1: Kho Cái Răng (Left 2-story Loft + Conveyor Belt) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('cairang')"
+        <polygon id="hitbox-cairang" class="room-hitbox" onclick="openRoomModal('cairang')"
           points="240,245 535,105 660,315 415,495 245,405">
           <title>🏢 Kho Cái Răng (Hub 21088000) - NVXL Công Bằng</title>
         </polygon>
-
-        <!-- Room 2: Trung Tâm Chỉ Huy Tiger AI (Top Center Hologram Room) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('kythuat')"
+        <polygon id="hitbox-tigercore" class="room-hitbox" onclick="openRoomModal('kythuat')"
           points="560,95 815,20 985,155 775,305 565,190">
           <title>🛠️ Trung Tâm Chỉ Huy Tiger AI Core (24/7)</title>
         </polygon>
-
-        <!-- Room 3: Kho Bình Thủy (Top Right Analytics & Wave Screen Room) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('binhthuy')"
+        <polygon id="hitbox-binhthuy" class="room-hitbox" onclick="openRoomModal('binhthuy')"
           points="995,160 1285,295 1105,415 880,295">
           <title>🏢 Kho Bình Thủy (Hub 21985000) - NVXL Bảo Toàn</title>
         </polygon>
-
-        <!-- Room 4: Phòng Server & Đối Soát ODO 365 (Center Server Racks) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('odo365')"
+        <polygon id="hitbox-kythuat" class="room-hitbox" onclick="openRoomModal('odo365')"
           points="725,365 895,295 1135,430 955,535">
-          <title>🚛 Phòng Server & Đối Soát Xe Tải ODO 365 (21 Kho)</title>
+          <title>🛠️ Phòng Server Auto-Heal & Đối Soát ODO 365</title>
         </polygon>
-
-        <!-- Room 5: Kho Vị Thanh (Far Right Green Warehouse Bay) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('vithanh')"
+        <polygon id="hitbox-vithanh" class="room-hitbox" onclick="openRoomModal('vithanh')"
           points="1115,415 1295,295 1525,425 1355,575">
           <title>🏢 Kho Vị Thanh (Hub 22862000) - NVXL Đức Trung</title>
         </polygon>
-
-        <!-- Room 6: Phòng Dữ Liệu B2B & Đơn Tạo (Lower Left CCTV & Desks) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('b2b')"
+        <polygon id="hitbox-b2b" class="room-hitbox" onclick="openRoomModal('b2b')"
           points="435,515 625,405 785,505 595,645">
           <title>📊 Phòng Dữ Liệu B2B & Xuất Đơn Tạo 18:00 (Topic 506)</title>
         </polygon>
-
-        <!-- Room 7: Ban Thanh Tra & Kiểm Soát Cổng Chính (Front Gate Room) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('thanhtra')"
+        <polygon id="hitbox-thanhtra" class="room-hitbox" onclick="openRoomModal('thanhtra')"
           points="715,535 885,465 1035,565 875,685">
           <title>🔍 Ban Thanh Tra & Canh Đơn Hàng VIP 24/7</title>
         </polygon>
-
-        <!-- Room 8: Kho Ô Môn & Sân Cafe (Bottom Right Cubicles & Patio) -->
-        <polygon class="room-hitbox" onclick="openRoomModal('omon')"
+        <polygon id="hitbox-omon" class="room-hitbox" onclick="openRoomModal('omon')"
           points="935,665 1165,525 1435,665 1175,835">
-          <title>🏢 Kho Ô Môn (Hub 22917000) - NVXL Trọng Bằng</title>
+          <title>🏢 Kho Ô Môn & Sân Cafe Nghỉ Ngơi</title>
         </polygon>
       </svg>
 
-      <!-- ================= FLOATING AGENT NAME TAGS (EXACT SHO NGUYEN STUDIO POSITIONS) ================= -->
-      <!-- 1. Kho Cái Răng (Left Loft & Conveyor) -->
-      <div class="agent-tag blue" style="left: 30.5%; top: 20.5%;" onclick="openRoomModal('cairang')">
+      <!-- ================= STATE-DRIVEN MOVING AGENT TAGS ================= -->
+      <!-- 1. Công Bằng (Kho Cái Răng) -->
+      <div class="agent-tag blue" id="agent-cairang" style="left: 30.5%; top: 20.5%;" onclick="openRoomModal('cairang')">
+        <div class="agent-bubble" id="bubble-cairang">⚡ Đang trực Kho Cái Răng</div>
         <span class="agent-tag-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></span>
-        <span>Công Bằng</span>
+        <span>Công Bằng (Cái Răng)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag pink" style="left: 33.5%; top: 26.5%;" onclick="openRoomModal('cairang')">
+      <div class="agent-tag pink" style="left: 26.5%; top: 41.5%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
         <span class="agent-tag-avatar">📹</span>
-        <span>Kho Cái Răng · Cam 05</span>
-        <span class="agent-tag-dot"></span>
-      </div>
-      <div class="agent-tag" style="left: 26.5%; top: 41.5%;" onclick="openRoomModal('cairang')">
-        <span class="agent-tag-avatar">📦</span>
-        <span>Băng Chuyền Cái Răng</span>
+        <span>Cam 05 Cái Răng</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <!-- 2. Trung Tâm Chỉ Huy Tiger AI (Top Center Hologram Room) -->
-      <div class="agent-tag amber" style="left: 48.5%; top: 15.5%;" onclick="openRoomModal('kythuat')">
+      <!-- 2. Tiger AI Core (Trung Tâm Chỉ Huy) -->
+      <div class="agent-tag amber" id="agent-tigercore" style="left: 48.5%; top: 15.5%;" onclick="openRoomModal('kythuat')">
+        <div class="agent-bubble" id="bubble-tigercore">⚡ Điều phối 9 luồng Cloud</div>
         <span class="agent-tag-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></span>
         <span>Tiger AI Core</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag red" style="left: 44.5%; top: 31.5%;" onclick="openRoomModal('kythuat')">
-        <span class="agent-tag-avatar">⚡</span>
-        <span>Cloud Runner 24/7</span>
-        <span class="agent-tag-dot"></span>
-      </div>
 
-      <!-- 3. Kho Bình Thủy (Top Right Analytics & Wave Chart Room) -->
-      <div class="agent-tag blue" style="left: 65.5%; top: 29.5%;" onclick="openRoomModal('binhthuy')">
+      <!-- 3. Bảo Toàn (Kho Bình Thủy) -->
+      <div class="agent-tag blue" id="agent-binhthuy" style="left: 65.5%; top: 29.5%;" onclick="openRoomModal('binhthuy')">
+        <div class="agent-bubble" id="bubble-binhthuy">⚡ KPI 91.6% (Dẫn đầu)</div>
         <span class="agent-tag-avatar">🦁</span>
         <span>Bảo Toàn (Bình Thủy)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag" style="left: 71.5%; top: 36%;" onclick="openRoomModal('binhthuy')">
+      <div class="agent-tag" style="left: 71.5%; top: 36%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
         <span class="agent-tag-avatar">📹</span>
         <span>Cam 06 Bình Thủy</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <!-- 4. Phòng Server & Đối Soát ODO 365 (Center Server Room) -->
-      <div class="agent-tag cyan" style="left: 55.5%; top: 41%;" onclick="openRoomModal('odo365')">
+      <!-- 4. Auto-Heal Bot & Agent ODO 365 (Phòng Server / Tuần Tra) -->
+      <div class="agent-tag cyan" id="agent-kythuat" style="left: 55.5%; top: 41%;" onclick="openRoomModal('kythuat')">
+        <div class="agent-bubble" id="bubble-kythuat">🛡️ Canh Token 24/7</div>
         <span class="agent-tag-avatar">🛠️</span>
         <span>Auto-Heal Bot</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag purple" style="left: 60.5%; top: 48.5%;" onclick="openRoomModal('odo365')">
+      <div class="agent-tag purple" id="agent-odo365" style="left: 60.5%; top: 48.5%;" onclick="openRoomModal('odo365')">
+        <div class="agent-bubble" id="bubble-odo365">☕ Nghỉ sau ca 02:00 AM</div>
         <span class="agent-tag-avatar">🚛</span>
-        <span>ODO 365 (21 Kho)</span>
+        <span>Agent ODO 365</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <!-- 5. Kho Vị Thanh (Far Right Green Warehouse Bay) -->
-      <div class="agent-tag blue" style="left: 81.5%; top: 44.5%;" onclick="openRoomModal('vithanh')">
+      <!-- 5. Đức Trung (Kho Vị Thanh) -->
+      <div class="agent-tag blue" id="agent-vithanh" style="left: 81.5%; top: 44.5%;" onclick="openRoomModal('vithanh')">
+        <div class="agent-bubble" id="bubble-vithanh">⚡ Đang trực Kho Vị Thanh</div>
         <span class="agent-tag-avatar">🦅</span>
         <span>Đức Trung (Vị Thanh)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag" style="left: 86.5%; top: 52%;" onclick="openRoomModal('vithanh')">
+      <div class="agent-tag" style="left: 86.5%; top: 52%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
         <span class="agent-tag-avatar">📹</span>
         <span>Cam 08 Vị Thanh</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <!-- 6. Phòng Dữ Liệu B2B & Đơn Tạo (Lower Left Office) -->
-      <div class="agent-tag amber" style="left: 36%; top: 55.5%;" onclick="openRoomModal('b2b')">
+      <!-- 6. Agent B2B (Phòng Dữ Liệu B2B & Đơn Tạo) -->
+      <div class="agent-tag amber" id="agent-b2b" style="left: 36%; top: 55.5%;" onclick="openRoomModal('b2b')">
+        <div class="agent-bubble" id="bubble-b2b">📦 Đã lọc 24.878 đơn</div>
         <span class="agent-tag-avatar">📊</span>
         <span>Agent B2B (Topic 506)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="room-stat-pill" style="left: 42%; top: 61%;" onclick="openRoomModal('b2b')">📦 24.878</div>
+      <div class="room-stat-pill" style="left: 42%; top: 61%;" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Đồng bộ 24.878 đơn sang Ketqua')">📦 24.878</div>
 
-      <!-- 7. Ban Thanh Tra & Cổng Kiểm Soát (Front Security Room next to Vietnam Flag) -->
-      <div class="agent-tag red" style="left: 53.5%; top: 60%;" onclick="openRoomModal('thanhtra')">
+      <!-- 7. Thanh Tra & Watchdog (Phòng Cổng Chính) -->
+      <div class="agent-tag red" id="agent-thanhtra" style="left: 53.5%; top: 60%;" onclick="openRoomModal('thanhtra')">
+        <div class="agent-bubble" id="bubble-thanhtra">🕵️ Đang canh đơn VIP</div>
         <span class="agent-tag-avatar">🕵️</span>
         <span>Thanh Tra & Watchdog</span>
         <span class="agent-tag-dot"></span>
       </div>
 
-      <!-- 8. Kho Ô Môn & Sân Trà (Bottom Right Cubicles) -->
-      <div class="agent-tag amber" style="left: 69.5%; top: 66.5%;" onclick="openRoomModal('omon')">
+      <!-- 8. Trọng Bằng (Kho Ô Môn) -->
+      <div class="agent-tag amber" id="agent-omon" style="left: 69.5%; top: 66.5%;" onclick="openRoomModal('omon')">
+        <div class="agent-bubble" id="bubble-omon">⚡ Đang trực Kho Ô Môn</div>
         <span class="agent-tag-avatar">🐺</span>
         <span>Trọng Bằng (Ô Môn)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="agent-tag" style="left: 76.5%; top: 73.5%;" onclick="openRoomModal('omon')">
+      <div class="agent-tag" style="left: 74.5%; top: 73.5%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
         <span class="agent-tag-avatar">📹</span>
         <span>Cam 01 Ô Môn</span>
         <span class="agent-tag-dot"></span>
@@ -1023,41 +1220,107 @@
     </div>
   </main>
 
-  <!-- ================= BOTTOM-LEFT LIVE CHAT PANEL (PHÒNG HỘI THOẠI) ================= -->
-  <aside class="studio-chat-panel">
+  <!-- ================= BOTTOM-LEFT 2-WAY CHAT & COMMAND PANEL (PHÒNG HỘI THOẠI) ================= -->
+  <aside class="studio-chat-panel" id="studioChatPanel">
     <div class="chat-header" onclick="toggleChatPanel()">
-      <span id="chatHeaderTitle">▾ PHÒNG HỘI THOẠI · LIVE TÁC CHIẾN</span>
-      <button class="chat-header-btn" onclick="event.stopPropagation(); window.location.href='/war-room'">CHI TIẾT →</button>
+      <span id="chatHeaderTitle">▾ PHÒNG HỘI THOẠI · RA LỆNH & BÁO CÁO 2 CHIỀU</span>
+      <button class="chat-header-btn" onclick="event.stopPropagation(); openTaskDrawer()">GIAO VIỆC →</button>
     </div>
+
     <div class="chat-body" id="chatBodyList">
       <div class="chat-item">
         <div class="chat-item-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></div>
         <div>
-          <div class="chat-meta"><b>Agent B2B 18h</b> → Anh Lộc · Vừa xong</div>
-          <div>Đã lọc trực tiếp 24.878 đơn từ Data sang Ketqua (5 giây) và bắn báo cáo về đúng Topic 506 (Đơn Tạo).</div>
+          <div class="chat-meta"><b>Agent B2B (Topic 506)</b> → Anh Lộc · Vừa xong</div>
+          <div>Dạ anh Lộc, em đã lọc trực tiếp 24.878 đơn từ Data sang Ketqua (5 giây) và khóa cổng gửi duy nhất về Topic 506 (Đơn Tạo).</div>
         </div>
       </div>
       <div class="chat-item">
         <div class="chat-item-avatar">🛠️</div>
         <div>
-          <div class="chat-meta"><b>Auto-Heal Bot</b> → Anh Lộc · Hôm nay</div>
-          <div>Đã thu hồi tin nhắn rác 8:45 AM và đồng bộ chuẩn múi giờ Việt Nam (UTC+7) trên toàn hệ thống.</div>
-        </div>
-      </div>
-      <div class="chat-item">
-        <div class="chat-item-avatar">🏢</div>
-        <div>
-          <div class="chat-meta"><b>Công Bằng</b> → Anh Lộc · Trực tuyến</div>
-          <div>Camera 05 Kho Cái Răng & 4 kho MT01 đang kết nối ổn định. Bấm vào từng phòng trên Sa Bàn để soi trực tiếp!</div>
+          <div class="chat-meta"><b>Auto-Heal Bot</b> → Anh Lộc · Trực tuyến</div>
+          <div>Em đang tuần tra 4 kho MT01. Anh Lộc cần sai Agent nào chạy việc cứ bấm nút bên dưới hoặc gõ lệnh trực tiếp nhé ạ!</div>
         </div>
       </div>
     </div>
+
+    <!-- 1-CLICK COMMAND CHIPS -->
+    <div class="chat-quick-bar">
+      <button class="quick-chip" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Chụp Cam 05 Kho Cái Răng')">📸 Chụp Cam Cái Răng</button>
+      <button class="quick-chip" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Lọc 24.878 đơn sang Ketqua & bắn Topic 506')">📊 Lọc Ketqua B2B</button>
+      <button class="quick-chip" onclick="dispatchAgentTask('binhthuy', 'kpi_scan', 'Quét KPI thực tế Kho Bình Thủy')">🎯 Quét KPI Kho</button>
+      <button class="quick-chip" onclick="dispatchAgentTask('kythuat', 'kythuat_heal', 'Đi tuần tra & kiểm tra Token 4 kho')">🛠️ Tuần Tra Token</button>
+      <button class="quick-chip" onclick="dispatchAgentTask('odo365', 'odo_365', 'Đối soát 67 chuyến xe tải ODO 365')">🚛 Đối Soát ODO</button>
+    </div>
+
+    <!-- 2-WAY DIRECT COMMAND INPUT -->
+    <form class="chat-input-row" onsubmit="handleChatCommandSubmit(event)">
+      <select class="chat-agent-select" id="chatTargetAgent">
+        <option value="auto">@Tự động</option>
+        <option value="cairang">@Công Bằng</option>
+        <option value="binhthuy">@Bảo Toàn</option>
+        <option value="vithanh">@Đức Trung</option>
+        <option value="omon">@Trọng Bằng</option>
+        <option value="b2b">@Agent B2B</option>
+        <option value="kythuat">@Auto-Heal</option>
+        <option value="odo365">@ODO 365</option>
+        <option value="thanhtra">@Thanh Tra</option>
+      </select>
+      <input type="text" class="chat-text-input" id="chatCommandInput" placeholder="Ra lệnh cho Agent (VD: chụp cam Cái Răng, lọc B2B...)" autocomplete="off">
+      <button type="submit" class="chat-send-btn">GỬI ➤</button>
+    </form>
   </aside>
 
   <!-- ================= BOTTOM-RIGHT ACTION BUTTON (+ TẠO VIỆC) ================= -->
   <div class="studio-fab-right">
-    <button class="btn-create-task" onclick="openSkillDrawer()">+ TẠO VIỆC</button>
+    <button class="btn-create-task" onclick="openTaskDrawer()">+ TẠO VIỆC</button>
   </div>
+
+  <!-- ================= RIGHT SLIDE-OVER TASK DISPATCHER DRAWER ("VIỆC ▲") ================= -->
+  <aside class="task-drawer" id="taskDrawer">
+    <div class="td-header">
+      <div class="td-title">⚡ TRẠM GIAO VIỆC & ĐIỀU PHỐI AGENT</div>
+      <button class="modal-close" onclick="closeTaskDrawer()">✕</button>
+    </div>
+    <div class="td-body">
+      <!-- FORM GIAO VIỆC TRỰC TIẾP -->
+      <div>
+        <div class="td-section-title">1. Giao việc mới cho Agent (Thực thi thật 100%)</div>
+        <div class="td-form-card">
+          <label style="font-size:0.74rem;color:#cbd5e1;">Chọn Nhân sự / Agent thực hiện:</label>
+          <select class="td-select" id="tdAgentSelect">
+            <option value="b2b">📊 Agent B2B (Phòng Dữ Liệu & Đơn Tạo Topic 506)</option>
+            <option value="cairang">🐯 Công Bằng (Kho Cái Răng - Hub 21088000)</option>
+            <option value="binhthuy">🦁 Bảo Toàn (Kho Bình Thủy - Hub 21985000)</option>
+            <option value="vithanh">🦅 Đức Trung (Kho Vị Thanh - Hub 22862000)</option>
+            <option value="omon">🐺 Trọng Bằng (Kho Ô Môn - Hub 22917000)</option>
+            <option value="kythuat">🛠️ Auto-Heal Bot (Phòng Kỹ Thuật & Server)</option>
+            <option value="odo365">🚛 Agent ODO 365 (Đối soát 21 Kho Miền Tây)</option>
+            <option value="thanhtra">🕵️ Thanh Tra & Watchdog (Soi hoãn ảo & Canh đơn)</option>
+          </select>
+
+          <label style="font-size:0.74rem;color:#cbd5e1;">Chọn Kỹ năng (Skill) yêu cầu chạy:</label>
+          <select class="td-select" id="tdActionSelect">
+            <option value="b2b_filter">📊 Đồng bộ Đơn Tạo (Data ➔ Ketqua) & Bắn Topic 506</option>
+            <option value="cam_snap">📸 Trích xuất Ảnh Camera Kho Thực Tế Mới Nhất</option>
+            <option value="kpi_scan">🎯 Quét Số Liệu KPI GTC & LTC Thực Tế Từ GHN</option>
+            <option value="kythuat_heal">🛠️ Tuần Tra & Kiểm Tra Sức Khỏe Token 4 Kho</option>
+            <option value="odo_365">🚛 Đối Soát Chuyến Xe Tải ODO 365 (21 Kho)</option>
+            <option value="shipper_audit">🕵️ Kiểm Tra Danh Sách Canh Đơn VIP & Soi Hoãn Ảo</option>
+          </select>
+
+          <input type="text" class="td-input" id="tdNoteInput" placeholder="Ghi chú lệnh của anh Lộc (không bắt buộc)...">
+          <button class="td-btn-submit" onclick="submitTaskFromDrawer()">🚀 GIAO VIỆC NGAY (GỌI AGENT VÀO PHÒNG)</button>
+        </div>
+      </div>
+
+      <!-- DANH SÁCH TRẠNG THÁI VỊ TRÍ CỦA CÁC AGENT TRÊN SA BÀN -->
+      <div>
+        <div class="td-section-title">2. Vị trí & Trạng thái Nhân sự trên Sa Bàn 3D</div>
+        <div class="agent-roster-list" id="agentRosterList"></div>
+      </div>
+    </div>
+  </aside>
 
   <!-- ================= ROOM / HUB INSPECTOR MODAL ================= -->
   <div class="modal-backdrop" id="roomModal" onclick="if(event.target===this) closeRoomModal()">
@@ -1095,7 +1358,7 @@
     </div>
   </div>
 
-  <!-- ================= SKILL & CONNECTOR DRAWER (EXACT IMAGE 1 LAYOUT) ================= -->
+  <!-- ================= SKILL & CONNECTOR DRAWER ================= -->
   <div class="skill-drawer" id="skillDrawer">
     <div class="skill-top-bar">
       <div>
@@ -1127,13 +1390,13 @@
           <td>📊 <b>looker-b2b-auto-18h</b> (Xuất Đơn Tạo B2B 13 tỉnh & Lọc Ketqua)</td>
           <td>Cloud Runner <span class="skill-badge-type">GitHub Actions</span></td>
           <td class="skill-status-ok">✓ Đã kết nối (Topic 506)</td>
-          <td style="text-align:right;"><a href="/?wf=b2b_looker" style="color:#2563eb;font-weight:800;text-decoration:none;">🧩 Mở Node →</a></td>
+          <td style="text-align:right;"><button onclick="closeSkillDrawer();dispatchAgentTask('b2b','b2b_filter','Chạy Skill looker-b2b-auto-18h')" style="border:none;background:#2563eb;color:#fff;padding:5px 10px;border-radius:4px;font-weight:800;cursor:pointer;">⚡ Chạy Skill</button></td>
         </tr>
         <tr data-kind="skill" data-agent="cairang binhthuy vithanh omon">
           <td>🎯 <b>kpi-gtc-ltc-07h00</b> (Đánh giá KPI Giao & Lấy Thành Công 4 Kho MT01)</td>
           <td>Cloud Render <span class="skill-badge-type">Cron 07:00</span></td>
           <td class="skill-status-ok">✓ Đã kết nối (Topic 2690)</td>
-          <td style="text-align:right;"><a href="/?wf=kpi_gtc" style="color:#2563eb;font-weight:800;text-decoration:none;">🧩 Mở Node →</a></td>
+          <td style="text-align:right;"><button onclick="closeSkillDrawer();dispatchAgentTask('cairang','kpi_scan','Chạy Skill kpi-gtc-ltc-07h00')" style="border:none;background:#2563eb;color:#fff;padding:5px 10px;border-radius:4px;font-weight:800;cursor:pointer;">⚡ Chạy Skill</button></td>
         </tr>
         <tr data-kind="skill" data-agent="cairang binhthuy vithanh omon">
           <td>⏰ <b>checkin-morning-07h35</b> (Điểm danh ca sáng & Chấn chỉnh đi trễ)</td>
@@ -1145,7 +1408,7 @@
           <td>🚛 <b>truck-odo-365-02h00</b> (Đối soát ODO Xe Tải 365 toàn bộ 21 Kho Miền Tây)</td>
           <td>Cloud Render <span class="skill-badge-type">Cron 02:00</span></td>
           <td class="skill-status-ok">✓ Đã kết nối</td>
-          <td style="text-align:right;"><a href="/?wf=truck_odo_365" style="color:#2563eb;font-weight:800;text-decoration:none;">🧩 Mở Node →</a></td>
+          <td style="text-align:right;"><button onclick="closeSkillDrawer();dispatchAgentTask('odo365','odo_365','Chạy Skill truck-odo-365-02h00')" style="border:none;background:#2563eb;color:#fff;padding:5px 10px;border-radius:4px;font-weight:800;cursor:pointer;">⚡ Chạy Skill</button></td>
         </tr>
         <tr data-kind="skill" data-agent="odo365">
           <td>🛣️ <b>lastmile-trips-sync-05h00</b> (Đồng bộ chuyến đi Lastmile N-1 lên Google Sheets)</td>
@@ -1175,13 +1438,13 @@
           <td>🕵️ <b>shipper-delay-auditor</b> (Thanh tra soi hoãn ảo Shipper & Canh đơn ngầm 24/7)</td>
           <td>Cloud Daemon <span class="skill-badge-type">Realtime</span></td>
           <td class="skill-status-ok">✓ Đã kết nối</td>
-          <td style="text-align:right;"><a href="/war-room" style="color:#2563eb;font-weight:800;text-decoration:none;">🛡️ War Room →</a></td>
+          <td style="text-align:right;"><button onclick="closeSkillDrawer();dispatchAgentTask('thanhtra','shipper_audit','Kiểm tra danh sách canh đơn & soi hoãn ảo')" style="border:none;background:#2563eb;color:#fff;padding:5px 10px;border-radius:4px;font-weight:800;cursor:pointer;">⚡ Chạy Skill</button></td>
         </tr>
         <tr data-kind="connector" data-agent="kythuat cairang binhthuy vithanh omon">
           <td>📹 <b>Hikvision Camera Stream API</b> (Trích xuất ảnh trực tiếp 4 Kho MT01)</td>
           <td>Web API <span class="skill-badge-type">Auto-Heal Token</span></td>
           <td class="skill-status-ok">✓ Đã kết nối (Topic 3365)</td>
-          <td style="text-align:right;"><button onclick="closeSkillDrawer();openRoomModal('cairang')" style="border:none;background:none;color:#2563eb;font-weight:800;cursor:pointer;">📸 Xem Cam →</button></td>
+          <td style="text-align:right;"><button onclick="closeSkillDrawer();dispatchAgentTask('cairang','cam_snap','Chụp ảnh Camera Kho Cái Răng')" style="border:none;background:none;color:#2563eb;font-weight:800;cursor:pointer;">📸 Chụp Cam →</button></td>
         </tr>
         <tr data-kind="connector" data-agent="kythuat b2b">
           <td>📑 <b>Google Sheets Direct API v4</b> (Đồng bộ trực tiếp Data -> Ketqua & ThongKe)</td>
@@ -1200,7 +1463,298 @@
   </div>
 
   <script>
-    // 1. LIVE CLOCK (VIETNAM TIME)
+    // =========================================================================
+    // 1. MULTI-AGENT STATE & POSITION ENGINE (WORKING ROOM <-> CAFE/COURTYARD)
+    // =========================================================================
+    const AGENT_STATE = {
+      cairang: {
+        name: 'Công Bằng (Cái Răng)',
+        workPos: { left: '30.5%', top: '20.5%', room: 'Kho Cái Răng (Tầng 2)' },
+        idlePos: { left: '78.5%', top: '76.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '⚡ Đang trực Kho Cái Răng'
+      },
+      tigercore: {
+        name: 'Tiger AI Core',
+        workPos: { left: '48.5%', top: '15.5%', room: 'Phòng Chỉ Huy Hologram' },
+        idlePos: { left: '48.5%', top: '24.5%', room: 'Bàn Cầu Hologram' },
+        status: 'WORKING',
+        taskText: '⚡ Điều phối 9 luồng Cloud'
+      },
+      binhthuy: {
+        name: 'Bảo Toàn (Bình Thủy)',
+        workPos: { left: '65.5%', top: '29.5%', room: 'Phòng Phân Tích Bình Thủy' },
+        idlePos: { left: '83.5%', top: '72.0%', room: 'Sân Trà Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '⚡ KPI 91.6% (Dẫn đầu)'
+      },
+      kythuat: {
+        name: 'Auto-Heal Bot',
+        workPos: { left: '55.5%', top: '41.0%', room: 'Phòng Server Trung Tâm' },
+        idlePos: { left: '45.5%', top: '71.5%', room: 'Sân Cờ Tổ Quốc' },
+        status: 'WORKING',
+        taskText: '🛡️ Canh Token 24/7'
+      },
+      odo365: {
+        name: 'Agent ODO 365',
+        workPos: { left: '60.5%', top: '48.5%', room: 'Bàn Điều Phối ODO 365' },
+        idlePos: { left: '75.5%', top: '81.5%', room: 'Bàn Cafe Sân Gỗ (Nghỉ ca)' },
+        status: 'IDLE', // Đã xong ca 02:00 AM nên ra ngồi uống Cafe dưới tán dù!
+        taskText: '☕ Đang nghỉ (Xong ca 02h)'
+      },
+      vithanh: {
+        name: 'Đức Trung (Vị Thanh)',
+        workPos: { left: '81.5%', top: '44.5%', room: 'Kho Vị Thanh (Sàn Xanh)' },
+        idlePos: { left: '41.5%', top: '75.0%', room: 'Sân Trước Cổng Chính' },
+        status: 'WORKING',
+        taskText: '⚡ Đang trực Kho Vị Thanh'
+      },
+      b2b: {
+        name: 'Agent B2B (Topic 506)',
+        workPos: { left: '36.0%', top: '55.5%', room: 'Phòng Dữ Liệu B2B' },
+        idlePos: { left: '81.0%', top: '78.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'IDLE', // Đã lọc xong 24.878 đơn nên ra Sân Cafe chờ lệnh 18:00 hoặc lệnh của anh Lộc!
+        taskText: '☕ Chờ ca 18h (Đã lọc 24.8k)'
+      },
+      thanhtra: {
+        name: 'Thanh Tra & Watchdog',
+        workPos: { left: '53.5%', top: '60.0%', room: 'Cổng Kiểm Soát An Ninh' },
+        idlePos: { left: '46.5%', top: '69.0%', room: 'Sân Cờ Tổ Quốc' },
+        status: 'WORKING',
+        taskText: '🕵️ Đang canh đơn VIP'
+      },
+      omon: {
+        name: 'Trọng Bằng (Ô Môn)',
+        workPos: { left: '69.5%', top: '66.5%', room: 'Khoang Điều Phối Ô Môn' },
+        idlePos: { left: '79.5%', top: '74.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '⚡ Đang trực Kho Ô Môn'
+      }
+    };
+
+    function renderAllAgentPositions() {
+      let workingCount = 0;
+      let idleCount = 0;
+
+      Object.keys(AGENT_STATE).forEach(id => {
+        const st = AGENT_STATE[id];
+        const el = document.getElementById('agent-' + id);
+        const bubble = document.getElementById('bubble-' + id);
+        const hitbox = document.getElementById('hitbox-' + id);
+        if (!el) return;
+
+        const targetPos = (st.status === 'IDLE') ? st.idlePos : (st.overridePos || st.workPos);
+        el.style.left = targetPos.left;
+        el.style.top = targetPos.top;
+
+        el.classList.toggle('is-working', st.status === 'RUNNING');
+        el.classList.toggle('is-idle', st.status === 'IDLE');
+
+        if (bubble) {
+          bubble.textContent = st.taskText || '';
+          bubble.classList.toggle('show', st.status === 'RUNNING' || st.status === 'IDLE');
+        }
+        if (hitbox) {
+          hitbox.classList.toggle('active-work', st.status === 'RUNNING');
+        }
+
+        if (st.status === 'IDLE') idleCount++;
+        else workingCount++;
+      });
+
+      const summaryEl = document.getElementById('hudOnlineSummary');
+      if (summaryEl) {
+        summaryEl.textContent = `${workingCount} đang trong phòng · ${idleCount} ở sân Cafe`;
+      }
+      renderRosterInDrawer();
+    }
+
+    function setAgentState(agentId, status, taskText, overridePos = null) {
+      if (!AGENT_STATE[agentId]) return;
+      AGENT_STATE[agentId].status = status;
+      if (taskText) AGENT_STATE[agentId].taskText = taskText;
+      AGENT_STATE[agentId].overridePos = overridePos;
+      renderAllAgentPositions();
+    }
+
+    function toggleAgentRestOrWork(agentId) {
+      const st = AGENT_STATE[agentId];
+      if (!st) return;
+      if (st.status === 'IDLE') {
+        setAgentState(agentId, 'WORKING', '⚡ Đã vào phòng trực ca');
+        appendChatLog('Anh Lộc', st.name, `Gọi ${st.name} từ Sân Cafe vào ${st.workPos.room} làm việc.`);
+      } else {
+        setAgentState(agentId, 'IDLE', '☕ Đang nghỉ tại Sân Cafe');
+        appendChatLog('Anh Lộc', st.name, `Cho phép ${st.name} ra ${st.idlePos.room} nghỉ giải lao.`);
+      }
+    }
+
+    let shiftSimToggle = false;
+    function toggleShiftSimulation() {
+      shiftSimToggle = !shiftSimToggle;
+      const btn = document.getElementById('btnShiftMode');
+      if (shiftSimToggle) {
+        btn.textContent = '☕ CHẾ ĐỘ: GIỜ NGHỈ TRƯA (RA SÂN CAFE)';
+        ['cairang', 'binhthuy', 'b2b', 'odo365'].forEach(id => {
+          setAgentState(id, 'IDLE', '☕ Giải lao tại Sân Cafe');
+        });
+      } else {
+        btn.textContent = '🏃 DI CHUYỂN CA: VÀO PHÒNG LÀM VIỆC';
+        Object.keys(AGENT_STATE).forEach(id => {
+          setAgentState(id, 'WORKING', '⚡ Đang trực tại phòng');
+        });
+      }
+    }
+
+    // Khởi tạo vị trí ban đầu (Agent ODO 365 & Agent B2B đang ở Sân Cafe chờ lệnh, khi giao việc sẽ chạy vào phòng!)
+    setTimeout(renderAllAgentPositions, 200);
+
+    // =========================================================================
+    // 2. REAL TASK DISPATCHER ENGINE (MOVES AGENT -> RUNS API -> REPLIES IN CHAT)
+    // =========================================================================
+    async function dispatchAgentTask(agentId, action, description) {
+      const targetKey = AGENT_STATE[agentId] ? agentId : 'cairang';
+      const agentObj = AGENT_STATE[targetKey];
+
+      // Bước 1: Ghi nhận lệnh của anh Lộc vào Phòng Hội Thoại
+      appendChatLog('Anh Lộc', agentObj.name, description || `Yêu cầu thực hiện: ${action}`, true);
+
+      // Bước 2: Nếu Agent đang ở Sân Cafe (IDLE) hoặc phòng khác -> Lập tức di chuyển vào đúng Phòng Làm Việc!
+      setAgentState(targetKey, 'RUNNING', '⏳ Bước 1/2: Đang vào phòng xử lý...');
+
+      // Nếu là lệnh kiểm tra kỹ thuật -> Cho Auto-Heal Bot chạy đi tuần tra!
+      if (action === 'kythuat_heal') {
+        setAgentState('kythuat', 'RUNNING', '🛠️ Đang tuần tra kiểm tra Token...', { left: '36.0%', top: '34.0%' });
+      }
+
+      try {
+        const res = await fetch('/api/saban/dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agent_id: targetKey,
+            action: action,
+            note: description || ''
+          })
+        });
+        const data = await res.json();
+        const resolvedId = (data.agent_id && AGENT_STATE[data.agent_id]) ? data.agent_id : targetKey;
+
+        // Cập nhật trạng thái Agent vừa thực thi
+        setAgentState(resolvedId, 'RUNNING', '✅ Hoàn tất 100%!');
+
+        // Hiển thị câu trả lời của Agent trong Phòng Hội Thoại
+        appendChatLog(
+          data.agent_label || agentObj.name,
+          'Anh Lộc',
+          data.reply || 'Dạ anh Lộc, em đã hoàn thành nhiệm vụ!',
+          false,
+          data.image || null
+        );
+
+        // Nếu có ảnh Camera mới -> Cập nhật vào Modal nếu đang mở
+        if (data.image && document.getElementById('roomModal').classList.contains('open')) {
+          document.getElementById('mCamImg').src = data.image;
+        }
+
+        // Sau 7 giây hoàn tất: Nếu là Agent theo ca cố định (như b2b hoặc odo365), tự động đi bộ ra Sân Cafe nghỉ ngơi!
+        setTimeout(() => {
+          if (resolvedId === 'b2b' || resolvedId === 'odo365') {
+            setAgentState(resolvedId, 'IDLE', '☕ Xong việc · Nghỉ tại Sân Cafe');
+          } else {
+            setAgentState(resolvedId, 'WORKING', '⚡ Trực tuyến tại phòng');
+          }
+        }, 7000);
+
+      } catch (err) {
+        setAgentState(targetKey, 'WORKING', '⚠️ Lỗi kết nối tạm thời');
+        appendChatLog('Auto-Heal Bot', 'Anh Lộc', 'Đang kiểm tra lại đường truyền mạng cho tiến trình...');
+      }
+    }
+
+    function appendChatLog(sender, receiver, text, isBoss = false, imgUrl = null) {
+      const list = document.getElementById('chatBodyList');
+      const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const item = document.createElement('div');
+      item.className = 'chat-item';
+      const imgHtml = imgUrl
+        ? `<div style="margin-top:5px;"><img src="${imgUrl}" style="width:100%;max-height:110px;object-fit:cover;border-radius:4px;border:1px solid #38bdf8;cursor:pointer;" onclick="openRoomModal('${currentRoomKey}')"></div>`
+        : '';
+      item.innerHTML = `
+        <div class="chat-item-avatar">${isBoss ? '👑' : '<img src="/static/img/tiger_avatar.jpg" alt="">'}</div>
+        <div style="flex:1;">
+          <div class="chat-meta"><b class="${isBoss ? 'boss' : ''}">${sender}</b> → ${receiver} · ${timeStr}</div>
+          <div>${text}</div>
+          ${imgHtml}
+        </div>
+      `;
+      list.prepend(item);
+    }
+
+    function handleChatCommandSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatCommandInput');
+      const select = document.getElementById('chatTargetAgent');
+      const text = input.value.trim();
+      if (!text) return;
+      const agentVal = select.value === 'auto' ? 'cairang' : select.value;
+      input.value = '';
+      dispatchAgentTask(agentVal, 'auto', text);
+    }
+
+    // =========================================================================
+    // 3. RIGHT SLIDE-OVER TASK DRAWER ("VIỆC ▲" & "+ TẠO VIỆC")
+    // =========================================================================
+    function openTaskDrawer() {
+      renderRosterInDrawer();
+      document.getElementById('taskDrawer').classList.add('open');
+    }
+    function closeTaskDrawer() {
+      document.getElementById('taskDrawer').classList.remove('open');
+    }
+    function submitTaskFromDrawer() {
+      const agentId = document.getElementById('tdAgentSelect').value;
+      const action = document.getElementById('tdActionSelect').value;
+      const note = document.getElementById('tdNoteInput').value.trim();
+      const actionNames = {
+        b2b_filter: 'Đồng bộ 24.878 đơn Data -> Ketqua & gửi Topic 506',
+        cam_snap: 'Trích xuất ảnh Camera kho thực tế mới nhất',
+        kpi_scan: 'Quét số liệu KPI GTC & LTC thực tế',
+        kythuat_heal: 'Tuần tra & kiểm tra sức khỏe Token 4 kho',
+        odo_365: 'Đối soát 67 chuyến xe tải ODO 365 (21 Kho)',
+        shipper_audit: 'Kiểm tra danh sách canh đơn VIP & soi hoãn ảo'
+      };
+      closeTaskDrawer();
+      dispatchAgentTask(agentId, action, note || actionNames[action]);
+    }
+
+    function renderRosterInDrawer() {
+      const box = document.getElementById('agentRosterList');
+      if (!box) return;
+      box.innerHTML = Object.keys(AGENT_STATE).map(id => {
+        const st = AGENT_STATE[id];
+        const isIdle = st.status === 'IDLE';
+        const locName = isIdle ? st.idlePos.room : st.workPos.room;
+        return `
+          <div class="roster-row">
+            <div>
+              <div style="font-weight:800;color:#f8fafc;">${st.name}</div>
+              <div style="font-size:0.7rem;color:#94a3b8;">📍 Vị trí: ${locName}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="roster-status-badge ${isIdle ? 'idle' : 'work'}">${isIdle ? '☕ Sân Cafe' : '⚡ Trong Phòng'}</span>
+              <button onclick="toggleAgentRestOrWork('${id}')" style="background:#1e293b;border:1px solid #475569;color:#fff;padding:4px 8px;border-radius:4px;font-size:0.68rem;font-weight:700;cursor:pointer;">
+                ${isIdle ? 'Gọi vào phòng' : 'Cho nghỉ'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 4. CLOCK, DAY/NIGHT, VIEWPORT PAN/ZOOM & ROOM MODAL
+    // =========================================================================
     function updateClock() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
@@ -1209,7 +1763,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 2. DAY / NIGHT MODE TOGGLE
     function toggleDayNight() {
       document.body.classList.toggle('day-mode');
       const isDay = document.body.classList.contains('day-mode');
@@ -1217,7 +1770,6 @@
       document.getElementById('lampStatusLabel').textContent = isDay ? 'Ánh sáng ban ngày' : 'Đèn văn phòng';
     }
 
-    // 3. PAN & ZOOM FOR 3D ISOMETRIC CAMPUS
     const viewport = document.getElementById('isoViewport');
     const scene = document.getElementById('isoScene');
     let scale = Math.max(window.innerWidth / 1600, window.innerHeight / 900);
@@ -1259,17 +1811,15 @@
       applyTransform();
     }, { passive: false });
 
-    // 4. CHAT PANEL COLLAPSE
     function toggleChatPanel() {
-      const body = document.getElementById('chatBodyList');
+      const panel = document.getElementById('studioChatPanel');
       const title = document.getElementById('chatHeaderTitle');
-      body.classList.toggle('collapsed');
-      title.textContent = body.classList.contains('collapsed')
-        ? '▸ PHÒNG HỘI THOẠI · LIVE TÁC CHIẾN'
-        : '▾ PHÒNG HỘI THOẠI · LIVE TÁC CHIẾN';
+      panel.classList.toggle('chat-panel-collapsed');
+      title.textContent = panel.classList.contains('chat-panel-collapsed')
+        ? '▸ PHÒNG HỘI THOẠI · RA LỆNH & BÁO CÁO 2 CHIỀU'
+        : '▾ PHÒNG HỘI THOẠI · RA LỆNH & BÁO CÁO 2 CHIỀU';
     }
 
-    // 5. ROOM CONFIG & LIVE MODAL
     let currentRoomKey = 'cairang';
     const ROOM_CONFIG = {
       cairang: {
@@ -1403,22 +1953,10 @@
       const btn = document.getElementById('mBtnSnap');
       const oldText = btn.textContent;
       btn.textContent = '⏳ Đang trích xuất Camera...';
-      try {
-        const r = await fetch('/api/war-room/cam-snap', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hub: cfg.hubKey })
-        });
-        const d = await r.json();
-        if (d.success && d.image) {
-          document.getElementById('mCamImg').src = d.image;
-          document.getElementById('mCamBadge').textContent = '🟢 ẢNH CAM THỰC TẾ MỚI NHẤT • ' + new Date().toLocaleTimeString('vi-VN');
-        }
-      } catch (e) {}
+      await dispatchAgentTask(cfg.hubKey, 'cam_snap', 'Chụp ảnh Camera thực tế từ bảng giám sát');
       btn.textContent = oldText;
     }
 
-    // 6. SKILL & CONNECTOR DRAWER
     function openSkillDrawer() {
       document.getElementById('skillDrawer').classList.add('open');
     }
@@ -1441,29 +1979,6 @@
         else tr.style.display = (tr.dataset.agent || '').includes(agent) ? '' : 'none';
       });
     }
-
-    // 7. SYNC LIVE TRACES INTO CHAT BOX
-    async function syncLiveChatTraces() {
-      try {
-        const r = await fetch('/api/war-room/traces');
-        const d = await r.json();
-        if (d.success && Array.isArray(d.traces) && d.traces.length > 0) {
-          const list = document.getElementById('chatBodyList');
-          const latest = d.traces.slice(-3).reverse();
-          list.innerHTML = latest.map(t => `
-            <div class="chat-item">
-              <div class="chat-item-avatar">${t.status === 'SUCCESS' ? '✅' : (t.status === 'RUNNING' ? '⏳' : '🛠️')}</div>
-              <div>
-                <div class="chat-meta"><b>${t.department || 'Tiger AI'}</b> → Anh Lộc · ${t.time || ''}</div>
-                <div><b>${t.task_name}:</b> ${t.current_step}</div>
-              </div>
-            </div>
-          `).join('');
-        }
-      } catch (e) {}
-    }
-    syncLiveChatTraces();
-    setInterval(syncLiveChatTraces, 12000);
   </script>
 </body>
 </html>
