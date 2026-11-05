@@ -787,8 +787,8 @@ def run_looker_export_pipeline(max_retries=3):
                 # 7. Tạo bảng thống kê -> ThongKe và đợi Telegram modal load xong & tự đóng
                 run_thongke_and_wait_telegram_modal(master_page)
 
-                # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 & 2690)
-                print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 & Topic 2690)...")
+                # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))
+                print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))...")
                 try:
                     import subprocess
                     reporter_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tiger_b2b_thongke_reporter.py")

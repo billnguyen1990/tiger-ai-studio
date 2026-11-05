@@ -26,7 +26,7 @@ if not os.path.exists(CREDS_FILE):
 
 BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 CHAT_ID = "-1003940889949"
-TOPIC_IDS = [506, 2690]  # Gửi đồng thời Topic 506 (📅 Đơn Tạo) & Topic 2690 (🔥 Báo Cáo / War Room)
+TOPIC_IDS = [506]  # Gửi đồng thời Topic 506 (📅 Đơn Tạo) & Topic 2690 (🔥 Báo Cáo / War Room)
 
 from datetime import datetime
 import time

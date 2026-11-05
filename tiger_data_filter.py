@@ -156,3 +156,4 @@ def sync_filter_data_to_ketqua(creds_path=None, sheet_id='1m2INwSknlsd9zaGXMinPq
 
 if __name__ == "__main__":
     sync_filter_data_to_ketqua()
+
