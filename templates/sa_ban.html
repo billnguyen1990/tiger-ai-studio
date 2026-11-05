@@ -1300,6 +1300,135 @@
       background: linear-gradient(135deg, rgba(67, 20, 7, 0.94), rgba(154, 52, 18, 0.88));
     }
 
+
+    /* ================= PARK, RIVER FISHING, JOGGING & MOVING 3D TRUCKS ================= */
+    .park-zone-sign {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, rgba(6, 78, 59, 0.94), rgba(4, 120, 87, 0.90));
+      border: 1.4px solid #34d399;
+      color: #ecfdf5;
+      padding: 2.5px 9px;
+      border-radius: 999px;
+      font-size: 0.61rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65), 0 0 12px rgba(52, 211, 153, 0.35);
+      z-index: 48;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .park-zone-sign:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #fde047;
+    }
+
+    /* POSE 4: JOGGING IN THE PARK (pose-jog) */
+    .agent-tag.pose-jog .chibi-whole-body {
+      animation: chibiJogBounce 0.34s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-jog .chibi-leg-l {
+      animation: chibiLegWalkL 0.28s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-jog .chibi-leg-r {
+      animation: chibiLegWalkR 0.28s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-jog .chibi-arm-l {
+      animation: chibiArmSwingL 0.28s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-jog .chibi-arm-r {
+      animation: chibiArmSwingR 0.28s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-jog .chibi-desk-prop {
+      opacity: 0 !important;
+      transform: scale(0.4);
+    }
+    @keyframes chibiJogBounce {
+      0% { transform: translateY(0px) rotate(-3deg); }
+      100% { transform: translateY(-6px) rotate(3deg); }
+    }
+
+    /* POSE 5: FISHING BY THE RIVER (pose-fish) */
+    .agent-tag.pose-fish .chibi-whole-body {
+      animation: chibiSitBreath 2.0s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-fish .chibi-desk-prop {
+      opacity: 0 !important;
+      transform: scale(0.4);
+    }
+    .chibi-fish-prop {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .agent-tag.pose-fish .chibi-fish-prop {
+      opacity: 1 !important;
+    }
+    .fish-bobber-anim {
+      animation: bobberFloat 1.3s ease-in-out infinite alternate;
+    }
+    @keyframes bobberFloat {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(4px); }
+    }
+
+    /* MOVING 3D ISOMETRIC GHN TRUCKS */
+    .moving-ghn-truck {
+      position: absolute;
+      width: 68px;
+      height: 48px;
+      transform: translate(-50%, -50%);
+      z-index: 54;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: left 2.6s linear, top 2.6s linear;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.65));
+    }
+    .moving-ghn-truck.flip-x .truck-svg-inner {
+      transform: scaleX(-1);
+    }
+    .truck-svg-inner {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.25s ease;
+      animation: truckEngineRumble 0.35s ease-in-out infinite alternate;
+    }
+    @keyframes truckEngineRumble {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-1.2px); }
+    }
+    .moving-ghn-truck.flip-x .truck-svg-inner {
+      animation: truckEngineRumbleFlip 0.35s ease-in-out infinite alternate;
+    }
+    @keyframes truckEngineRumbleFlip {
+      0% { transform: scaleX(-1) translateY(0px); }
+      100% { transform: scaleX(-1) translateY(-1.2px); }
+    }
+    .truck-plate-tag {
+      position: absolute;
+      bottom: calc(100% - 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #f97316;
+      color: #fed7aa;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 0.54rem;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+    .truck-headlight-beam {
+      animation: headlightPulse 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes headlightPulse {
+      0% { opacity: 0.45; }
+      100% { opacity: 0.85; }
+    }
+
   </style>
 </head>
 <body>
@@ -1365,8 +1494,8 @@
     <div class="iso-scene-wrapper" id="isoScene">
 
       <!-- HIGH-RES 3D ARCHITECTURAL CUTAWAY RENDERS (NIGHT & DAY) -->
-      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=megadepts1" alt="Tiger AI 3D Campus Night">
-      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=megadepts1" alt="Tiger AI 3D Campus Day">
+      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=parkriver1" alt="Tiger AI 3D Campus Night">
+      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=parkriver1" alt="Tiger AI 3D Campus Day">
 
       <!-- HOLOGRAM PULSE OVER THE CENTRAL SPHERE -->
       <div class="holo-pulse"></div>
@@ -1477,6 +1606,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -1571,6 +1709,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -1657,6 +1804,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -1737,6 +1893,15 @@
                 <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -1821,6 +1986,15 @@
                 <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -1915,6 +2089,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -1999,6 +2182,15 @@
                 <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -2086,6 +2278,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -2153,6 +2354,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -2213,6 +2423,15 @@
                 <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -2275,6 +2494,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -2336,6 +2564,15 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
           </svg>
         </div>
@@ -2395,6 +2632,15 @@
                 <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -2457,7 +2703,337 @@
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
               </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
             </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- BẢNG TÊN CÔNG VIÊN CÂY XANH, ĐƯỜNG CHẠY BỘ & BẾN CÂU CÁ BỜ SÔNG -->
+      <div class="park-zone-sign" style="left: 89.5%; top: 53.5%;" onclick="toggleShiftSimulation()" title="Bấm để cho nhân viên ra Công Viên chạy bộ & câu cá">🌳 CÔNG VIÊN & ĐƯỜNG CHẠY BỘ</div>
+      <div class="park-zone-sign" style="left: 85.0%; top: 75.0%;" onclick="toggleShiftSimulation()" title="Bến câu cá thư giãn bờ sông Hậu">🎣 BẾN CÂU CÁ BỜ SÔNG</div>
+    
+      <!-- Park/River Leisure Chibi: park-fisher-1 -->
+      <div class="agent-tag pose-fish" id="park-fisher-1" style="left: 85.2%; top: 80.2%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
+        <div class="agent-bubble">🎣 Câu Cá Bờ Sông</div>
+        <div class="chibi-nameplate">🎣 Câu Cá Bờ Sông</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🐟</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#34d399"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#34d399"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#059669" stroke="#0f172a" stroke-width="1.2"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#059669" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#059669" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                <ellipse cx="32" cy="14" rx="18" ry="4" fill="#fde047" stroke="#ca8a04" stroke-width="1"/>
+                <path d="M21,14 C21,7 43,7 43,14 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+              </g>
+              <g class="chibi-desk-prop" style="opacity:0;"></g>
+              <g class="chibi-coffee-prop" style="opacity:0;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+              </g>
+                            <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Park/River Leisure Chibi: park-fisher-2 -->
+      <div class="agent-tag pose-fish" id="park-fisher-2" style="left: 95.2%; top: 73.2%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
+        <div class="agent-bubble">🎣 Câu Cá Cầu Gỗ</div>
+        <div class="chibi-nameplate">🎣 Câu Cá Cầu Gỗ</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🎣</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#0284c7" stroke="#0f172a" stroke-width="1.2"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#0284c7" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#0284c7" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                <ellipse cx="32" cy="14" rx="18" ry="4" fill="#fde047" stroke="#ca8a04" stroke-width="1"/>
+                <path d="M21,14 C21,7 43,7 43,14 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+              </g>
+              <g class="chibi-desk-prop" style="opacity:0;"></g>
+              <g class="chibi-coffee-prop" style="opacity:0;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+              </g>
+                            <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Park/River Leisure Chibi: park-jogger-1 -->
+      <div class="agent-tag pose-jog" id="park-jogger-1" style="left: 91.8%; top: 46.0%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
+        <div class="agent-bubble">🏃 Chạy Bộ Công Viên</div>
+        <div class="chibi-nameplate">🏃 Chạy Bộ Công Viên</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🏃</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#fb7185"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#fb7185"/>
+              </g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#e11d48" stroke="#0f172a" stroke-width="1.2"/>
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#e11d48" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#e11d48" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <g class="chibi-eyes">
+                  <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                  <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+                  <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+                </g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+                <ellipse cx="32" cy="14" rx="18" ry="4" fill="#fde047" stroke="#ca8a04" stroke-width="1"/>
+                <path d="M21,14 C21,7 43,7 43,14 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+              </g>
+              <g class="chibi-desk-prop" style="opacity:0;"></g>
+              <g class="chibi-coffee-prop" style="opacity:0;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+              </g>
+                            <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <!-- Animated 3D GHN Box Truck: truck-cairang -->
+      <div class="moving-ghn-truck" id="truck-cairang" style="left: 23.5%; top: 67.5%;" onclick="openRoomModal('cairang')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-cairang">🚛 65C-188.92 • Vào Kho Cái Răng</div>
+        <div class="truck-svg-inner">
+          <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+            <!-- Headlight Glow Beams -->
+            <polygon class="truck-headlight-beam" points="76,38 96,33 96,45" fill="url(#beamGrad)" opacity="0.7"/>
+            <polygon class="truck-headlight-beam" points="76,46 96,44 96,55" fill="url(#beamGrad)" opacity="0.7"/>
+            <defs>
+              <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#fef08a" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Ground Shadow -->
+            <ellipse cx="46" cy="52" rx="34" ry="7" fill="rgba(0,0,0,0.45)"/>
+            <!-- 3D Cargo Container Box (Dark Navy + Orange GHN Stripe) -->
+            <polygon points="10,16 58,16 64,22 16,22" fill="#334155" stroke="#475569" stroke-width="1"/>
+            <rect x="10" y="22" width="48" height="24" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+            <polygon points="58,16 64,22 64,46 58,46" fill="#1e293b"/>
+            <!-- GHN Orange Branding Stripe on Container -->
+            <rect x="13" y="29" width="42" height="6" rx="1" fill="#f97316"/>
+            <text x="20" y="34.2" fill="#ffffff" font-size="6.2" font-weight="900" font-family="Arial">GHN TẢI</text>
+            <!-- 3D Orange Truck Cab -->
+            <polygon points="58,25 74,25 79,32 79,46 58,46" fill="#f97316" stroke="#c2410c" stroke-width="1.2"/>
+            <!-- Windshield -->
+            <polygon points="63,27 73,27 77,33 63,33" fill="#38bdf8" opacity="0.85"/>
+            <!-- Headlights -->
+            <rect x="76" y="37" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <rect x="76" y="42" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <!-- Wheels -->
+            <circle cx="22" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="38" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="68" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Animated 3D GHN Box Truck: truck-omon -->
+      <div class="moving-ghn-truck" id="truck-omon" style="left: 43.8%; top: 74.0%;" onclick="openRoomModal('omon')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-omon">🚛 65C-209.45 • Vào Kho Ô Môn</div>
+        <div class="truck-svg-inner">
+          <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+            <!-- Headlight Glow Beams -->
+            <polygon class="truck-headlight-beam" points="76,38 96,33 96,45" fill="url(#beamGrad)" opacity="0.7"/>
+            <polygon class="truck-headlight-beam" points="76,46 96,44 96,55" fill="url(#beamGrad)" opacity="0.7"/>
+            <defs>
+              <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#fef08a" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Ground Shadow -->
+            <ellipse cx="46" cy="52" rx="34" ry="7" fill="rgba(0,0,0,0.45)"/>
+            <!-- 3D Cargo Container Box (Dark Navy + Orange GHN Stripe) -->
+            <polygon points="10,16 58,16 64,22 16,22" fill="#334155" stroke="#475569" stroke-width="1"/>
+            <rect x="10" y="22" width="48" height="24" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+            <polygon points="58,16 64,22 64,46 58,46" fill="#1e293b"/>
+            <!-- GHN Orange Branding Stripe on Container -->
+            <rect x="13" y="29" width="42" height="6" rx="1" fill="#f97316"/>
+            <text x="20" y="34.2" fill="#ffffff" font-size="6.2" font-weight="900" font-family="Arial">GHN TẢI</text>
+            <!-- 3D Orange Truck Cab -->
+            <polygon points="58,25 74,25 79,32 79,46 58,46" fill="#f97316" stroke="#c2410c" stroke-width="1.2"/>
+            <!-- Windshield -->
+            <polygon points="63,27 73,27 77,33 63,33" fill="#38bdf8" opacity="0.85"/>
+            <!-- Headlights -->
+            <rect x="76" y="37" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <rect x="76" y="42" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <!-- Wheels -->
+            <circle cx="22" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="38" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="68" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Animated 3D GHN Box Truck: truck-vithanh -->
+      <div class="moving-ghn-truck" id="truck-vithanh" style="left: 56.2%; top: 67.5%;" onclick="openRoomModal('vithanh')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-vithanh">🚛 95C-086.19 • Xuất Kho Vị Thanh</div>
+        <div class="truck-svg-inner">
+          <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+            <!-- Headlight Glow Beams -->
+            <polygon class="truck-headlight-beam" points="76,38 96,33 96,45" fill="url(#beamGrad)" opacity="0.7"/>
+            <polygon class="truck-headlight-beam" points="76,46 96,44 96,55" fill="url(#beamGrad)" opacity="0.7"/>
+            <defs>
+              <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#fef08a" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Ground Shadow -->
+            <ellipse cx="46" cy="52" rx="34" ry="7" fill="rgba(0,0,0,0.45)"/>
+            <!-- 3D Cargo Container Box (Dark Navy + Orange GHN Stripe) -->
+            <polygon points="10,16 58,16 64,22 16,22" fill="#334155" stroke="#475569" stroke-width="1"/>
+            <rect x="10" y="22" width="48" height="24" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+            <polygon points="58,16 64,22 64,46 58,46" fill="#1e293b"/>
+            <!-- GHN Orange Branding Stripe on Container -->
+            <rect x="13" y="29" width="42" height="6" rx="1" fill="#f97316"/>
+            <text x="20" y="34.2" fill="#ffffff" font-size="6.2" font-weight="900" font-family="Arial">GHN TẢI</text>
+            <!-- 3D Orange Truck Cab -->
+            <polygon points="58,25 74,25 79,32 79,46 58,46" fill="#f97316" stroke="#c2410c" stroke-width="1.2"/>
+            <!-- Windshield -->
+            <polygon points="63,27 73,27 77,33 63,33" fill="#38bdf8" opacity="0.85"/>
+            <!-- Headlights -->
+            <rect x="76" y="37" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <rect x="76" y="42" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <!-- Wheels -->
+            <circle cx="22" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="38" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="68" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Animated 3D GHN Box Truck: truck-highway -->
+      <div class="moving-ghn-truck" id="truck-highway" style="left: 6.2%; top: 62.0%;" onclick="openRoomModal('giamsattai')" title="Bấm để mở Phòng Giám Sát Tải">
+        <div class="truck-plate-tag" id="tag-truck-highway">🚛 65H-365.01 • Chạy Ra Quốc Lộ</div>
+        <div class="truck-svg-inner">
+          <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+            <!-- Headlight Glow Beams -->
+            <polygon class="truck-headlight-beam" points="76,38 96,33 96,45" fill="url(#beamGrad)" opacity="0.7"/>
+            <polygon class="truck-headlight-beam" points="76,46 96,44 96,55" fill="url(#beamGrad)" opacity="0.7"/>
+            <defs>
+              <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#fef08a" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Ground Shadow -->
+            <ellipse cx="46" cy="52" rx="34" ry="7" fill="rgba(0,0,0,0.45)"/>
+            <!-- 3D Cargo Container Box (Dark Navy + Orange GHN Stripe) -->
+            <polygon points="10,16 58,16 64,22 16,22" fill="#334155" stroke="#475569" stroke-width="1"/>
+            <rect x="10" y="22" width="48" height="24" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+            <polygon points="58,16 64,22 64,46 58,46" fill="#1e293b"/>
+            <!-- GHN Orange Branding Stripe on Container -->
+            <rect x="13" y="29" width="42" height="6" rx="1" fill="#f97316"/>
+            <text x="20" y="34.2" fill="#ffffff" font-size="6.2" font-weight="900" font-family="Arial">GHN TẢI</text>
+            <!-- 3D Orange Truck Cab -->
+            <polygon points="58,25 74,25 79,32 79,46 58,46" fill="#f97316" stroke="#c2410c" stroke-width="1.2"/>
+            <!-- Windshield -->
+            <polygon points="63,27 73,27 77,33 63,33" fill="#38bdf8" opacity="0.85"/>
+            <!-- Headlights -->
+            <rect x="76" y="37" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <rect x="76" y="42" width="3" height="3.5" rx="1" fill="#fef08a"/>
+            <!-- Wheels -->
+            <circle cx="22" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="38" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
+            <circle cx="68" cy="48" r="5.5" fill="#090d16" stroke="#94a3b8" stroke-width="1.8"/>
           </svg>
         </div>
       </div>
@@ -2517,6 +3093,15 @@
                 <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
                 <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
                 <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+              <!-- Fishing Rod & River Bobber Prop (Visible when fishing at Riverside Park) -->
+              <g class="chibi-fish-prop">
+                <line x1="45" y1="44" x2="63" y2="18" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <path d="M63,18 Q64,38 61,58" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-dasharray="2,1"/>
+                <g class="fish-bobber-anim">
+                  <circle cx="61" cy="58" r="3" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                  <ellipse cx="61" cy="61" rx="6" ry="2" fill="none" stroke="#38bdf8" stroke-width="0.9" opacity="0.8"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -2773,28 +3358,28 @@
       cairang: {
         name: 'NVXL: Công Bằng (Kho Cái Răng)',
         workPos: { left: '21.0%', top: '52.0%', room: 'Cụm Kho 1: Kho Cái Răng' },
-        idlePos: { left: '64.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        idlePos: { left: '84.8%', top: '79.8%', room: 'Bến Câu Cá Bờ Sông', idlePose: 'pose-fish', idleFx: '🎣' },
         status: 'WORKING',
         taskText: '📦 Kho Cái Răng • Đang điều phối xuất nhập'
       },
       omon: {
         name: 'NVXL: Trọng Bằng (Kho Ô Môn)',
         workPos: { left: '40.5%', top: '52.0%', room: 'Cụm Kho 2: Kho Ô Môn' },
-        idlePos: { left: '66.5%', top: '87.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        idlePos: { left: '91.5%', top: '46.5%', room: 'Đường Chạy Bộ Công Viên', idlePose: 'pose-jog', idleFx: '🏃' },
         status: 'WORKING',
         taskText: '📦 Kho Ô Môn • Đang điều phối xuất nhập'
       },
       vithanh: {
         name: 'NVXL: Đức Trung (Kho Vị Thanh)',
         workPos: { left: '59.5%', top: '52.0%', room: 'Cụm Kho 3: Kho Vị Thanh' },
-        idlePos: { left: '68.5%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        idlePos: { left: '95.0%', top: '73.2%', room: 'Cầu Gỗ Câu Cá Bờ Sông', idlePose: 'pose-fish', idleFx: '🐟' },
         status: 'WORKING',
         taskText: '📦 Kho Vị Thanh • Đang điều phối xuất nhập'
       },
       binhthuy: {
         name: 'NVXL: Bảo Toàn (Kho Bình Thủy)',
         workPos: { left: '78.5%', top: '52.0%', room: 'Cụm Kho 4: Kho Bình Thủy' },
-        idlePos: { left: '65.0%', top: '88.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        idlePos: { left: '88.5%', top: '69.0%', room: 'Đường Chạy Bộ Công Viên', idlePose: 'pose-jog', idleFx: '🏃' },
         status: 'WORKING',
         taskText: '📈 Kho Bình Thủy • KPI 91.6% (Dẫn đầu)'
       },
@@ -2939,14 +3524,18 @@
       shiftSimToggle = !shiftSimToggle;
       const btn = document.getElementById('btnShiftMode');
       if (shiftSimToggle) {
-        btn.textContent = '☕ CHẾ ĐỘ: GIỜ NGHỈ TRƯA (RA SÂN CAFE)';
-        ['cairang', 'binhthuy', 'b2b'].forEach(id => {
-          setAgentState(id, 'IDLE', '☕ Giải lao tại Sân Cafe');
+        btn.textContent = '🎣 CHẾ ĐỘ: RA CÔNG VIÊN CHẠY BỘ & CÂU CÁ';
+        ['cairang', 'omon', 'vithanh', 'binhthuy', 'b2b', 'nhansu'].forEach(id => {
+          const st = AGENT_STATE[id];
+          const actLabel = (st && st.idlePos && st.idlePos.idlePose === 'pose-fish')
+            ? '🎣 Đang câu cá thư giãn bờ sông'
+            : ((st && st.idlePos && st.idlePos.idlePose === 'pose-jog') ? '🏃 Đang chạy bộ công viên cây xanh' : '☕ Nghỉ ngơi uống cafe bờ sông');
+          setAgentState(id, 'IDLE', actLabel);
         });
       } else {
-        btn.textContent = '🏃 DI CHUYỂN CA: VÀO PHÒNG LÀM VIỆC';
+        btn.textContent = '🏃 DI CHUYỂN CA: VÀO KHO & PHÒNG LÀM VIỆC';
         Object.keys(AGENT_STATE).forEach(id => {
-          setAgentState(id, 'WORKING', '⚡ Đang trực tại phòng');
+          setAgentState(id, 'WORKING', '⚡ Đang trực tại kho/phòng');
         });
       }
     }
@@ -3054,7 +3643,7 @@
       if (Math.abs(newX - oldX) > 0.4) {
         el.classList.toggle('facing-left', newX < oldX);
       }
-      el.classList.remove('pose-work', 'pose-walk', 'pose-coffee');
+      el.classList.remove('pose-work', 'pose-walk', 'pose-coffee', 'pose-jog', 'pose-fish');
       el.classList.add(poseClass || 'pose-work');
       const fxEl = el.querySelector('.chibi-work-fx');
       if (fxEl && fxIcon) fxEl.textContent = fxIcon;
@@ -3078,7 +3667,9 @@
         if (!el) continue;
 
         if (st.status === 'IDLE' && id !== 'odo365') {
-          applyChibiPoseAndDirection(el, el.style.left, st.idlePos.left, 'pose-coffee', '☕');
+          const iPose = (st.idlePos && st.idlePos.idlePose) || 'pose-coffee';
+          const iFx = (st.idlePos && st.idlePos.idleFx) || '☕';
+          applyChibiPoseAndDirection(el, el.style.left, st.idlePos.left, iPose, iFx);
           el.style.left = st.idlePos.left;
           el.style.top = st.idlePos.top;
           continue;
@@ -3102,6 +3693,100 @@
         }, 2150);
       }
     }, 2800);
+
+    // =========================================================================
+    // 1C. AUTONOMOUS 3D GHN TRUCK FLEET (DRIVING IN/OUT OF DOCKS & ONTO HIGHWAY)
+    //     + PARK JOGGER RUNNING ALONG THE RIVERSIDE GREEN TRACK
+    // =========================================================================
+    const TRUCK_ROUTES = {
+      'truck-cairang': [
+        { left: '23.5%', top: '67.5%', label: '📦 65C-188.92 • Bốc hàng Kho Cái Răng' },
+        { left: '23.5%', top: '76.5%', label: '🚛 65C-188.92 • Rời bến Kho Cái Răng' },
+        { left: '43.5%', top: '81.5%', label: '🚛 65C-188.92 • Tiến ra Cổng Kiểm Soát' },
+        { left: '43.5%', top: '94.5%', label: '🛣️ 65C-188.92 • Qua cổng ra Quốc Lộ' },
+        { left: '14.0%', top: '95.2%', label: '🛣️ 65C-188.92 • Đang chạy ngoài Quốc Lộ' },
+        { left: '43.5%', top: '94.5%', label: '🚛 65C-188.92 • Quay về Cổng Kho MT01' },
+        { left: '23.5%', top: '76.5%', label: '🚛 65C-188.92 • Lùi vào bến Kho Cái Răng' }
+      ],
+      'truck-omon': [
+        { left: '43.8%', top: '67.5%', label: '📦 65C-209.45 • Nhận tải Kho Ô Môn' },
+        { left: '43.8%', top: '79.5%', label: '🚛 65C-209.45 • Xuất bến Kho Ô Môn' },
+        { left: '43.8%', top: '94.5%', label: '🛣️ 65C-209.45 • Ra Cổng Chính' },
+        { left: '74.0%', top: '95.2%', label: '🛣️ 65C-209.45 • Giao hàng Tuyến QL91' },
+        { left: '43.8%', top: '94.5%', label: '🚛 65C-209.45 • Vào Cổng Kiểm Soát' },
+        { left: '43.8%', top: '76.0%', label: '🚛 65C-209.45 • Cập bến Kho Ô Môn' }
+      ],
+      'truck-vithanh': [
+        { left: '56.2%', top: '67.5%', label: '📦 95C-086.19 • Bốc hàng Kho Vị Thanh' },
+        { left: '56.2%', top: '76.5%', label: '🚛 95C-086.19 • Rời bến Kho Vị Thanh' },
+        { left: '44.0%', top: '82.0%', label: '🚛 95C-086.19 • Ra Cổng Kiểm Soát' },
+        { left: '44.0%', top: '94.8%', label: '🛣️ 95C-086.19 • Ra đường lớn đi Hậu Giang' },
+        { left: '20.0%', top: '95.2%', label: '🛣️ 95C-086.19 • Đang chạy trên Quốc Lộ' },
+        { left: '44.0%', top: '90.0%', label: '🚛 95C-086.19 • Vào bãi Kho Vị Thanh' },
+        { left: '64.0%', top: '67.5%', label: '📦 95C-086.19 • Lùi vào Bến 2 Vị Thanh' },
+        { left: '64.0%', top: '76.5%', label: '🚛 95C-086.19 • Chuyển sang Bến 1' }
+      ],
+      'truck-highway': [
+        { left: '5.5%', top: '75.0%', label: '🛣️ 65H-365.01 • Chạy dọc Đại Lộ Miền Tây' },
+        { left: '9.8%', top: '22.0%', label: '🛣️ 65H-365.01 • Tuyến Liên Tỉnh ĐBSCL' },
+        { left: '5.8%', top: '82.0%', label: '🚛 65H-365.01 • Về bãi trung chuyển MT01' },
+        { left: '28.0%', top: '95.2%', label: '🛣️ 65H-365.01 • Qua mặt tiền Công Ty' },
+        { left: '78.5%', top: '67.5%', label: '📦 65H-365.01 • Vào bến Kho Bình Thủy' },
+        { left: '50.0%', top: '80.0%', label: '🚛 65H-365.01 • Rời Kho Bình Thủy ra cổng' },
+        { left: '25.0%', top: '95.2%', label: '🛣️ 65H-365.01 • Ra lại Đại Lộ Miền Tây' }
+      ]
+    };
+    const truckStepIdx = {
+      'truck-cairang': 0,
+      'truck-omon': 2,
+      'truck-vithanh': 4,
+      'truck-highway': 0
+    };
+
+    const PARK_JOG_ROUTE = [
+      { left: '88.5%', top: '26.0%' },
+      { left: '91.8%', top: '46.0%' },
+      { left: '94.2%', top: '63.0%' },
+      { left: '88.0%', top: '70.5%' },
+      { left: '77.5%', top: '73.5%' },
+      { left: '88.0%', top: '70.5%' },
+      { left: '94.2%', top: '63.0%' },
+      { left: '91.8%', top: '46.0%' }
+    ];
+    let parkJogIdx = 0;
+
+    setInterval(() => {
+      // 1. Move all 4 3D GHN Trucks along their dock <-> gate <-> highway routes
+      Object.keys(TRUCK_ROUTES).forEach(tId => {
+        const el = document.getElementById(tId);
+        if (!el) return;
+        const route = TRUCK_ROUTES[tId];
+        const prevLeft = parseFloat(el.style.left) || 50;
+        truckStepIdx[tId] = (truckStepIdx[tId] + 1) % route.length;
+        const wp = route[truckStepIdx[tId]];
+        const newLeft = parseFloat(wp.left) || 50;
+        if (Math.abs(newLeft - prevLeft) > 0.5) {
+          el.classList.toggle('flip-x', newLeft < prevLeft);
+        }
+        el.style.left = wp.left;
+        el.style.top = wp.top;
+        const tagEl = document.getElementById('tag-' + tId);
+        if (tagEl && wp.label) tagEl.textContent = wp.label;
+      });
+
+      // 2. Move the Park Jogger along the scenic riverside jogging path
+      const jogEl = document.getElementById('park-jogger-1');
+      if (jogEl) {
+        const prevX = parseFloat(jogEl.style.left) || 90;
+        parkJogIdx = (parkJogIdx + 1) % PARK_JOG_ROUTE.length;
+        const jwp = PARK_JOG_ROUTE[parkJogIdx];
+        const nextX = parseFloat(jwp.left) || 90;
+        jogEl.classList.toggle('facing-left', nextX < prevX);
+        jogEl.style.left = jwp.left;
+        jogEl.style.top = jwp.top;
+      }
+    }, 2700);
+
 
     // =========================================================================
     // 2. REAL TASK DISPATCHER ENGINE (MOVES AGENT -> RUNS API -> REPLIES IN CHAT)
