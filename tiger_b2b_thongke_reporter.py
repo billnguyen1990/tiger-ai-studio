@@ -136,11 +136,29 @@ def run_b2b_report(send_telegram=True):
     
     if latest_in_sheet not in expected_today:
         print(f"⚠️ Cột ngày mới nhất trong ThongKe ({latest_in_sheet}) chưa khớp ngày hôm nay ({expected_today[0]})!")
-        if trigger_sheet_filter_via_cdp():
+        try:
+            from tiger_data_filter import sync_filter_data_to_ketqua
+            sync_filter_data_to_ketqua()
             all_rows = tk.get_all_values()
-            print("✓ Đã tải lại dữ liệu mới nhất sau khi tự động kích hoạt lọc!")
-        else:
-            print("⚠️ Chưa thể làm mới tự động, vẫn tiếp tục với dữ liệu sẵn có...")
+            cur_header1 = all_rows[1] if len(all_rows) > 1 else []
+            cur_dates = [c for c in cur_header1 if '/' in c]
+            latest_in_sheet = cur_dates[-1] if cur_dates else ""
+        except Exception as e_f:
+            print(f"⚠️ Lỗi lọc trực tiếp: {e_f}")
+
+        if latest_in_sheet not in expected_today and sys.platform == "win32" and "--no-auto-scrape" not in sys.argv:
+            print("🚀 [Auto-Scrape] Đang tự động mở Looker Studio (Tab 1. B2B) để xuất dữ liệu mới nhất của hôm nay...")
+            import subprocess
+            looker_script = os.path.join(DIR_NAME, "looker_export_temp.py")
+            subprocess.run([sys.executable, looker_script, "--no-reporter"], timeout=600)
+            all_rows = tk.get_all_values()
+            cur_header1 = all_rows[1] if len(all_rows) > 1 else []
+            cur_dates = [c for c in cur_header1 if '/' in c]
+            latest_in_sheet = cur_dates[-1] if cur_dates else ""
+
+        if latest_in_sheet not in expected_today and "--force-old" not in sys.argv:
+            print(f"⏸️ Bảng ThongKe vẫn đang ở ngày cũ ({latest_in_sheet}), tạm hoãn bắn vào Topic 506 để không gửi trùng dữ liệu hôm qua!")
+            return {"success": False, "skipped_stale": True, "today": latest_in_sheet}
 
 
     # Table 1: Count of mã đơn (Phòng 1: 5 kho)

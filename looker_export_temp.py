@@ -432,8 +432,30 @@ def copy_export_and_paste_to_master(context, export_page):
                     
                 print("  🎉 ĐỒNG BỘ DỮ LIỆU QUA API THÀNH CÔNG (0 MB RAM BROWSER)!")
                 synced_via_api = True
+                try:
+                    export_page.close()
+                    print("  🧹 Đã đóng tab Google Sheets tạm để giữ trình duyệt luôn sạch nhẹ!")
+                except Exception:
+                    pass
+                try:
+                    auth_file_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "google_auth_storage.json")
+                    sa_keep = None
+                    if os.path.exists(auth_file_p):
+                        with open(auth_file_p, "r", encoding="utf-8") as f_old:
+                            sa_keep = json.load(f_old).get("service_account")
+                    new_st = context.storage_state()
+                    if sa_keep:
+                        new_st["service_account"] = sa_keep
+                    with open(auth_file_p, "w", encoding="utf-8") as f_new:
+                        json.dump(new_st, f_new, ensure_ascii=False)
+                    print("  🔑 Đã tự động làm mới phiên cookie trong google_auth_storage.json!")
+                except Exception:
+                    pass
         except Exception as ex:
             print(f"  ! Lỗi đồng bộ API ({ex}), sẽ thử fallback về clipboard...")
+
+    if synced_via_api:
+        return None
 
     master_page = None
     for pg in context.pages:
@@ -447,9 +469,6 @@ def copy_export_and_paste_to_master(context, export_page):
 
     master_page.bring_to_front()
     time.sleep(2.0)
-
-    if synced_via_api:
-        return master_page
 
     # Chế độ Fallback clipboard
     export_page.bring_to_front()
@@ -810,25 +829,29 @@ def run_looker_export_pipeline(max_retries=3):
                 # 5. Copy toàn bộ -> Xóa sạch Data cũ -> Dán vào A1
                 master_page = copy_export_and_paste_to_master(context, export_page)
 
-                # 6. Chạy lọc -> Ketqua và đợi thông báo Hoàn Tất
-                run_filter_to_ketqua(master_page)
+                # 6. Chạy lọc -> Ketqua & ThongKe trực tiếp bằng Google Sheets API v4 (5 giây, chuẩn định dạng 100%)
+                print("\n[Bước 5 & 6] Lọc dữ liệu chuẩn xác từ Data sang Ketqua & Cập nhật 4 bảng ThongKe (Google Sheets API v4)...")
+                from tiger_data_filter import sync_filter_data_to_ketqua
+                sync_filter_data_to_ketqua()
 
-                # 7. Tạo bảng thống kê -> ThongKe và đợi Telegram modal load xong & tự đóng
-                run_thongke_and_wait_telegram_modal(master_page)
+                if master_page is not None:
+                    run_filter_to_ketqua(master_page)
+                    run_thongke_and_wait_telegram_modal(master_page)
 
                 # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))
-                print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))...")
-                try:
-                    import subprocess
-                    reporter_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tiger_b2b_thongke_reporter.py")
-                    p_rep = subprocess.run([sys.executable, reporter_script], capture_output=True, text=True, timeout=120)
-                    print(f"  ✓ Đã chạy xong tiger_b2b_thongke_reporter (code: {p_rep.returncode})")
-                    if p_rep.stdout:
-                        print("  " + "\n  ".join([line for line in p_rep.stdout.splitlines() if "✓" in line or "Kết quả" in line]))
-                    if p_rep.returncode != 0 and p_rep.stderr:
-                        print(f"  ⚠️ Stderr: {p_rep.stderr[:300]}")
-                except Exception as ex_rep:
-                    print(f"  ⚠️ Lỗi khi chạy tiger_b2b_thongke_reporter: {ex_rep}")
+                if "--no-reporter" not in sys.argv:
+                    print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))...")
+                    try:
+                        import subprocess
+                        reporter_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tiger_b2b_thongke_reporter.py")
+                        p_rep = subprocess.run([sys.executable, reporter_script, "--send", "--no-auto-scrape"], capture_output=True, text=True, timeout=120)
+                        print(f"  ✓ Đã chạy xong tiger_b2b_thongke_reporter (code: {p_rep.returncode})")
+                        if p_rep.stdout:
+                            print("  " + "\n  ".join([line for line in p_rep.stdout.splitlines() if "✓" in line or "Kết quả" in line]))
+                        if p_rep.returncode != 0 and p_rep.stderr:
+                            print(f"  ⚠️ Stderr: {p_rep.stderr[:300]}")
+                    except Exception as ex_rep:
+                        print(f"  ⚠️ Lỗi khi chạy tiger_b2b_thongke_reporter: {ex_rep}")
 
                 total_elapsed = round(time.time() - start_total, 1)
                 print("\n=======================================================")
