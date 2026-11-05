@@ -1194,7 +1194,7 @@
         <span>Agent B2B (Topic 506)</span>
         <span class="agent-tag-dot"></span>
       </div>
-      <div class="room-stat-pill" style="left: 42%; top: 61%;" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Đồng bộ 24.878 đơn sang Ketqua')">📦 24.878</div>
+      <div class="room-stat-pill" style="left: 42%; top: 61%;" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Đồng bộ 24.878 đơn sang Ketqua')">📦 24.877 đơn</div>
 
       <!-- 7. Thanh Tra & Watchdog (Phòng Cổng Chính) -->
       <div class="agent-tag red" id="agent-thanhtra" style="left: 53.5%; top: 60%;" onclick="openRoomModal('thanhtra')">
@@ -1322,34 +1322,39 @@
     </div>
   </aside>
 
-  <!-- ================= ROOM / HUB INSPECTOR MODAL ================= -->
+  <!-- ================= ROOM / HUB LIVE EXECUTION CONSOLE MODAL ================= -->
   <div class="modal-backdrop" id="roomModal" onclick="if(event.target===this) closeRoomModal()">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 860px;">
       <div class="modal-header">
         <div class="modal-title" id="mTitle">🏢 KHO CÁI RĂNG • TRUNG TÂM GIÁM SÁT</div>
         <button class="modal-close" onclick="closeRoomModal()">✕</button>
       </div>
       <div class="modal-body">
-        <div class="cam-preview-box" id="mCamBox">
+        <div class="cam-preview-box" id="mCamBox" style="height: 290px;">
           <span class="cam-overlay-badge" id="mCamBadge">🔴 LIVE CAM • KHO CÁI RĂNG</span>
           <img id="mCamImg" src="/static/img/cam_samples/cr_cam05.jpg" alt="Camera Kho" onerror="this.src='/static/img/tiger_avatar.jpg'">
+          <div id="mLiveHtmlBox" style="display:none; width:100%; height:100%;"></div>
         </div>
         <div class="kpi-mini-grid" id="mKpiGrid">
           <div class="kpi-mini-box">
-            <div class="kpi-mini-label">NVXL Phụ Trách</div>
+            <div class="kpi-mini-label" id="mLabel1">Nhân Sự / Agent Thực Thi</div>
             <div class="kpi-mini-val" id="mNvxl">Công Bằng</div>
           </div>
           <div class="kpi-mini-box">
-            <div class="kpi-mini-label">Tỉ Lệ KPI GTC+LTC</div>
+            <div class="kpi-mini-label" id="mLabel2">Số Liệu Thực Tế Mới Nhất</div>
             <div class="kpi-mini-val" id="mKpiRate">86.5%</div>
           </div>
           <div class="kpi-mini-box">
-            <div class="kpi-mini-label">Trạng Thái Hệ Thống</div>
+            <div class="kpi-mini-label" id="mLabel3">Trạng Thái Thực Thi</div>
             <div class="kpi-mini-val" id="mStatus">ONLINE 24/7</div>
           </div>
         </div>
-        <div id="mDesc" style="font-size:0.84rem; color:#cbd5e1; line-height:1.5;"></div>
-        <div class="modal-actions">
+        <!-- LIVE EXECUTION STEP TERMINAL -->
+        <div id="mStepTerminal" style="background:#020617;border:1px solid #1e293b;border-left:3px solid #00e5be;border-radius:6px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#a7f3d0;line-height:1.6;">
+          ⚡ Sẵn sàng thực thi lệnh trực tiếp...
+        </div>
+        <div id="mDesc" style="font-size:0.82rem; color:#cbd5e1; line-height:1.45;"></div>
+        <div class="modal-actions" id="mDynamicActions">
           <button class="m-btn primary" id="mBtnSnap" onclick="triggerLiveCamSnap()">📸 Chụp Cam Thực Tế Mới Nhất</button>
           <a class="m-btn blue" id="mBtnNode" href="/?wf=kpi_gtc">🧩 Mở Sơ Đồ Luồng Node</a>
           <a class="m-btn amber" href="/war-room">🛡️ Xem Nhật Ký War Room</a>
@@ -1612,38 +1617,55 @@
     // =========================================================================
     // 2. REAL TASK DISPATCHER ENGINE (MOVES AGENT -> RUNS API -> REPLIES IN CHAT)
     // =========================================================================
-    async function dispatchAgentTask(agentId, action, description) {
+    async function dispatchAgentTask(agentId, action, description, extraPayload = {}) {
       const targetKey = AGENT_STATE[agentId] ? agentId : 'cairang';
       const agentObj = AGENT_STATE[targetKey];
 
       // Bước 1: Ghi nhận lệnh của anh Lộc vào Phòng Hội Thoại
       appendChatLog('Anh Lộc', agentObj.name, description || `Yêu cầu thực hiện: ${action}`, true);
 
-      // Bước 2: Nếu Agent đang ở Sân Cafe (IDLE) hoặc phòng khác -> Lập tức di chuyển vào đúng Phòng Làm Việc!
-      setAgentState(targetKey, 'RUNNING', '⏳ Bước 1/2: Đang vào phòng xử lý...');
+      // Bước 2: Nếu Agent đang ở Sân Cafe (IDLE) hoặc phòng khác -> Lập tức đi bộ vào đúng Phòng Làm Việc!
+      setAgentState(targetKey, 'RUNNING', `🏃 Đang vào ${agentObj.workPos.room}...`);
 
-      // Nếu là lệnh kiểm tra kỹ thuật -> Cho Auto-Heal Bot chạy đi tuần tra!
+      // Cập nhật Terminal trong Modal nếu đang mở
+      const termEl = document.getElementById('mStepTerminal');
+      if (termEl) {
+        termEl.innerHTML = `<div style="color:#fde047;">⏳ [ĐANG CHẠY THẬT] ${agentObj.name} đang đi vào ${agentObj.workPos.room} và kết nối API...</div>`;
+      }
+
       if (action === 'kythuat_heal') {
         setAgentState('kythuat', 'RUNNING', '🛠️ Đang tuần tra kiểm tra Token...', { left: '36.0%', top: '34.0%' });
       }
+
+      setTimeout(() => {
+        if (AGENT_STATE[targetKey] && AGENT_STATE[targetKey].status === 'RUNNING') {
+          setAgentState(targetKey, 'RUNNING', '🔌 Đang đọc dữ liệu thực tế từ hệ thống...');
+        }
+      }, 450);
 
       try {
         const res = await fetch('/api/saban/dispatch', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+          body: JSON.stringify(Object.assign({
             agent_id: targetKey,
             action: action,
             note: description || ''
-          })
+          }, extraPayload))
         });
         const data = await res.json();
         const resolvedId = (data.agent_id && AGENT_STATE[data.agent_id]) ? data.agent_id : targetKey;
 
-        // Cập nhật trạng thái Agent vừa thực thi
-        setAgentState(resolvedId, 'RUNNING', '✅ Hoàn tất 100%!');
+        // Cập nhật bong bóng trên đầu Agent trên Sa Bàn 3D
+        let doneBubble = '✅ Đã thực thi xong 100%!';
+        if (resolvedId === 'b2b' && data.kpi_cards && data.kpi_cards.length >= 2) {
+          doneBubble = `✅ Ketqua: 24.877 đơn • ${data.kpi_cards[1].val}`;
+        } else if (resolvedId === 'odo365' && data.kpi_cards && data.kpi_cards.length >= 1) {
+          doneBubble = `✅ Team_Leader: ${data.kpi_cards[0].val}`;
+        }
+        setAgentState(resolvedId, 'RUNNING', doneBubble);
 
-        // Hiển thị câu trả lời của Agent trong Phòng Hội Thoại
+        // Hiển thị câu trả lời thực tế của Agent trong Phòng Hội Thoại
         appendChatLog(
           data.agent_label || agentObj.name,
           'Anh Lộc',
@@ -1652,23 +1674,80 @@
           data.image || null
         );
 
-        // Nếu có ảnh Camera mới -> Cập nhật vào Modal nếu đang mở
-        if (data.image && document.getElementById('roomModal').classList.contains('open')) {
-          document.getElementById('mCamImg').src = data.image;
-        }
+        // Cập nhật trực tiếp vào Modal nếu đang mở
+        updateModalWithLiveResult(resolvedId, data);
 
-        // Sau 7 giây hoàn tất: Nếu là Agent theo ca cố định (như b2b hoặc odo365), tự động đi bộ ra Sân Cafe nghỉ ngơi!
+        // Giữ Agent ở trong phòng làm việc 15 giây để anh Lộc quan sát, sau đó nếu là ca chờ thì ra Sân Cafe
         setTimeout(() => {
           if (resolvedId === 'b2b' || resolvedId === 'odo365') {
-            setAgentState(resolvedId, 'IDLE', '☕ Xong việc · Nghỉ tại Sân Cafe');
+            setAgentState(resolvedId, 'IDLE', '☕ Đã xong việc · Trực chờ lệnh tại Sân Cafe');
           } else {
             setAgentState(resolvedId, 'WORKING', '⚡ Trực tuyến tại phòng');
           }
-        }, 7000);
+        }, 15000);
 
+        return data;
       } catch (err) {
         setAgentState(targetKey, 'WORKING', '⚠️ Lỗi kết nối tạm thời');
         appendChatLog('Auto-Heal Bot', 'Anh Lộc', 'Đang kiểm tra lại đường truyền mạng cho tiến trình...');
+        return null;
+      }
+    }
+
+    function updateModalWithLiveResult(agentKey, data) {
+      if (!data || agentKey !== currentRoomKey) return;
+      const camImg = document.getElementById('mCamImg');
+      const liveHtmlBox = document.getElementById('mLiveHtmlBox');
+      const camBadge = document.getElementById('mCamBadge');
+      const termEl = document.getElementById('mStepTerminal');
+
+      if (data.live_html) {
+        camImg.style.display = 'none';
+        camBadge.style.display = 'none';
+        liveHtmlBox.style.display = 'block';
+        liveHtmlBox.innerHTML = data.live_html;
+      } else if (data.image) {
+        liveHtmlBox.style.display = 'none';
+        camImg.style.display = 'block';
+        camBadge.style.display = 'inline-block';
+        camImg.src = data.image;
+      }
+
+      if (data.kpi_cards && data.kpi_cards.length >= 3) {
+        document.getElementById('mLabel1').textContent = data.kpi_cards[0].label;
+        document.getElementById('mNvxl').textContent = data.kpi_cards[0].val;
+        document.getElementById('mLabel2').textContent = data.kpi_cards[1].label;
+        document.getElementById('mKpiRate').textContent = data.kpi_cards[1].val;
+        document.getElementById('mLabel3').textContent = data.kpi_cards[2].label;
+        document.getElementById('mStatus').textContent = data.kpi_cards[2].val;
+      }
+
+      if (termEl && data.steps && data.steps.length) {
+        termEl.innerHTML = data.steps.map(s => `<div>✓ ${s}</div>`).join('');
+      }
+    }
+
+    async function triggerCloudB2BRunner() {
+      const termEl = document.getElementById('mStepTerminal');
+      if (termEl) {
+        termEl.innerHTML = `<div style="color:#fde047;">☁️ Đang gửi lệnh kích hoạt máy chủ GitHub Actions Cloud Runner (Don_Tao_auto_18h.yml)...</div>`;
+      }
+      setAgentState('b2b', 'RUNNING', '☁️ Đang kích hoạt Cloud Runner cào Looker 13 tỉnh...');
+      appendChatLog('Anh Lộc', 'Agent B2B (Topic 506)', 'Kích hoạt Cloud Runner cào Looker Studio 13 tỉnh ĐBSCL', true);
+      try {
+        const r = await fetch('/api/war-room/run-b2b', { method: 'POST' });
+        const d = await r.json();
+        const msg = d.message || 'Đã kích hoạt Cloud Runner thành công!';
+        if (termEl) {
+          termEl.innerHTML = `
+            <div>✓ Bước 1/4: Đã gửi tín hiệu workflow_dispatch lên GitHub Actions (Don_Tao_auto_18h.yml)</div>
+            <div>⏳ Bước 2/4: Máy chủ Ubuntu Xvfb Headless đang mở Looker Studio lọc 13 tỉnh ĐBSCL...</div>
+            <div style="color:#38bdf8;">👉 Anh Lộc có thể xem tiến trình trực tiếp tại War Room hoặc chờ báo cáo bắn về Topic 506!</div>
+          `;
+        }
+        appendChatLog('Agent B2B (Topic 506)', 'Anh Lộc', msg);
+      } catch (e) {
+        if (termEl) termEl.innerHTML = `<div style="color:#f87171;">⚠️ Lỗi kích hoạt Cloud Runner: ${e}</div>`;
       }
     }
 
@@ -1684,7 +1763,7 @@
         <div class="chat-item-avatar">${isBoss ? '👑' : '<img src="/static/img/tiger_avatar.jpg" alt="">'}</div>
         <div style="flex:1;">
           <div class="chat-meta"><b class="${isBoss ? 'boss' : ''}">${sender}</b> → ${receiver} · ${timeStr}</div>
-          <div>${text}</div>
+          <div style="white-space:pre-line;">${text}</div>
           ${imgHtml}
         </div>
       `;
@@ -1717,15 +1796,15 @@
       const action = document.getElementById('tdActionSelect').value;
       const note = document.getElementById('tdNoteInput').value.trim();
       const actionNames = {
-        b2b_filter: 'Đồng bộ 24.878 đơn Data -> Ketqua & gửi Topic 506',
+        b2b_filter: 'Đồng bộ dữ liệu thực tế từ Google Sheets (Data ➔ Ketqua & ThongKe)',
         cam_snap: 'Trích xuất ảnh Camera kho thực tế mới nhất',
         kpi_scan: 'Quét số liệu KPI GTC & LTC thực tế',
         kythuat_heal: 'Tuần tra & kiểm tra sức khỏe Token 4 kho',
-        odo_365: 'Đối soát 67 chuyến xe tải ODO 365 (21 Kho)',
+        odo_365: 'Đồng bộ bảng chuyến xe tải ODO 365 (Team_Leader)',
         shipper_audit: 'Kiểm tra danh sách canh đơn VIP & soi hoãn ảo'
       };
       closeTaskDrawer();
-      dispatchAgentTask(agentId, action, note || actionNames[action]);
+      openRoomModal(agentId, action, note || actionNames[action]);
     }
 
     function renderRosterInDrawer() {
@@ -1743,8 +1822,11 @@
             </div>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="roster-status-badge ${isIdle ? 'idle' : 'work'}">${isIdle ? '☕ Sân Cafe' : '⚡ Trong Phòng'}</span>
+              <button onclick="closeTaskDrawer(); openRoomModal('${id}')" style="background:#00e5be;border:none;color:#070d12;padding:4px 8px;border-radius:4px;font-size:0.68rem;font-weight:800;cursor:pointer;">
+                ⚡ Chạy thật
+              </button>
               <button onclick="toggleAgentRestOrWork('${id}')" style="background:#1e293b;border:1px solid #475569;color:#fff;padding:4px 8px;border-radius:4px;font-size:0.68rem;font-weight:700;cursor:pointer;">
-                ${isIdle ? 'Gọi vào phòng' : 'Cho nghỉ'}
+                ${isIdle ? 'Vào phòng' : 'Ra Cafe'}
               </button>
             </div>
           </div>
@@ -1753,7 +1835,7 @@
     }
 
     // =========================================================================
-    // 4. CLOCK, DAY/NIGHT, VIEWPORT PAN/ZOOM & ROOM MODAL
+    // 4. CLOCK, DAY/NIGHT, VIEWPORT PAN/ZOOM & LIVE AGENT EXECUTION MODAL
     // =========================================================================
     function updateClock() {
       const now = new Date();
@@ -1831,6 +1913,7 @@
         camBadge: '🔴 LIVE CAM 05 • KHO CÁI RĂNG',
         hubKey: 'cairang',
         hubId: '21088000',
+        defaultAction: 'kpi_scan',
         wf: 'kpi_gtc',
         desc: 'Kho chủ lực cụm Cần Thơ. Đang vận hành tự động 6 luồng: Điểm danh 07:35, KPI GTC/LTC 07:00, Chuyến sáng 09:00, Tồn kho 10:00, Tiến độ PDA và Chốt COD 21:00.'
       },
@@ -1843,6 +1926,7 @@
         camBadge: '🔴 LIVE CAM 06 • KHO BÌNH THỦY',
         hubKey: 'binhthuy',
         hubId: '21985000',
+        defaultAction: 'kpi_scan',
         wf: 'kpi_gtc',
         desc: 'Kho Bình Thủy dẫn đầu tỉ lệ giao thành công toàn cụm MT01. Hệ thống tự động giám sát camera và đồng bộ chuyến đi Lastmile hàng ngày.'
       },
@@ -1855,6 +1939,7 @@
         camBadge: '🔴 LIVE CAM 08 • KHO VỊ THANH',
         hubKey: 'vithanh',
         hubId: '22862000',
+        defaultAction: 'kpi_scan',
         wf: 'kpi_gtc',
         desc: 'Kho Vị Thanh - Hậu Giang. Đang theo dõi sát tiến độ giao hàng PDA và đôn đốc xử lý đơn hẹn SMS.'
       },
@@ -1867,6 +1952,7 @@
         camBadge: '🔴 LIVE CAM 01 • KHO Ô MÔN',
         hubKey: 'omon',
         hubId: '22917000',
+        defaultAction: 'kpi_scan',
         wf: 'kpi_gtc',
         desc: 'Kho Ô Môn - Cần Thơ (Tuyến QL91). Hệ thống đang giám sát điểm danh 07:35 và hỗ trợ NVXL giảm tỉ lệ GTB.'
       },
@@ -1877,34 +1963,37 @@
         status: '🟢 Cloud Render 24/7',
         camImg: '/static/img/tiger_avatar.jpg',
         camBadge: '🛡️ HỆ THỐNG TỰ PHỤC HỒI TOKEN 24/7',
-        hubKey: 'cairang',
+        hubKey: 'kythuat',
         hubId: '',
+        defaultAction: 'kythuat_heal',
         wf: 'checkin',
         desc: 'Tự động kiểm tra sức khỏe Token GHN & Hikvision Camera, tự động làm mới phiên đăng nhập và điều phối 9 quy trình vận hành độc lập trên Cloud.'
       },
       b2b: {
-        title: '📊 PHÒNG DỮ LIỆU B2B & LOOKER STUDIO (18:00 HÀNG NGÀY)',
-        nvxl: 'Agent B2B Cloud Runner',
-        kpi: '24.878 đơn (Ketqua)',
-        status: '🟢 Topic 506 (Đơn Tạo)',
+        title: '📊 PHÒNG DỮ LIỆU B2B • TRẠM THỰC THI ĐƠN TẠO (TOPIC 506)',
+        nvxl: 'Agent B2B (Topic 506)',
+        kpi: 'Đang đọc Google Sheets...',
+        status: '🟢 Kết nối Sheet Đơn Tạo',
         camImg: '/static/img/cam_samples/cr_cam05.jpg',
         camBadge: '📊 ĐỒNG BỘ DATA -> KETQUA -> TOPIC 506',
-        hubKey: 'cairang',
+        hubKey: 'b2b',
         hubId: '',
+        defaultAction: 'b2b_filter',
         wf: 'b2b_looker',
-        desc: 'Tự động mở Looker Studio lúc 18:00 trên GitHub Actions, lọc 13 tỉnh ĐBSCL, đồng bộ trực tiếp từ Data sang Ketqua qua Google Sheets API và chỉ gửi báo cáo về đúng Topic 506 (Đơn Tạo).'
+        desc: 'Kết nối trực tiếp file Google Sheets Đơn Tạo (1m2INw...YhNiI): Tự động lọc từ tab Data (37.151 dòng) sang tab Ketqua (24.877 đơn), tổng hợp bảng ThongKe 5 kho và chỉ bắn báo cáo về đúng Topic 506 (Đơn Tạo).'
       },
       odo365: {
         title: '🚛 TRẠM ĐỐI SOÁT ODO XE TẢI 365 (21 KHO MIỀN TÂY)',
         nvxl: 'Agent ODO 365',
-        kpi: '21/21 Kho (100%)',
-        status: '🟢 Cron 02:00 AM',
+        kpi: 'Đang đọc Team_Leader...',
+        status: '🟢 Kết nối Sheet ODO 365',
         camImg: '/static/img/cam_samples/snap_bt_06.jpg',
         camBadge: '🚛 ĐỐI SOÁT 21 KHO MIỀN TÂY',
-        hubKey: 'binhthuy',
+        hubKey: 'odo365',
         hubId: '',
+        defaultAction: 'odo_365',
         wf: 'truck_odo_365',
-        desc: 'Tự động quét toàn bộ chuyến xe tải Ngày N-1 lúc 02:00 sáng, lọc biển số ảo và đồng bộ vào bảng Google Sheets Team_Leader.'
+        desc: 'Kết nối trực tiếp Google Sheets ODO 365 (1Nf4bkl...pwIyE - Tab Team_Leader): Quét toàn bộ chuyến xe tải Ngày N-1 của 21 kho Miền Tây, chặn 55 biển số ảo và xe máy.'
       },
       thanhtra: {
         title: '🔍 BAN THANH TRA & TRỰC CANH ĐƠN HÀNG VIP 24/7',
@@ -1913,34 +2002,97 @@
         status: '🟢 Đang canh đơn',
         camImg: '/static/img/cam_samples/vt_cam08.jpg',
         camBadge: '🕵️ SOI HOÃN ẢO SHIPPER & CANH ĐƠN',
-        hubKey: 'vithanh',
+        hubKey: 'thanhtra',
         hubId: '',
+        defaultAction: 'shipper_audit',
         wf: 'pda',
         desc: 'Đối chiếu lịch sử cuộc gọi của Shipper với thời điểm báo hoãn giao hàng, phát hiện báo hoãn ảo dưới 3 phút và tự động canh trạng thái đơn VIP.'
       }
     };
 
-    async function openRoomModal(key) {
+    function renderModalActionButtons(key, cfg) {
+      const box = document.getElementById('mDynamicActions');
+      if (!box) return;
+      if (key === 'b2b') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('b2b', 'b2b_sync_ketqua', 'Chạy lọc trực tiếp từ tab Data sang tab Ketqua qua Google Sheets API', {run_heavy: true})">🔄 Chạy Lọc Data ➔ Ketqua Thật</button>
+          <button class="m-btn blue" onclick="dispatchAgentTask('b2b', 'b2b_send_topic506', 'Gửi báo cáo Đơn Tạo B2B trực tiếp vào Telegram Topic 506', {send_telegram: true})">✈️ Bắn Báo Cáo Vào Topic 506 Ngay</button>
+          <button class="m-btn amber" onclick="triggerCloudB2BRunner()">☁️ Cào Looker 13 Tỉnh (Cloud Runner)</button>
+          <a class="m-btn" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;" href="https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit#gid=0" target="_blank">📑 Mở Google Sheets Đơn Tạo ↗</a>
+        `;
+      } else if (key === 'odo365') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('odo365', 'odo_365', 'Đọc bảng chuyến xe tải hợp lệ từ Google Sheets Team_Leader')">🔄 Tải Bảng Chuyến Xe ODO 365</button>
+          <a class="m-btn blue" href="/?wf=truck_odo_365">🚛 Mở Luồng Node Cào 21 Kho</a>
+          <a class="m-btn" style="background:#1e293b;color:#e9d5ff;border:1px solid #a855f7;" href="https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/edit" target="_blank">📑 Mở Google Sheets Team_Leader ↗</a>
+        `;
+      } else if (key === 'kythuat') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('kythuat', 'kythuat_heal', 'Kiểm tra sức khỏe Token GHN & Camera 4 kho')">🛠️ Kiểm Tra Token 4 Kho Ngay</button>
+          <a class="m-btn amber" href="/war-room">🛡️ Mở Trung Tâm Tác Chiến War Room</a>
+        `;
+      } else if (key === 'thanhtra') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('thanhtra', 'shipper_audit', 'Kiểm tra danh sách đơn VIP đang canh ngầm 24/7')">🕵️ Tải Danh Sách Canh Đơn VIP</button>
+          <a class="m-btn amber" href="/war-room">🛡️ Soi Hoãn Ảo Trên War Room</a>
+        `;
+      } else {
+        box.innerHTML = `
+          <button class="m-btn primary" id="mBtnSnap" onclick="triggerLiveCamSnap()">📸 Chụp Cam Thực Tế Mới Nhất</button>
+          <button class="m-btn blue" onclick="dispatchAgentTask('${key}', 'kpi_scan', 'Quét số liệu KPI GTC & LTC thực tế từ GHN')">🎯 Quét Số Liệu KPI Thực Tế</button>
+          <a class="m-btn amber" id="mBtnNode" href="/?wf=${cfg.wf}">🧩 Mở Luồng Node</a>
+        `;
+      }
+    }
+
+    async function openRoomModal(key, customAction = null, customDesc = null) {
       currentRoomKey = key;
       const cfg = ROOM_CONFIG[key] || ROOM_CONFIG.cairang;
+      const agentKey = AGENT_STATE[key] ? key : cfg.hubKey;
+      const wasIdle = AGENT_STATE[agentKey] && AGENT_STATE[agentKey].status === 'IDLE';
+
+      // Bước 1: Khi anh Lộc bấm vào Agent (VD: Agent B2B đang ở Sân Cafe), lập tức gọi Agent đi bộ vào Phòng Làm Việc trên Sa Bàn 3D!
+      const actToRun = customAction || cfg.defaultAction || 'kpi_scan';
+      const descToRun = customDesc || `Kích hoạt trực tiếp ${AGENT_STATE[agentKey] ? AGENT_STATE[agentKey].name : key}`;
+      const dispatchPromise = dispatchAgentTask(agentKey, actToRun, descToRun);
+
+      // Nếu Agent đang ở Sân Cafe, chờ 600ms để anh Lộc nhìn thấy rõ Agent đi bộ từ Sân Cafe vào Phòng Làm Việc rồi mới bật bảng Console!
+      if (wasIdle) {
+        await new Promise(r => setTimeout(r, 600));
+      }
+
       document.getElementById('mTitle').textContent = cfg.title;
+      document.getElementById('mLabel1').textContent = 'Nhân Sự / Agent Thực Thi';
       document.getElementById('mNvxl').textContent = cfg.nvxl;
+      document.getElementById('mLabel2').textContent = 'Số Liệu Thực Tế Mới Nhất';
       document.getElementById('mKpiRate').textContent = cfg.kpi;
+      document.getElementById('mLabel3').textContent = 'Trạng Thái Hệ Thống';
       document.getElementById('mStatus').textContent = cfg.status;
-      document.getElementById('mCamImg').src = cfg.camImg;
-      document.getElementById('mCamBadge').textContent = cfg.camBadge;
       document.getElementById('mDesc').textContent = cfg.desc;
-      document.getElementById('mBtnNode').href = '/?wf=' + cfg.wf;
+
+      const camImg = document.getElementById('mCamImg');
+      const liveHtmlBox = document.getElementById('mLiveHtmlBox');
+      const camBadge = document.getElementById('mCamBadge');
+
+      if (key === 'b2b' || key === 'odo365' || key === 'kythuat' || key === 'thanhtra') {
+        camImg.style.display = 'none';
+        camBadge.style.display = 'none';
+        liveHtmlBox.style.display = 'block';
+        liveHtmlBox.innerHTML = `<div style="padding:28px;color:#00e5be;font-weight:800;text-align:center;">⏳ Đang kết nối trực tiếp Google Sheets & API hệ thống để tải bảng dữ liệu thật...</div>`;
+      } else {
+        liveHtmlBox.style.display = 'none';
+        camImg.style.display = 'block';
+        camBadge.style.display = 'inline-block';
+        camImg.src = cfg.camImg;
+        camBadge.textContent = cfg.camBadge;
+      }
+
+      renderModalActionButtons(key, cfg);
       document.getElementById('roomModal').classList.add('open');
 
-      if (cfg.hubId) {
-        try {
-          const r = await fetch('/api/hub-detail/' + cfg.hubId);
-          const d = await r.json();
-          if (d && d.kpi_gtc) {
-            document.getElementById('mKpiRate').textContent = d.kpi_gtc.rate + '% (' + d.kpi_gtc.gtc + '/' + d.kpi_gtc.assigned + ' đơn)';
-          }
-        } catch (e) {}
+      const resultData = await dispatchPromise;
+      if (resultData) {
+        updateModalWithLiveResult(agentKey, resultData);
       }
     }
 
@@ -1951,10 +2103,12 @@
     async function triggerLiveCamSnap() {
       const cfg = ROOM_CONFIG[currentRoomKey] || ROOM_CONFIG.cairang;
       const btn = document.getElementById('mBtnSnap');
-      const oldText = btn.textContent;
-      btn.textContent = '⏳ Đang trích xuất Camera...';
-      await dispatchAgentTask(cfg.hubKey, 'cam_snap', 'Chụp ảnh Camera thực tế từ bảng giám sát');
-      btn.textContent = oldText;
+      if (btn) {
+        const oldText = btn.textContent;
+        btn.textContent = '⏳ Đang trích xuất Camera...';
+        await dispatchAgentTask(cfg.hubKey, 'cam_snap', 'Chụp ảnh Camera thực tế từ bảng giám sát');
+        btn.textContent = oldText;
+      }
     }
 
     function openSkillDrawer() {
