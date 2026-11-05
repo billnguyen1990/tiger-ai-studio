@@ -1,5 +1,6 @@
 import gspread, re, unicodedata, time, os
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 def normalize_text(text):
     if not text:
@@ -36,6 +37,14 @@ ALL_BUU_CUC_LIST = [
     'Kho Giao Hàng Nặng TNB'
 ]
 
+MT01_5_KHO = [
+    'Kho Giao Hàng Nặng - Cái Răng - Cần Thơ',
+    'Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ',
+    'Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang',
+    'Kho Giao Hàng Nặng - Ô Môn - Cần Thơ',
+    'Kho Giao Hàng Nặng TNB'
+]
+
 def match_warehouse_name(raw_name):
     if not raw_name:
         return None
@@ -66,8 +75,90 @@ def parse_vn_date_time(val):
         return datetime(int(m3.group(1)), int(m3.group(2)), int(m3.group(3)))
     return None
 
+def parse_weight_int(val):
+    if val is None:
+        return 0
+    if isinstance(val, (int, float)):
+        return int(round(val))
+    s = str(val).strip().replace('.', '').replace(',', '')
+    try:
+        return int(s)
+    except Exception:
+        return 0
+
+def sync_ketqua_to_thongke(sh, matched_rows, from_date, today):
+    """Tự động tính toán và cập nhật 4 bảng thống kê trong tab ThongKe từ dữ liệu Ketqua."""
+    try:
+        date_list = []
+        cur_d = from_date
+        while cur_d <= today:
+            date_list.append(cur_d)
+            cur_d += timedelta(days=1)
+
+        date_keys = [d.strftime("%Y-%m-%d") for d in date_list]
+        date_labels = [f"{d.day}/{d.month}/{d.year}" for d in date_list]
+
+        counts = defaultdict(lambda: defaultdict(int))
+        weights = defaultdict(lambda: defaultdict(int))
+
+        # matched_rows columns:
+        # 0: mã đơn, 1: ngày lấy, 2: đến phường, 3: đến quận, 4: đến tỉnh,
+        # 5: cân nặng, 6: trạng thái, 7: bưu cục giao, 8: ngày tạo, 9: địa chỉ
+        for r in matched_rows:
+            if len(r) < 9:
+                continue
+            kho = r[7]
+            dt = parse_vn_date_time(r[8])
+            if not dt:
+                continue
+            dk = dt.strftime("%Y-%m-%d")
+            w = parse_weight_int(r[5])
+            counts[kho][dk] += 1
+            weights[kho][dk] += w
+
+        num_cols = 2 + len(date_labels) + 1
+        blank_row = [''] * num_cols
+
+        def fmt_vn(n):
+            return f"{int(n):,}".replace(",", ".")
+
+        def build_pivot_block(title, kho_list, metric_dict):
+            block = []
+            title_row = [title] + [''] * (num_cols - 1)
+            header_row = ['STT', 'Nhãn Hàng'] + date_labels + ['Tổng Cuối']
+            block.append(title_row)
+            block.append(header_row)
+            col_totals = [0] * len(date_keys)
+            grand_total = 0
+            for idx, kho in enumerate(kho_list, start=1):
+                vals = [metric_dict[kho][dk] for dk in date_keys]
+                row_sum = sum(vals)
+                for c_i, v in enumerate(vals):
+                    col_totals[c_i] += v
+                grand_total += row_sum
+                block.append([str(idx), kho] + [fmt_vn(v) for v in vals] + [fmt_vn(row_sum)])
+            block.append(['', 'Tổng Cuối'] + [fmt_vn(v) for v in col_totals] + [fmt_vn(grand_total)])
+            return block
+
+        t1 = build_pivot_block('Count of mã đơn', MT01_5_KHO, counts)
+        t2 = build_pivot_block('Tổng của cân nặng', MT01_5_KHO, weights)
+        t3 = build_pivot_block('Count of mã đơn', ALL_BUU_CUC_LIST, counts)
+        t4 = build_pivot_block('Tổng của cân nặng', ALL_BUU_CUC_LIST, weights)
+
+        all_tk_rows = t1 + [blank_row] + t2 + [blank_row] + t3 + [blank_row] + t4
+        ws_tk = sh.worksheet('ThongKe')
+        ws_tk.clear()
+        end_col_letter = chr(ord('A') + num_cols - 1)
+        range_str = f"A1:{end_col_letter}{len(all_tk_rows)}"
+        ws_tk.update(values=all_tk_rows, range_name=range_str, value_input_option='RAW')
+        print(f"  🎉 Đã cập nhật trực tiếp 4 bảng ThongKe (đến ngày {date_labels[-1]}) thành công 100%!")
+        return True
+    except Exception as e:
+        print(f"  ⚠️ Lỗi khi cập nhật trực tiếp ThongKe: {e}")
+        return False
+
 def sync_filter_data_to_ketqua(creds_path=None, sheet_id='1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI'):
-    """Lọc tự động từ Data sang Ketqua bằng Google Sheets API tốc độ cao, đảm bảo 100% không bị sót hoặc rỗng."""
+    """Lọc tự động từ Data sang Ketqua VÀ cập nhật ThongKe bằng Google Sheets API tốc độ cao."""
     if not creds_path:
         candidates = [
             os.path.join(os.path.dirname(os.path.abspath(__file__)), "credentials.json"),
@@ -131,7 +222,7 @@ def sync_filter_data_to_ketqua(creds_path=None, sheet_id='1m2INwSknlsd9zaGXMinPq
                         out_row.append(row[idx_map[col]])
                 matched_rows.append(out_row)
 
-        print(f"  ✓ Đã lọc xong {len(matched_rows):,} đơn từ tab Data (Chuẩn 22 kho, 7 ngày gần nhất)!")
+        print(f"  ✓ Đã lọc xong {len(matched_rows):,} đơn từ tab Data (Chuẩn 22 kho, từ {from_date.day}/{from_date.month} đến {today.day}/{today.month}/{today.year})!")
 
         ws_ketqua = sh.worksheet('Ketqua')
         ws_ketqua.clear()
@@ -149,6 +240,7 @@ def sync_filter_data_to_ketqua(creds_path=None, sheet_id='1m2INwSknlsd9zaGXMinPq
             time.sleep(0.5)
 
         print(f"  🎉 Đã ghi {len(matched_rows):,} dòng vào tab Ketqua thành công 100%!")
+        sync_ketqua_to_thongke(sh, matched_rows, from_date, today)
         return True
     except Exception as ex:
         print(f"  ⚠️ Lỗi khi lọc dữ liệu qua API: {ex}")
@@ -156,4 +248,3 @@ def sync_filter_data_to_ketqua(creds_path=None, sheet_id='1m2INwSknlsd9zaGXMinPq
 
 if __name__ == "__main__":
     sync_filter_data_to_ketqua()
-

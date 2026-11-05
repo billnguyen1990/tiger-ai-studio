@@ -647,20 +647,24 @@ def check_chrome_ready():
     return result == 0
 
 def start_chrome_bat():
-    """Khởi chạy quy trình Cloud Runner tự động qua GitHub Actions, tuyệt đối không bắt người dùng thao tác."""
-    try:
-        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSOXfHoBFEfKc3Y3z3aO0Dq")
-        gh_repo = "billnguyen1990/tiger-ai-studio"
-        gh_headers = {
-            "Authorization": f"token {gh_token}",
-            "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "TigerAI"
-        }
-        dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Don_Tao_auto_18h.yml/dispatches"
-        requests.post(dispatch_url, headers=gh_headers, json={"ref": "main", "inputs": {"headless": "true"}}, timeout=10)
-        print("  ✓ Đã kích hoạt máy chủ Cloud GitHub Actions thành công 100% tự động!")
-    except Exception as ex:
-        print(f"  [Lưu ý] Dispatch Cloud Runner: {ex}")
+    """Khởi động Chrome Bot chạy ngầm (--headless=new) với ChromeBotProfile đã đăng nhập sẵn Looker Studio."""
+    if sys.platform == "win32":
+        chrome_exe = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+        user_dir = os.path.expanduser(r"~\ChromeBotProfile")
+        if os.path.exists(chrome_exe) and os.path.exists(user_dir):
+            subprocess.Popen([
+                chrome_exe,
+                "--remote-debugging-port=9223",
+                f"--user-data-dir={user_dir}",
+                "--headless=new",
+                "--window-size=1920,1080",
+                "--disable-gpu",
+                "--no-first-run",
+                "https://datastudio.google.com/u/0/reporting/24e3b6f7-8f28-4f42-bc94-fda815a0c64f/page/p_m3rsgqzjgd"
+            ], creationflags=0x08000000)
+            print("  ✓ Đã khởi động ChromeBotProfile chạy ngầm (--headless=new) tại port 9223!")
+            time.sleep(5)
+            return
 
 def send_telegram_alert(message):
     """Đã tắt gửi cảnh báo lỗi rác vào Topic 2690 theo lệnh của anh Lộc."""
