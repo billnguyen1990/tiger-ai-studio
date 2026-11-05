@@ -326,76 +326,231 @@
       50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
     }
 
-    /* ================= STATE-DRIVEN MOVING AGENT TAGS ================= */
+    /* ================= 3D ANIMATED CHIBI CHARACTERS & SLEEK CAM NODES ================= */
     .agent-tag {
       position: absolute;
-      display: inline-flex;
+      width: 68px;
+      height: 82px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 7px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 2px solid #10b981;
-      padding: 4px 10px 4px 5px;
-      border-radius: 5px;
-      color: #ffffff;
-      font-size: 0.75rem;
-      font-weight: 800;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.55);
+      justify-content: flex-end;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
       cursor: pointer;
-      z-index: 50;
-      /* Smooth walking transition when moving between Cafe/Rest Zone and Work Room! */
-      transition: left 1.25s cubic-bezier(0.34, 1.35, 0.64, 1),
-                  top 1.25s cubic-bezier(0.34, 1.35, 0.64, 1),
-                  transform 0.2s ease,
-                  box-shadow 0.2s ease;
-      white-space: nowrap;
-      transform: translate(-50%, -50%);
-    }
-    body.day-mode .agent-tag {
-      background: rgba(255, 255, 255, 0.97);
-      color: #0f172a;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
+      z-index: 60;
+      /* Smooth walking movement across rooms */
+      transition: left 2.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                  top 2.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                  transform 0.2s ease;
+      transform: translate(-50%, -75%);
+      user-select: none;
     }
     .agent-tag:hover {
-      transform: translate(-50%, calc(-50% - 5px)) scale(1.07);
-      z-index: 95;
-      box-shadow: 0 12px 28px rgba(0, 229, 190, 0.65);
-    }
-    .agent-tag.amber { border-color: #f59e0b; }
-    .agent-tag.blue { border-color: #3b82f6; }
-    .agent-tag.pink { border-color: #ec4899; }
-    .agent-tag.purple { border-color: #8b5cf6; }
-    .agent-tag.red { border-color: #ef4444; }
-    .agent-tag.cyan { border-color: #06b6d4; }
-
-    /* Working state glow */
-    .agent-tag.is-working {
-      border-color: #00e5be !important;
-      box-shadow: 0 0 22px rgba(0, 229, 190, 0.9), 0 8px 20px rgba(0,0,0,0.6) !important;
-      z-index: 92;
-    }
-    /* Resting/Idle at Cafe or Courtyard */
-    .agent-tag.is-idle {
-      opacity: 0.92;
-      border-style: dashed;
+      transform: translate(-50%, -80%) scale(1.14);
+      z-index: 120;
     }
 
-    /* SPEECH / PROGRESS BUBBLE ABOVE AGENT HEAD */
+    /* Floor shadow & subtle status ring under Chibi feet */
+    .chibi-floor-ring {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 42px;
+      height: 18px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.0) 75%);
+      border-radius: 50%;
+      border: 1.5px solid rgba(16, 185, 129, 0.75);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .agent-tag.is-working .chibi-floor-ring {
+      border-color: #00e5be;
+      box-shadow: 0 0 20px #00e5be, inset 0 0 10px rgba(0, 229, 190, 0.5);
+      animation: ringPulse 0.9s ease-in-out infinite alternate;
+    }
+    .agent-tag.is-idle .chibi-floor-ring {
+      border-color: rgba(245, 158, 11, 0.8);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+    @keyframes ringPulse {
+      from { transform: translateX(-50%) scale(0.92); }
+      to { transform: translateX(-50%) scale(1.18); }
+    }
+
+    /* Chibi Sprite Wrapper & Direction Flip */
+    .chibi-sprite-wrap {
+      position: relative;
+      width: 64px;
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease;
+      z-index: 2;
+    }
+    .agent-tag.facing-left .chibi-sprite-wrap {
+      transform: scaleX(-1);
+    }
+
+    .chibi-svg {
+      width: 64px;
+      height: 74px;
+      overflow: visible;
+      filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.65));
+    }
+
+    /* POSE 1: WALKING (Di chuyển đi lại) */
+    .agent-tag.pose-walk .chibi-whole-body {
+      animation: chibiWalkBob 0.36s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-walk .chibi-leg-l {
+      transform-origin: 27px 54px;
+      animation: chibiLegSwingL 0.34s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-walk .chibi-leg-r {
+      transform-origin: 37px 54px;
+      animation: chibiLegSwingR 0.34s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-walk .chibi-arm-l {
+      transform-origin: 21px 39px;
+      animation: chibiArmSwingL 0.34s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-walk .chibi-arm-r {
+      transform-origin: 43px 39px;
+      animation: chibiArmSwingR 0.34s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-walk .chibi-desk-prop {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    /* POSE 2: SITTING & WORKING AT DESK (Ngồi làm việc gõ máy) */
+    .agent-tag.pose-work .chibi-whole-body {
+      animation: chibiWorkBreathe 1.4s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-work .chibi-head-group {
+      transform-origin: 32px 28px;
+      animation: chibiHeadNod 1.8s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-work .chibi-arm-l {
+      transform-origin: 21px 39px;
+      animation: chibiTypeL 0.2s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-work .chibi-arm-r {
+      transform-origin: 43px 39px;
+      animation: chibiTypeR 0.2s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-work .chibi-leg-l,
+    .agent-tag.pose-work .chibi-leg-r {
+      transform: translateY(-3px);
+    }
+    .agent-tag.pose-work .chibi-desk-prop {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* POSE 3: CAFE / CHILLING (Ngồi uống Cafe nghỉ ca) */
+    .agent-tag.pose-coffee .chibi-whole-body {
+      animation: chibiCoffeeSway 2.2s ease-in-out infinite alternate;
+    }
+    .agent-tag.pose-coffee .chibi-desk-prop {
+      opacity: 0;
+    }
+    .agent-tag.pose-coffee .chibi-coffee-prop {
+      opacity: 1 !important;
+    }
+
+    /* Blinking eyes for all Chibis */
+    .chibi-eyes {
+      transform-origin: 32px 24px;
+      animation: chibiBlink 4.2s infinite;
+    }
+    @keyframes chibiBlink {
+      0%, 94%, 100% { transform: scaleY(1); }
+      97% { transform: scaleY(0.1); }
+    }
+
+    @keyframes chibiWalkBob {
+      0% { transform: translateY(0px) rotate(-2deg); }
+      100% { transform: translateY(-5px) rotate(2deg); }
+    }
+    @keyframes chibiLegSwingL {
+      0% { transform: rotate(-24deg) translateY(-2px); }
+      100% { transform: rotate(22deg) translateY(1px); }
+    }
+    @keyframes chibiLegSwingR {
+      0% { transform: rotate(22deg) translateY(1px); }
+      100% { transform: rotate(-24deg) translateY(-2px); }
+    }
+    @keyframes chibiArmSwingL {
+      0% { transform: rotate(20deg); }
+      100% { transform: rotate(-22deg); }
+    }
+    @keyframes chibiArmSwingR {
+      0% { transform: rotate(-22deg); }
+      100% { transform: rotate(20deg); }
+    }
+    @keyframes chibiWorkBreathe {
+      0% { transform: translateY(1px); }
+      100% { transform: translateY(-1.5px); }
+    }
+    @keyframes chibiHeadNod {
+      0% { transform: rotate(-2.5deg) translateY(0px); }
+      100% { transform: rotate(2.5deg) translateY(1px); }
+    }
+    @keyframes chibiTypeL {
+      0% { transform: rotate(-28deg) translateY(-2px); }
+      100% { transform: rotate(-12deg) translateY(1px); }
+    }
+    @keyframes chibiTypeR {
+      0% { transform: rotate(12deg) translateY(1px); }
+      100% { transform: rotate(28deg) translateY(-2px); }
+    }
+    @keyframes chibiCoffeeSway {
+      0% { transform: rotate(-3deg) translateY(0px); }
+      100% { transform: rotate(3deg) translateY(-2px); }
+    }
+
+    /* Floating mini activity icon above Chibi head (no ugly text!) */
+    .chibi-work-fx {
+      position: absolute;
+      top: -6px;
+      right: 2px;
+      font-size: 0.78rem;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+      animation: fxFloat 1.6s ease-in-out infinite alternate;
+      z-index: 5;
+    }
+    @keyframes fxFloat {
+      0% { transform: translateY(2px) scale(0.92); opacity: 0.85; }
+      100% { transform: translateY(-5px) scale(1.12); opacity: 1; }
+    }
+
+    /* SPEECH / HOVER TOOLTIP BUBBLE (Hidden by default so NO text clutters the 3D map!) */
     .agent-bubble {
       position: absolute;
-      bottom: calc(100% + 7px);
+      bottom: calc(100% + 4px);
       left: 50%;
-      transform: translateX(-50%);
-      background: #00e5be;
-      color: #070d12;
-      padding: 3px 9px;
-      border-radius: 12px;
-      font-size: 0.66rem;
+      transform: translateX(-50%) translateY(4px) scale(0.9);
+      background: rgba(15, 23, 42, 0.94);
+      color: #f8fafc;
+      border: 1.5px solid #00e5be;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 0.68rem;
       font-weight: 800;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0, 229, 190, 0.5);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65);
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 130;
     }
     .agent-bubble::after {
       content: '';
@@ -407,74 +562,74 @@
       border-style: solid;
       border-color: #00e5be transparent transparent transparent;
     }
+    /* Show bubble ONLY on hover or when actively running a dispatched command or if labels toggled on */
+    .agent-tag:hover .agent-bubble,
     .agent-tag.is-working .agent-bubble,
-    .agent-bubble.show {
+    body.show-all-bubbles .agent-bubble {
       opacity: 1;
-      transform: translateX(-50%) translateY(-2px);
-    }
-    .agent-tag.is-idle .agent-bubble {
-      opacity: 1;
-      background: rgba(30, 41, 59, 0.9);
-      color: #fde047;
-      border: 1px solid #f59e0b;
-      box-shadow: none;
-    }
-    .agent-tag.is-idle .agent-bubble::after {
-      border-top-color: #f59e0b;
+      transform: translateX(-50%) translateY(0px) scale(1);
     }
 
-    .agent-tag-avatar {
-      width: 22px;
-      height: 22px;
-      border-radius: 3px;
-      background: #1e293b;
-      display: inline-flex;
+    /* SLEEK 3D CCTV CAMERA ICON PINS (Replaces bulky camera text tags) */
+    .cam-icon-pin {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1e293b, #090d16);
+      border: 1.5px solid rgba(56, 189, 248, 0.85);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.55), 0 4px 10px rgba(0,0,0,0.6);
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .agent-tag-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .agent-tag-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 6px #10b981;
-      flex-shrink: 0;
-    }
-    .agent-tag.is-working .agent-tag-dot {
-      background: #00e5be;
-      box-shadow: 0 0 10px #00e5be;
-      animation: pulseDot 0.7s infinite;
-    }
-    .agent-tag.is-idle .agent-tag-dot {
-      background: #f59e0b;
-      box-shadow: 0 0 6px #f59e0b;
-    }
-
-    .room-stat-pill {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.95);
-      color: #047857;
-      border: 2px solid #10b981;
-      padding: 3px 9px;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      font-family: 'JetBrains Mono', monospace;
-      z-index: 48;
+      font-size: 0.9rem;
       cursor: pointer;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.35);
+      z-index: 52;
+      transition: all 0.2s ease;
+    }
+    .cam-icon-pin::before {
+      content: '';
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      animation: spinSlow 8s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .cam-icon-pin:hover {
+      transform: translate(-50%, -50%) scale(1.22);
+      border-color: #00e5be;
+      box-shadow: 0 0 22px #00e5be;
+      z-index: 110;
+    }
+    .cam-icon-pin .cam-tip {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      color: #38bdf8;
+      border: 1px solid #38bdf8;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .cam-icon-pin:hover .cam-tip {
+      opacity: 1;
     }
 
-    /* ================= BOTTOM-LEFT 2-WAY COMMAND & CHAT BOX (PHÒNG HỘI THOẠI) ================= */
+/* ================= BOTTOM-LEFT 2-WAY COMMAND & CHAT BOX (PHÒNG HỘI THOẠI) ================= */
     .studio-chat-panel {
       position: fixed;
       bottom: 12px;
@@ -1125,96 +1280,785 @@
         </polygon>
       </svg>
 
-      <!-- ================= STATE-DRIVEN MOVING AGENT TAGS ================= -->
+      <!-- ================= 3D ANIMATED CHIBI CHARACTERS & SLEEK CAM PINS ================= -->
       <!-- 1. Công Bằng (Kho Cái Răng) -->
-      <div class="agent-tag blue" id="agent-cairang" style="left: 30.5%; top: 20.5%;" onclick="openRoomModal('cairang')">
-        <div class="agent-bubble" id="bubble-cairang">⚡ Đang trực Kho Cái Răng</div>
-        <span class="agent-tag-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></span>
-        <span>Công Bằng (Cái Răng)</span>
-        <span class="agent-tag-dot"></span>
+      <div class="agent-tag pose-work" id="agent-cairang" style="left: 31.2%; top: 22.0%;" onclick="openRoomModal('cairang')">
+        <div class="agent-bubble" id="bubble-cairang">🐯 Công Bằng (Cái Răng) • ⚡ Đang trực</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">💻</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#f97316"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#f97316"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#1d4ed8" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#f97316"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#1d4ed8" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#1d4ed8" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- 3D GHN Safety Hardhat -->
+          <path d="M16,18 C16,7 48,7 48,18 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.2"/>
+          <rect x="14" y="16" width="36" height="3.5" rx="1.8" fill="#fb923c"/>
+          <rect x="28" y="9" width="8" height="7" rx="1.5" fill="#fde047"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#f97316" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#f97316" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
       </div>
-      <div class="agent-tag pink" style="left: 26.5%; top: 41.5%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
-        <span class="agent-tag-avatar">📹</span>
-        <span>Cam 05 Cái Răng</span>
-        <span class="agent-tag-dot"></span>
+      <div class="cam-icon-pin" style="left: 25.0%; top: 39.5%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
+        <span>📹</span>
+        <div class="cam-tip">Cam 05 Cái Răng (Bấm chụp)</div>
       </div>
 
       <!-- 2. Tiger AI Core (Trung Tâm Chỉ Huy) -->
-      <div class="agent-tag amber" id="agent-tigercore" style="left: 48.5%; top: 15.5%;" onclick="openRoomModal('kythuat')">
-        <div class="agent-bubble" id="bubble-tigercore">⚡ Điều phối 9 luồng Cloud</div>
-        <span class="agent-tag-avatar"><img src="/static/img/tiger_avatar.jpg" alt=""></span>
-        <span>Tiger AI Core</span>
-        <span class="agent-tag-dot"></span>
+      <div class="agent-tag pose-work" id="agent-tigercore" style="left: 48.7%; top: 19.5%;" onclick="openRoomModal('kythuat')">
+        <div class="agent-bubble" id="bubble-tigercore">👑 Tiger AI Core • ⚡ Điều phối 9 luồng</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🌐</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#00e5be"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#00e5be"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#0f172a" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#00e5be"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#f59e0b"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- Cute 3D Tiger Ears & Cyber Visor -->
+          <circle cx="19" cy="11" r="5.5" fill="#f59e0b" stroke="#78350f" stroke-width="1.2"/>
+          <circle cx="19" cy="11" r="2.8" fill="#fde68a"/>
+          <circle cx="45" cy="11" r="5.5" fill="#f59e0b" stroke="#78350f" stroke-width="1.2"/>
+          <circle cx="45" cy="11" r="2.8" fill="#fde68a"/>
+          <path d="M26,7 L32,2 L38,7 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+          <rect x="18" y="19" width="28" height="5" rx="2.5" fill="rgba(56,189,248,0.75)" stroke="#00e5be" stroke-width="1"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#00e5be" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#00e5be" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
       </div>
 
       <!-- 3. Bảo Toàn (Kho Bình Thủy) -->
-      <div class="agent-tag blue" id="agent-binhthuy" style="left: 65.5%; top: 29.5%;" onclick="openRoomModal('binhthuy')">
-        <div class="agent-bubble" id="bubble-binhthuy">⚡ KPI 91.6% (Dẫn đầu)</div>
-        <span class="agent-tag-avatar">🦁</span>
-        <span>Bảo Toàn (Bình Thủy)</span>
-        <span class="agent-tag-dot"></span>
+      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 65.5%; top: 29.5%;" onclick="openRoomModal('binhthuy')">
+        <div class="agent-bubble" id="bubble-binhthuy">🦁 Bảo Toàn (Bình Thủy) • 📈 KPI 91.6%</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">📈</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#38bdf8"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#2563eb" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#38bdf8"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#2563eb" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#2563eb" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#0f172a"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- Spiky Anime Chibi Hair + Headset -->
+          <path d="M16,20 C16,8 48,8 48,20 C45,14 38,12 32,13 C25,12 19,14 16,20 Z" fill="#0f172a"/>
+          <path d="M16,22 C15,10 49,10 48,22" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+          <circle cx="16" cy="23" r="3" fill="#0284c7"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#38bdf8" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
       </div>
-      <div class="agent-tag" style="left: 71.5%; top: 36%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
-        <span class="agent-tag-avatar">📹</span>
-        <span>Cam 06 Bình Thủy</span>
-        <span class="agent-tag-dot"></span>
+      <div class="cam-icon-pin" style="left: 71.5%; top: 35.5%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
+        <span>📹</span>
+        <div class="cam-tip">Cam 06 Bình Thủy (Bấm chụp)</div>
       </div>
 
-      <!-- 4. Auto-Heal Bot & Agent ODO 365 (Phòng Server / Tuần Tra) -->
-      <div class="agent-tag cyan" id="agent-kythuat" style="left: 55.5%; top: 41%;" onclick="openRoomModal('kythuat')">
-        <div class="agent-bubble" id="bubble-kythuat">🛡️ Canh Token 24/7</div>
-        <span class="agent-tag-avatar">🛠️</span>
-        <span>Auto-Heal Bot</span>
-        <span class="agent-tag-dot"></span>
-      </div>
-      <div class="agent-tag purple" id="agent-odo365" style="left: 60.5%; top: 48.5%;" onclick="openRoomModal('odo365')">
-        <div class="agent-bubble" id="bubble-odo365">☕ Nghỉ sau ca 02:00 AM</div>
-        <span class="agent-tag-avatar">🚛</span>
-        <span>Agent ODO 365</span>
-        <span class="agent-tag-dot"></span>
+      <!-- 4. Auto-Heal Bot (Phòng Server Trung Tâm) -->
+      <div class="agent-tag pose-walk" id="agent-kythuat" style="left: 55.5%; top: 41.5%;" onclick="openRoomModal('kythuat')">
+        <div class="agent-bubble" id="bubble-kythuat">🤖 Auto-Heal Bot • 🛡️ Tuần tra Server</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🛠️</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#06b6d4"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#06b6d4"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#0284c7" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#06b6d4"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#0284c7" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#0284c7" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <g class="chibi-eyes">
+            <circle cx="26" cy="21.5" r="2.6" fill="#00e5be"/>
+            <circle cx="38" cy="21.5" r="2.6" fill="#00e5be"/>
+            <path d="M28,24.5 Q32,27 36,24.5" fill="none" stroke="#00e5be" stroke-width="1.5" stroke-linecap="round"/>
+          </g>
+        
+                
+          <!-- Cute Chibi Robot Helmet & Antenna -->
+          <line x1="32" y1="2" x2="32" y2="9" stroke="#38bdf8" stroke-width="2.2"/>
+          <circle cx="32" cy="2.5" r="3" fill="#00e5be"/>
+          <rect x="16" y="10" width="32" height="22" rx="10" fill="#e2e8f0" stroke="#38bdf8" stroke-width="1.5"/>
+          <rect x="20" y="16" width="24" height="11" rx="5" fill="#0f172a" stroke="#00e5be" stroke-width="1"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#06b6d4" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#06b6d4" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
       </div>
 
-      <!-- 5. Đức Trung (Kho Vị Thanh) -->
-      <div class="agent-tag blue" id="agent-vithanh" style="left: 81.5%; top: 44.5%;" onclick="openRoomModal('vithanh')">
-        <div class="agent-bubble" id="bubble-vithanh">⚡ Đang trực Kho Vị Thanh</div>
-        <span class="agent-tag-avatar">🦅</span>
-        <span>Đức Trung (Vị Thanh)</span>
-        <span class="agent-tag-dot"></span>
-      </div>
-      <div class="agent-tag" style="left: 86.5%; top: 52%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
-        <span class="agent-tag-avatar">📹</span>
-        <span>Cam 08 Vị Thanh</span>
-        <span class="agent-tag-dot"></span>
+      <!-- 5. Agent ODO 365 (Đối soát 21 Kho) -->
+      <div class="agent-tag pose-coffee" id="agent-odo365" style="left: 74.5%; top: 83.5%;" onclick="openRoomModal('odo365')">
+        <div class="agent-bubble" id="bubble-odo365">🚛 Agent ODO 365 • ☕ Nghỉ sau ca 02h</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🚛</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#a855f7"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#a855f7"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#7e22ce" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#a855f7"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#7e22ce" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#7e22ce" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#3b0764"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- Logistics Cap -->
+          <path d="M17,17 C17,7 47,7 47,17 Z" fill="#a855f7" stroke="#0f172a" stroke-width="1"/>
+          <path d="M28,15 L52,18 C50,20 38,20 28,17 Z" fill="#a855f7"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#a855f7" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#a855f7" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
       </div>
 
-      <!-- 6. Agent B2B (Phòng Dữ Liệu B2B & Đơn Tạo) -->
-      <div class="agent-tag amber" id="agent-b2b" style="left: 36%; top: 55.5%;" onclick="openRoomModal('b2b')">
-        <div class="agent-bubble" id="bubble-b2b">📦 Đã lọc 24.878 đơn</div>
-        <span class="agent-tag-avatar">📊</span>
-        <span>Agent B2B (Topic 506)</span>
-        <span class="agent-tag-dot"></span>
-      </div>
-      <div class="room-stat-pill" style="left: 42%; top: 61%;" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Đồng bộ 24.878 đơn sang Ketqua')">📦 24.877 đơn</div>
+      <!-- 6. Đức Trung (Kho Vị Thanh) -->
+      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 81.5%; top: 44.5%;" onclick="openRoomModal('vithanh')">
+        <div class="agent-bubble" id="bubble-vithanh">🦅 Đức Trung (Vị Thanh) • 📦 Điều phối kho</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">📦</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#10b981"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#10b981"/>
+              </g>
 
-      <!-- 7. Thanh Tra & Watchdog (Phòng Cổng Chính) -->
-      <div class="agent-tag red" id="agent-thanhtra" style="left: 53.5%; top: 60%;" onclick="openRoomModal('thanhtra')">
-        <div class="agent-bubble" id="bubble-thanhtra">🕵️ Đang canh đơn VIP</div>
-        <span class="agent-tag-avatar">🕵️</span>
-        <span>Thanh Tra & Watchdog</span>
-        <span class="agent-tag-dot"></span>
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#059669" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#10b981"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#059669" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#059669" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- Logistics Cap -->
+          <path d="M17,17 C17,7 47,7 47,17 Z" fill="#10b981" stroke="#0f172a" stroke-width="1"/>
+          <path d="M28,15 L52,18 C50,20 38,20 28,17 Z" fill="#10b981"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Parcel Box & Scanner -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <rect x="20" y="42" width="24" height="15" rx="2" fill="#d97706" stroke="#fef3c7" stroke-width="1"/>
+            <line x1="20" y1="47" x2="44" y2="47" stroke="#fef3c7" stroke-width="1"/>
+            <rect x="28" y="44" width="8" height="6" fill="#fef08a"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
+      </div>
+      <div class="cam-icon-pin" style="left: 88.0%; top: 51.5%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
+        <span>📹</span>
+        <div class="cam-tip">Cam 08 Vị Thanh (Bấm chụp)</div>
       </div>
 
-      <!-- 8. Trọng Bằng (Kho Ô Môn) -->
-      <div class="agent-tag amber" id="agent-omon" style="left: 69.5%; top: 66.5%;" onclick="openRoomModal('omon')">
-        <div class="agent-bubble" id="bubble-omon">⚡ Đang trực Kho Ô Môn</div>
-        <span class="agent-tag-avatar">🐺</span>
-        <span>Trọng Bằng (Ô Môn)</span>
-        <span class="agent-tag-dot"></span>
+      <!-- 7. Agent B2B (Phòng Dữ Liệu B2B & Đơn Tạo Topic 506) -->
+      <div class="agent-tag pose-work" id="agent-b2b" style="left: 36.5%; top: 56.0%;" onclick="openRoomModal('b2b')">
+        <div class="agent-bubble" id="bubble-b2b">📊 Agent B2B (Topic 506) • 142 đơn (5/11)</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">📊</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#f59e0b"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#f59e0b"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#d97706" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#f59e0b"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#d97706" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#d97706" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#451a03"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- Cute Cat-Ear Headphones -->
+          <path d="M16,23 C15,9 49,9 48,23" fill="none" stroke="#f43f5e" stroke-width="3"/>
+          <polygon points="19,12 23,5 26,11" fill="#f43f5e"/>
+          <polygon points="45,12 41,5 38,11" fill="#f43f5e"/>
+          <rect x="13" y="19" width="5" height="9" rx="2.5" fill="#fb7185" stroke="#be123c" stroke-width="1"/>
+          <rect x="46" y="19" width="5" height="9" rx="2.5" fill="#fb7185" stroke="#be123c" stroke-width="1"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#f59e0b" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#f59e0b" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
       </div>
-      <div class="agent-tag" style="left: 74.5%; top: 73.5%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
-        <span class="agent-tag-avatar">📹</span>
-        <span>Cam 01 Ô Môn</span>
-        <span class="agent-tag-dot"></span>
+
+      <!-- 8. Thanh Tra & Watchdog (Phòng Cổng Chính) -->
+      <div class="agent-tag pose-walk" id="agent-thanhtra" style="left: 53.5%; top: 60.0%;" onclick="openRoomModal('thanhtra')">
+        <div class="agent-bubble" id="bubble-thanhtra">🕵️ Thanh Tra • 🔎 Canh đơn VIP 24/7</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🔎</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#ef4444"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#ef4444"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#ef4444"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#b91c1c" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#b91c1c" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- Chibi Inspector Cap -->
+          <ellipse cx="32" cy="15" rx="18" ry="4" fill="#991b1b"/>
+          <path d="M18,15 C18,6 46,6 46,15 Z" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.2"/>
+          <circle cx="32" cy="11" r="2.5" fill="#fde047"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- Glowing Inspector Magnifying Glass -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <circle cx="46" cy="42" r="7" fill="rgba(56,189,248,0.35)" stroke="#00e5be" stroke-width="2"/>
+            <line x1="41" y1="47" x2="36" y2="53" stroke="#fde047" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
+      </div>
+
+      <!-- 9. Trọng Bằng (Kho Ô Môn) -->
+      <div class="agent-tag pose-work" id="agent-omon" style="left: 69.5%; top: 66.5%;" onclick="openRoomModal('omon')">
+        <div class="agent-bubble" id="bubble-omon">🐺 Trọng Bằng (Ô Môn) • ⚡ Đang trực</div>
+        
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">⚡</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <!-- Legs (Animated when walking) -->
+              <g class="chibi-leg-l">
+                <rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#f97316"/>
+              </g>
+              <g class="chibi-leg-r">
+                <rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+                <ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#f97316"/>
+              </g>
+
+              <!-- Chibi Torso / Uniform -->
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#ea580c" stroke="#0f172a" stroke-width="1.2"/>
+              <!-- Uniform Collar / Tie -->
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <polygon points="30.5,36 33.5,36 32,46" fill="#f97316"/>
+
+              <!-- Arms (Swing when walking, type when working) -->
+              <g class="chibi-arm-l">
+                <rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#ea580c" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+              <g class="chibi-arm-r">
+                <rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#ea580c" stroke="#0f172a" stroke-width="1"/>
+                <circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/>
+              </g>
+
+              <!-- Head & Hat Group -->
+              <g class="chibi-head-group">
+                
+          <!-- Cute 3D Chibi Head -->
+          <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+          <!-- Hair Bangs -->
+          <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#0f172a"/>
+          <!-- Rosy Cheeks -->
+          <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+          <!-- Expressive Blinking Eyes -->
+          <g class="chibi-eyes">
+            <ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="25.2" cy="22.3" r="1.1" fill="#ffffff"/>
+            <ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/>
+            <circle cx="37.2" cy="22.3" r="1.1" fill="#ffffff"/>
+          </g>
+          <!-- Happy Smile -->
+          <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-linecap="round"/>
+        
+                
+          <!-- 3D GHN Safety Hardhat -->
+          <path d="M16,18 C16,7 48,7 48,18 Z" fill="#f97316" stroke="#c2410c" stroke-width="1.2"/>
+          <rect x="14" y="16" width="36" height="3.5" rx="1.8" fill="#fb923c"/>
+          <rect x="28" y="9" width="8" height="7" rx="1.5" fill="#fde047"/>
+        
+              </g>
+
+              <!-- Desk / Laptop / Box Prop -->
+              
+          <!-- 3D Glowing Isometric Laptop on Desk -->
+          <g class="chibi-desk-prop" style="transition: all 0.25s;">
+            <polygon points="16,52 48,52 52,57 12,57" fill="#334155" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="19" y="39" width="26" height="14" rx="2" fill="#0f172a" stroke="#f97316" stroke-width="1.4"/>
+            <rect x="21" y="41" width="22" height="10" rx="1" fill="#f97316" opacity="0.35"/>
+            <circle cx="32" cy="46" r="2.2" fill="#ffffff"/>
+          </g>
+        
+
+              <!-- Coffee Cup Prop (Visible when chilling at Cafe) -->
+              <g class="chibi-coffee-prop" style="opacity:0; transition: opacity 0.25s;">
+                <rect x="43" y="42" width="9" height="11" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="43" y="45" width="9" height="4" fill="#d97706"/>
+                <path d="M46,39 Q48,35 46,32" fill="none" stroke="#fde68a" stroke-width="1.3" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+    
+      </div>
+      <div class="cam-icon-pin" style="left: 75.5%; top: 72.5%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
+        <span>📹</span>
+        <div class="cam-tip">Cam 01 Ô Môn (Bấm chụp)</div>
       </div>
 
     </div>
@@ -1557,7 +2401,7 @@
 
         if (bubble) {
           bubble.textContent = st.taskText || '';
-          bubble.classList.toggle('show', st.status === 'RUNNING' || st.status === 'IDLE');
+          bubble.classList.toggle('show', st.status === 'RUNNING');
         }
         if (hitbox) {
           hitbox.classList.toggle('active-work', st.status === 'RUNNING');
@@ -1611,8 +2455,124 @@
       }
     }
 
-    // Khởi tạo vị trí ban đầu (Agent ODO 365 & Agent B2B đang ở Sân Cafe chờ lệnh, khi giao việc sẽ chạy vào phòng!)
+    // =========================================================================
+    // 1B. AUTONOMOUS CHIBI WALKING & DESK-WORKING LIFE ENGINE
+    // =========================================================================
+    const CHIBI_PATROL_ROUTES = {
+      cairang: [
+        { left: '31.2%', top: '22.0%', pose: 'pose-work', fx: '💻' }, // Ngồi bàn tầng 2 gõ máy
+        { left: '26.5%', top: '26.8%', pose: 'pose-walk', fx: '📋' }, // Đi xuống cầu thang kiểm hàng
+        { left: '36.2%', top: '35.5%', pose: 'pose-walk', fx: '📦' }, // Đi dọc băng chuyền Cái Răng
+        { left: '31.2%', top: '22.0%', pose: 'pose-work', fx: '💻' }
+      ],
+      tigercore: [
+        { left: '48.7%', top: '19.5%', pose: 'pose-work', fx: '🌐' }, // Trực bàn Hologram
+        { left: '44.5%', top: '16.5%', pose: 'pose-walk', fx: '⚡' }, // Đi kiểm tra màn hình lớn
+        { left: '53.0%', top: '18.0%', pose: 'pose-walk', fx: '🛰️' },
+        { left: '48.7%', top: '19.5%', pose: 'pose-work', fx: '🌐' }
+      ],
+      binhthuy: [
+        { left: '65.5%', top: '29.5%', pose: 'pose-work', fx: '📈' }, // Ngồi bàn họp phân tích KPI
+        { left: '69.0%', top: '26.5%', pose: 'pose-walk', fx: '📊' }, // Đi tới bảng biểu đồ
+        { left: '62.0%', top: '31.5%', pose: 'pose-work', fx: '💻' }
+      ],
+      kythuat: [
+        { left: '55.5%', top: '41.5%', pose: 'pose-work', fx: '🛠️' }, // Ngồi bàn Server
+        { left: '52.0%', top: '38.5%', pose: 'pose-walk', fx: '🛡️' }, // Đi tuần tra dãy tủ Rack trái
+        { left: '60.5%', top: '44.0%', pose: 'pose-walk', fx: '⚡' }, // Đi tuần tra dãy tủ Rack phải
+        { left: '55.5%', top: '41.5%', pose: 'pose-work', fx: '💻' }
+      ],
+      vithanh: [
+        { left: '81.5%', top: '44.5%', pose: 'pose-walk', fx: '📦' }, // Khu vực kiện hàng Vị Thanh
+        { left: '77.5%', top: '41.5%', pose: 'pose-work', fx: '📋' }, // Kiểm tra pallet
+        { left: '85.5%', top: '48.5%', pose: 'pose-walk', fx: '🚚' }, // Băng chuyền xuất hàng
+        { left: '81.5%', top: '44.5%', pose: 'pose-work', fx: '💻' }
+      ],
+      b2b: [
+        { left: '36.5%', top: '56.0%', pose: 'pose-work', fx: '📊' }, // Ngồi bàn máy tính B2B lọc đơn
+        { left: '41.0%', top: '59.0%', pose: 'pose-work', fx: '📑' }, // Ngồi máy trạm số 2 đối chiếu
+        { left: '33.5%', top: '53.5%', pose: 'pose-walk', fx: '📈' }, // Đi kiểm tra tủ hồ sơ B2B
+        { left: '36.5%', top: '56.0%', pose: 'pose-work', fx: '📊' }
+      ],
+      thanhtra: [
+        { left: '53.5%', top: '60.0%', pose: 'pose-walk', fx: '🔎' }, // Sảnh chính
+        { left: '46.5%', top: '68.5%', pose: 'pose-walk', fx: '🚩' }, // Đi tuần ra cột cờ Tổ Quốc
+        { left: '38.0%', top: '70.0%', pose: 'pose-walk', fx: '🛡️' }, // Đi kiểm tra cổng barrier
+        { left: '53.5%', top: '60.0%', pose: 'pose-work', fx: '🕵️' }
+      ],
+      omon: [
+        { left: '69.5%', top: '66.5%', pose: 'pose-work', fx: '💻' }, // Ngồi bàn điều phối Ô Môn
+        { left: '73.5%', top: '68.5%', pose: 'pose-walk', fx: '📦' }, // Qua bàn kế bên
+        { left: '66.0%', top: '70.5%', pose: 'pose-work', fx: '⚡' }
+      ],
+      odo365: [
+        { left: '74.5%', top: '83.5%', pose: 'pose-coffee', fx: '☕' }, // Ngồi bàn Cafe
+        { left: '60.5%', top: '48.5%', pose: 'pose-work', fx: '🚛' }, // Lên phòng kế toán đối soát ODO
+        { left: '83.5%', top: '76.5%', pose: 'pose-walk', fx: '📋' }, // Đi dạo sân vườn
+        { left: '74.5%', top: '83.5%', pose: 'pose-coffee', fx: '☕' }
+      ]
+    };
+
+    const chibiStepIdx = {
+      cairang: 0, tigercore: 0, binhthuy: 0, kythuat: 0,
+      vithanh: 0, b2b: 0, thanhtra: 0, omon: 0, odo365: 0
+    };
+
+    function applyChibiPoseAndDirection(el, oldLeft, newLeft, poseClass, fxIcon) {
+      if (!el) return;
+      const oldX = parseFloat(oldLeft) || 50;
+      const newX = parseFloat(newLeft) || 50;
+      if (Math.abs(newX - oldX) > 0.4) {
+        el.classList.toggle('facing-left', newX < oldX);
+      }
+      el.classList.remove('pose-work', 'pose-walk', 'pose-coffee');
+      el.classList.add(poseClass || 'pose-work');
+      const fxEl = el.querySelector('.chibi-work-fx');
+      if (fxEl && fxIcon) fxEl.textContent = fxIcon;
+    }
+
+    // Cho B2B mặc định ở trong Phòng Dữ Liệu B2B ngồi làm việc & đi lại
+    AGENT_STATE.b2b.status = 'WORKING';
+    AGENT_STATE.b2b.taskText = '📊 Agent B2B • 142 đơn (5/11)';
+
     setTimeout(renderAllAgentPositions, 200);
+
+    // Cứ mỗi 2.6 giây, cho các nhân vật Chibi tự động đi tuần tra giữa bàn làm việc, băng chuyền và hành lang!
+    setInterval(() => {
+      const ids = Object.keys(CHIBI_PATROL_ROUTES);
+      // Chọn 3 nhân vật di chuyển mỗi nhịp để toàn bộ tòa nhà luôn sống động
+      for (let k = 0; k < 3; k++) {
+        const id = ids[Math.floor(Math.random() * ids.length)];
+        const st = AGENT_STATE[id];
+        if (!st || st.status === 'RUNNING') continue; // Đang thực thi lệnh của anh Lộc thì giữ nguyên
+        const el = document.getElementById('agent-' + id);
+        if (!el) continue;
+
+        if (st.status === 'IDLE' && id !== 'odo365') {
+          applyChibiPoseAndDirection(el, el.style.left, st.idlePos.left, 'pose-coffee', '☕');
+          el.style.left = st.idlePos.left;
+          el.style.top = st.idlePos.top;
+          continue;
+        }
+
+        const route = CHIBI_PATROL_ROUTES[id];
+        chibiStepIdx[id] = (chibiStepIdx[id] + 1) % route.length;
+        const wp = route[chibiStepIdx[id]];
+        const prevLeft = el.style.left || st.workPos.left;
+
+        // Trong lúc đang di chuyển từ điểm A sang điểm B -> Bật động tác bước đi (pose-walk)
+        applyChibiPoseAndDirection(el, prevLeft, wp.left, 'pose-walk', '👣');
+        el.style.left = wp.left;
+        el.style.top = wp.top;
+
+        // Khi tới bàn làm việc sau 2.1 giây -> Chuyển sang ngồi gõ máy (pose-work) hoặc uống cafe (pose-coffee)
+        setTimeout(() => {
+          if (AGENT_STATE[id] && AGENT_STATE[id].status !== 'RUNNING') {
+            applyChibiPoseAndDirection(el, wp.left, wp.left, wp.pose, wp.fx);
+          }
+        }, 2150);
+      }
+    }, 2800);
 
     // =========================================================================
     // 2. REAL TASK DISPATCHER ENGINE (MOVES AGENT -> RUNS API -> REPLIES IN CHAT)
