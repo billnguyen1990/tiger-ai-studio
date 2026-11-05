@@ -309,10 +309,10 @@
 
     .holo-pulse {
       position: absolute;
-      left: 50.6%;
-      top: 15.8%;
-      width: 90px;
-      height: 48px;
+      left: 50.0%;
+      top: 15.2%;
+      width: 76px;
+      height: 42px;
       transform: translate(-50%, -50%);
       border-radius: 50%;
       border: 2px solid rgba(56, 189, 248, 0.85);
@@ -320,6 +320,61 @@
       pointer-events: none;
       z-index: 25;
       animation: holoRing 2.4s ease-in-out infinite;
+    }
+    /* 3D Architectural Signage for the 4 Separate Warehouse Hubs & 3 Operations Rooms */
+    .warehouse-zone-sign {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.92));
+      color: #f8fafc;
+      border: 1.5px solid #f97316;
+      border-bottom: 3px solid #ea580c;
+      padding: 3px 11px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.65), 0 0 12px rgba(249, 115, 22, 0.35);
+      z-index: 42;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .warehouse-zone-sign:hover {
+      transform: translate(-50%, -55%) scale(1.08);
+      box-shadow: 0 8px 22px rgba(249, 115, 22, 0.75);
+      border-color: #fde047;
+    }
+    .warehouse-zone-sign.dept-sign {
+      border-color: #38bdf8;
+      border-bottom-color: #0284c7;
+      font-size: 0.64rem;
+      padding: 2px 9px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+    /* Compact Floating Nameplate Attached Above Each Chibi's Head */
+    .chibi-nameplate {
+      position: absolute;
+      bottom: calc(100% - 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92);
+      color: #fde047;
+      border: 1.2px solid rgba(250, 204, 21, 0.85);
+      padding: 1.5px 7px;
+      border-radius: 10px;
+      font-size: 0.63rem;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
+      z-index: 10;
+      letter-spacing: 0.2px;
+    }
+    .chibi-nameplate.dept-plate {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.85);
     }
         .dock-loading-fx {
       position: absolute;
@@ -578,7 +633,7 @@
     /* SPEECH / HOVER TOOLTIP BUBBLE (Hidden by default so NO text clutters the 3D map!) */
     .agent-bubble {
       position: absolute;
-      bottom: calc(100% + 4px);
+      bottom: calc(100% + 16px);
       left: 50%;
       transform: translateX(-50%) translateY(4px) scale(0.9);
       background: rgba(15, 23, 42, 0.94);
@@ -1281,8 +1336,8 @@
     <div class="iso-scene-wrapper" id="isoScene">
 
       <!-- HIGH-RES 3D ARCHITECTURAL CUTAWAY RENDERS (NIGHT & DAY) -->
-      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=logistics2" alt="Tiger AI 3D Campus Night">
-      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=logistics2" alt="Tiger AI 3D Campus Day">
+      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=mega4kho" alt="Tiger AI 3D Campus Night">
+      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=mega4kho" alt="Tiger AI 3D Campus Day">
 
       <!-- HOLOGRAM PULSE OVER THE CENTRAL SPHERE -->
       <div class="holo-pulse"></div>
@@ -1299,52 +1354,55 @@
 
       <!-- INTERACTIVE ROOM HITBOXES -->
       <svg class="iso-overlay-svg" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
-        <!-- 1. Cụm Kho Cái Răng (Khu kệ hàng cao tầng & băng chuyền cánh trái) -->
+        <!-- KHO 1: CỤM KHO CÁI RĂNG (Bay 1 - Cánh trái ngoài cùng) -->
         <polygon id="hitbox-cairang" class="room-hitbox" onclick="openRoomModal('cairang')"
-          points="115,395 625,125 745,215 285,485">
-          <title>🏭 Cụm Kho Hàng Nặng Cái Răng (Hub 21088000) - NVXL Công Bằng</title>
+          points="215,215 505,215 495,530 155,530">
+          <title>🏭 Cụm Kho 1: KHO CÁI RĂNG (Hub 21088000) - NVXL Công Bằng</title>
         </polygon>
-        <!-- 2. Trung Tâm Chỉ Huy Tiger AI Core (Bán nguyệt Hologram đỉnh trên) -->
-        <polygon id="hitbox-tigercore" class="room-hitbox" onclick="openRoomModal('kythuat')"
-          points="665,105 815,25 995,125 815,225">
-          <title>🌐 Trung Tâm Chỉ Huy Tiger AI Core (24/7)</title>
+        <!-- KHO 2: CỤM KHO Ô MÔN (Bay 2 - Cánh trái giữa) -->
+        <polygon id="hitbox-omon" class="room-hitbox" onclick="openRoomModal('omon')"
+          points="510,215 795,215 795,530 500,530">
+          <title>🏭 Cụm Kho 2: KHO Ô MÔN (Hub 22917000) - NVXL Trọng Bằng</title>
         </polygon>
-        <!-- 3. Phòng Server Kỹ Thuật Auto-Heal (Trung tâm) -->
-        <polygon id="hitbox-kythuat" class="room-hitbox" onclick="openRoomModal('kythuat')"
-          points="665,295 815,225 905,280 765,365">
-          <title>🛠️ Phòng Server Kỹ Thuật & Auto-Heal Bot</title>
-        </polygon>
-        <!-- 4. Cụm Kho Bình Thủy (Khu kệ hàng & băng chuyền tự động cánh phải trên) -->
-        <polygon id="hitbox-binhthuy" class="room-hitbox" onclick="openRoomModal('binhthuy')"
-          points="905,185 1385,325 1145,455 885,295">
-          <title>🏭 Cụm Kho Hàng Nặng Bình Thủy (Hub 21985000) - NVXL Bảo Toàn</title>
-        </polygon>
-        <!-- 5. Cụm Kho Vị Thanh (Khu lồng hàng, xe nâng & bãi xuất cánh phải giữa) -->
+        <!-- KHO 3: CỤM KHO VỊ THANH (Bay 3 - Cánh phải giữa) -->
         <polygon id="hitbox-vithanh" class="room-hitbox" onclick="openRoomModal('vithanh')"
-          points="795,380 995,310 1165,445 945,555">
-          <title>🏭 Cụm Kho Hàng Nặng Vị Thanh (Hub 22862000) - NVXL Đức Trung</title>
+          points="805,215 1090,215 1105,530 805,530">
+          <title>🏭 Cụm Kho 3: KHO VỊ THANH (Hub 22862000) - NVXL Đức Trung</title>
         </polygon>
-        <!-- 6. Phòng Dữ Liệu B2B & Kế Toán ODO 365 (Khối văn phòng điều hành trong kho) -->
+        <!-- KHO 4: CỤM KHO BÌNH THỦY (Bay 4 - Cánh phải ngoài cùng) -->
+        <polygon id="hitbox-binhthuy" class="room-hitbox" onclick="openRoomModal('binhthuy')"
+          points="1095,215 1380,215 1445,530 1110,530">
+          <title>🏭 Cụm Kho 4: KHO BÌNH THỦY (Hub 21985000) - NVXL Bảo Toàn</title>
+        </polygon>
+
+        <!-- KHỐI PHÒNG BAN PHÍA SAU -->
+        <!-- Phòng Dữ Liệu B2B & Kế Toán ODO 365 (Sau Trái) -->
         <polygon id="hitbox-b2b" class="room-hitbox" onclick="openRoomModal('b2b')"
-          points="335,485 625,335 695,395 455,565">
+          points="395,85 665,85 665,205 395,205">
           <title>📊 Phòng Dữ Liệu B2B (Topic 506) & Kế Toán ODO 365</title>
         </polygon>
-        <!-- 7. Cụm Kho Ô Môn (Khu kệ đôi trung tâm & 2 cửa xuất xe tải mặt tiền) -->
-        <polygon id="hitbox-omon" class="room-hitbox" onclick="openRoomModal('omon')"
-          points="515,545 735,415 925,535 715,685">
-          <title>🏭 Cụm Kho Hàng Nặng Ô Môn (Hub 22917000) - NVXL Trọng Bằng</title>
+        <!-- Trung Tâm Chỉ Huy Tiger AI Core (Sau Giữa - Quả cầu Hologram) -->
+        <polygon id="hitbox-tigercore" class="room-hitbox" onclick="openRoomModal('kythuat')"
+          points="670,45 930,45 930,205 670,205">
+          <title>🌐 Trung Tâm Chỉ Huy Tiger AI Core (24/7)</title>
         </polygon>
-        <!-- 8. Cổng Kiểm Soát An Ninh, Bãi Xe Tải & Ban Thanh Tra -->
+        <!-- Phòng Server Kỹ Thuật Auto-Heal (Sau Phải) -->
+        <polygon id="hitbox-kythuat" class="room-hitbox" onclick="openRoomModal('kythuat')"
+          points="935,85 1205,85 1205,205 935,205">
+          <title>🛠️ Phòng Server Kỹ Thuật & Auto-Heal Bot</title>
+        </polygon>
+        <!-- Cổng Kiểm Soát An Ninh, Bãi Xe Tải & Ban Thanh Tra -->
         <polygon id="hitbox-thanhtra" class="room-hitbox" onclick="openRoomModal('thanhtra')"
-          points="1150,625 1480,625 1560,865 1150,865">
+          points="640,720 1150,720 1150,890 640,890">
           <title>🕵️ Cổng Kiểm Soát Xe Tải & Ban Thanh Tra Đơn VIP</title>
         </polygon>
       </svg>
 
       <!-- ================= 3D ANIMATED CHIBI CHARACTERS & SLEEK CAM PINS ================= -->
       <!-- 1. Công Bằng (Kho Cái Răng) -->
-      <div class="agent-tag pose-work" id="agent-cairang" style="left: 22.5%; top: 38.5%;" onclick="openRoomModal('cairang')">
+      <div class="agent-tag pose-work" id="agent-cairang" style="left: 22.5%; top: 43.0%;" onclick="openRoomModal('cairang')">
         <div class="agent-bubble" id="bubble-cairang">🐯 Công Bằng (Cái Răng) • ⚡ Đang trực</div>
+        <div class="chibi-nameplate">NVXL: Công Bằng</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">💻</div>
@@ -1426,14 +1484,15 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 14.5%; top: 47.5%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
+      <div class="cam-icon-pin" style="left: 19.5%; top: 58.0%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
         <span>📹</span>
         <div class="cam-tip">Cam 05 Cái Răng (Bấm chụp)</div>
       </div>
 
       <!-- 2. Tiger AI Core (Trung Tâm Chỉ Huy) -->
-      <div class="agent-tag pose-work" id="agent-tigercore" style="left: 50.6%; top: 14.5%;" onclick="openRoomModal('kythuat')">
+      <div class="agent-tag pose-work" id="agent-tigercore" style="left: 50.0%; top: 14.5%;" onclick="openRoomModal('kythuat')">
         <div class="agent-bubble" id="bubble-tigercore">👑 Tiger AI Core • ⚡ Điều phối 9 luồng</div>
+        <div class="chibi-nameplate dept-plate">Tiger AI Core</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">🌐</div>
@@ -1521,8 +1580,9 @@
       </div>
 
       <!-- 3. Bảo Toàn (Kho Bình Thủy) -->
-      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 67.5%; top: 33.5%;" onclick="openRoomModal('binhthuy')">
+      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 78.5%; top: 43.0%;" onclick="openRoomModal('binhthuy')">
         <div class="agent-bubble" id="bubble-binhthuy">🦁 Bảo Toàn (Bình Thủy) • 📈 KPI 91.6%</div>
+        <div class="chibi-nameplate">NVXL: Bảo Toàn</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">📈</div>
@@ -1604,14 +1664,15 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 81.0%; top: 41.5%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
+      <div class="cam-icon-pin" style="left: 80.5%; top: 58.0%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
         <span>📹</span>
         <div class="cam-tip">Cam 06 Bình Thủy (Bấm chụp)</div>
       </div>
 
       <!-- 4. Auto-Heal Bot (Phòng Server Trung Tâm) -->
-      <div class="agent-tag pose-walk" id="agent-kythuat" style="left: 48.5%; top: 31.5%;" onclick="openRoomModal('kythuat')">
+      <div class="agent-tag pose-walk" id="agent-kythuat" style="left: 67.0%; top: 16.5%;" onclick="openRoomModal('kythuat')">
         <div class="agent-bubble" id="bubble-kythuat">🤖 Auto-Heal Bot • 🛡️ Tuần tra Server</div>
+        <div class="chibi-nameplate dept-plate">Auto-Heal Bot</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">🛠️</div>
@@ -1686,8 +1747,9 @@
       </div>
 
       <!-- 5. Agent ODO 365 (Đối soát 21 Kho) -->
-      <div class="agent-tag pose-coffee" id="agent-odo365" style="left: 36.8%; top: 43.5%;" onclick="openRoomModal('odo365')">
+      <div class="agent-tag pose-coffee" id="agent-odo365" style="left: 36.8%; top: 17.5%;" onclick="openRoomModal('odo365')">
         <div class="agent-bubble" id="bubble-odo365">🚛 Agent ODO 365 • ☕ Nghỉ sau ca 02h</div>
+        <div class="chibi-nameplate dept-plate">Agent ODO 365</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">🚛</div>
@@ -1771,8 +1833,9 @@
       </div>
 
       <!-- 6. Đức Trung (Kho Vị Thanh) -->
-      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 56.5%; top: 45.0%;" onclick="openRoomModal('vithanh')">
+      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 59.5%; top: 43.0%;" onclick="openRoomModal('vithanh')">
         <div class="agent-bubble" id="bubble-vithanh">🦅 Đức Trung (Vị Thanh) • 📦 Điều phối kho</div>
+        <div class="chibi-nameplate">NVXL: Đức Trung</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">📦</div>
@@ -1853,14 +1916,15 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 73.5%; top: 51.5%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
+      <div class="cam-icon-pin" style="left: 60.0%; top: 58.0%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
         <span>📹</span>
         <div class="cam-tip">Cam 08 Vị Thanh (Bấm chụp)</div>
       </div>
 
       <!-- 7. Agent B2B (Phòng Dữ Liệu B2B & Đơn Tạo Topic 506) -->
-      <div class="agent-tag pose-work" id="agent-b2b" style="left: 28.2%; top: 53.5%;" onclick="openRoomModal('b2b')">
+      <div class="agent-tag pose-work" id="agent-b2b" style="left: 29.0%; top: 17.5%;" onclick="openRoomModal('b2b')">
         <div class="agent-bubble" id="bubble-b2b">📊 Agent B2B (Topic 506) • 142 đơn (5/11)</div>
+        <div class="chibi-nameplate dept-plate">Agent B2B (Đơn Tạo)</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">📊</div>
@@ -1947,8 +2011,9 @@
       </div>
 
       <!-- 8. Thanh Tra & Watchdog (Phòng Cổng Chính) -->
-      <div class="agent-tag pose-walk" id="agent-thanhtra" style="left: 82.0%; top: 79.5%;" onclick="openRoomModal('thanhtra')">
+      <div class="agent-tag pose-walk" id="agent-thanhtra" style="left: 52.5%; top: 86.0%;" onclick="openRoomModal('thanhtra')">
         <div class="agent-bubble" id="bubble-thanhtra">🕵️ Thanh Tra • 🔎 Canh đơn VIP 24/7</div>
+        <div class="chibi-nameplate dept-plate">Ban Thanh Tra</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">🔎</div>
@@ -2031,8 +2096,9 @@
       </div>
 
       <!-- 9. Trọng Bằng (Kho Ô Môn) -->
-      <div class="agent-tag pose-work" id="agent-omon" style="left: 45.5%; top: 61.5%;" onclick="openRoomModal('omon')">
+      <div class="agent-tag pose-work" id="agent-omon" style="left: 40.5%; top: 43.0%;" onclick="openRoomModal('omon')">
         <div class="agent-bubble" id="bubble-omon">🐺 Trọng Bằng (Ô Môn) • ⚡ Đang trực</div>
+        <div class="chibi-nameplate">NVXL: Trọng Bằng</div>
         
         <div class="chibi-floor-ring"></div>
         <div class="chibi-work-fx">⚡</div>
@@ -2114,7 +2180,7 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 54.5%; top: 69.5%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
+      <div class="cam-icon-pin" style="left: 40.0%; top: 58.0%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
         <span>📹</span>
         <div class="cam-tip">Cam 01 Ô Môn (Bấm chụp)</div>
       </div>
@@ -2375,67 +2441,67 @@
     // =========================================================================
     const AGENT_STATE = {
       cairang: {
-        name: 'Công Bằng (Kho Cái Răng)',
-        workPos: { left: '22.5%', top: '38.5%', room: 'Cụm Kho Hàng Nặng Cái Răng' },
-        idlePos: { left: '31.0%', top: '79.5%', room: 'Bàn Cafe Dù Ngoài Trời' },
+        name: 'NVXL Công Bằng (Kho Cái Răng)',
+        workPos: { left: '22.5%', top: '43.0%', room: 'Cụm Kho 1: Kho Cái Răng' },
+        idlePos: { left: '64.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
         status: 'WORKING',
-        taskText: '📦 Đang điều phối Kho Cái Răng'
+        taskText: '📦 Kho Cái Răng • Đang điều phối xuất nhập'
+      },
+      omon: {
+        name: 'NVXL Trọng Bằng (Kho Ô Môn)',
+        workPos: { left: '40.5%', top: '43.0%', room: 'Cụm Kho 2: Kho Ô Môn' },
+        idlePos: { left: '66.5%', top: '87.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '📦 Kho Ô Môn • Đang điều phối xuất nhập'
+      },
+      vithanh: {
+        name: 'NVXL Đức Trung (Kho Vị Thanh)',
+        workPos: { left: '59.5%', top: '43.0%', room: 'Cụm Kho 3: Kho Vị Thanh' },
+        idlePos: { left: '68.5%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '📦 Kho Vị Thanh • Đang điều phối xuất nhập'
+      },
+      binhthuy: {
+        name: 'NVXL Bảo Toàn (Kho Bình Thủy)',
+        workPos: { left: '78.5%', top: '43.0%', room: 'Cụm Kho 4: Kho Bình Thủy' },
+        idlePos: { left: '65.0%', top: '88.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '📈 Kho Bình Thủy • KPI 91.6% (Dẫn đầu)'
       },
       tigercore: {
         name: 'Tiger AI Core',
-        workPos: { left: '50.6%', top: '14.5%', room: 'Trung Tâm Chỉ Huy Hologram' },
-        idlePos: { left: '50.6%', top: '17.5%', room: 'Bàn Cầu Hologram' },
+        workPos: { left: '50.0%', top: '14.5%', room: 'Trung Tâm Chỉ Huy Hologram' },
+        idlePos: { left: '50.0%', top: '16.5%', room: 'Quả Cầu Hologram' },
         status: 'WORKING',
-        taskText: '🌐 Điều phối 9 luồng Logistics'
-      },
-      binhthuy: {
-        name: 'Bảo Toàn (Kho Bình Thủy)',
-        workPos: { left: '67.5%', top: '33.5%', room: 'Cụm Kho Hàng Nặng Bình Thủy' },
-        idlePos: { left: '34.8%', top: '82.5%', room: 'Bàn Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '📈 Kho Bình Thủy • KPI 91.6%'
+        taskText: '🌐 Trung Tâm Chỉ Huy • 9 luồng Cloud'
       },
       kythuat: {
         name: 'Auto-Heal Bot',
-        workPos: { left: '48.5%', top: '31.5%', room: 'Phòng Server Trung Tâm' },
-        idlePos: { left: '46.5%', top: '33.5%', room: 'Phòng Server Trung Tâm' },
+        workPos: { left: '67.0%', top: '16.5%', room: 'Phòng Server Kỹ Thuật' },
+        idlePos: { left: '64.0%', top: '16.5%', room: 'Phòng Server Kỹ Thuật' },
         status: 'WORKING',
-        taskText: '🛡️ Trực Server & Token 24/7'
-      },
-      odo365: {
-        name: 'Agent ODO 365',
-        workPos: { left: '36.8%', top: '43.5%', room: 'Phòng Kế Toán & Điều Vận ODO 365' },
-        idlePos: { left: '38.2%', top: '85.5%', room: 'Bàn Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '🚛 Đối soát 2.596 chuyến xe tải'
-      },
-      vithanh: {
-        name: 'Đức Trung (Kho Vị Thanh)',
-        workPos: { left: '56.5%', top: '45.0%', room: 'Cụm Kho Hàng Nặng Vị Thanh' },
-        idlePos: { left: '31.0%', top: '79.5%', room: 'Bàn Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '📦 Đang xuất nhập Kho Vị Thanh'
+        taskText: '🛡️ Phòng Server • Canh Token 24/7'
       },
       b2b: {
         name: 'Agent B2B (Topic 506)',
-        workPos: { left: '28.2%', top: '53.5%', room: 'Phòng Dữ Liệu B2B (Topic 506)' },
-        idlePos: { left: '34.8%', top: '82.5%', room: 'Bàn Cafe Dù Ngoài Trời' },
+        workPos: { left: '29.0%', top: '17.5%', room: 'Phòng Dữ Liệu B2B (Topic 506)' },
+        idlePos: { left: '64.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
         status: 'WORKING',
-        taskText: '📊 Đơn Tạo: 142 đơn (5/11)'
+        taskText: '📊 Đơn Tạo: 142 đơn (5/11) • Lũy kế 4.141'
+      },
+      odo365: {
+        name: 'Agent ODO 365',
+        workPos: { left: '36.8%', top: '17.5%', room: 'Phòng Kế Toán & Đối Soát ODO 365' },
+        idlePos: { left: '68.5%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        status: 'WORKING',
+        taskText: '🚛 Đối soát 2.596 chuyến xe tải Miền Tây'
       },
       thanhtra: {
-        name: 'Thanh Tra & Watchdog',
-        workPos: { left: '82.0%', top: '79.5%', room: 'Trạm Kiểm Soát Cổng Xe Tải' },
-        idlePos: { left: '75.5%', top: '75.0%', room: 'Cột Cờ Tổ Quốc' },
+        name: 'Ban Thanh Tra & Watchdog',
+        workPos: { left: '52.5%', top: '86.0%', room: 'Trạm Gác Cổng Kiểm Soát Xe Tải' },
+        idlePos: { left: '60.5%', top: '82.0%', room: 'Cột Cờ Tổ Quốc' },
         status: 'WORKING',
-        taskText: '🔎 Kiểm soát cổng xe tải & đơn VIP'
-      },
-      omon: {
-        name: 'Trọng Bằng (Kho Ô Môn)',
-        workPos: { left: '45.5%', top: '61.5%', room: 'Cụm Kho Hàng Nặng Ô Môn' },
-        idlePos: { left: '38.2%', top: '85.5%', room: 'Bàn Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '📦 Đang điều phối Kho Ô Môn'
+        taskText: '🔎 Kiểm soát xe tải ra vào & Canh đơn VIP'
       }
     };
 
@@ -2518,58 +2584,58 @@
     // =========================================================================
     const CHIBI_PATROL_ROUTES = {
       cairang: [
-        { left: '22.5%', top: '38.5%', pose: 'pose-walk', fx: '📦' }, // Kiểm hàng khu băng chuyền Kho Cái Răng
-        { left: '16.5%', top: '46.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa xuất hàng đón xe tải lùi vào kho Cái Răng
-        { left: '31.5%', top: '28.5%', pose: 'pose-walk', fx: '📋' }, // Đi dọc dãy kệ pallet cao tầng Cái Răng
-        { left: '22.5%', top: '38.5%', pose: 'pose-work', fx: '💻' }
-      ],
-      tigercore: [
-        { left: '50.6%', top: '14.5%', pose: 'pose-work', fx: '🌐' }, // Trực quả cầu Hologram Trung Tâm Chỉ Huy
-        { left: '46.5%', top: '12.5%', pose: 'pose-walk', fx: '⚡' }, // Đi kiểm tra màn hình bản đồ tuyến xe
-        { left: '54.5%', top: '13.5%', pose: 'pose-walk', fx: '🛰️' },
-        { left: '50.6%', top: '14.5%', pose: 'pose-work', fx: '🌐' }
-      ],
-      binhthuy: [
-        { left: '67.5%', top: '33.5%', pose: 'pose-walk', fx: '📦' }, // Khu kệ pallet Kho Bình Thủy
-        { left: '75.5%', top: '41.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xuất hàng xe tải Bình Thủy
-        { left: '61.5%', top: '26.5%', pose: 'pose-walk', fx: '📈' }, // Kiểm tra băng chuyền phân loại Bình Thủy
-        { left: '67.5%', top: '33.5%', pose: 'pose-work', fx: '💻' }
-      ],
-      kythuat: [
-        { left: '48.5%', top: '31.5%', pose: 'pose-work', fx: '🛠️' }, // Trực phòng Server trung tâm
-        { left: '45.8%', top: '30.0%', pose: 'pose-walk', fx: '🛡️' }, // Kiểm tra dãy tủ Rack xanh
-        { left: '51.2%', top: '33.0%', pose: 'pose-walk', fx: '⚡' },
-        { left: '48.5%', top: '31.5%', pose: 'pose-work', fx: '💻' }
-      ],
-      vithanh: [
-        { left: '56.5%', top: '45.0%', pose: 'pose-walk', fx: '📦' }, // Khu xe nâng & lồng sắt Kho Vị Thanh
-        { left: '64.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra bệ xuất nhập hàng đón xe tải Vị Thanh
-        { left: '53.5%', top: '39.5%', pose: 'pose-walk', fx: '📋' }, // Kiểm tra lồng hàng Vị Thanh
-        { left: '56.5%', top: '45.0%', pose: 'pose-work', fx: '📦' }
-      ],
-      b2b: [
-        { left: '28.2%', top: '53.5%', pose: 'pose-work', fx: '📊' }, // Ngồi bàn máy tính Phòng Dữ Liệu B2B
-        { left: '25.5%', top: '51.5%', pose: 'pose-work', fx: '📑' }, // Kiểm tra màn hình biểu đồ B2B
-        { left: '31.5%', top: '56.5%', pose: 'pose-walk', fx: '📈' },
-        { left: '28.2%', top: '53.5%', pose: 'pose-work', fx: '📊' }
-      ],
-      odo365: [
-        { left: '36.8%', top: '43.5%', pose: 'pose-work', fx: '🚛' }, // Ngồi bàn máy tính Phòng Kế Toán & Điều Vận ODO 365
-        { left: '33.5%', top: '46.5%', pose: 'pose-work', fx: '📋' }, // Đối soát lộ trình xe tải trên màn hình bản đồ
-        { left: '34.8%', top: '82.5%', pose: 'pose-coffee', fx: '☕' }, // Ra bàn Cafe dù ngoài trời giải lao
-        { left: '36.8%', top: '43.5%', pose: 'pose-work', fx: '🚛' }
-      ],
-      thanhtra: [
-        { left: '82.0%', top: '79.5%', pose: 'pose-walk', fx: '🔎' }, // Trực bốt gác Cổng Kiểm Soát Xe Tải
-        { left: '76.5%', top: '73.5%', pose: 'pose-walk', fx: '🚩' }, // Đi tuần qua cột cờ Tổ Quốc
-        { left: '87.5%', top: '82.5%', pose: 'pose-work', fx: '🚛' }, // Kiểm tra xe tải vào cổng barrier
-        { left: '82.0%', top: '79.5%', pose: 'pose-walk', fx: '🔎' }
+        { left: '22.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi giữa 2 dãy kệ pallet Kho Cái Răng
+        { left: '16.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải Kho Cái Răng kiểm hàng
+        { left: '26.8%', top: '36.0%', pose: 'pose-walk', fx: '📋' }, // Lên đầu dãy kệ Kho Cái Răng
+        { left: '15.0%', top: '46.5%', pose: 'pose-work', fx: '⚡' }  // Kiểm tra băng chuyền Kho Cái Răng
       ],
       omon: [
-        { left: '45.5%', top: '61.5%', pose: 'pose-walk', fx: '📦' }, // Khu kệ hàng đôi Kho Ô Môn
-        { left: '51.5%', top: '66.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải Kho Ô Môn kiểm hàng lên xe
-        { left: '41.5%', top: '55.5%', pose: 'pose-walk', fx: '📋' }, // Đi dọc hành lang an toàn Kho Ô Môn
-        { left: '45.5%', top: '61.5%', pose: 'pose-work', fx: '💻' }
+        { left: '40.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi dọc hành lang kệ pallet Kho Ô Môn
+        { left: '36.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải số 1 Kho Ô Môn
+        { left: '44.0%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Qua cửa bến xe tải số 2 Kho Ô Môn
+        { left: '40.5%', top: '34.5%', pose: 'pose-walk', fx: '📋' }  // Kiểm tra khu phân loại Kho Ô Môn
+      ],
+      vithanh: [
+        { left: '59.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi dọc dãy kệ pallet Kho Vị Thanh
+        { left: '63.8%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến đón xe tải Kho Vị Thanh
+        { left: '55.5%', top: '35.5%', pose: 'pose-walk', fx: '📋' }, // Kiểm tra xe nâng Kho Vị Thanh
+        { left: '62.5%', top: '48.5%', pose: 'pose-work', fx: '📦' }  // Kiểm tra băng chuyền Kho Vị Thanh
+      ],
+      binhthuy: [
+        { left: '78.5%', top: '43.0%', pose: 'pose-walk', fx: '📦' }, // Đi giữa dãy kệ pallet Kho Bình Thủy
+        { left: '83.5%', top: '54.5%', pose: 'pose-work', fx: '🚛' }, // Ra cửa bến xe tải Kho Bình Thủy
+        { left: '74.5%', top: '35.0%', pose: 'pose-walk', fx: '📈' }, // Kiểm tra đầu băng chuyền Bình Thủy
+        { left: '84.5%', top: '45.5%', pose: 'pose-work', fx: '⚡' }  // Kiểm tra cửa xuất bên hông phải
+      ],
+      tigercore: [
+        { left: '50.0%', top: '14.5%', pose: 'pose-work', fx: '🌐' }, // Trực quả cầu Hologram Trung Tâm Chỉ Huy
+        { left: '46.0%', top: '13.5%', pose: 'pose-walk', fx: '⚡' },
+        { left: '54.0%', top: '13.5%', pose: 'pose-walk', fx: '🛰️' },
+        { left: '50.0%', top: '14.5%', pose: 'pose-work', fx: '🌐' }
+      ],
+      kythuat: [
+        { left: '67.0%', top: '16.5%', pose: 'pose-work', fx: '🛠️' }, // Tuần tra Phòng Server Kỹ Thuật
+        { left: '63.0%', top: '15.5%', pose: 'pose-walk', fx: '🛡️' },
+        { left: '71.0%', top: '16.5%', pose: 'pose-walk', fx: '⚡' },
+        { left: '67.0%', top: '16.5%', pose: 'pose-work', fx: '💻' }
+      ],
+      b2b: [
+        { left: '29.0%', top: '17.5%', pose: 'pose-work', fx: '📊' }, // Ngồi bàn máy tính Phòng Dữ Liệu B2B
+        { left: '27.2%', top: '15.5%', pose: 'pose-walk', fx: '📈' }, // Xem màn hình bản đồ B2B trên tường
+        { left: '31.2%', top: '18.0%', pose: 'pose-work', fx: '📑' },
+        { left: '29.0%', top: '17.5%', pose: 'pose-work', fx: '📊' }
+      ],
+      odo365: [
+        { left: '36.8%', top: '17.5%', pose: 'pose-work', fx: '🚛' }, // Ngồi bàn máy tính Phòng Kế Toán ODO 365
+        { left: '35.2%', top: '15.5%', pose: 'pose-walk', fx: '📋' }, // Xem bản đồ tuyến xe tải 21 kho
+        { left: '38.5%', top: '18.0%', pose: 'pose-work', fx: '💰' },
+        { left: '36.8%', top: '17.5%', pose: 'pose-work', fx: '🚛' }
+      ],
+      thanhtra: [
+        { left: '52.5%', top: '86.0%', pose: 'pose-walk', fx: '🔎' }, // Trực bốt gác Cổng Kiểm Soát Xe Tải
+        { left: '45.5%', top: '86.5%', pose: 'pose-walk', fx: '🛡️' }, // Kiểm tra thanh chắn barrier cổng vào
+        { left: '59.5%', top: '83.5%', pose: 'pose-walk', fx: '🚩' }, // Đi tuần qua Cột Cờ Tổ Quốc
+        { left: '52.5%', top: '86.0%', pose: 'pose-work', fx: '🔎' }
       ]
     };
 
