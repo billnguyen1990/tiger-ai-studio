@@ -5502,6 +5502,9 @@ def api_saban_dispatch():
         "phongcam": ("Phòng Chuyên Camera", "📹 Phòng Chuyên Camera 4 Kho", ""),
         "ketoan": ("Phòng Kế Toán (Lương)", "💼 Phòng Kế Toán", ""),
         "thuquy": ("Phòng Thủ Quỹ (Thu Chi)", "💰 Phòng Thủ Quỹ", ""),
+        "starbucks": ("Starbucks Coffee & Boba", "🧋 Quán Trà Sữa & Coffee Starbucks", ""),
+        "quan_an": ("Bếp Trưởng Quán Ăn", "🍜 Quán Ăn Nhân Viên", ""),
+        "garden_coffee": ("Barista Garden Coffee", "☕ Quán Coffee Vườn Ven Sông", ""),
         "b2b": ("Agent B2B (Topic 506)", "📊 Phòng Dữ Liệu B2B", ""),
         "kythuat": ("Auto-Heal Bot", "🛠️ Phòng Kỹ Thuật & Server AI", ""),
         "thanhtra": ("Thanh Tra & Watchdog", "🕵️ Ban Thanh Tra", ""),
@@ -5543,6 +5546,18 @@ def api_saban_dispatch():
             action = "thuquy_check"
             agent_id = "thuquy"
             agent_label, dept_name, _ = agent_names["thuquy"]
+        elif agent_id == "starbucks" or any(w in note_lower for w in ["starbucks", "trà sữa", "boba", "macchiato", "cold brew"]):
+            action = "starbucks_order"
+            agent_id = "starbucks"
+            agent_label, dept_name, _ = agent_names["starbucks"]
+        elif agent_id == "quan_an" or any(w in note_lower for w in ["quán ăn", "cơm", "phở", "hủ tiếu", "ăn trưa"]):
+            action = "quanan_order"
+            agent_id = "quan_an"
+            agent_label, dept_name, _ = agent_names["quan_an"]
+        elif agent_id == "garden_coffee" or any(w in note_lower for w in ["coffee", "cà phê", "cafe sữa", "bạc xỉu"]):
+            action = "gardencoffee_order"
+            agent_id = "garden_coffee"
+            agent_label, dept_name, _ = agent_names["garden_coffee"]
         elif agent_id in ("kythuat", "tigercore") or any(w in note_lower for w in ["token", "lỗi", "sức khỏe", "heal", "kỹ thuật"]):
             action = "kythuat_heal"
             agent_id = "kythuat" if agent_id != "tigercore" else "tigercore"
@@ -6515,6 +6530,169 @@ def api_saban_dispatch():
                 {"label": "Quỹ Thu COD 4 Kho", "val": "+322,645,355 đ (Khớp 100%)"},
                 {"label": "Phiếu Chi Được Sếp Duyệt", "val": "3 phiếu (-19,870,000 đ)"},
                 {"label": "Kỷ Luật Tài Chính", "val": "Chỉ chi khi Sếp Lộc duyệt"}
+            ]
+        })
+
+    # =========================================================================
+    # 4H. QUÁN TRÀ SỮA & COFFEE STARBUCKS (CHÍNH HÃNG CÔNG VIÊN MIỀN TÂY 01)
+    # =========================================================================
+    elif action == "starbucks_order":
+        html_sb = """
+        <div style="width:100%;height:100%;overflow:auto;padding:12px;background:#062319;color:#f8fafc;font-size:0.75rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px solid #00704A;padding-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <img src="/static/img/starbucks_logo.svg" style="width:26px;height:26px;" />
+              <span style="font-weight:900;color:#00D880;font-size:0.9rem;">STARBUCKS COFFEE & BOBA MILK TEA • MIỀN TÂY 01</span>
+            </div>
+            <span style="background:#00704A;color:#E8F5E9;padding:2px 8px;border-radius:4px;font-size:0.68rem;font-weight:800;">✓ OPEN 24/7 PHỤC VỤ KHU KHO</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
+            <div style="background:#0b3829;border:1px solid #00704A;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fef08a;">🧋 Trà Sữa Trân Châu Hoàng Kim</div>
+              <div style="color:#a7f3d0;font-size:0.7rem;">Trà ô long sữa tươi + Trân châu đường đen</div>
+              <div style="color:#00D880;font-weight:800;margin-top:4px;">65,000 đ (Size Venti)</div>
+            </div>
+            <div style="background:#0b3829;border:1px solid #00704A;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fef08a;">☕ Cold Brew Phin Sữa Tươi</div>
+              <div style="color:#a7f3d0;font-size:0.7rem;">Ủ lạnh 16h Arabica Cầu Đất nguyên chất</div>
+              <div style="color:#00D880;font-weight:800;margin-top:4px;">75,000 đ (Đậm đà)</div>
+            </div>
+            <div style="background:#0b3829;border:1px solid #00704A;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fef08a;">🍮 Caramel Macchiato Nóng</div>
+              <div style="color:#a7f3d0;font-size:0.7rem;">Espresso kép, bọt sữa mịn & sốt caramel</div>
+              <div style="color:#00D880;font-weight:800;margin-top:4px;">80,000 đ (Signature)</div>
+            </div>
+          </div>
+          <div style="background:#071a13;padding:8px;border-radius:6px;border-left:3px solid #00D880;font-size:0.72rem;color:#cbd5e1;">
+            ✨ Không gian máy lạnh kính tràn view nhìn ra bờ sông & bãi xe tải GHN. Nhân viên kho vận được giảm 15% khi quét thẻ PDA!
+          </div>
+        </div>
+        """
+        record_pipeline_event(
+            task_name="Order Starbucks Milk Tea & Coffee",
+            department="🧋 Quán Trà Sữa & Coffee Starbucks",
+            current_step="Đã kết nối quầy Barista Starbucks: Menu trà sữa & cà phê đặc sản sẵn sàng phục vụ",
+            total_steps=2,
+            status="SUCCESS",
+            handler_dept="🧋 Starbucks Miền Tây 01",
+            healing_action="Đang chuẩn bị thức uống cho nhân viên khu kho vận.",
+            can_resume=True
+        )
+        return jsonify({
+            "success": True,
+            "agent_id": "starbucks",
+            "agent_label": "Starbucks Coffee & Boba",
+            "action": action,
+            "reply": "Dạ anh Lộc, Barista Starbucks xin chào anh! Quán trà sữa & cà phê Starbucks ven sông đã sẵn sàng phục vụ anh Lộc và toàn thể anh em 4 kho với đầy đủ Trà Sữa Trân Châu Hoàng Kim, Cold Brew ủ lạnh và Caramel Macchiato!",
+            "live_html": html_sb,
+            "steps": [
+                "Bước 1/2: Kết nối quầy Barista Starbucks với hệ thống Sa Bàn 3D",
+                "Bước 2/2: Bật ưu đãi giảm 15% cho anh em nhân viên kho Miền Tây 01"
+            ],
+            "kpi_cards": [
+                {"label": "Thương Hiệu", "val": "Starbucks Official"},
+                {"label": "Món Best-Seller", "val": "Trà Sữa Trân Châu & Cold Brew"},
+                {"label": "Giờ Phục Vụ", "val": "24/7 (Phục vụ ca đêm kho)"}
+            ]
+        })
+
+    # =========================================================================
+    # 4I. QUÁN ĂN NHÂN VIÊN (CƠM TRƯA, PHỞ & HỦ TIẾU CẦN THƠ)
+    # =========================================================================
+    elif action == "quanan_order":
+        html_qa = """
+        <div style="width:100%;height:100%;overflow:auto;padding:12px;background:#1c1308;color:#f8fafc;font-size:0.75rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px solid #d97706;padding-bottom:8px;">
+            <span style="font-weight:900;color:#fbbf24;font-size:0.9rem;">🍜 QUÁN ĂN NHÂN VIÊN MIỀN TÂY 01 (CƠM TRƯA • PHỞ • HỦ TIẾU)</span>
+            <span style="background:#78350f;color:#fef3c7;padding:2px 8px;border-radius:4px;font-size:0.68rem;font-weight:800;">✓ NÓNG HỔI • VỆ SINH ATTP</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
+            <div style="background:#291807;border:1px solid #78350f;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fde047;">🍱 Cơm Sườn Bì Chả Nướng</div>
+              <div style="color:#cbd5e1;font-size:0.7rem;">Sườn nướng mật ong + Chả trứng hấp + Canh chua</div>
+              <div style="color:#38bdf8;font-weight:800;margin-top:4px;">35,000 đ (Suất đầy đủ)</div>
+            </div>
+            <div style="background:#291807;border:1px solid #78350f;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fde047;">🍲 Phở Bò Tái Nạm Cần Thơ</div>
+              <div style="color:#cbd5e1;font-size:0.7rem;">Nước dùng hầm xương ống 12h, thịt bò tươi</div>
+              <div style="color:#38bdf8;font-weight:800;margin-top:4px;">40,000 đ (Tô lớn)</div>
+            </div>
+            <div style="background:#291807;border:1px solid #78350f;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fde047;">🍜 Hủ Tiếu Nam Vang Đặc Biệt</div>
+              <div style="color:#cbd5e1;font-size:0.7rem;">Tôm sú, thịt nạc, trứng cút, tóp mỡ giòn rụm</div>
+              <div style="color:#38bdf8;font-weight:800;margin-top:4px;">40,000 đ (Khô / Nước)</div>
+            </div>
+          </div>
+          <div style="background:#201103;padding:8px;border-radius:6px;border-left:3px solid #f59e0b;font-size:0.72rem;color:#cbd5e1;">
+            🍚 Phục vụ 3 ca liên tục: Ca sáng (06:30 - 08:30) • Ca trưa (11:00 - 13:30) • Ca đêm (18:30 - 22:00) cho tài xế và NVXL.
+          </div>
+        </div>
+        """
+        return jsonify({
+            "success": True,
+            "agent_id": "quan_an",
+            "agent_label": "Bếp Trưởng Quán Ăn",
+            "action": action,
+            "reply": "Dạ anh Lộc, Bếp trưởng Quán Ăn Nhân Viên báo cáo: Bếp đã chuẩn bị sẵn sàng suất ăn ca cho 4 kho với Cơm sườn nướng, Phở bò tái nạm và Hủ tiếu Nam Vang nóng sốt đảm bảo sức khỏe cho anh em vận hành!",
+            "live_html": html_qa,
+            "steps": [
+                "Bước 1/2: Kiểm tra nguyên liệu tươi & thực đơn ca trưa/chiều",
+                "Bước 2/2: Sẵn sàng phục vụ cơm trưa và giải lao cho anh em 4 kho"
+            ],
+            "kpi_cards": [
+                {"label": "Phục Vụ Nhân Viên", "val": "4 Cụm Kho MT01"},
+                {"label": "Thực Đơn Hôm Nay", "val": "Cơm Sườn • Phở • Hủ Tiếu"},
+                {"label": "Tiêu Chuẩn ATTP", "val": "100% Đạt Chuẩn Sạch"}
+            ]
+        })
+
+    # =========================================================================
+    # 4J. QUÁN GARDEN COFFEE VEN SÔNG (CÀ PHÊ SỮA ĐÁ & BẠC XỈU 3 TẦNG)
+    # =========================================================================
+    elif action == "gardencoffee_order":
+        html_cf = """
+        <div style="width:100%;height:100%;overflow:auto;padding:12px;background:#181008;color:#f8fafc;font-size:0.75rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:1px solid #92400e;padding-bottom:8px;">
+            <span style="font-weight:900;color:#fbbf24;font-size:0.9rem;">☕ GARDEN COFFEE VEN SÔNG • KHÔNG GIAN DƯỚI BÓNG CÂY XANH</span>
+            <span style="background:#78350f;color:#fef3c7;padding:2px 8px;border-radius:4px;font-size:0.68rem;font-weight:800;">✓ VIEW SÔNG HẬU THƠ MỘNG</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">
+            <div style="background:#26180c;border:1px solid #92400e;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fde047;">☕ Cà Phê Sữa Đá Miền Tây</div>
+              <div style="color:#cbd5e1;font-size:0.7rem;">Cà phê Robusta rang mộc pha phin truyền thống</div>
+              <div style="color:#00e5be;font-weight:800;margin-top:4px;">20,000 đ</div>
+            </div>
+            <div style="background:#26180c;border:1px solid #92400e;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fde047;">🥛 Bạc Xỉu 3 Tầng Đá</div>
+              <div style="color:#cbd5e1;font-size:0.7rem;">Sữa đặc, sữa tươi thanh trùng & lớp cà phê bồng bềnh</div>
+              <div style="color:#00e5be;font-weight:800;margin-top:4px;">25,000 đ</div>
+            </div>
+            <div style="background:#26180c;border:1px solid #92400e;padding:8px;border-radius:6px;">
+              <div style="font-weight:800;color:#fde047;">🍑 Trà Đào Cam Sả Tươi</div>
+              <div style="color:#cbd5e1;font-size:0.7rem;">Đào miếng giòn ngọt, sả thơm thanh mát</div>
+              <div style="color:#00e5be;font-weight:800;margin-top:4px;">25,000 đ</div>
+            </div>
+          </div>
+          <div style="background:#1b1007;padding:8px;border-radius:6px;border-left:3px solid #d97706;font-size:0.72rem;color:#cbd5e1;">
+            🌿 Bàn ghế dù ngoài trời râm mát cạnh hồ nước & lối chạy bộ công viên. Nơi giao lưu tuyệt vời cho anh em nghỉ ca!
+          </div>
+        </div>
+        """
+        return jsonify({
+            "success": True,
+            "agent_id": "garden_coffee",
+            "agent_label": "Barista Garden Coffee",
+            "action": action,
+            "reply": "Dạ anh Lộc, Garden Coffee ven sông đã sẵn sàng phục vụ cà phê phin sữa đá, bạc xỉu và trà đào cam sả thanh mát dưới bóng cây xanh cho anh em thư giãn ạ!",
+            "live_html": html_cf,
+            "steps": [
+                "Bước 1/2: Chuẩn bị cà phê pha phin truyền thống & thức uống giải khát",
+                "Bước 2/2: Bố trí bàn ghế dù ven sông đón gió mát"
+            ],
+            "kpi_cards": [
+                {"label": "Không Gian", "val": "Vườn Cây & Bờ Sông"},
+                {"label": "Đồ Uống", "val": "Cà Phê Sữa Đá • Bạc Xỉu"},
+                {"label": "Trạng Thái", "val": "Mở Cửa Cả Ngày"}
             ]
         })
 

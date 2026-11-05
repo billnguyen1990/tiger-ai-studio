@@ -1429,6 +1429,56 @@
       100% { opacity: 0.85; }
     }
 
+
+    .starbucks-zone-sign {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, rgba(6, 40, 26, 0.96), rgba(0, 112, 74, 0.92));
+      border: 1.5px solid #00D880;
+      color: #E8F5E9;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.62rem;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.7), 0 0 12px rgba(0, 216, 128, 0.4);
+      z-index: 52;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .starbucks-zone-sign:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #fde047;
+      color: #ffffff;
+    }
+    .food-zone-sign {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, rgba(69, 26, 3, 0.94), rgba(180, 83, 9, 0.90));
+      border: 1.4px solid #f59e0b;
+      color: #fef3c7;
+      padding: 2.5px 9px;
+      border-radius: 999px;
+      font-size: 0.60rem;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.65);
+      z-index: 52;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .food-zone-sign:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #38bdf8;
+    }
+    .food-zone-sign.coffee-sign {
+      background: linear-gradient(135deg, rgba(46, 26, 10, 0.94), rgba(120, 53, 15, 0.90));
+      border-color: #d97706;
+    }
+
   </style>
 </head>
 <body>
@@ -1494,30 +1544,42 @@
     <div class="iso-scene-wrapper" id="isoScene">
 
       <!-- HIGH-RES 3D ARCHITECTURAL CUTAWAY RENDERS (NIGHT & DAY) -->
-      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=parkriver1" alt="Tiger AI 3D Campus Night">
-      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=parkriver1" alt="Tiger AI 3D Campus Day">
+      <img class="campus-img night" src="/static/img/saban_campus_night.jpg?v=masterplan4corners" alt="Tiger AI 3D Campus Night">
+      <img class="campus-img day" src="/static/img/saban_campus_day.jpg?v=masterplan4corners" alt="Tiger AI 3D Campus Day">
 
       <!-- HOLOGRAM PULSE OVER THE CENTRAL SPHERE -->
       <div class="holo-pulse"></div>
 
-      <!-- TẦNG 1 (TRÊN CÙNG): BẢNG TÊN 4 PHÒNG BAN TRUNG TÂM -->
-      <div class="dept-zone-sign" style="left: 20.5%; top: 8.2%;" onclick="openRoomModal('vanhanh')">🎯 PHÒNG VẬN HÀNH (KPI)</div>
-      <div class="dept-zone-sign" style="left: 33.0%; top: 8.2%;" onclick="openRoomModal('b2b')">📊 PHÒNG DỮ LIỆU B2B</div>
-      <div class="dept-zone-sign" style="left: 50.0%; top: 5.2%;" onclick="openRoomModal('kythuat')">🌐 TRUNG TÂM CHỈ HUY & SERVER AI</div>
-      <div class="dept-zone-sign" style="left: 79.8%; top: 8.2%;" onclick="openRoomModal('phongcam')">📹 PHÒNG CHUYÊN CAMERA 4 KHO</div>
+      <!-- 1. KHỐI VĂN PHÒNG ĐỘC LẬP Ở CHÍNH GIỮA (TẦNG 1 - TRÊN) -->
+      <div class="dept-zone-sign" style="left: 37.0%; top: 26.5%;" onclick="openRoomModal('vanhanh')">🎯 PHÒNG VẬN HÀNH (KPI)</div>
+      <div class="dept-zone-sign" style="left: 46.0%; top: 26.5%;" onclick="openRoomModal('b2b')">📊 PHÒNG DỮ LIỆU B2B</div>
+      <div class="dept-zone-sign" style="left: 55.0%; top: 25.0%;" onclick="openRoomModal('kythuat')">🌐 TRUNG TÂM CHỈ HUY & SERVER AI</div>
+      <div class="dept-zone-sign" style="left: 64.0%; top: 26.5%;" onclick="openRoomModal('phongcam')">📹 PHÒNG CHUYÊN CAMERA 4 KHO</div>
 
-      <!-- TẦNG 2 (TẦNG LỬNG): BẢNG TÊN 5 PHÒNG BAN NGHIỆP VỤ -->
-      <div class="dept-zone-sign" style="left: 22.5%; top: 23.2%;" onclick="openRoomModal('nhansu')">👥 PHÒNG NHÂN SỰ</div>
-      <div class="dept-zone-sign warn-sign" style="left: 40.8%; top: 23.2%;" onclick="openRoomModal('ccdc')">🧰 PHÒNG THIẾT BỊ CCDC (NHẮC FILE)</div>
-      <div class="dept-zone-sign" style="left: 58.8%; top: 23.2%;" onclick="openRoomModal('giamsattai')">🚛 PHÒNG GIÁM SÁT TẢI</div>
-      <div class="dept-zone-sign" style="left: 72.5%; top: 23.2%;" onclick="openRoomModal('ketoan')">💼 PHÒNG KẾ TOÁN</div>
-      <div class="dept-zone-sign" style="left: 82.5%; top: 23.2%;" onclick="openRoomModal('thuquy')">💰 PHÒNG THỦ QUỸ</div>
+      <!-- 2. KHỐI VĂN PHÒNG ĐỘC LẬP Ở CHÍNH GIỮA (TẦNG 2 - DƯỚI) -->
+      <div class="dept-zone-sign" style="left: 37.0%; top: 41.5%;" onclick="openRoomModal('nhansu')">👥 PHÒNG NHÂN SỰ</div>
+      <div class="dept-zone-sign warn-sign" style="left: 46.0%; top: 41.5%;" onclick="openRoomModal('ccdc')">🧰 PHÒNG THIẾT BỊ CCDC (NHẮC FILE)</div>
+      <div class="dept-zone-sign" style="left: 55.0%; top: 41.5%;" onclick="openRoomModal('giamsattai')">🚛 PHÒNG GIÁM SÁT TẢI</div>
+      <div class="dept-zone-sign" style="left: 62.5%; top: 41.5%;" onclick="openRoomModal('ketoan')">💼 KẾ TOÁN</div>
+      <div class="dept-zone-sign" style="left: 66.5%; top: 41.5%;" onclick="openRoomModal('thuquy')">💰 THỦ QUỸ</div>
 
-      <!-- TẦNG 3 (SÀN KHO CÔNG NGHIỆP): BẢNG TÊN 4 CỤM KHO HÀNG NẶNG RIÊNG BIỆT -->
-      <div class="warehouse-zone-sign" style="left: 21.0%; top: 38.2%;" onclick="openRoomModal('cairang')">🏭 CỤM KHO CÁI RĂNG</div>
-      <div class="warehouse-zone-sign" style="left: 40.5%; top: 38.2%;" onclick="openRoomModal('omon')">🏭 CỤM KHO Ô MÔN</div>
-      <div class="warehouse-zone-sign" style="left: 59.5%; top: 38.2%;" onclick="openRoomModal('vithanh')">🏭 CỤM KHO VỊ THANH</div>
-      <div class="warehouse-zone-sign" style="left: 78.5%; top: 38.2%;" onclick="openRoomModal('binhthuy')">🏭 CỤM KHO BÌNH THỦY</div>
+      <!-- 3. 4 CỤM KHO HÀNG NẶNG RIÊNG BIỆT TẠI 4 GÓC NGOÀI (TÁCH BIỆT VỚI VĂN PHÒNG) -->
+      <div class="warehouse-zone-sign" style="left: 18.0%; top: 4.5%;" onclick="openRoomModal('cairang')">🏭 CỤM KHO CÁI RĂNG (GÓC TRÊN TRÁI)</div>
+      <div class="warehouse-zone-sign" style="left: 8.5%; top: 8.5%;" onclick="openRoomModal('binhthuy')">🏭 CỤM KHO BÌNH THỦY (GÓC TÂY BẮC)</div>
+      <div class="warehouse-zone-sign" style="left: 11.5%; top: 43.5%;" onclick="openRoomModal('omon')">🏭 CỤM KHO Ô MÔN (GÓC DƯỚI TRÁI)</div>
+      <div class="warehouse-zone-sign" style="left: 67.5%; top: 4.5%;" onclick="openRoomModal('vithanh')">🏭 CỤM KHO VỊ THANH (GÓC TRÊN PHẢI)</div>
+
+      <!-- 4. KHU DỊCH VỤ F&B, STARBUCKS, QUÁN ĂN, CAFE & CÔNG VIÊN BỜ SÔNG -->
+      <div class="starbucks-zone-sign" style="left: 29.5%; top: 71.5%;" onclick="openRoomModal('starbucks')">
+        <img src="/static/img/starbucks_logo.svg" style="width:18px;height:18px;border-radius:50%;background:#fff;" alt="Starbucks">
+        <span>STARBUCKS TRÀ SỮA & COFFEE</span>
+      </div>
+      <div class="food-zone-sign" style="left: 62.5%; top: 71.5%;" onclick="openRoomModal('quan_an')">🍜 QUÁN ĂN NHÂN VIÊN</div>
+      <div class="food-zone-sign coffee-sign" style="left: 70.5%; top: 71.5%;" onclick="openRoomModal('garden_coffee')">☕ GARDEN COFFEE</div>
+      <div class="dept-zone-sign" style="left: 49.8%; top: 80.0%;" onclick="openRoomModal('thanhtra')">🕵️ CỔNG KIỂM SOÁT XE TẢI</div>
+      <div class="park-zone-sign" style="left: 88.0%; top: 38.0%;" onclick="toggleShiftSimulation()">🌳 CÔNG VIÊN & ĐƯỜNG CHẠY BỘ</div>
+      <div class="park-zone-sign" style="left: 78.5%; top: 86.0%;" onclick="toggleShiftSimulation()">🎣 BẾN CÂU CÁ 1</div>
+      <div class="park-zone-sign" style="left: 90.5%; top: 72.0%;" onclick="toggleShiftSimulation()">🎣 BẾN CÂU CÁ 2 (CẦU GỖ)</div>
 
       <!-- HIỆU ỨNG BỐC XẾP KIỆN HÀNG TẠI CỬA BẾN XE TẢI 4 CỤM KHO -->
       <div class="dock-loading-fx" style="left: 15.6%; top: 61.5%;" title="Bãi xuất nhập Kho Cái Răng">📦</div>
@@ -1527,7 +1589,7 @@
       <div class="dock-loading-fx" style="left: 84.4%; top: 61.5%; animation-delay: 1.1s;" title="Bãi xuất nhập Kho Bình Thủy">📦</div>
 
       <!-- 1. Công Bằng (Kho Cái Răng) -->
-      <div class="agent-tag pose-work" id="agent-cairang" style="left: 21.0%; top: 52.0%;" onclick="openRoomModal('cairang')">
+      <div class="agent-tag pose-work" id="agent-cairang" style="left: 18.0%; top: 18.0%;" onclick="openRoomModal('cairang')">
         <div class="agent-bubble" id="bubble-cairang">🐯 Công Bằng (Cái Răng) • ⚡ Đang trực</div>
         <div class="chibi-nameplate">NVXL: Công Bằng</div>
         
@@ -1620,13 +1682,13 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 19.5%; top: 58.0%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
+      <div class="cam-icon-pin" style="left: 21.0%; top: 24.0%;" onclick="dispatchAgentTask('cairang', 'cam_snap', 'Trích xuất Camera 05 Kho Cái Răng')">
         <span>📹</span>
         <div class="cam-tip">Cam 05 Cái Răng (Bấm chụp)</div>
       </div>
 
       <!-- 2. Tiger AI Core (Trung Tâm Chỉ Huy) -->
-      <div class="agent-tag pose-work" id="agent-tigercore" style="left: 50.0%; top: 14.5%;" onclick="openRoomModal('kythuat')">
+      <div class="agent-tag pose-work" id="agent-tigercore" style="left: 54.5%; top: 32.0%;" onclick="openRoomModal('kythuat')">
         <div class="agent-bubble" id="bubble-tigercore">👑 Tiger AI Core • ⚡ Điều phối 9 luồng</div>
         <div class="chibi-nameplate dept-plate">Tiger AI Core</div>
         
@@ -1725,7 +1787,7 @@
       </div>
 
       <!-- 3. Bảo Toàn (Kho Bình Thủy) -->
-      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 78.5%; top: 52.0%;" onclick="openRoomModal('binhthuy')">
+      <div class="agent-tag pose-work" id="agent-binhthuy" style="left: 8.5%; top: 21.0%;" onclick="openRoomModal('binhthuy')">
         <div class="agent-bubble" id="bubble-binhthuy">🦁 Bảo Toàn (Bình Thủy) • 📈 KPI 91.6%</div>
         <div class="chibi-nameplate">NVXL: Bảo Toàn</div>
         
@@ -1818,13 +1880,13 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 80.5%; top: 58.0%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
+      <div class="cam-icon-pin" style="left: 6.5%; top: 23.5%;" onclick="dispatchAgentTask('binhthuy', 'cam_snap', 'Trích xuất Camera 06 Kho Bình Thủy')">
         <span>📹</span>
         <div class="cam-tip">Cam 06 Bình Thủy (Bấm chụp)</div>
       </div>
 
       <!-- 4. Auto-Heal Bot (Phòng Server Trung Tâm) -->
-      <div class="agent-tag pose-walk" id="agent-kythuat" style="left: 67.0%; top: 16.5%;" onclick="openRoomModal('kythuat')">
+      <div class="agent-tag pose-walk" id="agent-kythuat" style="left: 57.0%; top: 33.0%;" onclick="openRoomModal('kythuat')">
         <div class="agent-bubble" id="bubble-kythuat">🤖 Auto-Heal Bot • 🛡️ Tuần tra Server</div>
         <div class="chibi-nameplate dept-plate">Auto-Heal Bot</div>
         
@@ -1909,7 +1971,7 @@
     
       </div>
       <!-- 6. Đức Trung (Kho Vị Thanh) -->
-      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 59.5%; top: 52.0%;" onclick="openRoomModal('vithanh')">
+      <div class="agent-tag pose-walk" id="agent-vithanh" style="left: 67.5%; top: 13.5%;" onclick="openRoomModal('vithanh')">
         <div class="agent-bubble" id="bubble-vithanh">🦅 Đức Trung (Vị Thanh) • 📦 Điều phối kho</div>
         <div class="chibi-nameplate">NVXL: Đức Trung</div>
         
@@ -2001,13 +2063,13 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 60.0%; top: 58.0%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
+      <div class="cam-icon-pin" style="left: 71.5%; top: 12.5%;" onclick="dispatchAgentTask('vithanh', 'cam_snap', 'Trích xuất Camera 08 Kho Vị Thanh')">
         <span>📹</span>
         <div class="cam-tip">Cam 08 Vị Thanh (Bấm chụp)</div>
       </div>
 
       <!-- 7. Agent B2B (Phòng Dữ Liệu B2B & Đơn Tạo Topic 506) -->
-      <div class="agent-tag pose-work" id="agent-b2b" style="left: 33.0%; top: 17.5%;" onclick="openRoomModal('b2b')">
+      <div class="agent-tag pose-work" id="agent-b2b" style="left: 46.0%; top: 33.0%;" onclick="openRoomModal('b2b')">
         <div class="agent-bubble" id="bubble-b2b">📊 Agent B2B (Topic 506) • 142 đơn (5/11)</div>
         <div class="chibi-nameplate dept-plate">Agent B2B (Đơn Tạo)</div>
         
@@ -2105,7 +2167,7 @@
       </div>
 
       <!-- 8. Thanh Tra & Watchdog (Phòng Cổng Chính) -->
-      <div class="agent-tag pose-walk" id="agent-thanhtra" style="left: 52.5%; top: 86.0%;" onclick="openRoomModal('thanhtra')">
+      <div class="agent-tag pose-walk" id="agent-thanhtra" style="left: 49.8%; top: 84.5%;" onclick="openRoomModal('thanhtra')">
         <div class="agent-bubble" id="bubble-thanhtra">🕵️ Thanh Tra • 🔎 Canh đơn VIP 24/7</div>
         <div class="chibi-nameplate dept-plate">Ban Thanh Tra</div>
         
@@ -2199,7 +2261,7 @@
       </div>
 
       <!-- 9. Trọng Bằng (Kho Ô Môn) -->
-      <div class="agent-tag pose-work" id="agent-omon" style="left: 40.5%; top: 52.0%;" onclick="openRoomModal('omon')">
+      <div class="agent-tag pose-work" id="agent-omon" style="left: 11.0%; top: 68.0%;" onclick="openRoomModal('omon')">
         <div class="agent-bubble" id="bubble-omon">🐺 Trọng Bằng (Ô Môn) • ⚡ Đang trực</div>
         <div class="chibi-nameplate">NVXL: Trọng Bằng</div>
         
@@ -2292,13 +2354,13 @@
         </div>
     
       </div>
-      <div class="cam-icon-pin" style="left: 40.0%; top: 58.0%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
+      <div class="cam-icon-pin" style="left: 14.5%; top: 68.0%;" onclick="dispatchAgentTask('omon', 'cam_snap', 'Trích xuất Camera 01 Kho Ô Môn')">
         <span>📹</span>
         <div class="cam-tip">Cam 01 Ô Môn (Bấm chụp)</div>
       </div>
 
       <!-- Chibi Agent: vanhanh (Phòng Vận Hành) -->
-      <div class="agent-tag pose-work" id="agent-vanhanh" style="left: 20.5%; top: 17.5%;" onclick="openRoomModal('vanhanh')">
+      <div class="agent-tag pose-work" id="agent-vanhanh" style="left: 37.0%; top: 33.0%;" onclick="openRoomModal('vanhanh')">
         <div class="agent-bubble" id="bubble-vanhanh">🎯 Phòng Vận Hành • Quản lý Đơn Gán, GTC, GTB, Tỉ lệ, Chi phí</div>
         <div class="chibi-nameplate dept-plate">Phòng Vận Hành</div>
         <div class="chibi-floor-ring"></div>
@@ -2368,7 +2430,7 @@
         </div>
       </div>
       <!-- Chibi Agent: phongcam (Phòng Camera (5S)) -->
-      <div class="agent-tag pose-work" id="agent-phongcam" style="left: 79.8%; top: 17.5%;" onclick="openRoomModal('phongcam')">
+      <div class="agent-tag pose-work" id="agent-phongcam" style="left: 64.0%; top: 33.0%;" onclick="openRoomModal('phongcam')">
         <div class="agent-bubble" id="bubble-phongcam">📹 Phòng Camera • Check 5S & Chất xếp sáng/cuối ngày</div>
         <div class="chibi-nameplate dept-plate">Phòng Camera (5S)</div>
         <div class="chibi-floor-ring"></div>
@@ -2438,7 +2500,7 @@
         </div>
       </div>
       <!-- Chibi Agent: nhansu (Phòng Nhân Sự) -->
-      <div class="agent-tag pose-work" id="agent-nhansu" style="left: 22.5%; top: 33.5%;" onclick="openRoomModal('nhansu')">
+      <div class="agent-tag pose-work" id="agent-nhansu" style="left: 37.0%; top: 50.0%;" onclick="openRoomModal('nhansu')">
         <div class="agent-bubble" id="bubble-nhansu">👥 Phòng Nhân Sự • Quân số 4 kho, Đúng giờ & Nghỉ phép</div>
         <div class="chibi-nameplate dept-plate">Phòng Nhân Sự</div>
         <div class="chibi-floor-ring"></div>
@@ -2508,7 +2570,7 @@
         </div>
       </div>
       <!-- Chibi Agent: ccdc (Phòng CCDC (Nhắc File)) -->
-      <div class="agent-tag pose-walk" id="agent-ccdc" style="left: 40.8%; top: 33.5%;" onclick="openRoomModal('ccdc')">
+      <div class="agent-tag pose-walk" id="agent-ccdc" style="left: 46.0%; top: 50.0%;" onclick="openRoomModal('ccdc')">
         <div class="agent-bubble" id="bubble-ccdc">🧰 Phòng CCDC • Quản lý thiết bị (Nhắc anh Lộc bổ sung file)</div>
         <div class="chibi-nameplate dept-plate">Phòng CCDC (Nhắc File)</div>
         <div class="chibi-floor-ring"></div>
@@ -2578,7 +2640,7 @@
         </div>
       </div>
       <!-- Chibi Agent: giamsattai (Phòng Giám Sát Tải) -->
-      <div class="agent-tag pose-work" id="agent-giamsattai" style="left: 58.8%; top: 33.5%;" onclick="openRoomModal('giamsattai')">
+      <div class="agent-tag pose-work" id="agent-giamsattai" style="left: 55.0%; top: 50.0%;" onclick="openRoomModal('giamsattai')">
         <div class="agent-bubble" id="bubble-giamsattai">🚛 Phòng Giám Sát Tải • Chi phí tải, Xe cố định & Tuyến OFF</div>
         <div class="chibi-nameplate dept-plate">Phòng Giám Sát Tải</div>
         <div class="chibi-floor-ring"></div>
@@ -2647,7 +2709,7 @@
         </div>
       </div>
       <!-- Chibi Agent: ketoan (Phòng Kế Toán) -->
-      <div class="agent-tag pose-work" id="agent-ketoan" style="left: 72.5%; top: 33.5%;" onclick="openRoomModal('ketoan')">
+      <div class="agent-tag pose-work" id="agent-ketoan" style="left: 63.0%; top: 50.0%;" onclick="openRoomModal('ketoan')">
         <div class="agent-bubble" id="bubble-ketoan">💼 Phòng Kế Toán • Theo dõi lương NVXL kho & Shipper</div>
         <div class="chibi-nameplate dept-plate">Phòng Kế Toán</div>
         <div class="chibi-floor-ring"></div>
@@ -2717,12 +2779,10 @@
         </div>
       </div>
 
-      <!-- BẢNG TÊN CÔNG VIÊN CÂY XANH, ĐƯỜNG CHẠY BỘ & BẾN CÂU CÁ BỜ SÔNG -->
-      <div class="park-zone-sign" style="left: 89.5%; top: 53.5%;" onclick="toggleShiftSimulation()" title="Bấm để cho nhân viên ra Công Viên chạy bộ & câu cá">🌳 CÔNG VIÊN & ĐƯỜNG CHẠY BỘ</div>
-      <div class="park-zone-sign" style="left: 85.0%; top: 75.0%;" onclick="toggleShiftSimulation()" title="Bến câu cá thư giãn bờ sông Hậu">🎣 BẾN CÂU CÁ BỜ SÔNG</div>
+
     
       <!-- Park/River Leisure Chibi: park-fisher-1 -->
-      <div class="agent-tag pose-fish" id="park-fisher-1" style="left: 85.2%; top: 80.2%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
+      <div class="agent-tag pose-fish" id="park-fisher-1" style="left: 78.5%; top: 88.5%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
         <div class="agent-bubble">🎣 Câu Cá Bờ Sông</div>
         <div class="chibi-nameplate">🎣 Câu Cá Bờ Sông</div>
         <div class="chibi-floor-ring"></div>
@@ -2778,7 +2838,7 @@
         </div>
       </div>
       <!-- Park/River Leisure Chibi: park-fisher-2 -->
-      <div class="agent-tag pose-fish" id="park-fisher-2" style="left: 95.2%; top: 73.2%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
+      <div class="agent-tag pose-fish" id="park-fisher-2" style="left: 90.5%; top: 74.0%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
         <div class="agent-bubble">🎣 Câu Cá Cầu Gỗ</div>
         <div class="chibi-nameplate">🎣 Câu Cá Cầu Gỗ</div>
         <div class="chibi-floor-ring"></div>
@@ -2834,7 +2894,7 @@
         </div>
       </div>
       <!-- Park/River Leisure Chibi: park-jogger-1 -->
-      <div class="agent-tag pose-jog" id="park-jogger-1" style="left: 91.8%; top: 46.0%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
+      <div class="agent-tag pose-jog" id="park-jogger-1" style="left: 88.0%; top: 46.0%;" onclick="toggleShiftSimulation()" title="Nhân sự đang thư giãn tại Công Viên Bờ Sông">
         <div class="agent-bubble">🏃 Chạy Bộ Công Viên</div>
         <div class="chibi-nameplate">🏃 Chạy Bộ Công Viên</div>
         <div class="chibi-floor-ring"></div>
@@ -3038,7 +3098,7 @@
         </div>
       </div>
       <!-- Chibi Agent: thuquy (Phòng Thủ Quỹ) -->
-      <div class="agent-tag pose-work" id="agent-thuquy" style="left: 82.5%; top: 33.5%;" onclick="openRoomModal('thuquy')">
+      <div class="agent-tag pose-work" id="agent-thuquy" style="left: 66.5%; top: 50.0%;" onclick="openRoomModal('thuquy')">
         <div class="agent-bubble" id="bubble-thuquy">💰 Phòng Thủ Quỹ • Đảm bảo thu chi từng việc Sếp Lộc duyệt</div>
         <div class="chibi-nameplate dept-plate">Phòng Thủ Quỹ</div>
         <div class="chibi-floor-ring"></div>
@@ -3108,6 +3168,107 @@
         </div>
       </div>
 
+
+      <!-- Chibi Barista Starbucks: starbucks -->
+      <div class="agent-tag pose-work" id="agent-starbucks" style="left: 29.5%; top: 82.5%;" onclick="openRoomModal('starbucks')">
+        <div class="agent-bubble" id="bubble-starbucks">🧋 Starbucks • Trà Sữa Boba & Cold Brew</div>
+        <div class="chibi-nameplate dept-plate" style="background:#00704A;border-color:#00D880;">🧋 Barista Starbucks</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🧋</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l"><rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b"/><ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#00D880"/></g>
+              <g class="chibi-leg-r"><rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b"/><ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#00D880"/></g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#00704A" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <g class="chibi-arm-l"><rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#00704A"/><circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/></g>
+              <g class="chibi-arm-r"><rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#00704A"/><circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/></g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <ellipse cx="22.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <ellipse cx="41.5" cy="26.5" rx="2.6" ry="1.5" fill="#fb7185" opacity="0.55"/>
+                <g class="chibi-eyes"><ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/><circle cx="25.2" cy="22.3" r="1.1" fill="#fff"/><ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/><circle cx="37.2" cy="22.3" r="1.1" fill="#fff"/></g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4"/>
+                <!-- Starbucks Green Visor -->
+                <rect x="15" y="13" width="34" height="4" rx="2" fill="#00D880"/>
+              </g>
+              <!-- Boba Milk Tea Cup Prop -->
+              <g class="chibi-coffee-prop" style="opacity:1;">
+                <rect x="41" y="40" width="11" height="15" rx="2.5" fill="#fef08a" stroke="#ca8a04" stroke-width="1.2"/>
+                <circle cx="44" cy="50" r="1.6" fill="#1e293b"/>
+                <circle cx="48" cy="49" r="1.6" fill="#1e293b"/>
+                <circle cx="45" cy="46" r="1.6" fill="#1e293b"/>
+                <line x1="46.5" y1="36" x2="46.5" y2="44" stroke="#00D880" stroke-width="2" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Chibi Đầu Bếp Quán Ăn: quan_an -->
+      <div class="agent-tag pose-work" id="agent-quan_an" style="left: 62.5%; top: 80.5%;" onclick="openRoomModal('quan_an')">
+        <div class="agent-bubble" id="bubble-quan_an">🍜 Bếp Trưởng • Cơm sườn & Phở bò nóng sốt</div>
+        <div class="chibi-nameplate dept-plate" style="background:#78350f;border-color:#f59e0b;">🍜 Quán Ăn Nhân Viên</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">🍜</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l"><rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b"/><ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#f59e0b"/></g>
+              <g class="chibi-leg-r"><rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b"/><ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#f59e0b"/></g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#92400e" stroke="#0f172a" stroke-width="1.2"/>
+              <polygon points="28,34 36,34 32,41" fill="#ffffff"/>
+              <g class="chibi-arm-l"><rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#92400e"/><circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/></g>
+              <g class="chibi-arm-r"><rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#92400e"/><circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/></g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <!-- Chef Tall White Toque -->
+                <path d="M21,13 C21,5 43,5 43,13 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                <rect x="22" y="12" width="20" height="3" fill="#ffffff"/>
+                <g class="chibi-eyes"><ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/><circle cx="25.2" cy="22.3" r="1.1" fill="#fff"/><ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/><circle cx="37.2" cy="22.3" r="1.1" fill="#fff"/></g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:1;">
+                <!-- Hot Soup Bowl Prop -->
+                <ellipse cx="46" cy="46" rx="6" ry="3.5" fill="#f59e0b"/>
+                <path d="M40,46 Q46,55 52,46 Z" fill="#78350f" stroke="#f59e0b" stroke-width="1"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Chibi Garden Coffee: garden_coffee -->
+      <div class="agent-tag pose-work" id="agent-garden_coffee" style="left: 70.5%; top: 79.5%;" onclick="openRoomModal('garden_coffee')">
+        <div class="agent-bubble" id="bubble-garden_coffee">☕ Garden Coffee • Cà phê sữa đá & Bạc xỉu 3 tầng</div>
+        <div class="chibi-nameplate dept-plate" style="background:#451a03;border-color:#d97706;">☕ Garden Coffee</div>
+        <div class="chibi-floor-ring"></div>
+        <div class="chibi-work-fx">☕</div>
+        <div class="chibi-sprite-wrap">
+          <svg class="chibi-svg" viewBox="0 0 64 70" xmlns="http://www.w3.org/2000/svg">
+            <g class="chibi-whole-body">
+              <g class="chibi-leg-l"><rect x="23" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b"/><ellipse cx="26" cy="64" rx="4.5" ry="2.5" fill="#fde047"/></g>
+              <g class="chibi-leg-r"><rect x="34.5" y="51" width="6.5" height="13" rx="3.2" fill="#1e293b"/><ellipse cx="38" cy="64" rx="4.5" ry="2.5" fill="#fde047"/></g>
+              <path d="M19,35 C19,33 45,33 45,35 L47,53 C47,55 17,55 17,53 Z" fill="#713f12" stroke="#0f172a" stroke-width="1.2"/>
+              <g class="chibi-arm-l"><rect x="13" y="36" width="6.5" height="15" rx="3.2" fill="#713f12"/><circle cx="16.2" cy="51.5" r="3" fill="#ffedd5"/></g>
+              <g class="chibi-arm-r"><rect x="44.5" y="36" width="6.5" height="15" rx="3.2" fill="#713f12"/><circle cx="47.8" cy="51.5" r="3" fill="#ffedd5"/></g>
+              <g class="chibi-head-group">
+                <rect x="18" y="12" width="28" height="23" rx="11.5" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <path d="M18,19 C21,11 43,11 46,19 C42,15 36,15 32,17 C27,15 22,15 18,19 Z" fill="#1e293b"/>
+                <g class="chibi-eyes"><ellipse cx="26" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/><circle cx="25.2" cy="22.3" r="1.1" fill="#fff"/><ellipse cx="38" cy="23.5" rx="2.5" ry="3.1" fill="#0f172a"/><circle cx="37.2" cy="22.3" r="1.1" fill="#fff"/></g>
+                <path d="M29.5,28.5 Q32,31 34.5,28.5" fill="none" stroke="#9a3412" stroke-width="1.4"/>
+              </g>
+              <g class="chibi-coffee-prop" style="opacity:1;">
+                <rect x="42" y="41" width="10" height="13" rx="2" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+                <rect x="42" y="44" width="10" height="5" fill="#d97706"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -3137,13 +3298,14 @@
 
     <!-- 1-CLICK COMMAND CHIPS -->
     <div class="chat-quick-bar">
-      <button class="quick-chip" onclick="openRoomModal('vanhanh')">🎯 Phòng Vận Hành</button>
-      <button class="quick-chip" onclick="openRoomModal('nhansu')">👥 Phòng Nhân Sự</button>
-      <button class="quick-chip" onclick="openRoomModal('ccdc')">🧰 Phòng CCDC</button>
+      <button class="quick-chip" style="border-color:#00D880;color:#00D880;" onclick="openRoomModal('starbucks')">🧋 Starbucks Trà Sữa</button>
+      <button class="quick-chip" style="border-color:#f59e0b;color:#f59e0b;" onclick="openRoomModal('quan_an')">🍜 Quán Ăn</button>
+      <button class="quick-chip" style="border-color:#d97706;color:#d97706;" onclick="openRoomModal('garden_coffee')">☕ Garden Coffee</button>
+      <button class="quick-chip" onclick="openRoomModal('vanhanh')">🎯 Vận Hành (KPI)</button>
       <button class="quick-chip" onclick="openRoomModal('giamsattai')">🚛 Giám Sát Tải</button>
-      <button class="quick-chip" onclick="openRoomModal('phongcam')">📹 Phòng Camera</button>
-      <button class="quick-chip" onclick="openRoomModal('ketoan')">💼 Phòng Kế Toán</button>
-      <button class="quick-chip" onclick="openRoomModal('thuquy')">💰 Phòng Thủ Quỹ</button>
+      <button class="quick-chip" onclick="openRoomModal('nhansu')">👥 Nhân Sự</button>
+      <button class="quick-chip" onclick="openRoomModal('ccdc')">🧰 CCDC (Nhắc File)</button>
+      <button class="quick-chip" onclick="openRoomModal('phongcam')">📹 Camera 4 Kho</button>
       <button class="quick-chip" onclick="openRoomModal('b2b')">📊 Đơn Tạo B2B</button>
     </div>
 
@@ -3357,106 +3519,127 @@
     const AGENT_STATE = {
       cairang: {
         name: 'NVXL: Công Bằng (Kho Cái Răng)',
-        workPos: { left: '21.0%', top: '52.0%', room: 'Cụm Kho 1: Kho Cái Răng' },
-        idlePos: { left: '84.8%', top: '79.8%', room: 'Bến Câu Cá Bờ Sông', idlePose: 'pose-fish', idleFx: '🎣' },
+        workPos: { left: '18.0%', top: '18.0%', room: 'Góc Trên Trái: Kho Cái Răng' },
+        idlePos: { left: '78.5%', top: '88.5%', room: 'Bến Câu Cá 1 Bờ Sông', idlePose: 'pose-fish', idleFx: '🎣' },
         status: 'WORKING',
-        taskText: '📦 Kho Cái Răng • Đang điều phối xuất nhập'
-      },
-      omon: {
-        name: 'NVXL: Trọng Bằng (Kho Ô Môn)',
-        workPos: { left: '40.5%', top: '52.0%', room: 'Cụm Kho 2: Kho Ô Môn' },
-        idlePos: { left: '91.5%', top: '46.5%', room: 'Đường Chạy Bộ Công Viên', idlePose: 'pose-jog', idleFx: '🏃' },
-        status: 'WORKING',
-        taskText: '📦 Kho Ô Môn • Đang điều phối xuất nhập'
-      },
-      vithanh: {
-        name: 'NVXL: Đức Trung (Kho Vị Thanh)',
-        workPos: { left: '59.5%', top: '52.0%', room: 'Cụm Kho 3: Kho Vị Thanh' },
-        idlePos: { left: '95.0%', top: '73.2%', room: 'Cầu Gỗ Câu Cá Bờ Sông', idlePose: 'pose-fish', idleFx: '🐟' },
-        status: 'WORKING',
-        taskText: '📦 Kho Vị Thanh • Đang điều phối xuất nhập'
+        taskText: '📦 Kho Cái Răng • Đang điều phối bốc dỡ'
       },
       binhthuy: {
         name: 'NVXL: Bảo Toàn (Kho Bình Thủy)',
-        workPos: { left: '78.5%', top: '52.0%', room: 'Cụm Kho 4: Kho Bình Thủy' },
-        idlePos: { left: '88.5%', top: '69.0%', room: 'Đường Chạy Bộ Công Viên', idlePose: 'pose-jog', idleFx: '🏃' },
+        workPos: { left: '8.5%', top: '21.0%', room: 'Góc Tây Bắc: Kho Bình Thủy' },
+        idlePos: { left: '88.0%', top: '46.0%', room: 'Đường Chạy Bộ Công Viên', idlePose: 'pose-jog', idleFx: '🏃' },
         status: 'WORKING',
         taskText: '📈 Kho Bình Thủy • KPI 91.6% (Dẫn đầu)'
       },
+      omon: {
+        name: 'NVXL: Trọng Bằng (Kho Ô Môn)',
+        workPos: { left: '11.0%', top: '68.0%', room: 'Góc Dưới Trái: Kho Ô Môn' },
+        idlePos: { left: '29.5%', top: '82.5%', room: 'Quán Starbucks Trà Sữa', idlePose: 'pose-coffee', idleFx: '🧋' },
+        status: 'WORKING',
+        taskText: '📦 Kho Ô Môn • Đang điều phối xuất bến'
+      },
+      vithanh: {
+        name: 'NVXL: Đức Trung (Kho Vị Thanh)',
+        workPos: { left: '67.5%', top: '13.5%', room: 'Góc Trên Phải: Kho Vị Thanh' },
+        idlePos: { left: '90.5%', top: '74.0%', room: 'Bến Câu Cá 2 Cầu Gỗ', idlePose: 'pose-fish', idleFx: '🐟' },
+        status: 'WORKING',
+        taskText: '📦 Kho Vị Thanh • Đang tiếp nhận tải'
+      },
       vanhanh: {
         name: 'Phòng Vận Hành (Quản Lý KPI)',
-        workPos: { left: '20.5%', top: '17.5%', room: 'Phòng Vận Hành (Đơn Gán, GTC, GTB, Tỉ Lệ, Chi Phí)' },
-        idlePos: { left: '63.5%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+        workPos: { left: '37.0%', top: '33.0%', room: 'Khối Văn Phòng Giữa: Phòng Vận Hành' },
+        idlePos: { left: '62.5%', top: '80.5%', room: 'Quán Ăn Nhân Viên', idlePose: 'pose-coffee', idleFx: '🍜' },
         status: 'WORKING',
         taskText: '🎯 Phòng Vận Hành • Quản lý KPI Đơn Gán, GTC, GTB, Chi phí'
       },
-      nhansu: {
-        name: 'Phòng Nhân Sự (Quân Số & Chấm Công)',
-        workPos: { left: '22.5%', top: '33.5%', room: 'Phòng Nhân Sự (Quân số 4 kho, Đúng giờ & Nghỉ phép)' },
-        idlePos: { left: '65.5%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+      b2b: {
+        name: 'Agent B2B (Topic 506)',
+        workPos: { left: '46.0%', top: '33.0%', room: 'Khối Văn Phòng Giữa: Phòng Dữ Liệu B2B' },
+        idlePos: { left: '29.5%', top: '82.5%', room: 'Quán Starbucks Trà Sữa', idlePose: 'pose-coffee', idleFx: '🧋' },
         status: 'WORKING',
-        taskText: '👥 Phòng Nhân Sự • Quản lý quân số 4 kho & Chấm công 07:35'
-      },
-      ccdc: {
-        name: 'Phòng Thiết Bị CCDC Vận Hành',
-        workPos: { left: '40.8%', top: '33.5%', room: 'Phòng Thiết Bị CCDC Vận Hành (Chờ anh Lộc bổ sung file)' },
-        idlePos: { left: '67.5%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '🧰 Phòng CCDC • Nhắc anh Lộc bổ sung file CCDC vận hành'
-      },
-      giamsattai: {
-        name: 'Phòng Giám Sát Tải (Xe Cố Định & Tuyến OFF)',
-        workPos: { left: '58.8%', top: '33.5%', room: 'Phòng Giám Sát Tải (Chi phí tải, Xe chạy, Tuyến OFF)' },
-        idlePos: { left: '64.5%', top: '88.0%', room: 'Sân Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '🚛 Phòng Giám Sát Tải • Kiểm tra xe cố định & tuyến OFF'
-      },
-      phongcam: {
-        name: 'Phòng Chuyên Camera 4 Kho (5S & Chất Xếp)',
-        workPos: { left: '79.8%', top: '17.5%', room: 'Phòng Chuyên Camera (Check Sáng & Cuối Ngày)' },
-        idlePos: { left: '68.0%', top: '88.0%', room: 'Sân Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '📹 Phòng Camera • Check vệ sinh 5S & chất xếp hàng 4 kho'
-      },
-      ketoan: {
-        name: 'Phòng Kế Toán (Lương NVXL & Giao Hàng)',
-        workPos: { left: '72.5%', top: '33.5%', room: 'Phòng Kế Toán (Theo dõi lương NVXL kho & Shipper)' },
-        idlePos: { left: '66.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '💼 Phòng Kế Toán • Đảm bảo & theo dõi lương NVXL + Shipper'
-      },
-      thuquy: {
-        name: 'Phòng Thủ Quỹ (Thu Chi Sếp Duyệt)',
-        workPos: { left: '82.5%', top: '33.5%', room: 'Phòng Thủ Quỹ (Thu chi từng việc Sếp Lộc duyệt)' },
-        idlePos: { left: '69.0%', top: '86.5%', room: 'Sân Cafe Dù Ngoài Trời' },
-        status: 'WORKING',
-        taskText: '💰 Phòng Thủ Quỹ • Đảm bảo thu chi từng việc Sếp Lộc duyệt'
+        taskText: '📊 Đơn Tạo: 142 đơn (5/11) • Lũy kế 4.141'
       },
       tigercore: {
         name: 'Tiger AI Core',
-        workPos: { left: '50.0%', top: '14.5%', room: 'Trung Tâm Chỉ Huy Hologram' },
-        idlePos: { left: '50.0%', top: '16.5%', room: 'Quả Cầu Hologram' },
+        workPos: { left: '54.5%', top: '32.0%', room: 'Khối Văn Phòng Giữa: Trung Tâm AI Hologram' },
+        idlePos: { left: '54.5%', top: '34.0%', room: 'Quả Cầu Hologram' },
         status: 'WORKING',
         taskText: '🌐 Trung Tâm Chỉ Huy • 9 luồng Cloud'
       },
       kythuat: {
         name: 'Auto-Heal Bot',
-        workPos: { left: '67.0%', top: '16.5%', room: 'Phòng Server Kỹ Thuật' },
-        idlePos: { left: '64.0%', top: '16.5%', room: 'Phòng Server Kỹ Thuật' },
+        workPos: { left: '57.0%', top: '33.0%', room: 'Khối Văn Phòng Giữa: Phòng Server Kỹ Thuật' },
+        idlePos: { left: '55.0%', top: '33.0%', room: 'Phòng Server' },
         status: 'WORKING',
         taskText: '🛡️ Phòng Server • Canh Token 24/7'
       },
-      b2b: {
-        name: 'Agent B2B (Topic 506)',
-        workPos: { left: '33.0%', top: '17.5%', room: 'Phòng Dữ Liệu B2B (Topic 506)' },
-        idlePos: { left: '64.0%', top: '85.5%', room: 'Sân Cafe Dù Ngoài Trời' },
+      phongcam: {
+        name: 'Phòng Chuyên Camera 4 Kho (5S & Chất Xếp)',
+        workPos: { left: '64.0%', top: '33.0%', room: 'Khối Văn Phòng Giữa: Phòng Camera 4 Kho' },
+        idlePos: { left: '70.5%', top: '79.5%', room: 'Garden Coffee Ven Sông', idlePose: 'pose-coffee', idleFx: '☕' },
         status: 'WORKING',
-        taskText: '📊 Đơn Tạo: 142 đơn (5/11) • Lũy kế 4.141'
+        taskText: '📹 Phòng Camera • Check vệ sinh 5S & chất xếp hàng 4 kho'
+      },
+      nhansu: {
+        name: 'Phòng Nhân Sự (Quân Số & Chấm Công)',
+        workPos: { left: '37.0%', top: '50.0%', room: 'Khối Văn Phòng Giữa: Phòng Nhân Sự' },
+        idlePos: { left: '88.0%', top: '46.0%', room: 'Đường Chạy Bộ Công Viên', idlePose: 'pose-jog', idleFx: '🏃' },
+        status: 'WORKING',
+        taskText: '👥 Phòng Nhân Sự • Quản lý quân số 4 kho & Chấm công 07:35'
+      },
+      ccdc: {
+        name: 'Phòng Thiết Bị CCDC Vận Hành',
+        workPos: { left: '46.0%', top: '50.0%', room: 'Khối Văn Phòng Giữa: Phòng CCDC Vận Hành' },
+        idlePos: { left: '70.5%', top: '79.5%', room: 'Garden Coffee Ven Sông', idlePose: 'pose-coffee', idleFx: '☕' },
+        status: 'WORKING',
+        taskText: '🧰 Phòng CCDC • Nhắc anh Lộc bổ sung file CCDC vận hành'
+      },
+      giamsattai: {
+        name: 'Phòng Giám Sát Tải (Xe Cố Định & Tuyến OFF)',
+        workPos: { left: '55.0%', top: '50.0%', room: 'Khối Văn Phòng Giữa: Phòng Giám Sát Tải' },
+        idlePos: { left: '29.5%', top: '82.5%', room: 'Starbucks Trà Sữa', idlePose: 'pose-coffee', idleFx: '🧋' },
+        status: 'WORKING',
+        taskText: '🚛 Phòng Giám Sát Tải • Kiểm tra xe cố định & tuyến OFF'
+      },
+      ketoan: {
+        name: 'Phòng Kế Toán (Lương NVXL & Giao Hàng)',
+        workPos: { left: '63.0%', top: '50.0%', room: 'Khối Văn Phòng Giữa: Phòng Kế Toán' },
+        idlePos: { left: '62.5%', top: '80.5%', room: 'Quán Ăn Nhân Viên', idlePose: 'pose-coffee', idleFx: '🍜' },
+        status: 'WORKING',
+        taskText: '💼 Phòng Kế Toán • Đảm bảo & theo dõi lương NVXL + Shipper'
+      },
+      thuquy: {
+        name: 'Phòng Thủ Quỹ (Thu Chi Sếp Duyệt)',
+        workPos: { left: '66.5%', top: '50.0%', room: 'Khối Văn Phòng Giữa: Phòng Thủ Quỹ Két Sắt' },
+        idlePos: { left: '70.5%', top: '79.5%', room: 'Garden Coffee Ven Sông', idlePose: 'pose-coffee', idleFx: '☕' },
+        status: 'WORKING',
+        taskText: '💰 Phòng Thủ Quỹ • Đảm bảo thu chi từng việc Sếp Lộc duyệt'
+      },
+      starbucks: {
+        name: 'Starbucks Coffee & Boba',
+        workPos: { left: '29.5%', top: '82.5%', room: 'Quán Trà Sữa & Coffee Starbucks' },
+        idlePos: { left: '29.5%', top: '82.5%', room: 'Quán Starbucks', idlePose: 'pose-coffee', idleFx: '🧋' },
+        status: 'WORKING',
+        taskText: '🧋 Starbucks • Phục vụ Trà sữa Boba & Cold Brew 24/7'
+      },
+      quan_an: {
+        name: 'Bếp Trưởng Quán Ăn Nhân Viên',
+        workPos: { left: '62.5%', top: '80.5%', room: 'Quán Ăn Nhân Viên Cần Thơ' },
+        idlePos: { left: '62.5%', top: '80.5%', room: 'Quán Ăn', idlePose: 'pose-coffee', idleFx: '🍜' },
+        status: 'WORKING',
+        taskText: '🍜 Quán Ăn • Cơm sườn nướng, phở & hủ tiếu nóng sốt'
+      },
+      garden_coffee: {
+        name: 'Barista Garden Coffee Ven Sông',
+        workPos: { left: '70.5%', top: '79.5%', room: 'Garden Coffee Ven Sông Râm Mát' },
+        idlePos: { left: '70.5%', top: '79.5%', room: 'Garden Coffee', idlePose: 'pose-coffee', idleFx: '☕' },
+        status: 'WORKING',
+        taskText: '☕ Garden Coffee • Cà phê sữa đá & Bạc xỉu 3 tầng'
       },
       thanhtra: {
         name: 'Ban Thanh Tra & Watchdog',
-        workPos: { left: '52.5%', top: '86.0%', room: 'Trạm Gác Cổng Kiểm Soát Xe Tải' },
-        idlePos: { left: '60.5%', top: '82.0%', room: 'Cột Cờ Tổ Quốc' },
+        workPos: { left: '49.8%', top: '84.5%', room: 'Cổng Kiểm Soát Xe Tải & Barrier' },
+        idlePos: { left: '49.8%', top: '86.0%', room: 'Cột Cờ Tổ Quốc' },
         status: 'WORKING',
         taskText: '🔎 Kiểm soát xe tải ra vào & Canh đơn VIP'
       }
@@ -3700,40 +3883,41 @@
     // =========================================================================
     const TRUCK_ROUTES = {
       'truck-cairang': [
-        { left: '23.5%', top: '67.5%', label: '📦 65C-188.92 • Bốc hàng Kho Cái Răng' },
-        { left: '23.5%', top: '76.5%', label: '🚛 65C-188.92 • Rời bến Kho Cái Răng' },
-        { left: '43.5%', top: '81.5%', label: '🚛 65C-188.92 • Tiến ra Cổng Kiểm Soát' },
-        { left: '43.5%', top: '94.5%', label: '🛣️ 65C-188.92 • Qua cổng ra Quốc Lộ' },
-        { left: '14.0%', top: '95.2%', label: '🛣️ 65C-188.92 • Đang chạy ngoài Quốc Lộ' },
-        { left: '43.5%', top: '94.5%', label: '🚛 65C-188.92 • Quay về Cổng Kho MT01' },
-        { left: '23.5%', top: '76.5%', label: '🚛 65C-188.92 • Lùi vào bến Kho Cái Răng' }
+        { left: '18.0%', top: '26.0%', label: '📦 65C-188.92 • Bốc hàng Kho Cái Răng (Góc trên trái)' },
+        { left: '26.5%', top: '24.0%', label: '🚛 65C-188.92 • Chạy vào Đường Vành Đai Bắc' },
+        { left: '49.0%', top: '23.0%', label: '🚛 65C-188.92 • Đi ngang mặt sau Khối Văn Phòng' },
+        { left: '71.5%', top: '24.0%', label: '🚛 65C-188.92 • Qua Cụm Kho Vị Thanh' },
+        { left: '73.0%', top: '50.0%', label: '🚛 65C-188.92 • Vòng qua Đường Vành Đai Đông' },
+        { left: '50.0%', top: '65.0%', label: '🚛 65C-188.92 • Vòng về mặt trước Khối Văn Phòng' },
+        { left: '26.0%', top: '50.0%', label: '🚛 65C-188.92 • Đường Vành Đai Tây' },
+        { left: '18.0%', top: '26.0%', label: '🚛 65C-188.92 • Cập bến Kho Cái Răng' }
       ],
       'truck-omon': [
-        { left: '43.8%', top: '67.5%', label: '📦 65C-209.45 • Nhận tải Kho Ô Môn' },
-        { left: '43.8%', top: '79.5%', label: '🚛 65C-209.45 • Xuất bến Kho Ô Môn' },
-        { left: '43.8%', top: '94.5%', label: '🛣️ 65C-209.45 • Ra Cổng Chính' },
-        { left: '74.0%', top: '95.2%', label: '🛣️ 65C-209.45 • Giao hàng Tuyến QL91' },
-        { left: '43.8%', top: '94.5%', label: '🚛 65C-209.45 • Vào Cổng Kiểm Soát' },
-        { left: '43.8%', top: '76.0%', label: '🚛 65C-209.45 • Cập bến Kho Ô Môn' }
+        { left: '16.0%', top: '68.0%', label: '📦 65C-209.45 • Nhận tải Kho Ô Môn (Góc dưới trái)' },
+        { left: '26.0%', top: '65.0%', label: '🚛 65C-209.45 • Xuất bến ra Vòng Xuyến Trung Tâm' },
+        { left: '27.0%', top: '80.0%', label: '🧋 65C-209.45 • Chạy ngang Quán Starbucks' },
+        { left: '46.0%', top: '86.0%', label: '🛣️ 65C-209.45 • Qua Cổng Kiểm Soát ra Đại Lộ' },
+        { left: '15.0%', top: '96.0%', label: '🛣️ 65C-209.45 • Giao hàng Tuyến Quốc Lộ 91' },
+        { left: '46.0%', top: '86.0%', label: '🚛 65C-209.45 • Về lại Cổng Kho MT01' },
+        { left: '16.0%', top: '68.0%', label: '🚛 65C-209.45 • Cập bến Kho Ô Môn' }
       ],
       'truck-vithanh': [
-        { left: '56.2%', top: '67.5%', label: '📦 95C-086.19 • Bốc hàng Kho Vị Thanh' },
-        { left: '56.2%', top: '76.5%', label: '🚛 95C-086.19 • Rời bến Kho Vị Thanh' },
-        { left: '44.0%', top: '82.0%', label: '🚛 95C-086.19 • Ra Cổng Kiểm Soát' },
-        { left: '44.0%', top: '94.8%', label: '🛣️ 95C-086.19 • Ra đường lớn đi Hậu Giang' },
-        { left: '20.0%', top: '95.2%', label: '🛣️ 95C-086.19 • Đang chạy trên Quốc Lộ' },
-        { left: '44.0%', top: '90.0%', label: '🚛 95C-086.19 • Vào bãi Kho Vị Thanh' },
-        { left: '64.0%', top: '67.5%', label: '📦 95C-086.19 • Lùi vào Bến 2 Vị Thanh' },
-        { left: '64.0%', top: '76.5%', label: '🚛 95C-086.19 • Chuyển sang Bến 1' }
+        { left: '64.0%', top: '16.5%', label: '📦 95C-086.19 • Bốc hàng Kho Vị Thanh (Góc trên phải)' },
+        { left: '72.0%', top: '30.0%', label: '🚛 95C-086.19 • Chạy dọc Đường Vành Đai Đông' },
+        { left: '72.0%', top: '60.0%', label: '🌳 95C-086.19 • Chạy ngang Công Viên Cây Xanh' },
+        { left: '56.0%', top: '65.0%', label: '🚛 95C-086.19 • Mặt trước Khối Văn Phòng' },
+        { left: '47.0%', top: '86.0%', label: '🛣️ 95C-086.19 • Ra Cổng Lớn đi Hậu Giang' },
+        { left: '47.0%', top: '86.0%', label: '🚛 95C-086.19 • Về Cổng Kiểm Soát' },
+        { left: '64.0%', top: '16.5%', label: '📦 95C-086.19 • Lùi vào bến Kho Vị Thanh' }
       ],
       'truck-highway': [
-        { left: '5.5%', top: '75.0%', label: '🛣️ 65H-365.01 • Chạy dọc Đại Lộ Miền Tây' },
-        { left: '9.8%', top: '22.0%', label: '🛣️ 65H-365.01 • Tuyến Liên Tỉnh ĐBSCL' },
-        { left: '5.8%', top: '82.0%', label: '🚛 65H-365.01 • Về bãi trung chuyển MT01' },
-        { left: '28.0%', top: '95.2%', label: '🛣️ 65H-365.01 • Qua mặt tiền Công Ty' },
-        { left: '78.5%', top: '67.5%', label: '📦 65H-365.01 • Vào bến Kho Bình Thủy' },
-        { left: '50.0%', top: '80.0%', label: '🚛 65H-365.01 • Rời Kho Bình Thủy ra cổng' },
-        { left: '25.0%', top: '95.2%', label: '🛣️ 65H-365.01 • Ra lại Đại Lộ Miền Tây' }
+        { left: '8.0%', top: '96.0%', label: '🛣️ 65H-365.01 • Chạy dọc Đại Lộ Miền Tây' },
+        { left: '28.0%', top: '96.0%', label: '🧋 65H-365.01 • Qua góc Quán Starbucks' },
+        { left: '48.0%', top: '86.0%', label: '🚛 65H-365.01 • Ghé Cổng Kiểm Soát lấy phiếu tải' },
+        { left: '60.0%', top: '86.0%', label: '🍜 65H-365.01 • Đi ngang Quán Ăn & Garden Coffee' },
+        { left: '70.0%', top: '65.0%', label: '🚛 65H-365.01 • Rẽ vào Đường Vành Đai Nội Bộ' },
+        { left: '26.0%', top: '50.0%', label: '📦 65H-365.01 • Giao hàng liên kho Bình Thủy - Ô Môn' },
+        { left: '8.0%', top: '96.0%', label: '🛣️ 65H-365.01 • Tiếp tục lộ trình Liên Tỉnh ĐBSCL' }
       ]
     };
     const truckStepIdx = {
@@ -4272,6 +4456,45 @@
         defaultAction: 'thuquy_check',
         wf: 'evening_cod',
         desc: 'Đảm bảo về việc thu chi từng công việc cụ thể chỉ được giải ngân khi có phê duyệt của Sếp Lộc, đồng thời đối soát quỹ tiền mặt COD nộp về cuối mỗi ca.'
+      },
+      starbucks: {
+        title: '🧋 QUÁN TRÀ SỮA & COFFEE STARBUCKS • CÔNG VIÊN MIỀN TÂY 01',
+        nvxl: 'Barista Starbucks Official',
+        kpi: 'Menu Boba & Cold Brew 24/7',
+        status: '🟢 Open 24/7 Phục Vụ Kho',
+        camImg: '/static/img/cam_samples/cr_cam05.jpg',
+        camBadge: '🧋 STARBUCKS OFFICIAL BOBA & COFFEE',
+        hubKey: 'starbucks',
+        hubId: '',
+        defaultAction: 'starbucks_order',
+        wf: 'evening_cod',
+        desc: 'Quán Starbucks chính hãng ven sông phục vụ trà sữa trân châu hoàng kim, Cold Brew ủ lạnh, Caramel Macchiato và bánh ngọt nướng nóng cho anh em văn phòng và kho vận.'
+      },
+      quan_an: {
+        title: '🍜 QUÁN ĂN NHÂN VIÊN MIỀN TÂY 01 • CƠM TRƯA, PHỞ & HỦ TIẾU',
+        nvxl: 'Bếp Trưởng Quán Ăn',
+        kpi: 'Phục Vụ 3 Ca Liên Tục',
+        status: '🟢 Đảm Bảo Vệ Sinh ATTP',
+        camImg: '/static/img/cam_samples/snap_bt_06.jpg',
+        camBadge: '🍜 CƠM SƯỜN NƯỚNG • PHỞ • HỦ TIẾU',
+        hubKey: 'quan_an',
+        hubId: '',
+        defaultAction: 'quanan_order',
+        wf: 'checkin',
+        desc: 'Nhà ăn nhân viên phục vụ cơm sườn bì chả, phở bò tái nạm, hủ tiếu Nam Vang đặc biệt đảm bảo dinh dưỡng và năng lượng cho đội ngũ vận hành 4 kho.'
+      },
+      garden_coffee: {
+        title: '☕ GARDEN COFFEE VEN SÔNG • CÀ PHÊ SỮA ĐÁ & BẠC XỈU 3 TẦNG',
+        nvxl: 'Barista Garden Coffee',
+        kpi: 'Không Gian Râm Mát Dưới Cây',
+        status: '🟢 View Bờ Sông Hậu',
+        camImg: '/static/img/cam_samples/vt_cam08.jpg',
+        camBadge: '☕ CÀ PHÊ PHIN SỮA ĐÁ • BẠC XỈU',
+        hubKey: 'garden_coffee',
+        hubId: '',
+        defaultAction: 'gardencoffee_order',
+        wf: 'checkin',
+        desc: 'Không gian cà phê sân vườn thoáng đãng dưới bóng cây xanh râm mát, sát lối chạy bộ và bến câu cá bờ sông.'
       }
     };
 
@@ -4334,6 +4557,19 @@
         box.innerHTML = `
           <button class="m-btn primary" onclick="dispatchAgentTask('thuquy', 'thuquy_check', 'Kiểm tra sổ quỹ Thu - Chi từng việc được Sếp Lộc duyệt')">💰 Kiểm Tra Sổ Thu Chi Sếp Duyệt</button>
           <a class="m-btn blue" href="/?wf=evening_cod">🌙 Mở Luồng Chốt Quỹ COD 21:00</a>
+        `;
+      } else if (key === 'starbucks') {
+        box.innerHTML = `
+          <button class="m-btn primary" style="background:#00D880;color:#071a13;" onclick="dispatchAgentTask('starbucks', 'starbucks_order', 'Order Trà Sữa Trân Châu Hoàng Kim & Cold Brew cho team')">🧋 Order Trà Sữa & Cold Brew Ngay</button>
+          <button class="m-btn amber" onclick="alert('Dạ anh Lộc! Starbucks đã ghi nhận đơn: 10 Ly Trà Sữa Trân Châu Hoàng Kim + 5 Ly Cold Brew giao ngay cho anh em 4 kho!')">⚡ Giao Nhanh Đến 4 Kho</button>
+        `;
+      } else if (key === 'quan_an') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('quan_an', 'quanan_order', 'Kiểm tra thực đơn cơm ca trưa và suất ăn nóng cho 4 kho')">🍱 Đặt Suất Ăn Ca Cho 4 Kho</button>
+        `;
+      } else if (key === 'garden_coffee') {
+        box.innerHTML = `
+          <button class="m-btn primary" onclick="dispatchAgentTask('garden_coffee', 'gardencoffee_order', 'Gọi cà phê sữa đá & bạc xỉu giải khát ven sông')">☕ Đặt Bàn Cafe Bờ Sông</button>
         `;
       } else {
         box.innerHTML = `
