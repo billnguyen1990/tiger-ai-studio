@@ -9,9 +9,9 @@
     "topic_id": 2690,
     "reply_to_id": 9999,
     "alerted": false,
-    "last_checked": "15:25:46 04/11/2026",
-    "last_status": "READY_TO_PICK",
-    "last_hub": "22873000- Kho B2B - Đức Hòa - Long An",
+    "last_checked": "13:25:05 05/11/2026",
+    "last_status": "Lưu kho giao",
+    "last_hub": "1908- Kho Trung Chuyển Cần Thơ",
     "updated_at": "15:33:09 04/11/2026"
   },
   {
@@ -24,9 +24,9 @@
     "topic_id": 2690,
     "reply_to_id": 9999,
     "alerted": false,
-    "last_checked": "15:25:46 04/11/2026",
-    "last_status": "READY_TO_PICK",
-    "last_hub": "22873000- Kho B2B - Đức Hòa - Long An",
+    "last_checked": "13:25:05 05/11/2026",
+    "last_status": "Lưu kho giao",
+    "last_hub": "22917000- Kho Giao Hàng Nặng - Ô Môn - Cần Thơ",
     "updated_at": "15:33:09 04/11/2026"
   },
   {
@@ -39,9 +39,9 @@
     "topic_id": 2690,
     "reply_to_id": 9999,
     "alerted": false,
-    "last_checked": "15:25:46 04/11/2026",
-    "last_status": "READY_TO_PICK",
-    "last_hub": "22873000- Kho B2B - Đức Hòa - Long An",
+    "last_checked": "13:25:05 05/11/2026",
+    "last_status": "Lưu kho giao",
+    "last_hub": "22862000- Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang",
     "updated_at": "15:33:09 04/11/2026"
   }
 ]

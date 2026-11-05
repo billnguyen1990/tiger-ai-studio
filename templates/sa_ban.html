@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TIGER AI • SA BÀN SỐ HÓA KHO VẬN 3D (DIGITAL TWIN MT01)</title>
+  <link rel="icon" type="image/jpeg" href="/static/img/tiger_avatar.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070d12;
+      --bg-canvas: #09131a;
+      --card: rgba(13, 25, 34, 0.85);
+      --card-border: rgba(0, 229, 190, 0.25);
+      --accent: #00e5be;
+      --accent-glow: rgba(0, 229, 190, 0.4);
+      --amber: #f59e0b;
+      --blue: #38bdf8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+
+    body.light-mode {
+      --bg: #edf2f7;
+      --bg-canvas: #e2e8f0;
+      --card: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(14, 165, 233, 0.35);
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.25);
+      --text: #0f172a;
+      --muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* UNIFIED HEADER & MODE SWITCHER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .brand-info h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+    .brand-info p {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* SWITCHER PILLS */
+    .tiger-nav-switcher {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      padding: 4px;
+      gap: 4px;
+      backdrop-filter: blur(8px);
+    }
+    body.light-mode .tiger-nav-switcher {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .t-nav-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .t-nav-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .t-nav-item.active {
+      color: #070d12;
+      background: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    body.light-mode .t-nav-item.active {
+      color: #ffffff;
+      background: #0284c7;
+    }
+    .t-nav-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .t-nav-badge.live { background: #ef4444; color: white; }
+    .t-nav-badge.new { background: #f59e0b; color: #070d12; }
+
+    /* ACTION CONTROLS */
+    .header-ctrls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-toggle-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-toggle-light:hover {
+      background: var(--amber);
+      color: #070d12;
+    }
+
+    /* SA BAN MAIN CAMPUS */
+    .saban-container {
+      flex: 1;
+      position: relative;
+      background: var(--bg-canvas);
+      padding: 24px 18px 90px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .campus-intro {
+      text-align: center;
+      max-width: 800px;
+      margin-bottom: 24px;
+    }
+    .campus-intro h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .campus-intro p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ISOMETRIC GRID LAYOUT */
+    .campus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1280px;
+    }
+
+    .pod-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .pod-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--accent);
+      opacity: 0.4;
+      transition: opacity 0.3s ease;
+    }
+    .pod-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 14px 35px var(--accent-glow);
+    }
+    .pod-card:hover::before {
+      opacity: 1;
+    }
+
+    .pod-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .pod-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pod-icon {
+      font-size: 1.8rem;
+      background: rgba(0, 229, 190, 0.1);
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--card-border);
+    }
+    .pod-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .pod-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .pod-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid var(--success);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .pod-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 1.5s infinite;
+    }
+
+    /* AGENT BADGE IN POD */
+    .agent-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+    }
+    body.light-mode .agent-pill {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .agent-avatar {
+      font-size: 1rem;
+    }
+    .agent-name {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .pod-preview-thumb {
+      width: 100%;
+      height: 140px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid var(--card-border);
+      background: #000;
+      position: relative;
+    }
+    .pod-thumb-overlay {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .pod-cam-tag {
+      position: absolute;
+      top: 8px; left: 8px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+    .pod-action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .pod-status-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .btn-pod-open {
+      background: var(--accent);
+      color: #070d12;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-pod-open:hover {
+      box-shadow: 0 0 12px var(--accent-glow);
+      transform: scale(1.03);
+    }
+
+    /* REALTIME CHAT / ACTIVITY FEED WIDGET (SHO NGUYEN STYLE) */
+    .live-chat-panel {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      width: 380px;
+      max-width: calc(100vw - 36px);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+      z-index: 90;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .chat-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chat-badge {
+      font-size: 0.65rem;
+      background: rgba(0, 229, 190, 0.15);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+    .chat-body {
+      max-height: 180px;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-msg {
+      font-size: 0.78rem;
+      line-height: 1.4;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border-left: 3px solid var(--accent);
+    }
+    .chat-sender {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 2px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .chat-time {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* MODAL POPUP */
+    .saban-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .saban-modal.active { display: flex; }
+    .modal-content {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 640px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .btn-close-modal {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .modal-img {
+      width: 100%;
+      max-height: 340px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: #000;
+    }
+    .modal-details {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .modal-foot {
+      padding: 12px 20px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    @media (max-width: 768px) {
+      .header { flex-direction: column; align-items: stretch; }
+      .tiger-nav-switcher { overflow-x: auto; width: 100%; justify-content: flex-start; }
+      .live-chat-panel { display: none; } /* Hide chat on mobile to avoid covering content */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER WITH UNIFIED 3-MODE SWITCHER -->
+  <header class="header">
+    <div class="brand-box">
+      <img src="/static/img/tiger_avatar.jpg" alt="Tiger AI" class="brand-avatar">
+      <div class="brand-info">
+        <h1>SA BÀN SỐ HÓA KHO VẬN MT01</h1>
+        <p>Digital Twin • Mô phỏng 3D Cụm 4 Kho & Bầy Agent AI</p>
+      </div>
+    </div>
+
+    <!-- UNIFIED COMMAND MODE SWITCHER -->
+    <nav class="tiger-nav-switcher">
+      <a href="/war-room" class="t-nav-item" title="Trung tâm tác chiến & Bắt lỗi">
+        <span class="t-nav-icon">⚡</span>
+        <span class="t-nav-label">War Room Tác Chiến</span>
+        <span class="t-nav-badge live">24/7</span>
+      </a>
+      <a href="/" class="t-nav-item" title="Sơ đồ luồng Node tự động">
+        <span class="t-nav-icon">🧩</span>
+        <span class="t-nav-label">Sơ Đồ Node Flow</span>
+      </a>
+      <a href="/sa-ban" class="t-nav-item active" title="Sa bàn số hóa 3D kho vận">
+        <span class="t-nav-icon">🎮</span>
+        <span class="t-nav-label">Sa Bàn Kho 3D</span>
+        <span class="t-nav-badge new">3D</span>
+      </a>
+      <a href="/cost-dashboard" class="t-nav-item" target="_blank" title="11 chỉ số chi phí & xe tải">
+        <span class="t-nav-icon">📊</span>
+        <span class="t-nav-label">Dashboard Vận Hành</span>
+      </a>
+    </nav>
+
+    <div class="header-ctrls">
+      <button type="button" class="btn-toggle-light" id="btnToggleLight" onclick="toggleLightMode()">
+        <span id="lightIcon">💡</span>
+        <span id="lightText">Bật/Tắt Đèn</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SA BAN MAIN CANVAS -->
+  <main class="saban-container">
+    <div class="campus-intro">
+      <h2>🌐 TRUNG TÂM TÁC CHIẾN SA BÀN 3D - CỤM LIÊN HỢP MIỀN TÂY 01</h2>
+      <p>Mô phỏng không gian thực tế của 4 Kho Hàng Nặng, Bãi Xe Tải GHN 365 và các phòng ban điều hành tự trị 24/7.</p>
+    </div>
+
+    <div class="campus-grid">
+      <!-- POD 1: KHO CÁI RĂNG -->
+      <div class="pod-card" onclick="openPodModal('cairang')">
+        <div class="pod-head">
+          <div class="pod-title-group">
+            <div class="pod-icon">🏢</div>
+            <div>
+              <div class="pod-title">Kho Hàng Nặng Cái Răng</div>
+              <div class="pod-subtitle">Trung Tâm Hub MT01 • 531 Võ Nguyên Giáp</div>
+            </div>
+          </div>
+          <div class="pod-badge"><span class="pod-badge-dot"></span> 16 CAM ONLINE</div>
+        </div>
+        <div class="agent-pill">
+          <span class="agent-avatar">🐯</span>
+          <span class="agent-name">Agent Mắt Thần Cái Răng</span>
+          <span style="color:var(--muted);">| Giám sát Dock Bốc Xếp</span>
+        </div>
+        <div class="pod-thumb-overlay">
+          <img src="/static/img/cam_samples/cr_cam05.jpg" alt="Cam 05 Cái Răng" class="pod-preview-thumb">
+          <span class="pod-cam-tag">LIVE • CAM 05 DOCK</span>
+        </div>
+        <div class="pod-action-row">
+          <span class="pod-status-desc">Cửa Dock bốc xếp hoạt động 24/7</span>
+          <button class="btn-pod-open">Soi Cam 🔍</button>
+        </div>
+      </div>
+
+      <!-- POD 2: KHO BÌNH THỦY -->
+      <div class="pod-card" onclick="openPodModal('binhthuy')">
+        <div class="pod-head">
+          <div class="pod-title-group">
+            <div class="pod-icon">📦</div>
+            <div>
+              <div class="pod-title">Kho Hàng Nặng Bình Thủy</div>
+              <div class="pod-subtitle">Khu Tập Kết Pallet • Cụm Hub Cái Răng</div>
+            </div>
+          </div>
+          <div class="pod-badge"><span class="pod-badge-dot"></span> 16 CAM ONLINE</div>
+        </div>
+        <div class="agent-pill">
+          <span class="agent-avatar">📦</span>
+          <span class="agent-name">Agent Mắt Thần Bình Thủy</span>
+          <span style="color:var(--muted);">| Giám sát Khu Pallet</span>
+        </div>
+        <div class="pod-thumb-overlay">
+          <img src="/static/img/cam_samples/snap_bt_06.jpg" alt="Cam 06 Bình Thủy" class="pod-preview-thumb">
+          <span class="pod-cam-tag">LIVE • CAM 06 PALLET</span>
+        </div>
+        <div class="pod-action-row">
+          <span class="pod-status-desc">Khu tập kết kiện nặng & xuất bến</span>
+          <button class="btn-pod-open">Soi Cam 🔍</button>
+        </div>
+      </div>
+
+      <!-- POD 3: KHO Ô MÔN -->
+      <div class="pod-card" onclick="openPodModal('omon')">
+        <div class="pod-head">
+          <div class="pod-title-group">
+            <div class="pod-icon">🏭</div>
+            <div>
+              <div class="pod-title">Kho Hàng Nặng Ô Môn</div>
+              <div class="pod-subtitle">Tuyến QL91 • Ngã 3 Nông Trường</div>
+            </div>
+          </div>
+          <div class="pod-badge"><span class="pod-badge-dot"></span> 8 CAM ONLINE</div>
+        </div>
+        <div class="agent-pill">
+          <span class="agent-avatar">🚛</span>
+          <span class="agent-name">Agent Mắt Thần Ô Môn</span>
+          <span style="color:var(--muted);">| Giám sát Cửa Cuốn & Sàn</span>
+        </div>
+        <div class="pod-thumb-overlay">
+          <img src="/static/img/cam_samples/om_cam01.jpg" alt="Cam 01 Ô Môn" class="pod-preview-thumb">
+          <span class="pod-cam-tag">LIVE • CAM 01 SÀN KHO</span>
+        </div>
+        <div class="pod-action-row">
+          <span class="pod-status-desc">Cửa cuốn & khu vực chia chọn PDA</span>
+          <button class="btn-pod-open">Soi Cam 🔍</button>
+        </div>
+      </div>
+
+      <!-- POD 4: KHO VỊ THANH -->
+      <div class="pod-card" onclick="openPodModal('vithanh')">
+        <div class="pod-head">
+          <div class="pod-title-group">
+            <div class="pod-icon">🌾</div>
+            <div>
+              <div class="pod-title">Kho Hàng Nặng Vị Thanh</div>
+              <div class="pod-subtitle">175 Ba Tháng Hai • Hậu Giang</div>
+            </div>
+          </div>
+          <div class="pod-badge"><span class="pod-badge-dot"></span> 8 CAM ONLINE</div>
+        </div>
+        <div class="agent-pill">
+          <span class="agent-avatar">🚜</span>
+          <span class="agent-name">Agent Mắt Thần Vị Thanh</span>
+          <span style="color:var(--muted);">| Giám sát Cổng Xe Tải</span>
+        </div>
+        <div class="pod-thumb-overlay">
+          <img src="/static/img/cam_samples/vt_cam08.jpg" alt="Cam 08 Vị Thanh" class="pod-preview-thumb">
+          <span class="pod-cam-tag">LIVE • CAM 08 CỔNG</span>
+        </div>
+        <div class="pod-action-row">
+          <span class="pod-status-desc">Cổng ra vào kiểm soát xe tải nặng</span>
+          <button class="btn-pod-open">Soi Cam 🔍</button>
+        </div>
+      </div>
+
+      <!-- POD 5: BÃI XE TẢI GHN 365 -->
+      <div class="pod-card" onclick="openPodModal('fleet')">
+        <div class="pod-head">
+          <div class="pod-title-group">
+            <div class="pod-icon">🚚</div>
+            <div>
+              <div class="pod-title">Bãi Xe Tải & Đội Xe 365</div>
+              <div class="pod-subtitle">Quản lý ODO & Đối Soát 21 Tuyến</div>
+            </div>
+          </div>
+          <div class="pod-badge"><span class="pod-badge-dot"></span> AUTO 02:00 AM</div>
+        </div>
+        <div class="agent-pill">
+          <span class="agent-avatar">🛡️</span>
+          <span class="agent-name">Agent Điều Vận Fleet-365</span>
+          <span style="color:var(--muted);">| So khớp ODO & Mã MCD</span>
+        </div>
+        <div class="pod-details" style="background:rgba(0,0,0,0.3); border-radius:12px; padding:12px; font-size:0.8rem; line-height:1.6;">
+          <div>🚛 <b>Tổng số tuyến:</b> 21 tuyến liên tỉnh MT01</div>
+          <div>✅ <b>Trạng thái:</b> Tự động quét bù thứ Hai & đối soát N-1</div>
+          <div>⚡ <b>Cảnh báo lệch ODO:</b> Gửi trực tiếp Telegram Báo Cáo</div>
+        </div>
+        <div class="pod-action-row">
+          <span class="pod-status-desc">Đồng bộ tự động vào Google Sheets</span>
+          <button class="btn-pod-open">Chi Tiết 📋</button>
+        </div>
+      </div>
+
+      <!-- POD 6: PHÒNG DỮ LIỆU B2B -->
+      <div class="pod-card" onclick="openPodModal('b2b')">
+        <div class="pod-head">
+          <div class="pod-title-group">
+            <div class="pod-icon">📊</div>
+            <div>
+              <div class="pod-title">Phòng Dữ Liệu & B2B Looker</div>
+              <div class="pod-subtitle">Cào 13 Tỉnh ĐBSCL • Đồng Bộ Sheets</div>
+            </div>
+          </div>
+          <div class="pod-badge"><span class="pod-badge-dot"></span> TOPIC 506 CHUẨN</div>
+        </div>
+        <div class="agent-pill">
+          <span class="agent-avatar">📈</span>
+          <span class="agent-name">Agent Dữ Liệu B2B</span>
+          <span style="color:var(--muted);">| API Sheet Ketqua 5s</span>
+        </div>
+        <div class="pod-details" style="background:rgba(0,0,0,0.3); border-radius:12px; padding:12px; font-size:0.8rem; line-height:1.6;">
+          <div>📋 <b>Dữ liệu hôm nay:</b> 24.878 đơn đã nạp tab Ketqua</div>
+          <div>🎯 <b>Phòng nhận báo cáo:</b> Topic 506 (📅 Đơn Tạo)</div>
+          <div>⚡ <b>Tốc độ lọc:</b> 5 giây qua Google Sheets Direct API</div>
+        </div>
+        <div class="pod-action-row">
+          <span class="pod-status-desc">Chạy tự động 18:00 mỗi ngày</span>
+          <button class="btn-pod-open">Xem Báo Cáo 📊</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- LIVE AGENT ACTIVITY CHAT (SHO NGUYEN STYLE) -->
+  <aside class="live-chat-panel">
+    <div class="chat-head">
+      <div class="chat-title">
+        <span>💬</span> PHÒNG HỘI THOẠI TIGER AI
+      </div>
+      <span class="chat-badge">REAL-TIME</span>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-msg">
+        <div class="chat-sender">
+          <span>Anh Lộc (Chỉ Huy)</span>
+          <span class="chat-time">09:00</span>
+        </div>
+        <div>Kiểm tra toàn bộ luồng Đơn Tạo và ODO xe tải sáng nay.</div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-sender">
+          <span>Tiger AI (Trợ Lý)</span>
+          <span class="chat-time">09:01</span>
+        </div>
+        <div>Dạ anh Lộc, em đã lọc 24.878 dòng sang tab Ketqua và gửi báo cáo về Topic 506 thành công 100%!</div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-sender">
+          <span>Agent Mắt Thần MT01</span>
+          <span class="chat-time">10:15</span>
+        </div>
+        <div>Cả 4 kho Cái Răng, Bình Thủy, Ô Môn, Vị Thanh kết nối luồng Hikvision RTSP ổn định, không có điểm nghẽn.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MODAL POPUP CHI TIẾT -->
+  <div class="saban-modal" id="sabanModal">
+    <div class="modal-content">
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">Chi Tiết Kho</div>
+        <button class="btn-close-modal" onclick="closePodModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImg" src="" alt="Live Preview" class="modal-img">
+        <div class="modal-details" id="modalDetails">Đang tải...</div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-pod-open" onclick="closePodModal()">Đóng Cửa Sổ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Toggle Day / Night Mode
+    function toggleLightMode() {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      document.getElementById('lightIcon').textContent = isLight ? '🌙' : '💡';
+      document.getElementById('lightText').textContent = isLight ? 'Bật Chế Độ Đêm' : 'Bật Chế Độ Ngày';
+      localStorage.setItem('saban_theme', isLight ? 'light' : 'dark');
+    }
+
+    if (localStorage.getItem('saban_theme') === 'light') {
+      toggleLightMode();
+    }
+
+    // Modal data
+    const POD_DATA = {
+      cairang: {
+        title: "🏢 Kho Hàng Nặng Cái Răng - Cam 05 Cửa Dock",
+        img: "/static/img/cam_samples/cr_cam05.jpg",
+        details: "📍 <b>Địa chỉ:</b> 531 Võ Nguyên Giáp, P. Phú Thứ, Q. Cái Răng, TP. Cần Thơ.<br>📹 <b>Hệ thống camera:</b> 16 Camera IP Hikvision NVR.<br>🐯 <b>Agent phụ trách:</b> Agent Mắt Thần Cái Răng (Tự động nhận diện xe bốc dỡ hàng nặng)."
+      },
+      binhthuy: {
+        title: "📦 Kho Hàng Nặng Bình Thủy - Cam 06 Pallet",
+        img: "/static/img/cam_samples/snap_bt_06.jpg",
+        details: "📍 <b>Vị trí:</b> Cụm Hub Hàng Nặng Cái Răng (Chung Hub).<br>📹 <b>Hệ thống camera:</b> 16 Camera giám sát khu vực lưu kho Pallet và xuất bến.<br>📦 <b>Agent phụ trách:</b> Agent Mắt Thần Bình Thủy."
+      },
+      omon: {
+        title: "🏭 Kho Hàng Nặng Ô Môn - Cam 01 Cửa Cuốn",
+        img: "/static/img/cam_samples/om_cam01.jpg",
+        details: "📍 <b>Địa chỉ:</b> 1962 QL91, Ngã 3 Nông Trường, Ô Môn, Cần Thơ.<br>📹 <b>Hệ thống camera:</b> 8 Camera giám sát sàn kho & cửa cuốn.<br>🚛 <b>Agent phụ trách:</b> Agent Mắt Thần Ô Môn."
+      },
+      vithanh: {
+        title: "🌾 Kho Hàng Nặng Vị Thanh - Cam 08 Cổng Kho",
+        img: "/static/img/cam_samples/vt_cam08.jpg",
+        details: "📍 <b>Địa chỉ:</b> 175 Ba Tháng Hai, Phường 5, TP. Vị Thanh, Hậu Giang.<br>📹 <b>Hệ thống camera:</b> 8 Camera giám sát cổng kiểm soát xe ra vào.<br>🚜 <b>Agent phụ trách:</b> Agent Mắt Thần Vị Thanh."
+      },
+      fleet: {
+        title: "🚚 Bãi Xe Tải & Đội Xe 365 (Fleet Management)",
+        img: "/static/img/cam_samples/cr_cam05.jpg",
+        details: "🚛 <b>Hệ thống xe:</b> Quản lý 21 tuyến xe tải nặng MT01.<br>⚙️ <b>Quy trình tự động:</b> Quét lúc 02:00 AM hàng ngày, đối soát ODO với GHN và 365, tự động tính lệch km.<br>🛡️ <b>Agent phụ trách:</b> Agent Điều Vận Fleet-365."
+      },
+      b2b: {
+        title: "📊 Phòng Kinh Doanh & Dữ Liệu B2B (Looker Studio)",
+        img: "/static/img/cam_samples/cr_cam05.jpg",
+        details: "📋 <b>Nhiệm vụ:</b> Cào và xuất dữ liệu Đơn Tạo B2B 13 tỉnh ĐBSCL.<br>🚀 <b>Tối ưu hóa:</b> Đồng bộ trực tiếp qua Google Sheets API trong 5 giây (Tab Ketqua: 24.878 đơn).<br>📈 <b>Agent phụ trách:</b> Agent Dữ Liệu B2B (Bắn báo cáo vào Topic 506)."
+      }
+    };
+
+    function openPodModal(id) {
+      const data = POD_DATA[id];
+      if (!data) return;
+      document.getElementById('modalTitle').innerHTML = data.title;
+      document.getElementById('modalImg').src = data.img;
+      document.getElementById('modalDetails').innerHTML = data.details;
+      document.getElementById('sabanModal').classList.add('active');
+    }
+
+    function closePodModal() {
+      document.getElementById('sabanModal').classList.remove('active');
+    }
+
+    // Close modal on escape or background click
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePodModal();
+    });
+    document.getElementById('sabanModal').addEventListener('click', (e) => {
+      if (e.target.id === 'sabanModal') closePodModal();
+    });
+  </script>
+</body>
+</html>

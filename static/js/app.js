@@ -439,7 +439,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      switchWorkflow(workflowSelect ? (workflowSelect.value || "kpi_gtc") : "kpi_gtc");
+      // Tự động nhận diện ?wf=... từ War Room
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramWf = urlParams.get("wf");
+      if (paramWf && allWorkflows[paramWf]) {
+        if (workflowSelect) workflowSelect.value = paramWf;
+        switchWorkflow(paramWf);
+      } else {
+        switchWorkflow(workflowSelect ? (workflowSelect.value || "kpi_gtc") : "kpi_gtc");
+      }
       enforceSidebarsCollapsed();
       loadSystemStatus();
     } catch (err) {

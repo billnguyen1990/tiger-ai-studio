@@ -6320,3 +6320,61 @@ body.theme-light .floating-tiger-mascot .mascot-label-pill {
     opacity: 0.95;
   }
 }
+
+
+/* ========================================================
+   UNIFIED 3-MODE SWITCHER (WAR ROOM / NODE FLOW / SA BAN 3D)
+   ======================================================== */
+.tiger-nav-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 229, 190, 0.25);
+  border-radius: 30px;
+  padding: 4px;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+  margin: 0 12px;
+}
+.t-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.t-nav-item:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
+}
+.t-nav-item.active {
+  color: #070d12 !important;
+  background: #00e5be !important;
+  box-shadow: 0 0 16px rgba(0, 229, 190, 0.4);
+}
+.t-nav-badge {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.t-nav-badge.live { background: #ef4444; color: white; }
+.t-nav-badge.new { background: #f59e0b; color: #070d12; }
+
+@media (max-width: 1024px) {
+  .tiger-nav-switcher {
+    padding: 2px;
+    gap: 2px;
+  }
+  .t-nav-item {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+}

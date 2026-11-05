@@ -5473,6 +5473,11 @@ def view_war_room():
     """Giao diện Trung Tâm Tác Chiến (War Room) soi tiến trình & lỗi liên phòng ban"""
     return render_template("war_room.html")
 
+@app.route("/sa-ban")
+def view_sa_ban():
+    """Giao diện Sa Bàn Số Hóa Kho Vận 3D MT01"""
+    return render_template("sa_ban.html")
+
 @app.route("/api/war-room/traces")
 def api_get_war_room_traces():
     """API lấy nhật ký tiến trình thời gian thực"""

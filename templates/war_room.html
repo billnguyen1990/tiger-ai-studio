@@ -28,6 +28,71 @@
       padding: 16px;
       min-height: 100vh;
     }
+    /* UNIFIED 3-MODE SWITCHER */
+    .tiger-nav-switcher {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      padding: 4px;
+      gap: 4px;
+      backdrop-filter: blur(10px);
+    }
+    .t-nav-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .t-nav-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .t-nav-item.active {
+      color: #070d12;
+      background: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .t-nav-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .t-nav-badge.live { background: #ef4444; color: white; }
+    .t-nav-badge.new { background: #f59e0b; color: #070d12; }
+
+    .btn-node-jump {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(0, 229, 190, 0.1);
+      border: 1px solid var(--card-border);
+      padding: 3px 8px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 6px;
+      align-self: flex-start;
+      transition: all 0.2s ease;
+    }
+    .btn-node-jump:hover {
+      background: var(--accent);
+      color: #070d12;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -417,7 +482,7 @@
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- HEADER WITH UNIFIED 3-MODE SWITCHER -->
   <header class="header">
     <div class="title-box">
       <img src="/static/img/tiger_avatar.jpg" alt="Tiger AI" class="brand-avatar">
@@ -426,6 +491,29 @@
         <p>Trung Tâm Tác Chiến & Giám Sát Tiến Trình Từng Bước</p>
       </div>
     </div>
+
+    <!-- UNIFIED COMMAND MODE SWITCHER -->
+    <nav class="tiger-nav-switcher">
+      <a href="/war-room" class="t-nav-item active" title="Trung tâm tác chiến & Bắt lỗi">
+        <span class="t-nav-icon">⚡</span>
+        <span class="t-nav-label">War Room Tác Chiến</span>
+        <span class="t-nav-badge live">24/7</span>
+      </a>
+      <a href="/" class="t-nav-item" title="Sơ đồ luồng Node tự động">
+        <span class="t-nav-icon">🧩</span>
+        <span class="t-nav-label">Sơ Đồ Node Flow</span>
+      </a>
+      <a href="/sa-ban" class="t-nav-item" title="Sa bàn số hóa 3D kho vận">
+        <span class="t-nav-icon">🎮</span>
+        <span class="t-nav-label">Sa Bàn Kho 3D</span>
+        <span class="t-nav-badge new">3D</span>
+      </a>
+      <a href="/cost-dashboard" class="t-nav-item" target="_blank" title="11 chỉ số chi phí & xe tải">
+        <span class="t-nav-icon">📊</span>
+        <span class="t-nav-label">Dashboard Vận Hành</span>
+      </a>
+    </nav>
+
     <div class="live-badge">
       <div class="live-dot"></div> TRỰC TUYẾN 24/7
     </div>
@@ -442,36 +530,42 @@
       <div class="dept-icon">🛠️</div>
       <div class="dept-name">Phòng Kỹ Thuật</div>
       <div class="dept-status status-ok">● Thường trực / Auto-Heal</div>
+      <a href="/?wf=checkin" class="btn-node-jump" onclick="event.stopPropagation();" title="Xem sơ đồ luồng Node phòng này">🧩 Luồng Node</a>
     </div>
     <div class="dept-card" onclick="openDeptModal('vanhanh')">
       <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">🚚</div>
       <div class="dept-name">Vận Hành - Kho Vận</div>
       <div class="dept-status status-ok">● 4 Mắt Cam Trực Tuyến</div>
+      <a href="/?wf=kpi_gtc" class="btn-node-jump" onclick="event.stopPropagation();" title="Xem sơ đồ luồng Node phòng này">🧩 Luồng Node</a>
     </div>
     <div class="dept-card" onclick="openDeptModal('ketoan')">
       <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">💰</div>
       <div class="dept-name">Kế Toán - Tài Chính</div>
       <div class="dept-status status-ok">● Đối soát 365 sẵn sàng</div>
+      <a href="/?wf=truck_odo_365" class="btn-node-jump" onclick="event.stopPropagation();" title="Xem sơ đồ luồng Node phòng này">🧩 Luồng Node</a>
     </div>
     <div class="dept-card" onclick="openDeptModal('thanhtra')">
       <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">🔍</div>
       <div class="dept-name">Ban Thanh Tra</div>
       <div class="dept-status status-ok">● Quét hoãn ảo hoạt động</div>
+      <a href="/?wf=lastmile_trips" class="btn-node-jump" onclick="event.stopPropagation();" title="Xem sơ đồ luồng Node phòng này">🧩 Luồng Node</a>
     </div>
     <div class="dept-card" onclick="openDeptModal('cskh')">
       <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">📞</div>
       <div class="dept-name">Dịch Vụ Khách Hàng</div>
       <div class="dept-status status-ok">● Canh 3 đơn ngầm 24/7</div>
+      <a href="/?wf=unassigned" class="btn-node-jump" onclick="event.stopPropagation();" title="Xem sơ đồ luồng Node phòng này">🧩 Luồng Node</a>
     </div>
     <div class="dept-card" onclick="openDeptModal('b2b')">
       <span class="dept-tap-hint">Bấm mở</span>
       <div class="dept-icon">📊</div>
       <div class="dept-name">Kinh Doanh & Dữ Liệu</div>
       <div class="dept-status status-ok">● Xuất đơn B2B (18:00)</div>
+      <a href="/?wf=b2b_looker" class="btn-node-jump" onclick="event.stopPropagation();" title="Xem sơ đồ luồng Node phòng này">🧩 Luồng Node</a>
     </div>
   </section>
 
