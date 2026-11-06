@@ -69,6 +69,21 @@ def parse_vietnamese_float(s):
     except:
         return 0.0
 
+def parse_num_or_serial_date(s):
+    if not s:
+        return 0.0
+    s_str = str(s).strip()
+    if not s_str or s_str == "-":
+        return 0.0
+    # Xử lý trường hợp Google Sheets tự format số nguyên nhỏ (0, 10, 25...) thành ngày năm 1899/1900
+    if "/" in s_str and len(s_str) == 10 and (s_str.endswith("/1899") or s_str.endswith("/1900")):
+        try:
+            dt = datetime.datetime.strptime(s_str, "%d/%m/%Y").date()
+            return float(max(0, (dt - datetime.date(1899, 12, 30)).days))
+        except Exception:
+            return 0.0
+    return parse_vietnamese_float(s_str)
+
 def build_cost_dashboard_matrix(force=False):
     """
     Chỉ nạp và xử lý CHUYÊN BIỆT cho VÙNG MIỀN TÂY 01
@@ -144,8 +159,14 @@ def build_cost_dashboard_matrix(force=False):
                 "metrics": ent_metrics
             }
 
-        # 2. BẢNG CHI TIẾT LƯƠNG TÀI XẾ (NVGH) TỪ SHEET 'Data Raw' (BAO GỒM LHH GTC VÀ LHH LTC)
+        # 2. BẢNG CHI TIẾT LƯƠNG NHÂN VIÊN GIAO HÀNG (NVGH) & SẢN LƯỢNG ĐƠN TỪ SHEET 'Data Raw'
         drivers_list = []
+        hub_daily_orders = {
+            "Kho Cái Răng": {},
+            "Kho Bình Thủy": {},
+            "Kho Vị Thanh": {},
+            "Kho Ô Môn": {}
+        }
         try:
             ws_raw = sh.worksheet("Data Raw")
             all_raw = ws_raw.get_all_values()
@@ -157,6 +178,9 @@ def build_cost_dashboard_matrix(force=False):
                 col_driver = _get_col("driverName")
                 col_hub = _get_col("Kho")
                 col_date = _get_col("Thời gian")
+                col_don_gan = _get_col("Đơn Gán của NVXL/NVGH")
+                col_don_gtc = _get_col("Đơn GTC của NVXL/NVGH")
+                col_don_ltc = _get_col("Đơn LTC")
                 col_ltc = _get_col("LHH LTC")
                 col_gtc = _get_col("LHH GTC")
 
@@ -174,6 +198,7 @@ def build_cost_dashboard_matrix(force=False):
                     hub_val = r[col_hub].strip()
                     if hub_val not in hub_name_map:
                         continue
+                    short_hub = hub_name_map[hub_val]
                     driver_val = r[col_driver].strip()
                     if not driver_val:
                         continue
@@ -182,32 +207,60 @@ def build_cost_dashboard_matrix(force=False):
                     if not date_val or "/2026" not in date_val:
                         continue
 
+                    don_gan_val = parse_num_or_serial_date(r[col_don_gan]) if col_don_gan >= 0 and col_don_gan < len(r) else 0.0
+                    don_gtc_val = parse_num_or_serial_date(r[col_don_gtc]) if col_don_gtc >= 0 and col_don_gtc < len(r) else 0.0
+                    don_ltc_val = parse_num_or_serial_date(r[col_don_ltc]) if col_don_ltc >= 0 and col_don_ltc < len(r) else 0.0
                     ltc_val = parse_vietnamese_float(r[col_ltc]) if col_ltc >= 0 and col_ltc < len(r) else 0.0
                     gtc_val = parse_vietnamese_float(r[col_gtc]) if col_gtc >= 0 and col_gtc < len(r) else 0.0
                     tot_val = gtc_val + ltc_val
 
+                    # Cộng dồn đơn theo Kho & Ngày để đối chiếu cho NVXL
+                    if date_val not in hub_daily_orders[short_hub]:
+                        hub_daily_orders[short_hub][date_val] = {"don_gan": 0.0, "don_gtc": 0.0, "don_ltc": 0.0}
+                    hub_daily_orders[short_hub][date_val]["don_gan"] += don_gan_val
+                    hub_daily_orders[short_hub][date_val]["don_gtc"] += don_gtc_val
+                    hub_daily_orders[short_hub][date_val]["don_ltc"] += don_ltc_val
+
                     if driver_val not in driver_map:
                         driver_map[driver_val] = {
                             "driver_name": driver_val,
-                            "hub_name": hub_name_map[hub_val],
+                            "hub_name": short_hub,
                             "gtc_salary": 0.0,
                             "ltc_salary": 0.0,
                             "total_salary": 0.0,
+                            "don_gan": 0.0,
+                            "don_gtc": 0.0,
+                            "don_ltc": 0.0,
                             "daily": {}
                         }
 
+                    # Cập nhật kho mới nhất nếu NVGH có chạy ở kho này
+                    driver_map[driver_val]["hub_name"] = short_hub
                     driver_map[driver_val]["gtc_salary"] += gtc_val
                     driver_map[driver_val]["ltc_salary"] += ltc_val
                     driver_map[driver_val]["total_salary"] += tot_val
+                    driver_map[driver_val]["don_gan"] += don_gan_val
+                    driver_map[driver_val]["don_gtc"] += don_gtc_val
+                    driver_map[driver_val]["don_ltc"] += don_ltc_val
 
                     if date_val:
                         if date_val not in driver_map[driver_val]["daily"]:
-                            driver_map[driver_val]["daily"][date_val] = {"gtc": 0.0, "ltc": 0.0, "total": 0.0}
+                            driver_map[driver_val]["daily"][date_val] = {
+                                "gtc": 0.0,
+                                "ltc": 0.0,
+                                "total": 0.0,
+                                "don_gan": 0.0,
+                                "don_gtc": 0.0,
+                                "don_ltc": 0.0
+                            }
                         driver_map[driver_val]["daily"][date_val]["gtc"] += gtc_val
                         driver_map[driver_val]["daily"][date_val]["ltc"] += ltc_val
                         driver_map[driver_val]["daily"][date_val]["total"] += tot_val
+                        driver_map[driver_val]["daily"][date_val]["don_gan"] += don_gan_val
+                        driver_map[driver_val]["daily"][date_val]["don_gtc"] += don_gtc_val
+                        driver_map[driver_val]["daily"][date_val]["don_ltc"] += don_ltc_val
 
-                # Bổ sung các tài xế chính thức nếu chưa có chuyến
+                # Bổ sung các NVGH chính thức nếu chưa có chuyến
                 all_known_drivers = [
                     ("Nguyễn Hải Đông", "Kho Cái Răng"),
                     ("Nguyễn Chí Toàn", "Kho Ô Môn"),
@@ -247,6 +300,9 @@ def build_cost_dashboard_matrix(force=False):
                             "gtc_salary": 0.0,
                             "ltc_salary": 0.0,
                             "total_salary": 0.0,
+                            "don_gan": 0.0,
+                            "don_gtc": 0.0,
+                            "don_ltc": 0.0,
                             "daily": {}
                         }
 
@@ -257,6 +313,122 @@ def build_cost_dashboard_matrix(force=False):
                     drivers_list.append(d)
         except Exception as sal_ex:
             print(f"[{now_str}] ⚠️ Lỗi đọc sheet Data Raw: {sal_ex}")
+
+        # 3. BẢNG CHI TIẾT LƯƠNG NHÂN VIÊN XỬ LÝ KHO (NVXL) TỪ SHEET 'Lương NVXL'
+        nvxl_list = []
+        try:
+            ws_nvxl = sh.worksheet("Lương NVXL")
+            all_nvxl = ws_nvxl.get_all_values()
+            if all_nvxl:
+                hub_name_map_nvxl = {
+                    "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ": "Kho Cái Răng",
+                    "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ": "Kho Bình Thủy",
+                    "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang": "Kho Vị Thanh",
+                    "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ": "Kho Ô Môn"
+                }
+                # Gom các dòng Lương NVXL theo (hub, date) trước để phân bổ chính xác Đơn Gán / Đơn GTC / Đơn LTC của kho trong ngày đó
+                hub_date_rows = {}
+                for r in all_nvxl[1:]:
+                    if len(r) < 9:
+                        continue
+                    raw_hub = r[1].strip()
+                    if raw_hub not in hub_name_map_nvxl:
+                        continue
+                    short_hub = hub_name_map_nvxl[raw_hub]
+                    raw_emp = r[2].strip()
+                    date_val = r[3].strip()
+                    if not raw_emp or not date_val or "/2026" not in date_val:
+                        continue
+                    san_luong = parse_vietnamese_float(r[4])
+                    thao_tac = parse_vietnamese_float(r[5])
+                    khoi_luong_g = parse_vietnamese_float(r[6])
+                    luong_gn = parse_vietnamese_float(r[7])
+                    luong_xl = parse_vietnamese_float(r[8])
+                    hub_date_rows.setdefault((short_hub, date_val), []).append({
+                        "raw_emp": raw_emp,
+                        "san_luong": san_luong,
+                        "thao_tac": thao_tac,
+                        "khoi_luong_kg": khoi_luong_g / 1000.0,
+                        "luong_gn": luong_gn,
+                        "luong_xl": luong_xl
+                    })
+
+                nvxl_map = {}
+                for (short_hub, date_val), emp_rows in hub_date_rows.items():
+                    tot_sl_day = sum(x["san_luong"] for x in emp_rows)
+                    hub_ord = hub_daily_orders.get(short_hub, {}).get(date_val, {"don_gan": 0.0, "don_gtc": 0.0, "don_ltc": 0.0})
+                    # Nếu ngày đó Data Raw chưa có nhưng bảng Chi Phí MT01 có Volume gán / Volume GTC thì fallback sang Chi Phí MT01
+                    if hub_ord["don_gan"] == 0 and hub_ord["don_gtc"] == 0:
+                        h_m = hubs_matrix.get(short_hub, {}).get("metrics", {})
+                        dg_fb = _clean_num(h_m.get("Volume gán", {}).get("daily", {}).get(date_val, 0))
+                        dgtc_fb = _clean_num(h_m.get("Volume GTC", {}).get("daily", {}).get(date_val, 0))
+                        hub_ord = {"don_gan": dg_fb, "don_gtc": dgtc_fb, "don_ltc": 0.0}
+
+                    n_emps = len(emp_rows)
+                    for item in emp_rows:
+                        raw_emp = item["raw_emp"]
+                        if " - " in raw_emp:
+                            parts = raw_emp.split(" - ", 1)
+                            staff_id = parts[0].strip()
+                            emp_name = parts[1].strip()
+                        else:
+                            staff_id = ""
+                            emp_name = raw_emp
+
+                        share = (item["san_luong"] / tot_sl_day) if tot_sl_day > 0 else (1.0 / n_emps)
+                        d_gan = round(hub_ord["don_gan"] * share)
+                        d_gtc = round(hub_ord["don_gtc"] * share)
+                        d_ltc = round(hub_ord["don_ltc"] * share)
+
+                        emp_key = f"{raw_emp}__{short_hub}"
+                        if emp_key not in nvxl_map:
+                            nvxl_map[emp_key] = {
+                                "nvxl_key": emp_key,
+                                "staff_id": staff_id,
+                                "nvxl_name": emp_name,
+                                "full_label": f"{emp_name} ({staff_id})" if staff_id else emp_name,
+                                "hub_name": short_hub,
+                                "luong_xl": 0.0,
+                                "luong_gn": 0.0,
+                                "total_salary": 0.0,
+                                "don_gan": 0.0,
+                                "don_gtc": 0.0,
+                                "don_ltc": 0.0,
+                                "san_luong_xl": 0.0,
+                                "daily": {}
+                            }
+
+                        rec = nvxl_map[emp_key]
+                        tot_sal = item["luong_xl"] + item["luong_gn"]
+                        rec["luong_xl"] += item["luong_xl"]
+                        rec["luong_gn"] += item["luong_gn"]
+                        rec["total_salary"] += tot_sal
+                        rec["don_gan"] += d_gan
+                        rec["don_gtc"] += d_gtc
+                        rec["don_ltc"] += d_ltc
+                        rec["san_luong_xl"] += item["san_luong"]
+
+                        if date_val not in rec["daily"]:
+                            rec["daily"][date_val] = {
+                                "luong_xl": 0.0,
+                                "luong_gn": 0.0,
+                                "total": 0.0,
+                                "don_gan": 0.0,
+                                "don_gtc": 0.0,
+                                "don_ltc": 0.0,
+                                "san_luong_xl": 0.0
+                            }
+                        rec["daily"][date_val]["luong_xl"] += item["luong_xl"]
+                        rec["daily"][date_val]["luong_gn"] += item["luong_gn"]
+                        rec["daily"][date_val]["total"] += tot_sal
+                        rec["daily"][date_val]["don_gan"] += d_gan
+                        rec["daily"][date_val]["don_gtc"] += d_gtc
+                        rec["daily"][date_val]["don_ltc"] += d_ltc
+                        rec["daily"][date_val]["san_luong_xl"] += item["san_luong"]
+
+                nvxl_list = list(nvxl_map.values())
+        except Exception as nvxl_ex:
+            print(f"[{now_str}] ⚠️ Lỗi đọc sheet Lương NVXL: {nvxl_ex}")
 
         official_month_key = r2[2].strip() if len(r2) > 2 else ""
         official_week_key = r2[3].strip() if len(r2) > 3 else ""
@@ -273,6 +445,7 @@ def build_cost_dashboard_matrix(force=False):
             "hubs": [e[0] for e in entities_config],
             "entities": hubs_matrix,
             "drivers": drivers_list,
+            "nvxl": nvxl_list,
             "months_cols": months_dict,
             "weeks_cols": weeks_dict
         }
@@ -280,7 +453,7 @@ def build_cost_dashboard_matrix(force=False):
         with open(DASHBOARD_CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(dashboard_data, f, ensure_ascii=False, indent=2)
 
-        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 & {len(drivers_list)} tài xế thành công!")
+        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 ({len(drivers_list)} NVGH & {len(nvxl_list)} NVXL) thành công!")
         return dashboard_data
 
     except Exception as ex:
@@ -310,8 +483,22 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
     available_hubs = matrix.get("hubs", [])
     entities = matrix.get("entities", {})
     all_drivers = matrix.get("drivers", [])
+    all_nvxl = matrix.get("nvxl", [])
     official_month_key = matrix.get("official_month_key", "")
     official_week_key = matrix.get("official_week_key", "")
+
+    # Nếu file cache cũ chưa có trường nvxl hoặc chưa có don_gan trong drivers thì tự động rebuild
+    if not all_nvxl or (all_drivers and "don_gan" not in all_drivers[0]):
+        matrix = build_cost_dashboard_matrix(force=True)
+        available_months = matrix.get("months", [])
+        available_weeks = matrix.get("weeks", [])
+        available_days = matrix.get("days", [])
+        available_hubs = matrix.get("hubs", [])
+        entities = matrix.get("entities", {})
+        all_drivers = matrix.get("drivers", [])
+        all_nvxl = matrix.get("nvxl", [])
+        official_month_key = matrix.get("official_month_key", "")
+        official_week_key = matrix.get("official_week_key", "")
 
     # Lọc các ngày đã có phát sinh dữ liệu thật (Volume gán > 0) để làm mặc định ngày mới nhất & vẽ biểu đồ
     mt01_vol_daily = entities.get("Toàn Vùng MT01", {}).get("metrics", {}).get("Volume gán", {}).get("daily", {})
@@ -335,6 +522,53 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             if hub.lower() in h_l.lower():
                 selected_ent_label = h_l
                 break
+
+    # Xác định danh sách ngày thuộc kỳ đang chọn & các ngày đã có phát sinh số liệu
+    if mode == "day" and key:
+        period_all_days = [key]
+    elif mode == "week" and key:
+        w_cols = matrix.get("weeks_cols", {}).get(key, [])
+        period_all_days = [available_days[c - 4] for c in w_cols if 0 <= c - 4 < len(available_days)]
+    elif mode == "month" and key:
+        m_cols = matrix.get("months_cols", {}).get(key, [])
+        period_all_days = [available_days[c - 4] for c in m_cols if 0 <= c - 4 < len(available_days)]
+    else:
+        period_all_days = list(available_days)
+
+    period_active_days = [d for d in period_all_days if d in active_days]
+    if not period_active_days and period_all_days:
+        period_active_days = period_all_days
+
+    start_date_str = period_active_days[0] if period_active_days else (key or "")
+    end_date_str = period_active_days[-1] if period_active_days else (key or "")
+    active_days_cnt = len([d for d in period_all_days if d in active_days])
+
+    if mode == "day":
+        mode_vn = "Theo Ngày"
+        date_range_text = f"Chốt số liệu Ngày {key} (1 ngày)"
+        full_period_label = f"📅 NGÀY {key} • {selected_ent_label}"
+    elif mode == "week":
+        mode_vn = "Theo Tuần"
+        year_suffix = end_date_str[-4:] if len(end_date_str) == 10 else "2026"
+        date_range_text = f"Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt}/{len(period_all_days)} ngày có số liệu)"
+        full_period_label = f"📅 TUẦN {key} (Năm {year_suffix}) • Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt} ngày chốt số)"
+    else:
+        mode_vn = "Theo Tháng"
+        date_range_text = f"Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt}/{len(period_all_days)} ngày có số liệu)"
+        full_period_label = f"📅 {key.upper()} • Từ ngày {start_date_str} ➔ {end_date_str} ({active_days_cnt} ngày đã chốt số)"
+
+    period_info = {
+        "mode": mode,
+        "mode_vn": mode_vn,
+        "key": key,
+        "hub": selected_ent_label,
+        "start_date": start_date_str,
+        "end_date": end_date_str,
+        "active_days_count": active_days_cnt,
+        "total_days_in_period": len(period_all_days),
+        "date_range_text": date_range_text,
+        "full_label": full_period_label
+    }
 
     ent_obj = entities.get(selected_ent_label, {})
     metrics_map = ent_obj.get("metrics", {})
@@ -425,40 +659,39 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             row[m] = h_vals.get(m, {}).get("formatted", "-")
         hubs_breakdown.append(row)
 
-    # PHÂN RÃ CHI TIẾT LƯƠNG TÀI XẾ (NVGH) THEO BỘ LỌC KHO & KỲ BÁO CÁO (BAO GỒM LHH GTC VÀ LHH LTC)
+    # PHÂN RÃ CHI TIẾT LƯƠNG & ĐƠN CỦA NHÂN VIÊN GIAO HÀNG (NVGH) THEO KHO & KỲ BÁO CÁO
     filtered_drivers = []
     for d in all_drivers:
         if selected_ent_label == "Toàn Vùng MT01" or d["hub_name"] == selected_ent_label:
-            if mode == "day" and key:
-                day_val = d.get("daily", {}).get(key, {})
+            gtc_p = 0.0
+            ltc_p = 0.0
+            don_gan_p = 0.0
+            don_gtc_p = 0.0
+            don_ltc_p = 0.0
+            for day_str in period_all_days:
+                day_val = d.get("daily", {}).get(day_str)
                 if isinstance(day_val, dict):
-                    gtc_p = day_val.get("gtc", 0.0)
-                    ltc_p = day_val.get("ltc", 0.0)
-                    sal_period = day_val.get("total", gtc_p + ltc_p)
-                else:
-                    sal_period = float(day_val) if day_val else 0.0
-                    gtc_p = sal_period
-                    ltc_p = 0.0
-            elif mode == "week" and key and key in matrix.get("weeks_cols", {}) and available_days:
-                w_col_indices = matrix.get("weeks_cols", {}).get(key, [])
-                days_in_week = [available_days[c - 4] for c in w_col_indices if 0 <= c - 4 < len(available_days)]
-                gtc_p = sum(d.get("daily", {}).get(day_str, {}).get("gtc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_week)
-                ltc_p = sum(d.get("daily", {}).get(day_str, {}).get("ltc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_week)
-                sal_period = gtc_p + ltc_p
-            elif mode == "month" and key and key in matrix.get("months_cols", {}) and available_days:
-                m_col_indices = matrix.get("months_cols", {}).get(key, [])
-                days_in_month = [available_days[c - 4] for c in m_col_indices if 0 <= c - 4 < len(available_days)]
-                gtc_p = sum(d.get("daily", {}).get(day_str, {}).get("gtc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_month)
-                ltc_p = sum(d.get("daily", {}).get(day_str, {}).get("ltc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_month)
-                sal_period = gtc_p + ltc_p
-            else:
-                gtc_p = d.get("gtc_salary", 0.0)
-                ltc_p = d.get("ltc_salary", 0.0)
-                sal_period = d.get("total_salary", gtc_p + ltc_p)
+                    gtc_p += day_val.get("gtc", 0.0)
+                    ltc_p += day_val.get("ltc", 0.0)
+                    don_gan_p += day_val.get("don_gan", 0.0)
+                    don_gtc_p += day_val.get("don_gtc", 0.0)
+                    don_ltc_p += day_val.get("don_ltc", 0.0)
+                elif day_val:
+                    gtc_p += float(day_val)
+            sal_period = gtc_p + ltc_p
+            gtc_rate = (don_gtc_p / don_gan_p * 100.0) if don_gan_p > 0 else 0.0
 
             filtered_drivers.append({
                 "driver_name": d["driver_name"],
                 "hub_name": d["hub_name"],
+                "don_gan": int(round(don_gan_p)),
+                "formatted_don_gan": _format_vnd(don_gan_p),
+                "don_gtc": int(round(don_gtc_p)),
+                "formatted_don_gtc": _format_vnd(don_gtc_p),
+                "don_ltc": int(round(don_ltc_p)),
+                "formatted_don_ltc": _format_vnd(don_ltc_p),
+                "gtc_rate": round(gtc_rate, 1),
+                "formatted_gtc_rate": f"{gtc_rate:.1f}%" if don_gan_p > 0 else "0%",
                 "gtc_salary": gtc_p,
                 "formatted_gtc": _format_vnd(gtc_p) + " đ",
                 "ltc_salary": ltc_p,
@@ -469,13 +702,17 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
                 "formatted_total_salary": d.get("formatted_salary", _format_vnd(sal_period) + " đ")
             })
 
-    # Sắp xếp tài xế theo lương cao nhất trước
-    filtered_drivers.sort(key=lambda x: x["period_salary"], reverse=True)
+    # Sắp xếp NVGH theo lương kỳ cao nhất -> đơn GTC cao nhất
+    filtered_drivers.sort(key=lambda x: (x["period_salary"], x["don_gtc"], x["don_gan"]), reverse=True)
     
-    # Tính tổng lương, tổng GTC, tổng LTC và tỷ trọng
     tot_driver_sal = sum(d["period_salary"] for d in filtered_drivers)
     tot_gtc_sal = sum(d["gtc_salary"] for d in filtered_drivers)
     tot_ltc_sal = sum(d["ltc_salary"] for d in filtered_drivers)
+    tot_drv_gan = sum(d["don_gan"] for d in filtered_drivers)
+    tot_drv_gtc = sum(d["don_gtc"] for d in filtered_drivers)
+    tot_drv_ltc = sum(d["don_ltc"] for d in filtered_drivers)
+    overall_drv_rate = (tot_drv_gtc / tot_drv_gan * 100.0) if tot_drv_gan > 0 else 0.0
+    active_drv_cnt = sum(1 for d in filtered_drivers if d["period_salary"] > 0 or d["don_gan"] > 0)
 
     for idx, d in enumerate(filtered_drivers, 1):
         d["rank"] = idx
@@ -485,22 +722,129 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             d["badge"] = "Top Thu Nhập"
             d["badge_color"] = "#10b981"
         elif d["period_salary"] > 0:
-            d["badge"] = "Tích Cực"
-            d["badge_color"] = "#3b82f6"
+            if d["gtc_rate"] >= 85.0:
+                d["badge"] = "Đạt KPI GTC"
+                d["badge_color"] = "#3b82f6"
+            else:
+                d["badge"] = "Tích Cực"
+                d["badge_color"] = "#f59e0b"
         else:
-            d["badge"] = "NVXL / Dự Bị"
+            d["badge"] = "Nghỉ / Dự Bị"
             d["badge_color"] = "#94a3b8"
 
     driver_summary = {
         "count": len(filtered_drivers),
+        "active_count": active_drv_cnt,
+        "total_don_gan": tot_drv_gan,
+        "formatted_don_gan": _format_vnd(tot_drv_gan),
+        "total_don_gtc": tot_drv_gtc,
+        "formatted_don_gtc": _format_vnd(tot_drv_gtc),
+        "total_don_ltc": tot_drv_ltc,
+        "formatted_don_ltc": _format_vnd(tot_drv_ltc),
+        "overall_gtc_rate": f"{overall_drv_rate:.1f}%",
         "total_salary": tot_driver_sal,
         "formatted_total": _format_vnd(tot_driver_sal) + " đ",
         "total_gtc": tot_gtc_sal,
         "formatted_gtc": _format_vnd(tot_gtc_sal) + " đ",
         "total_ltc": tot_ltc_sal,
         "formatted_ltc": _format_vnd(tot_ltc_sal) + " đ",
-        "avg_salary": (tot_driver_sal / len(filtered_drivers)) if filtered_drivers else 0,
-        "formatted_avg": _format_vnd(tot_driver_sal / len(filtered_drivers)) + " đ" if filtered_drivers else "0 đ"
+        "avg_salary": (tot_driver_sal / active_drv_cnt) if active_drv_cnt else 0,
+        "formatted_avg": _format_vnd(tot_driver_sal / active_drv_cnt) + " đ" if active_drv_cnt else "0 đ"
+    }
+
+    # PHÂN RÃ CHI TIẾT LƯƠNG & ĐƠN CỦA NHÂN VIÊN XỬ LÝ KHO (NVXL) THEO KHO & KỲ BÁO CÁO
+    filtered_nvxl = []
+    for nv in all_nvxl:
+        if selected_ent_label == "Toàn Vùng MT01" or nv["hub_name"] == selected_ent_label:
+            l_xl = 0.0
+            l_gn = 0.0
+            d_gan = 0.0
+            d_gtc = 0.0
+            d_ltc = 0.0
+            sl_xl = 0.0
+            days_worked = 0
+            for day_str in period_all_days:
+                dv = nv.get("daily", {}).get(day_str)
+                if isinstance(dv, dict):
+                    l_xl += dv.get("luong_xl", 0.0)
+                    l_gn += dv.get("luong_gn", 0.0)
+                    d_gan += dv.get("don_gan", 0.0)
+                    d_gtc += dv.get("don_gtc", 0.0)
+                    d_ltc += dv.get("don_ltc", 0.0)
+                    sl_xl += dv.get("san_luong_xl", 0.0)
+                    if dv.get("luong_xl", 0.0) > 0 or dv.get("luong_gn", 0.0) > 0 or dv.get("don_gan", 0.0) > 0:
+                        days_worked += 1
+
+            tot_sal = l_xl + l_gn
+            # Chỉ hiển thị NVXL có phát sinh trong kỳ hoặc thuộc danh sách 4 NVXL chính của 4 kho
+            if tot_sal <= 0 and d_gan <= 0:
+                continue
+
+            gtc_rate_nv = (d_gtc / d_gan * 100.0) if d_gan > 0 else 0.0
+            filtered_nvxl.append({
+                "staff_id": nv.get("staff_id", ""),
+                "nvxl_name": nv.get("nvxl_name", ""),
+                "full_label": nv.get("full_label", nv.get("nvxl_name", "")),
+                "hub_name": nv.get("hub_name", ""),
+                "days_worked": days_worked,
+                "don_gan": int(round(d_gan)),
+                "formatted_don_gan": _format_vnd(d_gan),
+                "don_gtc": int(round(d_gtc)),
+                "formatted_don_gtc": _format_vnd(d_gtc),
+                "don_ltc": int(round(d_ltc)),
+                "formatted_don_ltc": _format_vnd(d_ltc),
+                "gtc_rate": round(gtc_rate_nv, 1),
+                "formatted_gtc_rate": f"{gtc_rate_nv:.1f}%" if d_gan > 0 else "0%",
+                "luong_xl": l_xl,
+                "formatted_luong_xl": _format_vnd(l_xl) + " đ",
+                "luong_gn": l_gn,
+                "formatted_luong_gn": _format_vnd(l_gn) + " đ",
+                "period_salary": tot_sal,
+                "formatted_period_salary": _format_vnd(tot_sal) + " đ"
+            })
+
+    filtered_nvxl.sort(key=lambda x: (x["period_salary"], x["luong_xl"], x["don_gtc"]), reverse=True)
+
+    tot_nvxl_sal = sum(x["period_salary"] for x in filtered_nvxl)
+    tot_nvxl_xl = sum(x["luong_xl"] for x in filtered_nvxl)
+    tot_nvxl_gn = sum(x["luong_gn"] for x in filtered_nvxl)
+    tot_nvxl_gan = sum(x["don_gan"] for x in filtered_nvxl)
+    tot_nvxl_gtc = sum(x["don_gtc"] for x in filtered_nvxl)
+    tot_nvxl_ltc = sum(x["don_ltc"] for x in filtered_nvxl)
+    overall_nvxl_rate = (tot_nvxl_gtc / tot_nvxl_gan * 100.0) if tot_nvxl_gan > 0 else 0.0
+
+    for idx, nv in enumerate(filtered_nvxl, 1):
+        nv["rank"] = idx
+        pct = (nv["period_salary"] / tot_nvxl_sal * 100) if tot_nvxl_sal > 0 else 0
+        nv["percentage"] = f"{pct:.1f}%"
+        if nv["gtc_rate"] >= 85.0:
+            nv["badge"] = "Đạt Chuẩn KPI (≥85%)"
+            nv["badge_color"] = "#10b981"
+        elif nv["gtc_rate"] >= 80.0:
+            nv["badge"] = "Cần Cố Gắng (80-84%)"
+            nv["badge_color"] = "#f59e0b"
+        else:
+            nv["badge"] = "Cảnh Báo GTC (<80%)"
+            nv["badge_color"] = "#ef4444"
+
+    nvxl_summary = {
+        "count": len(filtered_nvxl),
+        "active_count": len(filtered_nvxl),
+        "total_don_gan": tot_nvxl_gan,
+        "formatted_don_gan": _format_vnd(tot_nvxl_gan),
+        "total_don_gtc": tot_nvxl_gtc,
+        "formatted_don_gtc": _format_vnd(tot_nvxl_gtc),
+        "total_don_ltc": tot_nvxl_ltc,
+        "formatted_don_ltc": _format_vnd(tot_nvxl_ltc),
+        "overall_gtc_rate": f"{overall_nvxl_rate:.1f}%",
+        "total_luong_xl": tot_nvxl_xl,
+        "formatted_luong_xl": _format_vnd(tot_nvxl_xl) + " đ",
+        "total_luong_gn": tot_nvxl_gn,
+        "formatted_luong_gn": _format_vnd(tot_nvxl_gn) + " đ",
+        "total_salary": tot_nvxl_sal,
+        "formatted_total": _format_vnd(tot_nvxl_sal) + " đ",
+        "avg_salary": (tot_nvxl_sal / len(filtered_nvxl)) if filtered_nvxl else 0,
+        "formatted_avg": _format_vnd(tot_nvxl_sal / len(filtered_nvxl)) + " đ" if filtered_nvxl else "0 đ"
     }
 
     recent_days = active_days[-14:] if len(active_days) >= 14 else active_days
@@ -527,6 +871,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
         "success": True,
         "last_sync": matrix.get("last_sync"),
         "region": "Miền Tây 01",
+        "period_info": period_info,
         "filter": {
             "hub": selected_ent_label,
             "mode": mode,
@@ -536,13 +881,18 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             "hubs": ["Toàn Vùng MT01", "Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"],
             "months": available_months,
             "weeks": available_weeks,
-            "days": available_days
+            "days": available_days,
+            "latest_active_day": active_days[-1] if active_days else (available_days[-1] if available_days else "")
         },
         "metrics": result_metrics,
         "hubs_breakdown": hubs_breakdown,
         "drivers_breakdown": {
             "summary": driver_summary,
             "list": filtered_drivers
+        },
+        "nvxl_breakdown": {
+            "summary": nvxl_summary,
+            "list": filtered_nvxl
         },
         "trend_chart": {
             "labels": trend_labels,

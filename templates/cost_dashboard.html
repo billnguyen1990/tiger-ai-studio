@@ -1298,9 +1298,14 @@
 
     <!-- SECTION 3: BẢNG SO SÁNH CHI TIẾT TỪNG KHO -->
     <section class="content-box">
-      <div class="box-header">
-        <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
-        <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết</span>
+      <div class="box-header" style="flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
+          <span id="badgeHubTablePeriod" style="background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;">
+            📅 Đang tải kỳ báo cáo...
+          </span>
+        </div>
+        <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết theo đúng kỳ đang chọn</span>
       </div>
       <div class="table-wrapper">
         <table id="tblBreakdown">
@@ -1327,49 +1332,125 @@
       </div>
     </section>
 
-    <!-- SECTION 4: BẢNG LƯƠNG CHI TIẾT TÀI XẾ GIAO NHẬN (NVGH) -->
+    <!-- SECTION 4: BẢNG LƯƠNG & SẢN LƯỢNG CHI TIẾT (TÍCH HỢP 2 TAB: NVGH & NVXL + BỘ CHỌN KỲ NGAY TẠI BẢNG) -->
     <section class="content-box" style="margin-top: 24px;">
-      <div class="box-header" style="flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div class="box-title" style="color: var(--accent-amber);">🛵 BẢNG LƯƠNG CHI TIẾT TÀI XẾ GIAO NHẬN (NVGH)</div>
-          <span id="badgeDriverCount" class="badge-tag" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px;">29 Tài xế</span>
+      <!-- BANNER KỲ DỮ LIỆU RÕ RÀNG + BỘ CHỌN NHANH NGAY TẠI BẢNG LƯƠNG -->
+      <div style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(56, 189, 248, 0.08)); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="background: #10b981; color: #052e16; font-weight: 800; font-size: 11px; padding: 3px 9px; border-radius: 6px; letter-spacing: 0.4px;">KỲ BÁO CÁO ĐANG XEM</span>
+            <strong id="txtSalaryPeriodBanner" style="color: #34d399; font-size: 15px; font-weight: 800;">📅 THÁNG 11-NĂM 2026</strong>
+            <span id="txtSalaryHubBanner" style="background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">📍 Toàn Vùng MT01</span>
+          </div>
+          <div id="txtSalaryDateRangeSub" style="font-size: 12.5px; color: var(--text-main); opacity: 0.92;">
+            ⏱️ Phạm vi ngày cập nhật: <b>Từ ngày 01/11/2026 ➔ 05/11/2026 (5 ngày đã chốt số liệu trên Google Sheets)</b>
+          </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
-            <span style="color: var(--text-sub);">Tổng lương NVGH:</span>
-            <b id="txtTotalDriverSalary" style="color: var(--accent-green); margin-left: 6px; font-size: 15px;">238.465.727 đ</b>
+
+        <!-- Bộ đổi nhanh Ngày / Tuần / Tháng ngay tại bảng lương không cần cuộn lên trên -->
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: rgba(0,0,0,0.22); padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+          <span style="font-size: 11.5px; color: var(--text-sub); font-weight: 700;">⚡ Đổi kỳ xem nhanh:</span>
+          <div class="mode-pills" style="gap: 4px;">
+            <button class="pill-btn active" id="inlinePillMonth" onclick="setMode('month')" style="padding: 5px 10px; font-size: 12px;">📅 Tháng</button>
+            <button class="pill-btn" id="inlinePillWeek" onclick="setMode('week')" style="padding: 5px 10px; font-size: 12px;">📆 Tuần</button>
+            <button class="pill-btn" id="inlinePillDay" onclick="setMode('day')" style="padding: 5px 10px; font-size: 12px;">🕒 Ngày</button>
           </div>
-          <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
-            <span style="color: var(--text-sub);">Lương GTC:</span>
-            <b id="txtTotalGtcSalary" style="color: #38bdf8; margin-left: 6px;">235.766.384 đ</b>
-          </div>
-          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
-            <span style="color: var(--text-sub);">LHH LTC (Lấy):</span>
-            <b id="txtTotalLtcSalary" style="color: #f59e0b; margin-left: 6px;">2.699.343 đ</b>
-          </div>
-          <div style="background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px;">
-            <span style="color: var(--text-sub);">Bình quân/TX:</span>
-            <b id="txtAvgDriverSalary" style="color: var(--accent-blue); margin-left: 6px;">8.222.956 đ</b>
-          </div>
-          <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm kiếm tài xế..." oninput="filterDriversTable()" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 170px;">
+          <select id="selInlinePeriodKey" class="filter-select" onchange="onInlinePeriodChange(this.value)" style="min-width: 155px; padding: 5px 10px; font-size: 12.5px; font-weight: 700;"></select>
+          <select id="selInlineHub" class="filter-select" onchange="onInlineHubChange(this.value)" style="min-width: 145px; padding: 5px 10px; font-size: 12.5px;">
+            <option value="all">Toàn Vùng MT01</option>
+            <option value="Kho Cái Răng">📍 Kho Cái Răng</option>
+            <option value="Kho Bình Thủy">📍 Kho Bình Thủy</option>
+            <option value="Kho Vị Thanh">📍 Kho Vị Thanh</option>
+            <option value="Kho Ô Môn">📍 Kho Ô Môn</option>
+          </select>
         </div>
       </div>
+
+      <!-- THANH CHUYỂN TAB: LƯƠNG NVGH vs LƯƠNG NVXL -->
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <button id="tabBtnNVGH" onclick="switchSalaryTab('nvgh')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 13.5px; border: 1.5px solid #f59e0b; background: rgba(245, 158, 11, 0.18); color: #fbbf24; transition: 0.2s;">
+            <span>🛵 BẢNG LƯƠNG & ĐƠN NVGH (GIAO NHẬN)</span>
+            <span id="badgeDriverCount" style="background: rgba(245, 158, 11, 0.28); color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 11.5px;">25 NVGH</span>
+          </button>
+
+          <button id="tabBtnNVXL" onclick="switchSalaryTab('nvxl')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 13.5px; border: 1.5px solid var(--border-color); background: rgba(255, 255, 255, 0.04); color: var(--text-sub); transition: 0.2s;">
+            <span>🏢 BẢNG LƯƠNG & ĐƠN NVXL (XỬ LÝ KHO)</span>
+            <span id="badgeNvxlCount" style="background: rgba(16, 185, 129, 0.25); color: #34d399; padding: 2px 8px; border-radius: 999px; font-size: 11.5px;">4 NVXL</span>
+          </button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <label id="lblHideZeroWrap" style="display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-sub); cursor: pointer; background: rgba(255,255,255,0.04); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <input type="checkbox" id="chkOnlyActiveStaff" checked onchange="filterDriversTable()" style="accent-color: #10b981; cursor: pointer;">
+            <span>Chỉ hiện NV có phát sinh trong kỳ</span>
+          </label>
+          <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm tên NV hoặc Kho..." oninput="filterDriversTable()" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 195px;">
+        </div>
+      </div>
+
+      <!-- DẢI TỔNG HỢP SẢN LƯỢNG ĐƠN (GÁN / GTC / LTC / TỶ LỆ GTC) + LƯƠNG CỦA TAB ĐANG CHỌN -->
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
+        <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span style="color: var(--text-sub);">Tổng Đơn Gán:</span>
+          <b id="txtSumDonGan" style="color: #e2e8f0; margin-left: 5px; font-size: 14px;">0</b>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span style="color: var(--text-sub);">Đơn Giao TC (GTC):</span>
+          <b id="txtSumDonGtc" style="color: #34d399; margin-left: 5px; font-size: 14px;">0</b>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span style="color: var(--text-sub);">Đơn Lấy TC (LTC):</span>
+          <b id="txtSumDonLtc" style="color: #fbbf24; margin-left: 5px; font-size: 14px;">0</b>
+        </div>
+        <div style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span style="color: var(--text-sub);">Tỷ lệ GTC chung:</span>
+          <b id="txtSumGtcRate" style="color: #38bdf8; margin-left: 5px; font-size: 14px;">0%</b>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span id="lblTotalSalMain" style="color: var(--text-sub);">Tổng thu nhập NVGH:</span>
+          <b id="txtTotalDriverSalary" style="color: var(--accent-green); margin-left: 5px; font-size: 14.5px;">0 đ</b>
+        </div>
+        <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span id="lblSubSal1" style="color: var(--text-sub);">Lương GTC:</span>
+          <b id="txtTotalGtcSalary" style="color: #38bdf8; margin-left: 5px;">0 đ</b>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span id="lblSubSal2" style="color: var(--text-sub);">LHH LTC (Lấy):</span>
+          <b id="txtTotalLtcSalary" style="color: #f59e0b; margin-left: 5px;">0 đ</b>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
+          <span id="lblAvgSal" style="color: var(--text-sub);">Bình quân/NV:</span>
+          <b id="txtAvgDriverSalary" style="color: var(--accent-blue); margin-left: 5px;">0 đ</b>
+        </div>
+      </div>
+
+      <style>
+        #tblDrivers th, #tblDrivers td {
+          padding: 8px 8px !important;
+          font-size: 12.5px !important;
+        }
+      </style>
       <div class="table-wrapper">
         <table id="tblDrivers">
           <thead>
             <tr>
-              <th style="width: 60px; text-align: center;">Hạng</th>
-              <th>Họ & Tên Tài Xế (NVGH)</th>
+              <th style="width: 48px; text-align: center;">Hạng</th>
+              <th id="thStaffName">Họ & Tên Nhân Viên (NVGH)</th>
               <th>Kho Trực Thuộc</th>
-              <th style="text-align: right; color: #38bdf8;">Lương GTC (VNĐ)</th>
-              <th style="text-align: right; color: #f59e0b;">LHH LTC (VNĐ)</th>
+              <th style="text-align: right; color: #e2e8f0;">Đơn Gán</th>
+              <th style="text-align: right; color: #34d399;">Đơn GTC (Giao TC)</th>
+              <th style="text-align: right; color: #fbbf24;">Đơn LTC (Lấy TC)</th>
+              <th style="text-align: center; color: #38bdf8;">Tỷ Lệ GTC</th>
+              <th id="thSalCol1" style="text-align: right; color: #38bdf8;">Lương GTC (VNĐ)</th>
+              <th id="thSalCol2" style="text-align: right; color: #f59e0b;">LHH LTC (VNĐ)</th>
               <th style="text-align: right; color: var(--accent-green);">Tổng Thu Nhập (VNĐ)</th>
-              <th style="text-align: right;">Tỷ Trọng (%)</th>
-              <th style="text-align: center;">Trạng Thái / Đánh Giá</th>
+              <th style="text-align: right;">Tỷ Trọng</th>
+              <th style="text-align: center;">Đánh Giá KPI</th>
             </tr>
           </thead>
           <tbody id="tblBodyDrivers">
-            <tr><td colspan="8" style="text-align: center; padding: 20px;">Đang tải danh sách tài xế...</td></tr>
+            <tr><td colspan="12" style="text-align: center; padding: 20px;">Đang tải danh sách nhân sự...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1379,6 +1460,7 @@
 
   <script>
     let currentMode = "month";
+    let currentSalaryTab = "nvgh"; // 'nvgh' hoặc 'nvxl'
     let filterOptions = null;
     let trendChartInstance = null;
     let pieChartInstance = null;
@@ -1386,11 +1468,32 @@
     function setMode(mode) {
       currentMode = mode;
       document.querySelectorAll(".pill-btn").forEach(btn => btn.classList.remove("active"));
-      if (mode === "month") document.getElementById("pillMonth").classList.add("active");
-      if (mode === "week") document.getElementById("pillWeek").classList.add("active");
-      if (mode === "day") document.getElementById("pillDay").classList.add("active");
+      if (mode === "month") {
+        document.getElementById("pillMonth").classList.add("active");
+        if (document.getElementById("inlinePillMonth")) document.getElementById("inlinePillMonth").classList.add("active");
+      }
+      if (mode === "week") {
+        document.getElementById("pillWeek").classList.add("active");
+        if (document.getElementById("inlinePillWeek")) document.getElementById("inlinePillWeek").classList.add("active");
+      }
+      if (mode === "day") {
+        document.getElementById("pillDay").classList.add("active");
+        if (document.getElementById("inlinePillDay")) document.getElementById("inlinePillDay").classList.add("active");
+      }
       
       updatePeriodDropdown();
+      fetchData();
+    }
+
+    function onInlinePeriodChange(val) {
+      const selKey = document.getElementById("selPeriodKey");
+      if (selKey) selKey.value = val;
+      fetchData();
+    }
+
+    function onInlineHubChange(val) {
+      const selHub = document.getElementById("selHub");
+      if (selHub) selHub.value = val;
       fetchData();
     }
 
@@ -1414,8 +1517,10 @@
 
     function updatePeriodDropdown(preferredKey) {
       const selKey = document.getElementById("selPeriodKey");
+      const selInlineKey = document.getElementById("selInlinePeriodKey");
       const lblPeriod = document.getElementById("lblPeriod");
       selKey.innerHTML = "";
+      if (selInlineKey) selInlineKey.innerHTML = "";
 
       let items = [];
       if (currentMode === "month") {
@@ -1429,19 +1534,29 @@
         items = (filterOptions && filterOptions.days) ? [...filterOptions.days].reverse() : [];
       }
 
-      const defaultTarget = preferredKey || ((currentMode === "day") ? items[0] : items[items.length - 1]);
+      const defaultTarget = preferredKey || ((currentMode === "day") ? ((filterOptions && filterOptions.latest_active_day) || items[0]) : items[items.length - 1]);
       items.forEach((item) => {
         const opt = document.createElement("option");
         opt.value = item;
         opt.innerText = item;
         if (item === defaultTarget) opt.selected = true;
         selKey.appendChild(opt);
+
+        if (selInlineKey) {
+          const opt2 = document.createElement("option");
+          opt2.value = item;
+          opt2.innerText = item;
+          if (item === defaultTarget) opt2.selected = true;
+          selInlineKey.appendChild(opt2);
+        }
       });
     }
 
     async function fetchData() {
       const hub = document.getElementById("selHub").value;
       const key = document.getElementById("selPeriodKey").value;
+      if (document.getElementById("selInlineHub")) document.getElementById("selInlineHub").value = hub;
+      if (document.getElementById("selInlinePeriodKey")) document.getElementById("selInlinePeriodKey").value = key;
 
       document.getElementById("filterSummaryText").innerText = `${hub === 'all' ? 'Toàn Vùng MT01' : hub} • ${key || 'Mới nhất'}`;
 
@@ -1456,6 +1571,11 @@
         console.error("Error fetching cost data:", e);
       }
     }
+
+    let allLoadedDrivers = [];
+    let allLoadedDriversSummary = null;
+    let allLoadedNvxl = [];
+    let allLoadedNvxlSummary = null;
 
     function renderData(data) {
       window.lastRenderedData = data;
@@ -1476,52 +1596,166 @@
       document.getElementById("val_cost_per_stop").innerText = getVal("Chi phí giao hàng + xe tải / stop") + " đ";
       document.getElementById("val_cost_per_kg").innerText = getVal("Chi phí giao hàng + Cost / kg") + " đ";
 
-      // Render Table
+      // Cập nhật Banner Kỳ Báo Cáo Rõ Ràng cho cả Bảng Đối Soát 4 Kho & Bảng Lương
+      const pi = data.period_info || {};
+      const pKey = pi.key || (data.filter && data.filter.key) || "";
+      const pRange = pi.date_range_text || "";
+      const pHub = pi.hub || (data.filter && data.filter.hub) || "Toàn Vùng MT01";
+      const pModeVn = pi.mode_vn || "Theo Tháng";
+
+      if (document.getElementById("badgeHubTablePeriod")) {
+        document.getElementById("badgeHubTablePeriod").innerText = `📅 Kỳ đang xem (${pModeVn}): ${pKey} • ${pRange}`;
+      }
+      if (document.getElementById("txtSalaryPeriodBanner")) {
+        document.getElementById("txtSalaryPeriodBanner").innerText = `📅 KỲ ${pModeVn.toUpperCase()}: ${pKey}`;
+      }
+      if (document.getElementById("txtSalaryHubBanner")) {
+        document.getElementById("txtSalaryHubBanner").innerText = `📍 ${pHub}`;
+      }
+      if (document.getElementById("txtSalaryDateRangeSub")) {
+        document.getElementById("txtSalaryDateRangeSub").innerHTML = `⏱️ Phạm vi ngày cập nhật: <b style="color: #fbbf24;">${pRange}</b> • Đồng bộ lúc: <b>${data.last_sync || "Mới nhất"}</b>`;
+      }
+
+      // Render Table 4 Kho
       renderTable(data.hubs_breakdown || []);
 
-      // Render Drivers
+      // Lưu dữ liệu NVGH & NVXL
       const db = data.drivers_breakdown || {};
       allLoadedDrivers = db.list || [];
-      renderDriversTable(allLoadedDrivers, db.summary);
+      allLoadedDriversSummary = db.summary || {};
+
+      const nb = data.nvxl_breakdown || {};
+      allLoadedNvxl = nb.list || [];
+      allLoadedNvxlSummary = nb.summary || {};
+
+      if (document.getElementById("badgeDriverCount")) {
+        const actCnt = allLoadedDriversSummary.active_count !== undefined ? allLoadedDriversSummary.active_count : (allLoadedDriversSummary.count || 0);
+        document.getElementById("badgeDriverCount").innerText = `${actCnt}/${allLoadedDriversSummary.count || 0} NVGH`;
+      }
+      if (document.getElementById("badgeNvxlCount")) {
+        document.getElementById("badgeNvxlCount").innerText = `${allLoadedNvxlSummary.count || 0} NVXL`;
+      }
+
+      renderActiveSalaryTab();
 
       // Render Charts
       renderCharts(data);
     }
 
-    let allLoadedDrivers = [];
-
-    function renderDriversTable(drivers, summary) {
-      if (summary) {
-        document.getElementById("badgeDriverCount").innerText = `${summary.count || 0} Tài xế`;
-        document.getElementById("txtTotalDriverSalary").innerText = summary.formatted_total || "0 đ";
-        if (document.getElementById("txtTotalGtcSalary")) {
-          document.getElementById("txtTotalGtcSalary").innerText = summary.formatted_gtc || "0 đ";
-        }
-        if (document.getElementById("txtTotalLtcSalary")) {
-          document.getElementById("txtTotalLtcSalary").innerText = summary.formatted_ltc || "0 đ";
-        }
-        document.getElementById("txtAvgDriverSalary").innerText = summary.formatted_avg || "0 đ";
+    function switchSalaryTab(tab) {
+      currentSalaryTab = tab;
+      const btnNvgh = document.getElementById("tabBtnNVGH");
+      const btnNvxl = document.getElementById("tabBtnNVXL");
+      if (tab === "nvgh") {
+        btnNvgh.style.border = "1.5px solid #f59e0b";
+        btnNvgh.style.background = "rgba(245, 158, 11, 0.18)";
+        btnNvgh.style.color = "#fbbf24";
+        btnNvxl.style.border = "1.5px solid var(--border-color)";
+        btnNvxl.style.background = "rgba(255, 255, 255, 0.04)";
+        btnNvxl.style.color = "var(--text-sub)";
+      } else {
+        btnNvxl.style.border = "1.5px solid #10b981";
+        btnNvxl.style.background = "rgba(16, 185, 129, 0.18)";
+        btnNvxl.style.color = "#34d399";
+        btnNvgh.style.border = "1.5px solid var(--border-color)";
+        btnNvgh.style.background = "rgba(255, 255, 255, 0.04)";
+        btnNvgh.style.color = "var(--text-sub)";
       }
+      renderActiveSalaryTab();
+    }
+
+    function renderActiveSalaryTab() {
+      filterDriversTable();
+    }
+
+    function _getGtcRateColor(rate) {
+      if (rate >= 85) return "#10b981";
+      if (rate >= 80) return "#f59e0b";
+      if (rate > 0) return "#ef4444";
+      return "#64748b";
+    }
+
+    function renderDriversTable(items, summary) {
+      const isNvxl = (currentSalaryTab === "nvxl");
+      const sumObj = summary || (isNvxl ? allLoadedNvxlSummary : allLoadedDriversSummary) || {};
+
+      // Cập nhật nhãn tiêu đề cột & thẻ tổng theo Tab đang chọn
+      document.getElementById("thStaffName").innerText = isNvxl ? "Họ & Tên NV Xử Lý Kho (NVXL)" : "Họ & Tên NV Giao Hàng (NVGH)";
+      document.getElementById("thSalCol1").innerText = isNvxl ? "Lương Xử Lý Kho (VNĐ)" : "Lương GTC (VNĐ)";
+      document.getElementById("thSalCol2").innerText = isNvxl ? "Lương Giao Nhận Kiêm Nhiệm" : "LHH LTC - Lấy Hàng (VNĐ)";
+      document.getElementById("lblTotalSalMain").innerText = isNvxl ? "Tổng thu nhập NVXL:" : "Tổng lương NVGH:";
+      document.getElementById("lblSubSal1").innerText = isNvxl ? "Lương Xử Lý:" : "Lương GTC:";
+      document.getElementById("lblSubSal2").innerText = isNvxl ? "Kiêm nhiệm GN:" : "LHH LTC (Lấy):";
+      document.getElementById("lblAvgSal").innerText = isNvxl ? "Bình quân/NVXL:" : "Bình quân/NVGH:";
+
+      document.getElementById("txtSumDonGan").innerText = sumObj.formatted_don_gan || "0";
+      document.getElementById("txtSumDonGtc").innerText = sumObj.formatted_don_gtc || "0";
+      document.getElementById("txtSumDonLtc").innerText = sumObj.formatted_don_ltc || "0";
+      document.getElementById("txtSumGtcRate").innerText = sumObj.overall_gtc_rate || "0%";
+      document.getElementById("txtTotalDriverSalary").innerText = sumObj.formatted_total || "0 đ";
+      document.getElementById("txtTotalGtcSalary").innerText = isNvxl ? (sumObj.formatted_luong_xl || "0 đ") : (sumObj.formatted_gtc || "0 đ");
+      document.getElementById("txtTotalLtcSalary").innerText = isNvxl ? (sumObj.formatted_luong_gn || "0 đ") : (sumObj.formatted_ltc || "0 đ");
+      document.getElementById("txtAvgDriverSalary").innerText = sumObj.formatted_avg || "0 đ";
 
       const tbody = document.getElementById("tblBodyDrivers");
-      if (!drivers || drivers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Không có tài xế nào khớp bộ lọc</td></tr>';
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px;">Không có nhân sự nào khớp bộ lọc trong kỳ này</td></tr>';
         return;
       }
 
-      tbody.innerHTML = drivers.map(d => {
+      // Dòng TỔNG CỘNG trên cùng để Sếp đối chiếu nhanh
+      const summaryRowHtml = `
+        <tr style="background: rgba(16, 185, 129, 0.11); border-bottom: 2px solid rgba(16, 185, 129, 0.4);">
+          <td style="text-align: center; font-weight: 900; color: #34d399;">∑</td>
+          <td style="font-weight: 800; color: #34d399;">TỔNG CỘNG TOÀN BẢNG (${isNvxl ? (sumObj.count || 0) + ' NVXL' : (sumObj.active_count || 0) + ' NVGH có phát sinh'})</td>
+          <td style="color: var(--accent-blue); font-weight: 700;">📍 ${(window.lastRenderedData && window.lastRenderedData.period_info && window.lastRenderedData.period_info.hub) || 'Toàn Vùng MT01'}</td>
+          <td class="td-num" style="font-weight: 800; color: #fff; font-size: 14px;">${sumObj.formatted_don_gan || "0"}</td>
+          <td class="td-num" style="font-weight: 800; color: #34d399; font-size: 14px;">${sumObj.formatted_don_gtc || "0"}</td>
+          <td class="td-num" style="font-weight: 800; color: #fbbf24; font-size: 14px;">${sumObj.formatted_don_ltc || "0"}</td>
+          <td style="text-align: center;">
+            <span style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 800;">
+              ${sumObj.overall_gtc_rate || "0%"}
+            </span>
+          </td>
+          <td class="td-num" style="color: #38bdf8; font-weight: 800; font-size: 14px;">${isNvxl ? (sumObj.formatted_luong_xl || "0 đ") : (sumObj.formatted_gtc || "0 đ")}</td>
+          <td class="td-num" style="color: #f59e0b; font-weight: 800; font-size: 14px;">${isNvxl ? (sumObj.formatted_luong_gn || "0 đ") : (sumObj.formatted_ltc || "0 đ")}</td>
+          <td class="td-num" style="color: var(--accent-green); font-weight: 900; font-size: 15px;">${sumObj.formatted_total || "0 đ"}</td>
+          <td class="td-num" style="color: var(--accent-purple); font-weight: 800;">100%</td>
+          <td style="text-align: center;">
+            <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 800;">
+              Chuẩn Đối Soát
+            </span>
+          </td>
+        </tr>
+      `;
+
+      const rowsHtml = items.map(d => {
         let rankBadge = `#${d.rank}`;
         if (d.rank === 1) rankBadge = `<span style="font-size: 16px;">🥇</span> <b style="color: #fbbf24;">#1</b>`;
         else if (d.rank === 2) rankBadge = `<span style="font-size: 16px;">🥈</span> <b style="color: #94a3b8;">#2</b>`;
         else if (d.rank === 3) rankBadge = `<span style="font-size: 16px;">🥉</span> <b style="color: #b45309;">#3</b>`;
 
+        const staffName = isNvxl ? d.full_label : d.driver_name;
+        const staffIcon = isNvxl ? "🧑‍💼" : "👤";
+        const salCol1 = isNvxl ? (d.formatted_luong_xl || "0 đ") : (d.formatted_gtc || "0 đ");
+        const salCol2 = isNvxl ? (d.formatted_luong_gn || "0 đ") : (d.formatted_ltc || "0 đ");
+        const rateColor = _getGtcRateColor(d.gtc_rate || 0);
+
         return `
           <tr>
             <td style="text-align: center;">${rankBadge}</td>
-            <td style="font-weight: 700; color: #fff;">👤 ${d.driver_name}</td>
+            <td style="font-weight: 700; color: #fff;">${staffIcon} ${staffName}</td>
             <td style="color: var(--accent-blue);">🏢 ${d.hub_name}</td>
-            <td class="td-num" style="color: #38bdf8; font-weight: 600;">${d.formatted_gtc || "0 đ"}</td>
-            <td class="td-num" style="color: #f59e0b; font-weight: 600;">${d.formatted_ltc || "0 đ"}</td>
+            <td class="td-num" style="color: #e2e8f0; font-weight: 600;">${d.formatted_don_gan || "0"}</td>
+            <td class="td-num" style="color: #34d399; font-weight: 700;">${d.formatted_don_gtc || "0"}</td>
+            <td class="td-num" style="color: #fbbf24; font-weight: 600;">${d.formatted_don_ltc || "0"}</td>
+            <td style="text-align: center;">
+              <span style="background: ${rateColor}22; color: ${rateColor}; border: 1px solid ${rateColor}55; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 700;">
+                ${d.formatted_gtc_rate || "0%"}
+              </span>
+            </td>
+            <td class="td-num" style="color: #38bdf8; font-weight: 600;">${salCol1}</td>
+            <td class="td-num" style="color: #f59e0b; font-weight: 600;">${salCol2}</td>
             <td class="td-num" style="color: var(--accent-green); font-weight: 700; font-size: 14px;">${d.formatted_period_salary || d.formatted_total_salary}</td>
             <td class="td-num" style="color: var(--accent-purple); font-weight: 600;">${d.percentage || "0%"}</td>
             <td style="text-align: center;">
@@ -1532,19 +1766,27 @@
           </tr>
         `;
       }).join("");
+
+      tbody.innerHTML = summaryRowHtml + rowsHtml;
     }
 
     function filterDriversTable() {
+      const isNvxl = (currentSalaryTab === "nvxl");
+      const sourceList = isNvxl ? allLoadedNvxl : allLoadedDrivers;
+      const summaryObj = isNvxl ? allLoadedNvxlSummary : allLoadedDriversSummary;
       const q = (document.getElementById("txtSearchDriver").value || "").toLowerCase().trim();
-      if (!q) {
-        renderDriversTable(allLoadedDrivers);
-        return;
-      }
-      const filtered = allLoadedDrivers.filter(d => 
-        d.driver_name.toLowerCase().includes(q) || 
-        d.hub_name.toLowerCase().includes(q)
-      );
-      renderDriversTable(filtered);
+      const onlyActive = document.getElementById("chkOnlyActiveStaff") && document.getElementById("chkOnlyActiveStaff").checked;
+
+      const filtered = sourceList.filter(d => {
+        if (onlyActive && (d.period_salary || 0) <= 0 && (d.don_gan || 0) <= 0) {
+          return false;
+        }
+        if (!q) return true;
+        const nameStr = (d.full_label || d.driver_name || d.nvxl_name || "").toLowerCase();
+        const hubStr = (d.hub_name || "").toLowerCase();
+        return nameStr.includes(q) || hubStr.includes(q);
+      });
+      renderDriversTable(filtered, summaryObj);
     }
 
     function renderTable(hubs) {
