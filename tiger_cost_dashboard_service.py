@@ -179,8 +179,7 @@ def build_cost_dashboard_matrix(force=False):
                         continue
 
                     date_val = r[col_date].strip() if col_date >= 0 and col_date < len(r) else ""
-                    # Chỉ lấy dữ liệu chuẩn kỳ Tháng 10/2026 của Miền Tây 01
-                    if date_val and "/10/2026" not in date_val:
+                    if not date_val or "/2026" not in date_val:
                         continue
 
                     ltc_val = parse_vietnamese_float(r[col_ltc]) if col_ltc >= 0 and col_ltc < len(r) else 0.0
@@ -259,9 +258,15 @@ def build_cost_dashboard_matrix(force=False):
         except Exception as sal_ex:
             print(f"[{now_str}] ⚠️ Lỗi đọc sheet Data Raw: {sal_ex}")
 
+        official_month_key = r2[2].strip() if len(r2) > 2 else ""
+        official_week_key = r2[3].strip() if len(r2) > 3 else ""
+
         dashboard_data = {
             "last_sync": now_str,
+            "sync_epoch": datetime.datetime.now().timestamp(),
             "region": "Miền Tây 01",
+            "official_month_key": official_month_key,
+            "official_week_key": official_week_key,
             "months": list(months_dict.keys()),
             "weeks": list(weeks_dict.keys()),
             "days": days_list,
@@ -288,8 +293,11 @@ def build_cost_dashboard_matrix(force=False):
 def get_cost_dashboard_matrix():
     if os.path.exists(DASHBOARD_CACHE_FILE):
         try:
-            with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
+            # Tự động đồng bộ mới từ Google Sheets nếu file cache đã cũ quá 15 phút (900s)
+            mtime = os.path.getmtime(DASHBOARD_CACHE_FILE)
+            if (datetime.datetime.now().timestamp() - mtime) < 900:
+                with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
         except Exception:
             pass
     return build_cost_dashboard_matrix(force=True)
@@ -302,16 +310,24 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
     available_hubs = matrix.get("hubs", [])
     entities = matrix.get("entities", {})
     all_drivers = matrix.get("drivers", [])
+    official_month_key = matrix.get("official_month_key", "")
+    official_week_key = matrix.get("official_week_key", "")
+
+    # Lọc các ngày đã có phát sinh dữ liệu thật (Volume gán > 0) để làm mặc định ngày mới nhất & vẽ biểu đồ
+    mt01_vol_daily = entities.get("Toàn Vùng MT01", {}).get("metrics", {}).get("Volume gán", {}).get("daily", {})
+    active_days = [d for d in available_days if _clean_num(mt01_vol_daily.get(d, 0)) > 0]
+    if not active_days:
+        active_days = available_days
 
     if mode == "month":
         if not key or key not in available_months:
-            key = "Tháng 10-Năm 2026" if "Tháng 10-Năm 2026" in available_months else (available_months[-1] if available_months else "")
+            key = available_months[-1] if available_months else ""
     elif mode == "week":
         if not key or key not in available_weeks:
-            key = "Tuần 44-Năm 2026" if "Tuần 44-Năm 2026" in available_weeks else (available_weeks[-1] if available_weeks else "")
+            key = available_weeks[-1] if available_weeks else ""
     elif mode == "day":
         if not key or key not in available_days:
-            key = available_days[-1] if available_days else ""
+            key = active_days[-1] if active_days else ""
 
     selected_ent_label = "Toàn Vùng MT01"
     if hub and hub != "all":
@@ -333,7 +349,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
 
     def extract_entity_values(target_metrics):
         out = {}
-        if mode == "month" and key == "Tháng 10-Năm 2026":
+        if mode == "month" and official_month_key and key == official_month_key:
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("oct_official", "")
                 num_v = _clean_num(raw_v)
@@ -342,7 +358,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
                     "numeric": num_v,
                     "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
                 }
-        elif mode == "week" and key == "Tuần 44-Năm 2026":
+        elif mode == "week" and official_week_key and key == official_week_key:
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("w44_official", "")
                 num_v = _clean_num(raw_v)
@@ -429,6 +445,12 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
                 gtc_p = sum(d.get("daily", {}).get(day_str, {}).get("gtc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_week)
                 ltc_p = sum(d.get("daily", {}).get(day_str, {}).get("ltc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_week)
                 sal_period = gtc_p + ltc_p
+            elif mode == "month" and key and key in matrix.get("months_cols", {}) and available_days:
+                m_col_indices = matrix.get("months_cols", {}).get(key, [])
+                days_in_month = [available_days[c - 4] for c in m_col_indices if 0 <= c - 4 < len(available_days)]
+                gtc_p = sum(d.get("daily", {}).get(day_str, {}).get("gtc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_month)
+                ltc_p = sum(d.get("daily", {}).get(day_str, {}).get("ltc", 0.0) if isinstance(d.get("daily", {}).get(day_str), dict) else 0.0 for day_str in days_in_month)
+                sal_period = gtc_p + ltc_p
             else:
                 gtc_p = d.get("gtc_salary", 0.0)
                 ltc_p = d.get("ltc_salary", 0.0)
@@ -481,7 +503,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
         "formatted_avg": _format_vnd(tot_driver_sal / len(filtered_drivers)) + " đ" if filtered_drivers else "0 đ"
     }
 
-    recent_days = available_days[-14:] if len(available_days) >= 14 else available_days
+    recent_days = active_days[-14:] if len(active_days) >= 14 else active_days
     trend_labels = []
     trend_volume = []
     trend_cost_per_order = []

@@ -1161,7 +1161,7 @@
 
       <div style="font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
         <span>🎯 Góc nhìn:</span>
-        <strong id="filterSummaryText" style="color: var(--accent-blue);">Toàn Vùng MT01 • Tháng 10-Năm 2026</strong>
+        <strong id="filterSummaryText" style="color: var(--accent-blue);">Toàn Vùng MT01 • Tháng 11-Năm 2026</strong>
       </div>
     </section>
 
@@ -1396,12 +1396,15 @@
 
     async function loadInitial() {
       try {
-        const res = await fetch("/api/cost-dashboard/data?hub=all&mode=month&key=Tháng 10-Năm 2026");
+        const res = await fetch("/api/cost-dashboard/data?hub=all&mode=month");
         const json = await res.json();
         if (json.success) {
           filterOptions = json.available_filters;
           document.getElementById("syncStatus").innerText = "Đồng bộ: " + (json.last_sync || "Mới nhất");
-          updatePeriodDropdown();
+          updatePeriodDropdown(json.filter && json.filter.key);
+          if (json.filter && json.filter.key) {
+            document.getElementById("filterSummaryText").innerText = `Toàn Vùng MT01 • ${json.filter.key}`;
+          }
           renderData(json);
         }
       } catch (e) {
@@ -1409,7 +1412,7 @@
       }
     }
 
-    function updatePeriodDropdown() {
+    function updatePeriodDropdown(preferredKey) {
       const selKey = document.getElementById("selPeriodKey");
       const lblPeriod = document.getElementById("lblPeriod");
       selKey.innerHTML = "";
@@ -1426,13 +1429,12 @@
         items = (filterOptions && filterOptions.days) ? [...filterOptions.days].reverse() : [];
       }
 
-      items.forEach((item, idx) => {
+      const defaultTarget = preferredKey || ((currentMode === "day") ? items[0] : items[items.length - 1]);
+      items.forEach((item) => {
         const opt = document.createElement("option");
         opt.value = item;
         opt.innerText = item;
-        if (currentMode === "month" && item.includes("Tháng 10")) opt.selected = true;
-        else if (currentMode === "week" && item.includes("Tuần 44")) opt.selected = true;
-        else if (idx === 0 && !selKey.value) opt.selected = true;
+        if (item === defaultTarget) opt.selected = true;
         selKey.appendChild(opt);
       });
     }
