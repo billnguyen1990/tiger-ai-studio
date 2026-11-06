@@ -1693,6 +1693,71 @@
       }
     }
 
+    const MT01_NVXL_DIRECTORY = {
+      "bangc@giaohangnhanh.vn": {
+        email: "bangc@giaohangnhanh.vn",
+        name: "Công Bằng",
+        staff_id: "1716012",
+        role: "nvxl",
+        allowed_hub: "Kho Cái Răng",
+        can_access_studio: false
+      },
+      "toannpb@giaohangnhanh.vn": {
+        email: "toannpb@giaohangnhanh.vn",
+        name: "Nguyễn Phước Bảo Toàn",
+        staff_id: "3064883",
+        role: "nvxl",
+        allowed_hub: "Kho Bình Thủy",
+        can_access_studio: false
+      },
+      "trunghdd@giaohangnhanh.vn": {
+        email: "trunghdd@giaohangnhanh.vn",
+        name: "Huỳnh Diệp Đức Trung",
+        staff_id: "3126024",
+        role: "nvxl",
+        allowed_hub: "Kho Vị Thanh",
+        can_access_studio: false
+      },
+      "bangtt@giaohangnhanh.vn": {
+        email: "bangtt@giaohangnhanh.vn",
+        name: "Trần Trọng Bằng",
+        staff_id: "3130847",
+        role: "nvxl",
+        allowed_hub: "Kho Ô Môn",
+        can_access_studio: false
+      }
+    };
+
+    function _getAuthHeaders() {
+      const headers = {};
+      if (currentAuthUser) {
+        if (currentAuthUser.role === "admin") {
+          headers["X-Admin-Pin"] = "150917";
+        } else if (currentAuthUser.email) {
+          headers["X-Auth-Email"] = currentAuthUser.email;
+        }
+      }
+      return headers;
+    }
+
+    function _resolveLocalUser(rawInput) {
+      const clean = String(rawInput || "").trim().toLowerCase();
+      if (clean === "150917") {
+        return {
+          email: "admin@giaohangnhanh.vn",
+          name: "Quản Trị Vùng MT01",
+          staff_id: "ADMIN",
+          role: "admin",
+          allowed_hub: null,
+          can_access_studio: true
+        };
+      }
+      if (MT01_NVXL_DIRECTORY[clean]) {
+        return Object.assign({}, MT01_NVXL_DIRECTORY[clean]);
+      }
+      return null;
+    }
+
     async function submitCostLogin(e) {
       if (e) e.preventDefault();
       const inp = document.getElementById("inpAuthEmail");
@@ -1702,27 +1767,52 @@
 
       if (btn) btn.innerHTML = "<span>⏳ Đang xác thực...</span>";
       try {
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: val, pin: val })
-        });
-        const json = await res.json();
-        if (res.ok && json.success && json.user) {
+        let authedUser = null;
+        let serverError = null;
+        try {
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: val, pin: val })
+          });
+          const ct = (res.headers.get("content-type") || "").toLowerCase();
+          if (ct.includes("application/json")) {
+            const json = await res.json();
+            if (res.ok && json.success && json.user) {
+              authedUser = json.user;
+            } else {
+              serverError = json.error;
+            }
+          } else {
+            authedUser = _resolveLocalUser(val);
+          }
+        } catch (netErr) {
+          authedUser = _resolveLocalUser(val);
+        }
+
+        if (!authedUser && !serverError) {
+          authedUser = _resolveLocalUser(val);
+        }
+
+        if (authedUser) {
+          try {
+            localStorage.setItem("tiger_mt01_auth_user", JSON.stringify(authedUser));
+          } catch (errStorage) {}
           document.getElementById("authLoginModalOverlay").style.display = "none";
-          applyUserAuthUI(json.user);
+          applyUserAuthUI(authedUser);
           await loadInitial();
         } else {
-          showLoginModal(json.error || "Email hoặc Mã PIN không hợp lệ!");
+          showLoginModal(serverError || "Email không thuộc danh sách 4 NVXL được phân quyền (@giaohangnhanh.vn) hoặc sai Mã PIN Quản Trị!");
         }
-      } catch (err) {
-        showLoginModal("Lỗi kết nối máy chủ: " + err);
       } finally {
         if (btn) btn.innerHTML = "<span>🚀 Xác Thực & Vào Dashboard Kho</span>";
       }
     }
 
     async function logoutCostDashboard() {
+      try {
+        localStorage.removeItem("tiger_mt01_auth_user");
+      } catch (e) {}
       try {
         await fetch("/api/auth/logout", { method: "POST" });
       } catch (e) {}
@@ -1771,7 +1861,21 @@
           const noticeEl = document.getElementById("authNoticeStudioLocked");
           if (noticeEl) noticeEl.style.display = "block";
         }
-        const res = await fetch("/api/cost-dashboard/data?hub=all&mode=month");
+        if (!currentAuthUser) {
+          try {
+            const saved = localStorage.getItem("tiger_mt01_auth_user");
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (parsed && (parsed.role === "admin" || parsed.role === "nvxl")) {
+                applyUserAuthUI(parsed);
+              }
+            }
+          } catch (e) {}
+        }
+        const initialHub = (currentAuthUser && currentAuthUser.role === "nvxl") ? currentAuthUser.allowed_hub : "all";
+        const res = await fetch(`/api/cost-dashboard/data?hub=${encodeURIComponent(initialHub)}&mode=month`, {
+          headers: _getAuthHeaders()
+        });
         const json = await res.json();
         if (res.status === 401 || json.auth_required) {
           showLoginModal();
@@ -1844,7 +1948,7 @@
 
       try {
         const url = `/api/cost-dashboard/data?hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
-        const res = await fetch(url);
+        const res = await fetch(url, { headers: _getAuthHeaders() });
         const json = await res.json();
         if (res.status === 401 || json.auth_required) {
           showLoginModal();
@@ -2193,9 +2297,14 @@
               }
 
     function exportCostExcel() {
-                const hub = (document.getElementById("selHub") && document.getElementById("selHub").value) || "all";
+                const hub = (currentAuthUser && currentAuthUser.role === "nvxl")
+                  ? currentAuthUser.allowed_hub
+                  : ((document.getElementById("selHub") && document.getElementById("selHub").value) || "all");
                 const key = (document.getElementById("selPeriodKey") && document.getElementById("selPeriodKey").value) || "";
-                const url = `/api/cost-analytics/excel?hub=${encodeURIComponent(hub)}&mode=${encodeURIComponent(currentMode)}&key=${encodeURIComponent(key)}`;
+                const extraAuth = (currentAuthUser && currentAuthUser.role === "admin")
+                  ? "&pin=150917"
+                  : ((currentAuthUser && currentAuthUser.email) ? `&auth_email=${encodeURIComponent(currentAuthUser.email)}` : "");
+                const url = `/api/cost-analytics/excel?hub=${encodeURIComponent(hub)}&mode=${encodeURIComponent(currentMode)}&key=${encodeURIComponent(key)}${extraAuth}`;
                 window.location.href = url;
               }
 
