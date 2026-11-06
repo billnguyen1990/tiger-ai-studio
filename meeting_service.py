@@ -5,15 +5,21 @@ import time
 import subprocess
 import requests
 from datetime import datetime
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except Exception:
+    sync_playwright = None
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 MEETINGS_FILE = os.path.join(DATA_DIR, "meetings.json")
-SCRATCH_DIR = os.path.dirname(BASE_DIR)
-PDF_EXPORT_DIR = os.path.join(SCRATCH_DIR, "meeting_exports")
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(PDF_EXPORT_DIR, exist_ok=True)
+SCRATCH_DIR = BASE_DIR
+PDF_EXPORT_DIR = os.path.join(DATA_DIR, "meeting_exports")
+try:
+    os.makedirs(DATA_DIR, exist_ok=True)
+    os.makedirs(PDF_EXPORT_DIR, exist_ok=True)
+except Exception:
+    pass
 
 # Active bot process tracker
 _ACTIVE_MEETING_PROCESS = None

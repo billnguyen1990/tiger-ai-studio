@@ -7718,7 +7718,11 @@ def api_saban_reset_incidents():
 # ==============================================================================
 # 🏛️ PHÒNG HỌP & PHÒNG TRUYỀN THÔNG AI (MEETING & MEDIA SUITE)
 # ==============================================================================
-import meeting_service
+try:
+    import meeting_service
+except Exception as _ms_err:
+    print(f"[Meeting Service Init Warning] {_ms_err}")
+    meeting_service = None
 
 @app.route("/sa-ban-2d")
 def route_sa_ban_2d():
