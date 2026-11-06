@@ -1183,6 +1183,9 @@
           </div>
         </div>
       </div>
+      <span class="sync-badge" id="badgeCurrentUserRole" style="display: none; background: rgba(16, 185, 129, 0.14); border: 1px solid var(--accent-green); color: var(--accent-green); font-weight: 800;">
+        👤 Đang kiểm tra quyền...
+      </span>
       <span class="sync-badge" id="syncStatus">Đồng bộ: Đang tải...</span>
       <button class="btn btn-primary" id="btnSyncLive" onclick="triggerSync()">
         <span>🔄 Đồng Bộ Sheets</span>
@@ -1190,11 +1193,53 @@
       <button type="button" class="btn btn-outline" id="btnExportExcelTop" onclick="exportCostExcel()">
         <span>📥 Xuất Excel</span>
       </button>
-      <a href="/" class="btn btn-outline">
+      <a href="/" class="btn btn-outline" id="btnBackToStudio">
         <span>🔙 Về Studio</span>
       </a>
+      <button type="button" class="btn btn-outline" id="btnLogoutAccount" onclick="logoutCostDashboard()" title="Đăng xuất hoặc đổi sang tài khoản Email Kho khác" style="border-color: rgba(239, 68, 68, 0.45); color: var(--accent-red);">
+        <span>🚪 Đổi TK</span>
+      </button>
     </div>
   </header>
+
+  <!-- CỔNG ĐĂNG NHẬP PHÂN QUYỀN EMAIL CÔNG TY (@giaohangnhanh.vn) CHO 4 NVXL & SẾP LỘC -->
+  <div id="authLoginModalOverlay" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(6, 15, 20, 0.88); backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 16px;">
+    <div style="width: 100%; max-width: 460px; background: var(--bg-card); border: 1.5px solid var(--border-accent); border-radius: 18px; padding: 28px 26px; box-shadow: 0 24px 60px rgba(0,0,0,0.65); color: var(--text-main);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <img src="/static/img/tiger_avatar.jpg" alt="Tiger AI" style="width: 48px; height: 48px; border-radius: 12px; border: 2px solid var(--accent-green); object-fit: cover;">
+        <div>
+          <div style="font-size: 16.5px; font-weight: 800; color: var(--text-main);">🔐 CỔNG PHÂN QUYỀN DASHBOARD MT01</div>
+          <div style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">Sử dụng Email công ty (@giaohangnhanh.vn) để vào Kho phụ trách</div>
+        </div>
+      </div>
+
+      <div id="authNoticeStudioLocked" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.45); color: var(--accent-amber); padding: 10px 12px; border-radius: 10px; font-size: 12.5px; font-weight: 700; margin-bottom: 14px;">
+        🔒 Tài khoản NVXL chỉ được cấp quyền xem Dashboard của Kho mình quản lý, không được phép truy cập vào Studio!
+      </div>
+
+      <form onsubmit="submitCostLogin(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase;">
+            📧 Email Công Ty NVXL (Hoặc nhập Mã PIN Quản Trị Sếp Lộc)
+          </label>
+          <input type="text" id="inpAuthEmail" placeholder="VD: bangc@giaohangnhanh.vn" autocomplete="username" required
+            style="width: 100%; padding: 11px 14px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--bg-input); color: var(--text-main); font-size: 14px; font-weight: 600; outline: none;">
+        </div>
+
+        <div id="txtAuthLoginError" style="display: none; background: rgba(239, 68, 68, 0.14); border: 1px solid rgba(239, 68, 68, 0.4); color: var(--accent-red); padding: 9px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600;"></div>
+
+        <button type="submit" id="btnSubmitAuthLogin" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px; font-weight: 800; border-radius: 10px;">
+          <span>🚀 Xác Thực & Vào Dashboard Kho</span>
+        </button>
+      </form>
+
+      <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border-color); font-size: 12px; color: var(--text-sub); line-height: 1.6;">
+        <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">📌 Quy định phân quyền truy cập Vùng Miền Tây 01:</div>
+        <div>• <b>NVXL 4 Kho</b>: Đăng nhập bằng mail <code>@giaohangnhanh.vn</code> được cấp — chỉ xem duy nhất số liệu của Kho mình quản lý, khóa quyền xem Kho khác & khóa Studio.</div>
+        <div>• <b>Quản Trị Vùng (Sếp Lộc)</b>: Nhập Mã PIN Quản Trị để mở toàn bộ 4 Kho MT01 & Studio.</div>
+      </div>
+    </div>
+  </div>
 
   <!-- MAIN -->
   <main class="main-content">
@@ -1382,7 +1427,7 @@
     <section class="content-box">
       <div class="box-header" style="flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
+          <div class="box-title" id="titleHubComparisonBox">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
           <span id="badgeHubTablePeriod"
             style="background: rgba(2, 132, 199, 0.12); border: 1px solid var(--border-accent); color: var(--accent-blue); padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;">
             📅 Đang tải kỳ báo cáo...
@@ -1550,9 +1595,146 @@
   <script>
     let currentMode = "month";
     let currentSalaryTab = "nvgh"; // 'nvgh' hoặc 'nvxl'
+    let currentAuthUser = null;
     let filterOptions = null;
     let trendChartInstance = null;
     let pieChartInstance = null;
+
+    function showLoginModal(errorMsg) {
+      const modal = document.getElementById("authLoginModalOverlay");
+      const errBox = document.getElementById("txtAuthLoginError");
+      if (errBox) {
+        if (errorMsg) {
+          errBox.innerText = errorMsg;
+          errBox.style.display = "block";
+        } else {
+          errBox.style.display = "none";
+        }
+      }
+      if (modal) {
+        modal.style.display = "flex";
+        setTimeout(() => {
+          const inp = document.getElementById("inpAuthEmail");
+          if (inp) inp.focus();
+        }, 80);
+      }
+    }
+
+    function applyUserAuthUI(user) {
+      currentAuthUser = user;
+      const badgeRole = document.getElementById("badgeCurrentUserRole");
+      const btnStudio = document.getElementById("btnBackToStudio");
+      const selHub = document.getElementById("selHub");
+      const selInlineHub = document.getElementById("selInlineHub");
+      const titleHubBox = document.getElementById("titleHubComparisonBox");
+
+      if (!user) {
+        if (badgeRole) badgeRole.style.display = "none";
+        if (btnStudio) btnStudio.style.display = "none";
+        return;
+      }
+
+      if (badgeRole) {
+        badgeRole.style.display = "inline-flex";
+        if (user.role === "nvxl") {
+          badgeRole.innerHTML = `🔒 NVXL: ${user.name} • ${user.allowed_hub} (${user.email})`;
+        } else {
+          badgeRole.innerHTML = `👑 ${user.name} • Toàn Quyền 4 Kho & Studio`;
+        }
+      }
+
+      if (user.role === "nvxl") {
+        // 1. Khóa tuyệt đối nút Về Studio đối với NVXL
+        if (btnStudio) btnStudio.style.display = "none";
+
+        // 2. Khóa cứng bộ lọc Kho chỉ còn đúng Kho của NVXL đó quản lý
+        const hubName = user.allowed_hub;
+        if (selHub) {
+          selHub.innerHTML = `<option value="${hubName}" selected>🔒 ${hubName} (Kho Bạn Quản Lý)</option>`;
+          selHub.value = hubName;
+          selHub.disabled = true;
+        }
+        if (selInlineHub) {
+          selInlineHub.innerHTML = `<option value="${hubName}" selected>🔒 ${hubName}</option>`;
+          selInlineHub.value = hubName;
+          selInlineHub.disabled = true;
+        }
+        if (titleHubBox) {
+          titleHubBox.innerText = `📋 BẢNG ĐỐI SOÁT CHỈ SỐ VẬN HÀNH — ${hubName.toUpperCase()}`;
+        }
+      } else {
+        // Admin (Sếp Lộc): Mở toàn bộ 4 Kho & nút Về Studio
+        if (btnStudio) btnStudio.style.display = "inline-flex";
+        const fullHubOptions = `
+          <option value="all" selected>Toàn Vùng MT01 (Tổng Hợp)</option>
+          <option value="Kho Cái Răng">Kho Cái Răng</option>
+          <option value="Kho Bình Thủy">Kho Bình Thủy</option>
+          <option value="Kho Vị Thanh">Kho Vị Thanh</option>
+          <option value="Kho Ô Môn">Kho Ô Môn</option>
+        `;
+        if (selHub) {
+          const curVal = selHub.value || "all";
+          selHub.innerHTML = fullHubOptions;
+          selHub.value = curVal;
+          selHub.disabled = false;
+        }
+        if (selInlineHub) {
+          const curVal2 = selInlineHub.value || "all";
+          selInlineHub.innerHTML = `
+            <option value="all">Toàn Vùng MT01</option>
+            <option value="Kho Cái Răng">📍 Kho Cái Răng</option>
+            <option value="Kho Bình Thủy">📍 Kho Bình Thủy</option>
+            <option value="Kho Vị Thanh">📍 Kho Vị Thanh</option>
+            <option value="Kho Ô Môn">📍 Kho Ô Môn</option>
+          `;
+          selInlineHub.value = curVal2;
+          selInlineHub.disabled = false;
+        }
+        if (titleHubBox) {
+          titleHubBox.innerText = "📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01";
+        }
+      }
+    }
+
+    async function submitCostLogin(e) {
+      if (e) e.preventDefault();
+      const inp = document.getElementById("inpAuthEmail");
+      const btn = document.getElementById("btnSubmitAuthLogin");
+      const val = (inp ? inp.value : "").trim();
+      if (!val) return;
+
+      if (btn) btn.innerHTML = "<span>⏳ Đang xác thực...</span>";
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: val, pin: val })
+        });
+        const json = await res.json();
+        if (res.ok && json.success && json.user) {
+          document.getElementById("authLoginModalOverlay").style.display = "none";
+          applyUserAuthUI(json.user);
+          await loadInitial();
+        } else {
+          showLoginModal(json.error || "Email hoặc Mã PIN không hợp lệ!");
+        }
+      } catch (err) {
+        showLoginModal("Lỗi kết nối máy chủ: " + err);
+      } finally {
+        if (btn) btn.innerHTML = "<span>🚀 Xác Thực & Vào Dashboard Kho</span>";
+      }
+    }
+
+    async function logoutCostDashboard() {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch (e) {}
+      currentAuthUser = null;
+      applyUserAuthUI(null);
+      const inp = document.getElementById("inpAuthEmail");
+      if (inp) inp.value = "";
+      showLoginModal();
+    }
 
     function setMode(mode) {
       currentMode = mode;
@@ -1588,14 +1770,26 @@
 
     async function loadInitial() {
       try {
+        if (window.location.search.includes("notice=studio_locked")) {
+          const noticeEl = document.getElementById("authNoticeStudioLocked");
+          if (noticeEl) noticeEl.style.display = "block";
+        }
         const res = await fetch("/api/cost-dashboard/data?hub=all&mode=month");
         const json = await res.json();
+        if (res.status === 401 || json.auth_required) {
+          showLoginModal();
+          return;
+        }
         if (json.success) {
+          if (json.current_user) {
+            applyUserAuthUI(json.current_user);
+          }
           filterOptions = json.available_filters;
           document.getElementById("syncStatus").innerText = "Đồng bộ: " + (json.last_sync || "Mới nhất");
           updatePeriodDropdown(json.filter && json.filter.key);
           if (json.filter && json.filter.key) {
-            document.getElementById("filterSummaryText").innerText = `Toàn Vùng MT01 • ${json.filter.key}`;
+            const hubLabel = (json.filter && json.filter.hub) ? json.filter.hub : "Toàn Vùng MT01";
+            document.getElementById("filterSummaryText").innerText = `${hubLabel} • ${json.filter.key}`;
           }
           renderData(json);
         }
@@ -1642,7 +1836,9 @@
     }
 
     async function fetchData() {
-      const hub = document.getElementById("selHub").value;
+      const hub = (currentAuthUser && currentAuthUser.role === "nvxl")
+        ? currentAuthUser.allowed_hub
+        : document.getElementById("selHub").value;
       const key = document.getElementById("selPeriodKey").value;
       if (document.getElementById("selInlineHub")) document.getElementById("selInlineHub").value = hub;
       if (document.getElementById("selInlinePeriodKey")) document.getElementById("selInlinePeriodKey").value = key;
@@ -1653,7 +1849,14 @@
         const url = `/api/cost-dashboard/data?hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
         const res = await fetch(url);
         const json = await res.json();
+        if (res.status === 401 || json.auth_required) {
+          showLoginModal();
+          return;
+        }
         if (json.success) {
+          if (json.current_user) {
+            applyUserAuthUI(json.current_user);
+          }
           renderData(json);
         }
       } catch (e) {

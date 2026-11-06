@@ -8,7 +8,7 @@ import subprocess
 import threading
 import datetime
 import time
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, render_template, jsonify, request, send_from_directory, session, redirect
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import urllib.parse
@@ -22,9 +22,70 @@ _cached_tasks = []
 _cached_tasks_time = 0
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "tiger_ai_mt01_rbac_secret_key_2026_ghn")
+app.permanent_session_lifetime = datetime.timedelta(days=30)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 app.jinja_env.auto_reload = True
+
+# ==============================================================================
+# 🔐 PHÂN QUYỀN TRUY CẬP DASHBOARD THEO EMAIL CÔNG TY (@giaohangnhanh.vn) CHO 4 NVXL
+# ==============================================================================
+MT01_NVXL_ACCOUNTS = {
+    "bangc@giaohangnhanh.vn": {
+        "email": "bangc@giaohangnhanh.vn",
+        "name": "Công Bằng",
+        "staff_id": "1716012",
+        "role": "nvxl",
+        "allowed_hub": "Kho Cái Răng",
+        "can_access_studio": False
+    },
+    "toannpb@giaohangnhanh.vn": {
+        "email": "toannpb@giaohangnhanh.vn",
+        "name": "Nguyễn Phước Bảo Toàn",
+        "staff_id": "3064883",
+        "role": "nvxl",
+        "allowed_hub": "Kho Bình Thủy",
+        "can_access_studio": False
+    },
+    "trunghdd@giaohangnhanh.vn": {
+        "email": "trunghdd@giaohangnhanh.vn",
+        "name": "Huỳnh Diệp Đức Trung",
+        "staff_id": "3126024",
+        "role": "nvxl",
+        "allowed_hub": "Kho Vị Thanh",
+        "can_access_studio": False
+    },
+    "bangtt@giaohangnhanh.vn": {
+        "email": "bangtt@giaohangnhanh.vn",
+        "name": "Trần Trọng Bằng",
+        "staff_id": "3130847",
+        "role": "nvxl",
+        "allowed_hub": "Kho Ô Môn",
+        "can_access_studio": False
+    }
+}
+
+def get_current_mt01_user(req=None):
+    """Lấy thông tin tài khoản đang đăng nhập từ Flask Session hoặc Header"""
+    u = session.get("mt01_user")
+    if isinstance(u, dict) and u.get("role") in ("admin", "nvxl"):
+        return u
+    r = req or request
+    if r:
+        hdr_pin = (r.headers.get("X-Admin-Pin") or r.args.get("pin") or "").strip()
+        if hdr_pin == "150917":
+            return {
+                "email": "admin@giaohangnhanh.vn",
+                "name": "Sếp Lộc (Admin MT01)",
+                "role": "admin",
+                "allowed_hub": None,
+                "can_access_studio": True
+            }
+        hdr_email = (r.headers.get("X-Auth-Email") or r.args.get("auth_email") or "").strip().lower()
+        if hdr_email in MT01_NVXL_ACCOUNTS:
+            return dict(MT01_NVXL_ACCOUNTS[hdr_email])
+    return None
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(BASE_DIR, "..")) if os.path.exists(os.path.join(BASE_DIR, "..", "tiger_gtc_kpi_reporter.py")) else BASE_DIR
@@ -93,11 +154,76 @@ def add_no_cache_headers(response):
 
 @app.route("/")
 def index():
+    u = get_current_mt01_user()
+    if not u:
+        return redirect("/cost-dashboard")
+    if u.get("role") != "admin":
+        return redirect("/cost-dashboard?notice=studio_locked")
     return render_template("index.html")
+
+@app.route("/api/auth/me", methods=["GET"])
+def api_auth_me():
+    u = get_current_mt01_user()
+    return jsonify({
+        "success": True,
+        "authenticated": bool(u),
+        "user": u
+    })
+
+@app.route("/api/auth/login", methods=["POST"])
+def api_auth_login():
+    """Đăng nhập Dashboard bằng Email công ty (@giaohangnhanh.vn) cho 4 NVXL hoặc Mã PIN Admin cho Sếp Lộc"""
+    data = request.get_json(silent=True, force=True) or {}
+    email_raw = str(data.get("email", "")).strip().lower()
+    pin_raw = str(data.get("pin", "")).strip()
+
+    # 1. Nếu nhập Mã PIN Admin (150917) ở ô PIN hoặc ô Email -> Mở toàn quyền Admin Sếp Lộc
+    if pin_raw == "150917" or email_raw == "150917":
+        admin_user = {
+            "email": email_raw if "@" in email_raw else "locnp@giaohangnhanh.vn",
+            "name": "Sếp Lộc (Quản Trị Vùng MT01)",
+            "staff_id": "ADMIN",
+            "role": "admin",
+            "allowed_hub": None,
+            "can_access_studio": True
+        }
+        session.permanent = True
+        session["mt01_user"] = admin_user
+        return jsonify({
+            "success": True,
+            "user": admin_user,
+            "message": "Chào mừng Sếp Lộc! Đã mở khóa toàn quyền 4 Kho MT01 & Studio."
+        })
+
+    # 2. Kiểm tra danh sách 4 Email NVXL được cấp quyền
+    if email_raw in MT01_NVXL_ACCOUNTS:
+        nvxl_user = dict(MT01_NVXL_ACCOUNTS[email_raw])
+        session.permanent = True
+        session["mt01_user"] = nvxl_user
+        return jsonify({
+            "success": True,
+            "user": nvxl_user,
+            "message": f"Đăng nhập thành công: NVXL {nvxl_user['name']} ({nvxl_user['allowed_hub']})."
+        })
+
+    return jsonify({
+        "success": False,
+        "error": "Email không thuộc danh sách 4 NVXL được phân quyền (bangc / toannpb / trunghdd / bangtt @giaohangnhanh.vn) hoặc sai Mã PIN Quản Trị!"
+    }), 403
+
+@app.route("/api/auth/logout", methods=["POST", "GET"])
+def api_auth_logout():
+    session.pop("mt01_user", None)
+    if request.method == "GET":
+        return redirect("/cost-dashboard")
+    return jsonify({"success": True, "message": "Đã đăng xuất thành công."})
 
 @app.route("/api/workflows")
 def get_workflows():
     """Trả về danh sách 8 Workflow chuẩn hóa dạng Nodes & Edges"""
+    u = get_current_mt01_user()
+    if u and u.get("role") == "nvxl":
+        return jsonify({"success": False, "error": "Tài khoản NVXL chỉ được cấp quyền xem Dashboard của Kho phụ trách, không có quyền truy cập Studio!"}), 403
     workflows = {
         "truck_odo_365": {
             "id": "truck_odo_365",
@@ -698,6 +824,15 @@ def verify_admin_pin():
     data = request.get_json(silent=True, force=True) or {}
     pin = str(data.get("pin", "")).strip()
     if pin == ADMIN_MASTER_PIN:
+        session.permanent = True
+        session["mt01_user"] = {
+            "email": "locnp@giaohangnhanh.vn",
+            "name": "Sếp Lộc (Quản Trị Vùng MT01)",
+            "staff_id": "ADMIN",
+            "role": "admin",
+            "allowed_hub": None,
+            "can_access_studio": True
+        }
         return jsonify({
             "success": True,
             "role": "admin",
@@ -5333,15 +5468,29 @@ def view_cost_dashboard():
 
 @app.route("/api/cost-dashboard/data", methods=["GET"])
 def api_get_cost_dashboard_data():
-    """API truy vấn dữ liệu chi phí vận tải theo bộ lọc Vùng, Kho, Tháng, Tuần, Ngày"""
+    """API truy vấn dữ liệu chi phí vận tải theo bộ lọc Vùng, Kho, Tháng, Tuần, Ngày (Có kiểm soát phân quyền Email NVXL theo từng Kho)"""
     from flask import request
+    u = get_current_mt01_user(request)
+    if not u:
+        return jsonify({
+            "success": False,
+            "auth_required": True,
+            "error": "Vui lòng đăng nhập bằng Email công ty (@giaohangnhanh.vn) hoặc Mã PIN Quản Trị để xem Dashboard!"
+        }), 401
+
     region = request.args.get("region", "Miền Tây 01")
     hub = request.args.get("hub", "all")
     mode = request.args.get("mode", "month")
     key = request.args.get("key")
+
+    restrict_to_hub = u.get("allowed_hub") if u.get("role") == "nvxl" else None
+    if restrict_to_hub:
+        hub = restrict_to_hub
+
     try:
         from tiger_cost_dashboard_service import query_mt01_cost_data
-        data = query_mt01_cost_data(hub=hub, mode=mode, key=key)
+        data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub)
+        data["current_user"] = u
         return jsonify(data)
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -5378,21 +5527,29 @@ def api_sync_cost_analytics():
 
 @app.route("/api/cost-analytics/excel", methods=["GET"])
 def api_download_cost_excel():
-    """Tải file Excel đối soát chi phí, bảng lương NVGH/NVXL & xe tải theo đúng kỳ báo cáo đang chọn"""
+    """Tải file Excel đối soát chi phí, bảng lương NVGH/NVXL & xe tải theo đúng kỳ báo cáo và quyền hạn Kho của tài khoản"""
     from flask import send_file, request
+    u = get_current_mt01_user(request)
+    if not u:
+        return redirect("/cost-dashboard")
+
+    restrict_to_hub = u.get("allowed_hub") if u.get("role") == "nvxl" else None
     try:
         from tiger_cost_dashboard_service import generate_mt01_cost_excel_report
-        hub = request.args.get("hub", "all")
+        hub = restrict_to_hub or request.args.get("hub", "all")
         mode = request.args.get("mode", "month")
         key = request.args.get("key") or None
-        excel_path, download_filename = generate_mt01_cost_excel_report(hub=hub, mode=mode, key=key)
+        excel_path, download_filename = generate_mt01_cost_excel_report(
+            hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub
+        )
         if os.path.exists(excel_path):
             return send_file(excel_path, as_attachment=True, download_name=download_filename)
     except Exception as e:
         print(f"[Cost Excel Export Error] {e}")
-        excel_path = os.path.join(BASE_DIR, "data", "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
-        if os.path.exists(excel_path):
-            return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+        if not restrict_to_hub:
+            excel_path = os.path.join(BASE_DIR, "data", "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+            if os.path.exists(excel_path):
+                return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
     return jsonify({"success": False, "error": "Chưa có file Excel đối soát"}), 404
 
 
@@ -7572,7 +7729,12 @@ def route_sa_ban_2d():
 
 @app.route("/phong-hop")
 def route_phong_hop():
-    """Giao diện Quản lý Phòng Họp AI & Phòng Truyền Thông"""
+    """Giao diện Quản lý Phòng Họp AI & Phòng Truyền Thông (Chỉ dành cho Admin Sếp Lộc)"""
+    u = get_current_mt01_user()
+    if not u:
+        return redirect("/cost-dashboard")
+    if u.get("role") != "admin":
+        return redirect("/cost-dashboard?notice=studio_locked")
     return render_template("phong_hop.html")
 
 @app.route("/api/meetings/live-feed")

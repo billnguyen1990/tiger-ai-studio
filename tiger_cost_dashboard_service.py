@@ -475,7 +475,9 @@ def get_cost_dashboard_matrix():
             pass
     return build_cost_dashboard_matrix(force=True)
 
-def query_mt01_cost_data(hub="all", mode="month", key=None):
+def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None):
+    if restrict_to_hub:
+        hub = restrict_to_hub
     matrix = get_cost_dashboard_matrix()
     available_months = matrix.get("months", [])
     available_weeks = matrix.get("weeks", [])
@@ -649,9 +651,10 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
 
     result_metrics = extract_entity_values(metrics_map)
 
-    # Bảng phân rã 4 Kho trong MT01
+    # Bảng phân rã 4 Kho trong MT01 (nếu bị giới hạn quyền theo kho thì chỉ trả về đúng kho được phép)
     hubs_breakdown = []
-    for h_label in ["Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"]:
+    target_hub_list = [restrict_to_hub] if restrict_to_hub else ["Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"]
+    for h_label in target_hub_list:
         h_ent = entities.get(h_label, {})
         h_vals = extract_entity_values(h_ent.get("metrics", {}))
         row = {"hub_name": h_label}
@@ -878,12 +881,13 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
             "key": key
         },
         "available_filters": {
-            "hubs": ["Toàn Vùng MT01", "Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"],
+            "hubs": [restrict_to_hub] if restrict_to_hub else ["Toàn Vùng MT01", "Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"],
             "months": available_months,
             "weeks": available_weeks,
             "days": available_days,
             "latest_active_day": active_days[-1] if active_days else (available_days[-1] if available_days else "")
         },
+        "restricted_hub": restrict_to_hub,
         "metrics": result_metrics,
         "hubs_breakdown": hubs_breakdown,
         "drivers_breakdown": {
@@ -903,18 +907,21 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
     }
 
 
-def generate_mt01_cost_excel_report(hub="all", mode="month", key=None):
+def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_to_hub=None):
     """
     Xuất báo cáo Excel đối soát Chi Phí, Sản Lượng Đơn & Bảng Lương (NVGH + NVXL + Xe Tải 365)
     được thiết kế chuẩn Executive: tự động căn chỉnh độ rộng cột, định dạng số nguyên VNĐ (#,##0 "đ"),
     tô màu cảnh báo KPI, đóng khung viền và ghim dòng tiêu đề.
+    Nếu restrict_to_hub có giá trị, chỉ xuất dữ liệu của đúng kho đó (bảo mật 100% các kho khác).
     """
     import re
     from openpyxl import Workbook
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
 
-    data = query_mt01_cost_data(hub=hub, mode=mode, key=key)
+    if restrict_to_hub:
+        hub = restrict_to_hub
+    data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub)
     p_info = data.get("period_info", {})
     flt = data.get("filter", {})
     hub_label = flt.get("hub", "Toàn Vùng MT01")
@@ -1425,26 +1432,6 @@ def generate_mt01_cost_excel_report(hub="all", mode="month", key=None):
     # SHEET 4: ĐỐI SOÁT XE TẢI CỐ ĐỊNH NCC VẬN TẢI 365
     # =========================================================================
     ws4 = wb.create_sheet(title="4_Xe_Co_Dinh_NCC_365")
-    _add_sheet_banner(ws4, f"BẢNG ĐỐI SOÁT XE TẢI CỐ ĐỊNH (NCC VẬN TẢI 365) — {period_title.upper()}", 9)
-
-    headers_s4 = [
-        "Ngày Vận Hành",
-        "Kho Cái Răng (Chuẩn 6)",
-        "Kho Bình Thủy (Chuẩn 3)",
-        "Kho Vị Thanh (Chuẩn 2)",
-        "Kho Ô Môn (Chuẩn 2)",
-        "Tổng Xe Chạy Thực Tế",
-        "Định Mức Vùng (13 Xe)",
-        "Chênh Lệch (Xe)",
-        "Ghi Chú / Trạng Thái"
-    ]
-    ws4.row_dimensions[4].height = 28
-    for c_idx, h_text in enumerate(headers_s4, 1):
-        c = ws4.cell(row=4, column=c_idx, value=h_text)
-        c.font = f_tbl_header
-        c.fill = fill_header
-        c.border = b_header
-        c.alignment = al_center if c_idx < 9 else al_left
 
     truck_records = []
     cost_cache_path = os.path.join(DATA_DIR, "mt01_cost_analytics.json")
@@ -1456,88 +1443,194 @@ def generate_mt01_cost_excel_report(hub="all", mode="month", key=None):
         except Exception:
             truck_records = []
 
-    tot_cr = sum(int(r.get("hubs", {}).get("Cái Răng", {}).get("running", 0)) for r in truck_records)
-    tot_bt = sum(int(r.get("hubs", {}).get("Bình Thủy", {}).get("running", 0)) for r in truck_records)
-    tot_vt = sum(int(r.get("hubs", {}).get("Vị Thanh", {}).get("running", 0)) for r in truck_records)
-    tot_om = sum(int(r.get("hubs", {}).get("Ô Môn", {}).get("running", 0)) for r in truck_records)
-    tot_run = sum(int(r.get("total_running", 0)) for r in truck_records)
-    tot_norm = len(truck_records) * 13
-    tot_diff = tot_run - tot_norm
+    hub_truck_meta = {
+        "Kho Cái Răng": ("Cái Răng", 6),
+        "Kho Bình Thủy": ("Bình Thủy", 3),
+        "Kho Vị Thanh": ("Vị Thanh", 2),
+        "Kho Ô Môn": ("Ô Môn", 2)
+    }
 
-    ws4.row_dimensions[5].height = 25
-    sum_row_s4 = [
-        f"∑ TỔNG ({len(truck_records)} ngày)",
-        tot_cr,
-        tot_bt,
-        tot_vt,
-        tot_om,
-        tot_run,
-        tot_norm,
-        tot_diff,
-        "Tổng hợp lượt xe chạy thực tế so với định mức"
-    ]
-    for c_idx, val in enumerate(sum_row_s4, 1):
-        c = ws4.cell(row=5, column=c_idx, value=val)
-        c.font = f_total_row
-        c.fill = fill_total
-        c.border = b_total
-        c.alignment = al_center if c_idx < 9 else al_left
-        if 2 <= c_idx <= 8:
-            c.number_format = FMT_INT
+    if restrict_to_hub and restrict_to_hub in hub_truck_meta:
+        short_h, norm_h = hub_truck_meta[restrict_to_hub]
+        _add_sheet_banner(ws4, f"BẢO ĐỐI SOÁT XE TẢI CỐ ĐỊNH ({restrict_to_hub.upper()}) — {period_title.upper()}", 5)
+        headers_s4 = [
+            "Ngày Vận Hành",
+            f"{restrict_to_hub} (Chuẩn {norm_h} Xe)",
+            f"Định Mức Kho ({norm_h} Xe)",
+            "Chênh Lệch (Xe)",
+            "Ghi Chú / Trạng Thái"
+        ]
+        ws4.row_dimensions[4].height = 28
+        for c_idx, h_text in enumerate(headers_s4, 1):
+            c = ws4.cell(row=4, column=c_idx, value=h_text)
+            c.font = f_tbl_header
+            c.fill = fill_header
+            c.border = b_header
+            c.alignment = al_center if c_idx < 5 else al_left
 
-    r_idx = 5
-    for idx_t, rec in enumerate(truck_records, 1):
-        r_idx += 1
-        ws4.row_dimensions[r_idx].height = 22
-        z_fill = fill_zebra_odd if idx_t % 2 == 1 else fill_zebra_even
+        tot_h_run = sum(int(r.get("hubs", {}).get(short_h, {}).get("running", 0)) for r in truck_records)
+        tot_h_norm = len(truck_records) * norm_h
+        tot_h_diff = tot_h_run - tot_h_norm
 
-        cr_v = int(rec.get("hubs", {}).get("Cái Răng", {}).get("running", 0))
-        bt_v = int(rec.get("hubs", {}).get("Bình Thủy", {}).get("running", 0))
-        vt_v = int(rec.get("hubs", {}).get("Vị Thanh", {}).get("running", 0))
-        om_v = int(rec.get("hubs", {}).get("Ô Môn", {}).get("running", 0))
-        tot_v = int(rec.get("total_running", 0))
-        norm_v = int(rec.get("standard_norm", 13))
-        diff_v = int(rec.get("diff", tot_v - norm_v))
+        ws4.row_dimensions[5].height = 25
+        sum_row_s4 = [
+            f"∑ TỔNG ({len(truck_records)} ngày)",
+            tot_h_run,
+            tot_h_norm,
+            tot_h_diff,
+            f"Tổng hợp lượt xe chạy thực tế tại {restrict_to_hub}"
+        ]
+        for c_idx, val in enumerate(sum_row_s4, 1):
+            c = ws4.cell(row=5, column=c_idx, value=val)
+            c.font = f_total_row
+            c.fill = fill_total
+            c.border = b_total
+            c.alignment = al_center if c_idx < 5 else al_left
+            if 2 <= c_idx <= 4:
+                c.number_format = FMT_INT
 
-        if tot_v == 0:
-            note_str = "Chưa phát sinh / Nghỉ"
-        elif diff_v == 0:
-            note_str = "Đủ định mức (13/13 xe)"
-        elif diff_v < 0:
-            notes = []
-            if cr_v < 6: notes.append(f"CR -{6-cr_v}")
-            if bt_v < 3: notes.append(f"BT -{3-bt_v}")
-            if vt_v < 2: notes.append(f"VT -{2-vt_v}")
-            if om_v < 2: notes.append(f"OM -{2-om_v}")
-            note_str = f"Giảm {abs(diff_v)} xe ({', '.join(notes)})"
-        else:
-            note_str = f"Tăng cường +{diff_v} xe"
+        r_idx = 5
+        for idx_t, rec in enumerate(truck_records, 1):
+            r_idx += 1
+            ws4.row_dimensions[r_idx].height = 22
+            z_fill = fill_zebra_odd if idx_t % 2 == 1 else fill_zebra_even
+            run_v = int(rec.get("hubs", {}).get(short_h, {}).get("running", 0))
+            diff_v = run_v - norm_h
+            if run_v == 0:
+                note_str = "Chưa phát sinh / Nghỉ"
+            elif diff_v == 0:
+                note_str = f"Đủ định mức ({norm_h}/{norm_h} xe)"
+            elif diff_v < 0:
+                note_str = f"Giảm {abs(diff_v)} xe ({run_v}/{norm_h} xe)"
+            else:
+                note_str = f"Tăng cường +{diff_v} xe ({run_v}/{norm_h} xe)"
 
-        row_vals = [rec.get("date", ""), cr_v, bt_v, vt_v, om_v, tot_v, norm_v, diff_v, note_str]
-        for c_idx, val in enumerate(row_vals, 1):
-            c = ws4.cell(row=r_idx, column=c_idx, value=val)
-            c.fill = z_fill
-            c.border = b_data
-            c.font = f_data_bold if c_idx in (1, 6) else f_data_reg
+            row_vals = [rec.get("date", ""), run_v, norm_h, diff_v, note_str]
+            for c_idx, val in enumerate(row_vals, 1):
+                c = ws4.cell(row=r_idx, column=c_idx, value=val)
+                c.fill = z_fill
+                c.border = b_data
+                c.font = f_data_bold if c_idx in (1, 2) else f_data_reg
+                c.alignment = al_center if c_idx < 5 else al_left
+                if 2 <= c_idx <= 4:
+                    c.number_format = FMT_INT
+                if c_idx == 4:
+                    if diff_v == 0 and run_v > 0:
+                        c.fill = fill_good
+                        c.font = font_good
+                    elif diff_v < 0 and run_v > 0:
+                        c.fill = fill_warn
+                        c.font = font_warn
+
+        _auto_fit_and_polish_sheet(ws4, start_row=4, freeze_cell="B6", filter_range=f"A4:E{r_idx}")
+    else:
+        _add_sheet_banner(ws4, f"BẢNG ĐỐI SOÁT XE TẢI CỐ ĐỊNH (NCC VẬN TẢI 365) — {period_title.upper()}", 9)
+
+        headers_s4 = [
+            "Ngày Vận Hành",
+            "Kho Cái Răng (Chuẩn 6)",
+            "Kho Bình Thủy (Chuẩn 3)",
+            "Kho Vị Thanh (Chuẩn 2)",
+            "Kho Ô Môn (Chuẩn 2)",
+            "Tổng Xe Chạy Thực Tế",
+            "Định Mức Vùng (13 Xe)",
+            "Chênh Lệch (Xe)",
+            "Ghi Chú / Trạng Thái"
+        ]
+        ws4.row_dimensions[4].height = 28
+        for c_idx, h_text in enumerate(headers_s4, 1):
+            c = ws4.cell(row=4, column=c_idx, value=h_text)
+            c.font = f_tbl_header
+            c.fill = fill_header
+            c.border = b_header
+            c.alignment = al_center if c_idx < 9 else al_left
+
+        tot_cr = sum(int(r.get("hubs", {}).get("Cái Răng", {}).get("running", 0)) for r in truck_records)
+        tot_bt = sum(int(r.get("hubs", {}).get("Bình Thủy", {}).get("running", 0)) for r in truck_records)
+        tot_vt = sum(int(r.get("hubs", {}).get("Vị Thanh", {}).get("running", 0)) for r in truck_records)
+        tot_om = sum(int(r.get("hubs", {}).get("Ô Môn", {}).get("running", 0)) for r in truck_records)
+        tot_run = sum(int(r.get("total_running", 0)) for r in truck_records)
+        tot_norm = len(truck_records) * 13
+        tot_diff = tot_run - tot_norm
+
+        ws4.row_dimensions[5].height = 25
+        sum_row_s4 = [
+            f"∑ TỔNG ({len(truck_records)} ngày)",
+            tot_cr,
+            tot_bt,
+            tot_vt,
+            tot_om,
+            tot_run,
+            tot_norm,
+            tot_diff,
+            "Tổng hợp lượt xe chạy thực tế so với định mức"
+        ]
+        for c_idx, val in enumerate(sum_row_s4, 1):
+            c = ws4.cell(row=5, column=c_idx, value=val)
+            c.font = f_total_row
+            c.fill = fill_total
+            c.border = b_total
             c.alignment = al_center if c_idx < 9 else al_left
             if 2 <= c_idx <= 8:
                 c.number_format = FMT_INT
-            if c_idx == 8:
-                if diff_v == 0 and tot_v > 0:
-                    c.fill = fill_good
-                    c.font = font_good
-                elif diff_v < 0 and tot_v > 0:
-                    c.fill = fill_warn
-                    c.font = font_warn
 
-    _auto_fit_and_polish_sheet(ws4, start_row=4, freeze_cell="B6", filter_range=f"A4:I{r_idx}")
+        r_idx = 5
+        for idx_t, rec in enumerate(truck_records, 1):
+            r_idx += 1
+            ws4.row_dimensions[r_idx].height = 22
+            z_fill = fill_zebra_odd if idx_t % 2 == 1 else fill_zebra_even
+
+            cr_v = int(rec.get("hubs", {}).get("Cái Răng", {}).get("running", 0))
+            bt_v = int(rec.get("hubs", {}).get("Bình Thủy", {}).get("running", 0))
+            vt_v = int(rec.get("hubs", {}).get("Vị Thanh", {}).get("running", 0))
+            om_v = int(rec.get("hubs", {}).get("Ô Môn", {}).get("running", 0))
+            tot_v = int(rec.get("total_running", 0))
+            norm_v = int(rec.get("standard_norm", 13))
+            diff_v = int(rec.get("diff", tot_v - norm_v))
+
+            if tot_v == 0:
+                note_str = "Chưa phát sinh / Nghỉ"
+            elif diff_v == 0:
+                note_str = "Đủ định mức (13/13 xe)"
+            elif diff_v < 0:
+                notes = []
+                if cr_v < 6: notes.append(f"CR -{6-cr_v}")
+                if bt_v < 3: notes.append(f"BT -{3-bt_v}")
+                if vt_v < 2: notes.append(f"VT -{2-vt_v}")
+                if om_v < 2: notes.append(f"OM -{2-om_v}")
+                note_str = f"Giảm {abs(diff_v)} xe ({', '.join(notes)})"
+            else:
+                note_str = f"Tăng cường +{diff_v} xe"
+
+            row_vals = [rec.get("date", ""), cr_v, bt_v, vt_v, om_v, tot_v, norm_v, diff_v, note_str]
+            for c_idx, val in enumerate(row_vals, 1):
+                c = ws4.cell(row=r_idx, column=c_idx, value=val)
+                c.fill = z_fill
+                c.border = b_data
+                c.font = f_data_bold if c_idx in (1, 6) else f_data_reg
+                c.alignment = al_center if c_idx < 9 else al_left
+                if 2 <= c_idx <= 8:
+                    c.number_format = FMT_INT
+                if c_idx == 8:
+                    if diff_v == 0 and tot_v > 0:
+                        c.fill = fill_good
+                        c.font = font_good
+                    elif diff_v < 0 and tot_v > 0:
+                        c.fill = fill_warn
+                        c.font = font_warn
+
+        _auto_fit_and_polish_sheet(ws4, start_row=4, freeze_cell="B6", filter_range=f"A4:I{r_idx}")
 
     # Lưu ra file chuẩn và trả về tên file tải về theo kỳ báo cáo
-    excel_path = os.path.join(DATA_DIR, "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
-    wb.save(excel_path)
-
     safe_key = re.sub(r"[^0-9A-Za-zÀ-ỹ_\-]+", "_", str(flt.get("key") or "Latest")).strip("_")
-    download_filename = f"Bao_Cao_Doi_Soat_MT01_{safe_key}.xlsx"
+    if restrict_to_hub:
+        safe_hub = re.sub(r"[^0-9A-Za-zÀ-ỹ_\-]+", "_", str(restrict_to_hub)).strip("_")
+        excel_path = os.path.join(DATA_DIR, f"Bao_Cao_Doi_Soat_{safe_hub}_Latest.xlsx")
+        download_filename = f"Bao_Cao_{safe_hub}_{safe_key}.xlsx"
+    else:
+        excel_path = os.path.join(DATA_DIR, "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+        download_filename = f"Bao_Cao_Doi_Soat_MT01_{safe_key}.xlsx"
+    wb.save(excel_path)
     return excel_path, download_filename
 
 
