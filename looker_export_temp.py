@@ -408,6 +408,9 @@ def copy_export_and_paste_to_master(context, export_page):
                 total_rows = len(filtered_rows)
                 print(f"  ✓ Đã lọc chuẩn xác {total_rows:,} dòng dữ liệu cho 13 tỉnh Miền Tây")
                 
+                if total_rows <= 1:
+                    raise ValueError(f"Dữ liệu trích xuất từ Looker quá ít hoặc rỗng ({total_rows} dòng), hủy đồng bộ để bảo toàn dữ liệu cũ!")
+
                 creds = Credentials.from_service_account_file(
                     creds_file,
                     scopes=['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
