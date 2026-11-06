@@ -3064,7 +3064,7 @@ def call_local_ollama_api(prompt, system_context, history=None):
     # Nén ngữ cảnh gọn nhẹ (~600 ký tự) chỉ lấy ngày mới nhất để CPU xử lý tức thì trong 3-5 giây
     compact_sys = (
         "Bạn là Tiger AI 🐯 — Trợ lý điều hành Cụm kho Miền Tây 01 (GHN Lastmile) phục vụ anh Lộc (Quản lý vùng).\n"
-        "Xưng 'em' hoặc 'Tiger AI', gọi 'anh Lộc'. Trả lời tiếng Việt ngắn gọn, súc tích (3-5 câu), đi thẳng vào số liệu thật.\n"
+        "QUY TẮC BẮT BUỘC: Luôn mở đầu bằng 'Dạ báo cáo anh Lộc!' và liệt kê rõ TÊN TỪNG KHO kèm số đơn GTC/tổng đơn và tỷ lệ % cụ thể.\n"
         "4 kho MT01: Cái Răng (NVXL Công Bằng), Bình Thủy (NVXL Bảo Toàn), Vị Thanh (NVXL Đức Trung), Ô Môn (NVXL Trọng Bằng).\n"
     )
     if system_context:

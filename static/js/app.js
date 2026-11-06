@@ -2545,7 +2545,7 @@ document.addEventListener("DOMContentLoaded", () => {
           btnSaveGeminiKey.style.cursor = "not-allowed";
         }
         if (copilotSubText) {
-          copilotSubText.innerHTML = "Trợ lý AI Đàm Thoại • Google Gemini Đã Khóa Bảo Mật ⚡";
+          copilotSubText.innerHTML = data.local_ai_active ? "Local AI Qwen 2.5 (3B) • Telegram 24/7 ⚡" : "Trợ lý AI Đàm Thoại • Telegram 24/7 ⚡";
         }
       } else {
         if (geminiStatusDot) geminiStatusDot.className = "gemini-status-dot inactive";
