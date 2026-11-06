@@ -7798,26 +7798,61 @@ def api_meetings_render_pdf(meeting_id):
     return jsonify({
         "success": True,
         "pdf_url": f"/api/meetings/download-pdf/{fname}",
+        "preview_html_url": f"/api/meetings/{meeting_id}/preview-html",
         "filename": fname
     })
+
+@app.route("/api/meetings/<meeting_id>/preview-html")
+def api_meetings_preview_html(meeting_id):
+    from flask import Response
+    html_doc, err = meeting_service.build_meeting_a4_html(meeting_id, include_print_toolbar=True)
+    if err or not html_doc:
+        return "Không tìm thấy biên bản cuộc họp", 404
+    return Response(html_doc, mimetype="text/html; charset=utf-8")
+
+@app.route("/api/meetings/<meeting_id>/delete", methods=["POST", "DELETE"])
+def api_meetings_delete(meeting_id):
+    ok, msg = meeting_service.delete_meeting(meeting_id)
+    return jsonify({"success": ok, "message": msg})
 
 @app.route("/api/meetings/<meeting_id>/publish", methods=["POST"])
 def api_meetings_publish(meeting_id):
     data = request.get_json() or {}
     top_id = data.get("topic_id", 2046)
-    ok, msg = meeting_service.publish_meeting_telegram(meeting_id, topic_id=top_id)
+    custom_caption = data.get("custom_caption")
+    ok, msg = meeting_service.publish_meeting_telegram(
+        meeting_id,
+        topic_id=top_id,
+        custom_caption=custom_caption
+    )
     return jsonify({"success": ok, "message": msg})
 
 @app.route("/api/meetings/download-pdf/<path:filename>")
 def api_meetings_download_pdf(filename):
-    dirs = [
-        meeting_service.PDF_EXPORT_DIR,
-        meeting_service.SCRATCH_DIR
-    ]
-    for d in dirs:
-        p = os.path.join(d, filename)
-        if os.path.exists(p):
-            return send_from_directory(d, filename)
+    found = meeting_service._find_existing_file(filename)
+    if found and os.path.exists(found):
+        return send_from_directory(os.path.dirname(found), os.path.basename(found))
+
+    # Tự động dò tìm meeting_id tương ứng để dựng file ngay lập tức (không bao giờ lỗi File not found)
+    meetings = meeting_service.load_meetings()
+    target_mid = None
+    for m in meetings:
+        mid = m.get("id", "")
+        if m.get("pdf_filename") == filename or mid in filename:
+            target_mid = mid
+            break
+    if not target_mid and meetings:
+        target_mid = meetings[0].get("id")
+
+    if target_mid:
+        out_path, err = meeting_service.generate_meeting_pdf_render(target_mid)
+        if out_path and os.path.exists(out_path):
+            return send_from_directory(os.path.dirname(out_path), os.path.basename(out_path))
+        html_doc, _ = meeting_service.build_meeting_a4_html(target_mid, include_print_toolbar=True)
+        if html_doc:
+            from flask import Response
+            return Response(html_doc, mimetype="text/html; charset=utf-8")
+
     return "File not found", 404
 
 

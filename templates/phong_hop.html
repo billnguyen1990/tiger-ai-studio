@@ -526,9 +526,10 @@
       <div class="card">
         <div class="card-header">
           <h2>🔍 Kiểm Duyệt Nội Dung Biên Bản Cuộc Họp</h2>
-          <div style="display:flex; align-items:center; gap:10px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <select id="selMeetingTab2" class="form-control" style="width:auto; min-width:240px; padding:5px 10px; font-size:11.5px;" onchange="onSelectMeetingChange(this.value)"></select>
             <button class="btn btn-outline" id="btnAiSummarize" style="font-size:11.5px; padding:6px 12px; border-color:#38bdf8; color:#38bdf8;" onclick="runLocalAiSummarize()">
-              🤖 Local AI (Qwen 2.5) Tự Tóm Tắt Phụ Đề
+              🤖 AI Tự Tóm Tắt Phụ Đề
             </button>
             <span class="badge badge-pending">Giai đoạn: Sếp / Quản lý duyệt</span>
           </div>
@@ -581,12 +582,17 @@
       <div class="grid-3-2">
         <!-- PDF Preview Screen -->
         <div class="card">
-          <div class="card-header">
+          <div class="card-header" style="flex-wrap:wrap; gap:8px;">
             <h2>📄 Xem Trước Tài Liệu PDF Chính Thức</h2>
-            <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="renderPreviewPdf()">🔄 Tải lại bản PDF</button>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <select id="selMeetingTab3" class="form-control" style="width:auto; min-width:210px; padding:4px 8px; font-size:11px;" onchange="onSelectMeetingChange(this.value)"></select>
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="switchPreviewMode('pdf')" id="btnPreviewPdfMode">📑 Bản PDF</button>
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="switchPreviewMode('html')" id="btnPreviewHtmlMode">🖨️ Bản Chuẩn A4</button>
+              <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="renderPreviewPdf()">🔄 Kết xuất lại</button>
+            </div>
           </div>
           <div class="pdf-preview-box" id="pdfPreviewContainer">
-            <iframe id="pdfIframe" src="/api/meetings/download-pdf/Bien_Ban_Hop_Du_An_Hisense_B2B.pdf"></iframe>
+            <iframe id="pdfIframe" src="/api/meetings/meet_20261106_hisense/preview-html"></iframe>
           </div>
         </div>
 
@@ -594,17 +600,27 @@
         <div class="card">
           <div class="card-header">
             <h2>📢 Phòng Truyền Thông AI</h2>
-            <span class="badge badge-success">Sẵn sàng xuất bản</span>
+            <span class="badge badge-success" id="mediaReadyBadge">Sẵn sàng xuất bản</span>
           </div>
 
-          <div style="background: rgba(234, 88, 12, 0.1); border-left: 4px solid var(--primary); padding: 10px 12px; border-radius: 6px; margin-bottom: 16px; font-size: 12px;">
-            <strong>KÊNH PHÁT HÀNH:</strong> Nhóm Telegram <strong>Miền Tây 01</strong><br>
-            <strong>ROOM:</strong> 📓 <strong>Quan Trọng</strong> (Topic ID: <code>2046</code>)
+          <div style="background: rgba(234, 88, 12, 0.1); border-left: 4px solid var(--primary); padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; font-size: 12px;">
+            <div style="margin-bottom:6px;"><strong>KÊNH PHÁT HÀNH:</strong> Nhóm Telegram <strong>Miền Tây 01</strong></div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <strong>ROOM ĐÍCH:</strong>
+              <select id="selTelegramTopic" class="form-control" style="padding:4px 8px; font-size:11.5px; width:auto; flex:1;">
+                <option value="2046">📓 Room Quan Trọng (Topic #2046)</option>
+                <option value="2690">📊 Room Báo Cáo Vận Hành (Topic #2690)</option>
+                <option value="506">📦 Room Đơn Tạo B2B (Topic #506)</option>
+              </select>
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Thông điệp truyền thông đính kèm file:</label>
-            <textarea id="mediaCaption" class="form-control" style="min-height: 140px; font-size: 11px;">📋 BIÊN BẢN HỌP TRIỂN KHAI VẬN HÀNH DỰ ÁN HISENSE (HISEN) - B2B LTL
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label class="form-label" style="margin-bottom:0;">Thông điệp truyền thông đính kèm file:</label>
+              <button class="btn btn-outline" style="font-size:10.5px; padding:3px 8px;" onclick="syncCaptionFromCurrentMeeting(true)">✨ Soạn lại theo biên bản</button>
+            </div>
+            <textarea id="mediaCaption" class="form-control" style="min-height: 155px; font-size: 11.5px;">📋 BIÊN BẢN HỌP TRIỂN KHAI VẬN HÀNH DỰ ÁN HISENSE (HISEN) - B2B LTL
 
 ⏰ Thời gian họp: 14:03 – 14:25, Thứ Sáu (06/11/2026)
 👤 Chủ trì: Tú Tống Duy (Ops Project Lead)
@@ -620,13 +636,18 @@
 📎 Chi tiết xin vui lòng xem file PDF đính kèm bên dưới.</textarea>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
             <button class="btn btn-primary" onclick="publishToTelegramRoom()" style="font-size: 14px; padding: 12px;">
-              🚀 Bắn PDF Lên Room Quan Trọng (Telegram)
+              🚀 Bắn Tài Liệu Lên Room Telegram Đã Chọn
             </button>
-            <a id="btnDownloadPdf" href="/api/meetings/download-pdf/Bien_Ban_Hop_Du_An_Hisense_B2B.pdf" target="_blank" class="btn btn-outline">
-              💾 Tải File PDF Về Máy Tính
-            </a>
+            <div style="display:flex; gap:8px;">
+              <a id="btnDownloadPdf" href="/api/meetings/download-pdf/Bien_Ban_Hop_Du_An_Hisense_B2B.pdf" target="_blank" class="btn btn-outline" style="flex:1;">
+                💾 Tải File PDF Về Máy
+              </a>
+              <a id="btnPrintA4" href="/api/meetings/meet_20261106_hisense/preview-html" target="_blank" class="btn btn-outline" style="flex:1;">
+                🖨️ Mở Bản In Chuẩn A4
+              </a>
+            </div>
           </div>
 
           <div id="publishAlert" style="margin-top: 14px; display: none;"></div>
@@ -664,6 +685,32 @@
   <script>
     let currentMeetingId = 'meet_20261106_hisense';
     let livePollInterval = null;
+    let cachedMeetings = [];
+
+    async function refreshMeetingSelectors() {
+      try {
+        const res = await fetch('/api/meetings/list');
+        cachedMeetings = await res.json();
+        const opts = cachedMeetings.map(m => {
+          const sel = m.id === currentMeetingId ? 'selected' : '';
+          return `<option value="${m.id}" ${sel}>📋 ${escapeHtml(m.title)} (${m.created_at || ''})</option>`;
+        }).join('');
+        const s2 = document.getElementById('selMeetingTab2');
+        const s3 = document.getElementById('selMeetingTab3');
+        if (s2) s2.innerHTML = opts;
+        if (s3) s3.innerHTML = opts;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function onSelectMeetingChange(mid) {
+      if (!mid) return;
+      currentMeetingId = mid;
+      await refreshMeetingSelectors();
+      await loadReviewData();
+      await syncMediaTabWithCurrentMeeting(true);
+    }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -680,7 +727,11 @@
       }
 
       if (tabId === 'tab2') {
+        refreshMeetingSelectors();
         loadReviewData();
+      } else if (tabId === 'tab3') {
+        refreshMeetingSelectors();
+        syncMediaTabWithCurrentMeeting(false);
       } else if (tabId === 'tab4') {
         loadMeetingHistory();
       }
@@ -711,7 +762,7 @@
         const lineCount = document.getElementById('lineCountLabel');
         const box = document.getElementById('liveTranscriptBox');
 
-        lineCount.innerText = `${data.transcript_lines.toLocaleString()} câu thoại`;
+        lineCount.innerText = `${(data.transcript_lines || 0).toLocaleString()} câu thoại`;
 
         if (data.status === 'IN_MEETING') {
           badge.className = 'badge badge-live';
@@ -752,7 +803,7 @@
       const btn = document.getElementById('btnAiSummarize');
       const oldText = btn.innerText;
       btn.disabled = true;
-      btn.innerText = '⏳ Local AI (Qwen 2.5 3B) đang biên tập...';
+      btn.innerText = '⏳ AI đang biên tập phụ đề...';
       try {
         const res = await fetch(`/api/meetings/${currentMeetingId}/ai-summarize`, { method: 'POST' });
         const data = await res.json();
@@ -760,10 +811,10 @@
           document.getElementById('reviewSummary').value = data.meeting.summary || '';
           document.getElementById('reviewNotesMarkdown').value = data.meeting.notes_markdown || '';
         } else {
-          alert('Thông báo Local AI: ' + (data.message || 'Không thể tóm tắt'));
+          alert('Thông báo AI: ' + (data.message || 'Không thể tóm tắt'));
         }
       } catch (err) {
-        alert('Lỗi gọi Local AI: ' + err);
+        alert('Lỗi gọi AI: ' + err);
       } finally {
         btn.disabled = false;
         btn.innerText = oldText;
@@ -792,6 +843,7 @@
         const data = await res.json();
         if (data.success) {
           currentMeetingId = data.meeting.id;
+          await refreshMeetingSelectors();
           alert('🐯 Tiger AI Note Bot đã bắt đầu kết nối vào Google Meet!');
           loadLiveFeed();
         } else {
@@ -827,7 +879,7 @@
       try {
         const res = await fetch(`/api/meetings/${currentMeetingId}`);
         const m = await res.json();
-        if (m) {
+        if (m && !m.error) {
           document.getElementById('reviewTitle').value = m.title || '';
           document.getElementById('reviewChair').value = m.chair || '';
           document.getElementById('reviewSummary').value = m.summary || '';
@@ -835,28 +887,6 @@
         }
       } catch (err) {
         console.error(err);
-      }
-    }
-
-    async function runLocalAiSummarize() {
-      const btn = document.getElementById('btnAiSummarize');
-      const oldText = btn.innerText;
-      btn.disabled = true;
-      btn.innerText = '⏳ Local AI (Qwen 2.5 3B) đang biên tập...';
-      try {
-        const res = await fetch(`/api/meetings/${currentMeetingId}/ai-summarize`, { method: 'POST' });
-        const data = await res.json();
-        if (data.success && data.meeting) {
-          document.getElementById('reviewSummary').value = data.meeting.summary || '';
-          document.getElementById('reviewNotesMarkdown').value = data.meeting.notes_markdown || '';
-        } else {
-          alert('Thông báo Local AI: ' + (data.message || 'Không thể tóm tắt'));
-        }
-      } catch (err) {
-        alert('Lỗi gọi Local AI: ' + err);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = oldText;
       }
     }
 
@@ -879,45 +909,113 @@
         });
         const data = await res.json();
         if (data.success) {
-          alert('🎉 Đã kiểm duyệt thành công! Phòng Truyền Thông đang tạo tài liệu PDF...');
+          await syncCaptionFromCurrentMeeting(true);
           switchTab('tab3');
-          renderPreviewPdf();
+          await renderPreviewPdf();
         }
       } catch (err) {
         alert('Lỗi lưu duyệt: ' + err);
       }
     }
 
-    async function renderPreviewPdf() {
+    async function syncCaptionFromCurrentMeeting(forceOverwrite = false) {
+      try {
+        const res = await fetch(`/api/meetings/${currentMeetingId}`);
+        const m = await res.json();
+        if (!m || m.error) return;
+
+        const captionEl = document.getElementById('mediaCaption');
+        if (!forceOverwrite && captionEl.dataset.meetingId === currentMeetingId && captionEl.value.trim()) {
+          return;
+        }
+
+        if (currentMeetingId === 'meet_20261106_hisense' && !forceOverwrite) {
+          captionEl.dataset.meetingId = currentMeetingId;
+          return;
+        }
+
+        const title = (m.title || 'Biên Bản Họp').toUpperCase();
+        const chair = m.chair || 'Chủ trì cuộc họp';
+        const dept = m.department || 'Khối Vận Hành';
+        const timeStr = m.created_at || '';
+        const summary = m.summary || 'Đã tổng hợp biên bản chi tiết.';
+
+        captionEl.value =
+          `📋 BIÊN BẢN HỌP: ${title}\n\n` +
+          `⏰ Thời gian họp: ${timeStr}\n` +
+          `🏢 Bộ phận: ${dept}\n` +
+          `👤 Chủ trì: ${chair}\n\n` +
+          `🎯 TÓM TẮT ĐIỂM NÓNG & KẾT LUẬN:\n` +
+          `${summary}\n\n` +
+          `📎 Chi tiết toàn văn kính mời các anh em xem file biên bản đính kèm bên dưới.`;
+        captionEl.dataset.meetingId = currentMeetingId;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function syncMediaTabWithCurrentMeeting(forceCaption = false) {
+      await syncCaptionFromCurrentMeeting(forceCaption);
+      const printBtn = document.getElementById('btnPrintA4');
+      if (printBtn) {
+        printBtn.href = `/api/meetings/${currentMeetingId}/preview-html`;
+      }
+      await renderPreviewPdf();
+    }
+
+    function switchPreviewMode(mode) {
       const container = document.getElementById('pdfPreviewContainer');
-      container.innerHTML = '<div style="color:white;">⏳ Đang biên tập và kết xuất file PDF chuẩn GHN...</div>';
+      if (mode === 'html') {
+        container.innerHTML = `<iframe src="/api/meetings/${currentMeetingId}/preview-html?t=${Date.now()}"></iframe>`;
+      } else {
+        renderPreviewPdf(true);
+      }
+    }
+
+    async function renderPreviewPdf(showNativePdf = false) {
+      const container = document.getElementById('pdfPreviewContainer');
+      container.innerHTML = '<div style="color:white; font-size:13px;">⏳ Đang nạp tài liệu biên bản chuẩn GHN...</div>';
       try {
         const res = await fetch(`/api/meetings/${currentMeetingId}/render-pdf`, { method: 'POST' });
         const data = await res.json();
+        const a4Url = `/api/meetings/${currentMeetingId}/preview-html?t=${Date.now()}`;
         if (data.success && data.pdf_url) {
-          container.innerHTML = `<iframe src="${data.pdf_url}?t=${Date.now()}"></iframe>`;
           document.getElementById('btnDownloadPdf').href = data.pdf_url;
+          const printBtn = document.getElementById('btnPrintA4');
+          if (printBtn) {
+            printBtn.href = data.preview_html_url || `/api/meetings/${currentMeetingId}/preview-html`;
+          }
+          const targetIframeUrl = showNativePdf ? `${data.pdf_url}?t=${Date.now()}` : a4Url;
+          container.innerHTML = `<iframe src="${targetIframeUrl}"></iframe>`;
         } else {
-          container.innerHTML = `<div style="color:#ef4444;">Lỗi tạo PDF: ${data.message}</div>`;
+          container.innerHTML = `<iframe src="${a4Url}"></iframe>`;
         }
       } catch (err) {
-        container.innerHTML = `<div style="color:#ef4444;">Lỗi kết nối tạo PDF: ${err}</div>`;
+        container.innerHTML = `<iframe src="/api/meetings/${currentMeetingId}/preview-html?t=${Date.now()}"></iframe>`;
       }
     }
 
     async function publishToTelegramRoom() {
-      if (!confirm('Anh có chắc chắn muốn bắn tài liệu PDF này lên room Telegram "📓 Quan Trọng" không?')) return;
+      const topicSelect = document.getElementById('selTelegramTopic');
+      const topicId = topicSelect ? parseInt(topicSelect.value, 10) : 2046;
+      const topicLabel = topicSelect ? topicSelect.options[topicSelect.selectedIndex].text : 'Room Quan Trọng';
+      const customCaption = document.getElementById('mediaCaption').value.trim();
+
+      if (!confirm(`Anh có chắc chắn muốn bắn biên bản này lên Telegram "${topicLabel}" không?`)) return;
       const alertBox = document.getElementById('publishAlert');
       alertBox.style.display = 'block';
       alertBox.className = 'card';
       alertBox.style.background = 'rgba(234, 88, 12, 0.15)';
-      alertBox.innerHTML = '⏳ Đang truyền thông và đính kèm PDF lên Telegram...';
+      alertBox.innerHTML = `⏳ Đang truyền thông và đính kèm biên bản lên ${escapeHtml(topicLabel)}...`;
 
       try {
         const res = await fetch(`/api/meetings/${currentMeetingId}/publish`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic_id: 2046 })
+          body: JSON.stringify({
+            topic_id: topicId,
+            custom_caption: customCaption
+          })
         });
         const data = await res.json();
         if (data.success) {
@@ -947,7 +1045,8 @@
         tbody.innerHTML = list.map(m => {
           let badge = '<span class="badge badge-pending">Chờ duyệt</span>';
           if (m.status === 'PUBLISHED') badge = '<span class="badge badge-success">Đã truyền thông</span>';
-          if (m.status === 'LIVE') badge = '<span class="badge badge-live">Đang họp</span>';
+          else if (m.status === 'MEDIA_READY') badge = '<span class="badge badge-success">Sẵn sàng xuất bản</span>';
+          else if (m.status === 'LIVE') badge = '<span class="badge badge-live">Đang họp</span>';
 
           return `
             <tr>
@@ -956,8 +1055,10 @@
               <td>${escapeHtml(m.department || '')}</td>
               <td>${escapeHtml(m.chair || '')}</td>
               <td>${badge}</td>
-              <td>
-                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="viewMeetingDetail('${m.id}')">Xem & Sửa</button>
+              <td style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="viewMeetingDetail('${m.id}')">✏️ Sửa & Duyệt</button>
+                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; border-color:#f97316; color:#fb923c;" onclick="openMeetingMedia('${m.id}')">📄 Xem PDF</button>
+                ${m.id !== 'meet_20261106_hisense' ? `<button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; border-color:#ef4444; color:#f87171;" onclick="deleteMeetingItem('${m.id}')">🗑️ Xóa</button>` : ''}
               </td>
             </tr>
           `;
@@ -972,8 +1073,34 @@
       switchTab('tab2');
     }
 
+    function openMeetingMedia(id) {
+      currentMeetingId = id;
+      switchTab('tab3');
+    }
+
+    async function deleteMeetingItem(id) {
+      if (!confirm('Anh có chắc muốn xóa bản ghi cuộc họp này khỏi kho lưu trữ?')) return;
+      try {
+        const res = await fetch(`/api/meetings/${id}/delete`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          if (currentMeetingId === id) {
+            currentMeetingId = 'meet_20261106_hisense';
+          }
+          await refreshMeetingSelectors();
+          await loadMeetingHistory();
+        } else {
+          alert(data.message || 'Không thể xóa');
+        }
+      } catch (e) {
+        alert('Lỗi xóa: ' + e);
+      }
+    }
+
     function refreshAll() {
+      refreshMeetingSelectors();
       loadLiveFeed();
+      loadReviewData();
       loadMeetingHistory();
     }
 
@@ -983,6 +1110,7 @@
     }
 
     // Init
+    refreshMeetingSelectors();
     loadLiveFeed();
     loadReviewData();
   </script>

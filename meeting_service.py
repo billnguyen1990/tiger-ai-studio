@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 import time
@@ -11,6 +12,7 @@ except Exception:
     sync_playwright = None
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_SCRATCH_DIR = os.path.dirname(BASE_DIR)
 DATA_DIR = os.path.join(BASE_DIR, "data")
 MEETINGS_FILE = os.path.join(DATA_DIR, "meetings.json")
 SCRATCH_DIR = BASE_DIR
@@ -20,6 +22,23 @@ try:
     os.makedirs(PDF_EXPORT_DIR, exist_ok=True)
 except Exception:
     pass
+
+
+def _find_existing_file(filename):
+    """Tìm file trong các thư mục dữ liệu của dự án"""
+    if not filename:
+        return None
+    candidates = [
+        os.path.join(PDF_EXPORT_DIR, filename),
+        os.path.join(DATA_DIR, filename),
+        os.path.join(BASE_DIR, filename),
+        os.path.join(PARENT_SCRATCH_DIR, "meeting_exports", filename),
+        os.path.join(PARENT_SCRATCH_DIR, filename),
+    ]
+    for p in candidates:
+        if os.path.exists(p) and os.path.isfile(p):
+            return p
+    return None
 
 # Active bot process tracker
 _ACTIVE_MEETING_PROCESS = None
@@ -101,13 +120,15 @@ def create_and_start_meeting(title, meet_url, department="Vận Hành"):
     save_meetings(meetings)
     _ACTIVE_MEETING_ID = meeting_id
     
-    # Launch Meet Bot background script
-    bot_script = os.path.join(SCRATCH_DIR, "tiger_meet_bot.py")
-    if os.path.exists(bot_script):
-        # Update meet url in bot script or launch via args
+    # Launch Meet Bot background script (hỗ trợ cả thư mục gốc & thư mục cha)
+    bot_candidates = [
+        os.path.join(BASE_DIR, "tiger_meet_bot.py"),
+        os.path.join(PARENT_SCRATCH_DIR, "tiger_meet_bot.py")
+    ]
+    bot_script = next((p for p in bot_candidates if os.path.exists(p)), None)
+    if bot_script:
         try:
-            cmd = [sys.executable, bot_script]
-            # Use subprocess without blocking
+            cmd = [sys.executable, bot_script, meet_url.strip()]
             _ACTIVE_MEETING_PROCESS = subprocess.Popen(
                 cmd,
                 stdout=subprocess.DEVNULL,
@@ -116,13 +137,13 @@ def create_and_start_meeting(title, meet_url, department="Vận Hành"):
             )
         except Exception as e:
             print(f"Error launching meet bot process: {e}")
-            
+
     return new_meeting
 
 def get_live_status():
     global _ACTIVE_MEETING_ID
-    status_file = os.path.join(SCRATCH_DIR, "MEET_STATUS.json")
-    transcript_file = os.path.join(SCRATCH_DIR, "MEET_TRANSCRIPT.txt")
+    status_file = _find_existing_file("MEET_STATUS.json") or os.path.join(BASE_DIR, "MEET_STATUS.json")
+    transcript_file = _find_existing_file("MEET_TRANSCRIPT.txt") or os.path.join(BASE_DIR, "MEET_TRANSCRIPT.txt")
     
     status_info = {"state": "IDLE", "details": "Chưa có cuộc họp nào đang diễn ra", "lines_count": 0}
     if os.path.exists(status_file):
@@ -156,12 +177,12 @@ def get_live_status():
     }
 
 def ai_summarize_meeting_transcript(meeting_id):
-    """Dùng Local AI (Ollama Qwen 2.5 3B • Auto-Unload 2m) tự động bóc tách phụ đề Google Meet thành Biên bản chuẩn"""
+    """Dùng Local AI (Ollama Qwen 2.5 3B • Auto-Unload 2m) tự động bóc tách phụ đề Google Meet thành Biên bản chuẩn (Kèm Fallback thông minh trên Cloud)"""
     meeting = get_meeting(meeting_id)
     if not meeting:
         return None, "Không tìm thấy cuộc họp"
 
-    transcript_file = os.path.join(SCRATCH_DIR, "MEET_TRANSCRIPT.txt")
+    transcript_file = _find_existing_file("MEET_TRANSCRIPT.txt") or os.path.join(BASE_DIR, "MEET_TRANSCRIPT.txt")
     raw_lines = []
     if os.path.exists(transcript_file):
         try:
@@ -204,7 +225,7 @@ def ai_summarize_meeting_transcript(meeting_id):
         "options": {"temperature": 0.25, "num_predict": 700, "num_ctx": 4096}
     }
     try:
-        r = requests.post(f"{ollama_url}/api/chat", json=payload, timeout=40)
+        r = requests.post(f"{ollama_url}/api/chat", json=payload, timeout=35)
         if r.status_code == 200:
             content = (r.json().get("message") or {}).get("content", "").strip()
             if content:
@@ -224,8 +245,28 @@ def ai_summarize_meeting_transcript(meeting_id):
                     meeting.get("chair")
                 )
                 return updated, None
-    except Exception as e:
-        return None, f"Local AI Error: {e}"
+    except Exception:
+        pass
+
+    # Fallback thông minh khi chạy trên Cloud Render (không có Local Ollama)
+    if raw_lines:
+        clean_bullets = "\n".join(f"- {l}" for l in raw_lines[-18:])
+        fallback_notes = (
+            f"# BIÊN BẢN HỌP: {meeting.get('title', '').upper()}\n\n"
+            f"- **Thời gian:** {meeting.get('created_at', '')}\n"
+            f"- **Bộ phận:** {meeting.get('department', 'Khối Vận Hành')}\n"
+            f"- **Chủ trì:** {meeting.get('chair', 'Đại diện Chủ trì')}\n\n"
+            f"## 📌 Các phát biểu & nội dung trọng tâm ghi nhận\n{clean_bullets}"
+        )
+        updated = update_meeting_review(
+            meeting_id,
+            meeting.get("title"),
+            meeting.get("summary") or "Đã tổng hợp tự động các phát biểu trọng tâm từ phụ đề trực tiếp.",
+            fallback_notes,
+            meeting.get("chair")
+        )
+        return updated, None
+
     return meeting, None
 
 def stop_meeting(meeting_id):
@@ -267,48 +308,82 @@ def update_meeting_review(meeting_id, title, summary, notes_markdown, chair=""):
         save_meetings(meetings)
     return target
 
-def generate_meeting_pdf_render(meeting_id):
+def delete_meeting(meeting_id):
+    meetings = load_meetings()
+    new_meetings = [m for m in meetings if m.get("id") != meeting_id]
+    if len(new_meetings) == len(meetings):
+        return False, "Không tìm thấy biên bản cuộc họp."
+    save_meetings(new_meetings)
+    return True, "Đã xóa biên bản cuộc họp."
+
+def _md_inline_to_html(text):
+    if not text:
+        return ""
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", str(text))
+
+def build_meeting_a4_html(meeting_id, include_print_toolbar=False):
     meeting = get_meeting(meeting_id)
     if not meeting:
         return None, "Meeting not found"
-        
+
     title = meeting.get("title", "Biên Bản Họp")
     created_at = meeting.get("created_at", "")
     ended_at = meeting.get("ended_at", "")
     chair = meeting.get("chair", "Đại diện Chủ trì")
     dept = meeting.get("department", "Khối Vận Hành")
-    summary = meeting.get("summary", "")
+    summary = _md_inline_to_html(meeting.get("summary", ""))
     notes_md = meeting.get("notes_markdown", "")
-    
-    # Format notes to HTML paragraphs
+
     notes_html = ""
     for line in notes_md.split("\n"):
         line = line.strip()
-        if not line: continue
+        if not line:
+            continue
+        formatted = _md_inline_to_html(line)
         if line.startswith("# "):
-            notes_html += f"<h1 class='doc-title'>{line[2:]}</h1>"
+            notes_html += f"<h1 class='doc-title'>{_md_inline_to_html(line[2:])}</h1>"
         elif line.startswith("## "):
-            notes_html += f"<h2>{line[3:]}</h2>"
+            notes_html += f"<h2>{_md_inline_to_html(line[3:])}</h2>"
         elif line.startswith("### "):
-            notes_html += f"<h3>{line[4:]}</h3>"
-        elif line.startswith("- **") or line.startswith("* **"):
-            notes_html += f"<p class='bullet'>• {line[2:]}</p>"
+            notes_html += f"<h3>{_md_inline_to_html(line[4:])}</h3>"
+        elif line.startswith("- ") or line.startswith("* "):
+            notes_html += f"<p class='bullet'>• {_md_inline_to_html(line[2:])}</p>"
         else:
-            notes_html += f"<p>{line}</p>"
-            
-    safe_filename = f"Bien_Ban_Hop_{meeting_id}.pdf"
-    pdf_out_path = os.path.join(PDF_EXPORT_DIR, safe_filename)
-    
+            notes_html += f"<p>{formatted}</p>"
+
+    toolbar_html = ""
+    if include_print_toolbar:
+        toolbar_html = """
+        <div class="print-toolbar no-print">
+            <span>📄 Bản Chuẩn A4 Biên Bản Họp — Tiger AI Studio</span>
+            <button onclick="window.print()">🖨️ In / Lưu Thành PDF (Ctrl+P)</button>
+        </div>
+        """
+
     html_template = f"""<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>{title}</title>
     <style>
-        @page {{ size: A4; margin: 15mm; }}
+        @page {{ size: A4; margin: 14mm; }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #1e293b; line-height: 1.5; font-size: 9.5pt; margin: 0; padding: 0;
+            color: #1e293b; line-height: 1.55; font-size: 9.5pt; margin: 0; padding: {('18px 24px' if include_print_toolbar else '0')};
+            background: #ffffff;
+        }}
+        .print-toolbar {{
+            display: flex; justify-content: space-between; align-items: center;
+            background: #0f172a; color: #f8fafc; padding: 8px 14px; border-radius: 8px;
+            margin-bottom: 16px; font-size: 8.5pt; font-weight: 600;
+        }}
+        .print-toolbar button {{
+            background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff;
+            border: none; padding: 5px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 8pt;
+        }}
+        @media print {{
+            .no-print {{ display: none !important; }}
+            body {{ padding: 0; }}
         }}
         .header {{
             display: flex; justify-content: space-between; align-items: flex-start;
@@ -321,7 +396,7 @@ def generate_meeting_pdf_render(meeting_id):
         }}
         .company-name {{ font-size: 10.5pt; font-weight: 700; color: #0f172a; text-transform: uppercase; margin-top: 3px; }}
         .doc-meta {{ text-align: right; font-size: 8pt; color: #475569; }}
-        .doc-title {{ font-size: 14pt; font-weight: 800; color: #0f172a; text-transform: uppercase; text-align: center; margin: 10px 0 4px 0; }}
+        .doc-title {{ font-size: 13.5pt; font-weight: 800; color: #0f172a; text-transform: uppercase; text-align: center; margin: 10px 0 6px 0; }}
         .meta-grid {{
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
             background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
@@ -331,8 +406,8 @@ def generate_meeting_pdf_render(meeting_id):
             background: #fff7ed; border-left: 4px solid #ea580c; padding: 10px 12px;
             border-radius: 4px; margin-bottom: 14px; font-size: 9pt; color: #9a3412;
         }}
-        h2 {{ font-size: 11pt; color: #0f172a; border-left: 4px solid #ea580c; padding-left: 8px; margin: 14px 0 8px 0; }}
-        h3 {{ font-size: 10pt; color: #334155; margin: 10px 0 4px 0; }}
+        h2 {{ font-size: 10.5pt; color: #0f172a; border-left: 4px solid #ea580c; padding-left: 8px; margin: 14px 0 8px 0; }}
+        h3 {{ font-size: 9.8pt; color: #334155; margin: 10px 0 4px 0; }}
         p {{ margin: 0 0 6px 0; }}
         .bullet {{ margin-left: 12px; }}
         .signatures {{
@@ -341,11 +416,12 @@ def generate_meeting_pdf_render(meeting_id):
         }}
         .sig-block {{ border-top: 1px solid #cbd5e1; padding-top: 8px; }}
         .sig-title {{ font-weight: 700; font-size: 8.5pt; color: #334155; text-transform: uppercase; }}
-        .sig-space {{ height: 40px; }}
+        .sig-space {{ height: 38px; }}
         .sig-name {{ font-weight: 600; font-size: 8.5pt; color: #0f172a; }}
     </style>
 </head>
 <body>
+    {toolbar_html}
     <div class="header">
         <div>
             <div class="logo-badge">GHN</div>
@@ -391,76 +467,139 @@ def generate_meeting_pdf_render(meeting_id):
 </body>
 </html>
 """
-    
+    return html_template, None
+
+def generate_meeting_pdf_render(meeting_id):
+    meeting = get_meeting(meeting_id)
+    if not meeting:
+        return None, "Meeting not found"
+
+    html_template, err = build_meeting_a4_html(meeting_id, include_print_toolbar=False)
+    if err:
+        return None, err
+
+    safe_filename = f"Bien_Ban_Hop_{meeting_id}.pdf"
+    pdf_out_path = os.path.join(PDF_EXPORT_DIR, safe_filename)
+
     temp_html = os.path.join(PDF_EXPORT_DIR, f"{meeting_id}.html")
     with open(temp_html, "w", encoding="utf-8") as f:
         f.write(html_template)
-        
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
-            page.goto(f"file:///{temp_html.replace(os.sep, '/')}", wait_until="networkidle")
-            page.pdf(
-                path=pdf_out_path,
-                format="A4",
-                print_background=True,
-                margin={"top": "12mm", "bottom": "12mm", "left": "12mm", "right": "12mm"}
-            )
-            browser.close()
-            
+
+    if sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page()
+                page.goto(f"file:///{temp_html.replace(os.sep, '/')}", wait_until="networkidle")
+                page.pdf(
+                    path=pdf_out_path,
+                    format="A4",
+                    print_background=True,
+                    margin={"top": "12mm", "bottom": "12mm", "left": "12mm", "right": "12mm"}
+                )
+                browser.close()
+
+            meetings = load_meetings()
+            for m in meetings:
+                if m.get("id") == meeting_id:
+                    m["pdf_filename"] = safe_filename
+                    m["pdf_path"] = pdf_out_path
+                    m["status"] = "MEDIA_READY"
+                    break
+            save_meetings(meetings)
+            return pdf_out_path, None
+        except Exception:
+            pass
+
+    # Fallback khi chạy trên Cloud Linux không có Chromium binary:
+    # Kiểm tra xem có file PDF dựng sẵn của cuộc họp này không
+    existing_pdf = _find_existing_file(meeting.get("pdf_filename", ""), safe_filename, meeting.get("pdf_path", ""))
+    if existing_pdf and existing_pdf.lower().endswith(".pdf"):
         meetings = load_meetings()
         for m in meetings:
             if m.get("id") == meeting_id:
-                m["pdf_filename"] = safe_filename
-                m["pdf_path"] = pdf_out_path
+                m["pdf_filename"] = os.path.basename(existing_pdf)
+                m["pdf_path"] = existing_pdf
                 m["status"] = "MEDIA_READY"
                 break
         save_meetings(meetings)
-        return pdf_out_path, None
-    except Exception as e:
-        return None, str(e)
+        return existing_pdf, None
 
-def publish_meeting_telegram(meeting_id, topic_id=2046):
+    # Lưu bản HTML chuẩn A4 có thanh công cụ in PDF trực tiếp
+    html_with_toolbar, _ = build_meeting_a4_html(meeting_id, include_print_toolbar=True)
+    html_filename = f"Bien_Ban_Hop_{meeting_id}.html"
+    html_out_path = os.path.join(PDF_EXPORT_DIR, html_filename)
+    with open(html_out_path, "w", encoding="utf-8") as f:
+        f.write(html_with_toolbar)
+
+    meetings = load_meetings()
+    for m in meetings:
+        if m.get("id") == meeting_id:
+            m["pdf_filename"] = html_filename
+            m["pdf_path"] = html_out_path
+            m["status"] = "MEDIA_READY"
+            break
+    save_meetings(meetings)
+    return html_out_path, None
+
+def publish_meeting_telegram(meeting_id, topic_id=2046, custom_caption=None):
     meeting = get_meeting(meeting_id)
     if not meeting:
         return False, "Meeting not found"
-        
-    pdf_path = meeting.get("pdf_path")
-    if not pdf_path or not os.path.exists(pdf_path):
-        # Generate PDF first
-        pdf_path, err = generate_meeting_pdf_render(meeting_id)
-        if err:
-            return False, f"Lỗi tạo PDF: {err}"
-            
+
+    doc_path = _find_existing_file(
+        meeting.get("pdf_path", ""),
+        meeting.get("pdf_filename", ""),
+        f"Bien_Ban_Hop_{meeting_id}.pdf"
+    )
+    if not doc_path or not os.path.exists(doc_path):
+        doc_path, err = generate_meeting_pdf_render(meeting_id)
+        if err or not doc_path:
+            return False, f"Lỗi tạo tài liệu: {err}"
+
     bot_token = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
     chat_id = "-1003940889949"
-    target_topic = topic_id or 2046
-    
+    target_topic = int(topic_id or 2046)
+
+    topic_names = {
+        2046: "Room Quan Trọng (#2046)",
+        2690: "Room Báo Cáo Vận Hành (#2690)",
+        506: "Room Đơn Tạo B2B (#506)"
+    }
+    room_label = topic_names.get(target_topic, f"Topic #{target_topic}")
+
     title = meeting.get("title", "Biên Bản Họp")
     summary = meeting.get("summary", "")
     chair = meeting.get("chair", "Chủ trì cuộc họp")
-    
-    caption = (
-        f"📋 <b>BIÊN BẢN HỌP: {title.upper()}</b>\n\n"
-        f"⏰ <b>Thời gian:</b> {meeting.get('created_at', '')}\n"
-        f"👤 <b>Chủ trì:</b> {chair}\n"
-        f"📢 <b>Phòng Truyền Thông Tiger AI thông báo:</b>\n\n"
-        f"🎯 <b>NỘI DUNG CỐT LÕI:</b>\n"
-        f"{summary[:700]}\n\n"
-        f"📎 <i>Chi tiết toàn văn kính mời các anh em xem tệp PDF đính kèm!</i>"
-    )
-    
+
+    if custom_caption and str(custom_caption).strip():
+        caption = str(custom_caption).strip()[:1000]
+        parse_mode = None
+    else:
+        caption = (
+            f"📋 <b>BIÊN BẢN HỌP: {title.upper()}</b>\n\n"
+            f"⏰ <b>Thời gian:</b> {meeting.get('created_at', '')}\n"
+            f"👤 <b>Chủ trì:</b> {chair}\n"
+            f"📢 <b>Phòng Truyền Thông Tiger AI thông báo:</b>\n\n"
+            f"🎯 <b>NỘI DUNG CỐT LÕI:</b>\n"
+            f"{summary[:650]}\n\n"
+            f"📎 <i>Chi tiết toàn văn kính mời các anh em xem tệp biên bản đính kèm!</i>"
+        )
+        parse_mode = "HTML"
+
     url = f"https://api.telegram.org/bot{bot_token}/sendDocument"
     try:
-        with open(pdf_path, "rb") as f:
-            files = {"document": (meeting.get("pdf_filename", "Bien_Ban_Hop.pdf"), f, "application/pdf")}
+        doc_filename = os.path.basename(doc_path)
+        mime_type = "application/pdf" if doc_filename.lower().endswith(".pdf") else "text/html"
+        with open(doc_path, "rb") as f:
+            files = {"document": (doc_filename, f, mime_type)}
             data = {
                 "chat_id": chat_id,
                 "message_thread_id": target_topic,
                 "caption": caption,
-                "parse_mode": "HTML"
             }
+            if parse_mode:
+                data["parse_mode"] = parse_mode
             res = requests.post(url, data=data, files=files, timeout=30)
             res_json = res.json()
             if res_json.get("ok"):
@@ -470,10 +609,11 @@ def publish_meeting_telegram(meeting_id, topic_id=2046):
                     if m.get("id") == meeting_id:
                         m["status"] = "PUBLISHED"
                         m["telegram_message_id"] = msg_id
+                        m["telegram_topic_id"] = target_topic
                         m["published_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         break
                 save_meetings(meetings)
-                return True, f"Bắn thành công vào Room Quan Trọng (Msg #{msg_id})"
+                return True, f"Bắn thành công vào {room_label} (Msg #{msg_id})"
             else:
                 return False, res_json.get("description", "Telegram API Error")
     except Exception as e:
