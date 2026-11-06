@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗺️ Sa Bàn 2D • Tiger Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1120;--card:#111a2e;--line:rgba(255,255,255,.08);--tx:#e2e8f0;--mut:#94a3b8;
+--ok:#10b981;--warn:#f59e0b;--bad:#ef4444;--pri:#f97316;--blue:#38bdf8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-bottom:1px solid var(--line);background:#0d1527}
+header h1{font-size:15px;font-weight:800}
+header .sub{font-size:11px;color:var(--mut)}
+nav{display:flex;gap:8px}
+nav a{color:var(--tx);text-decoration:none;font-size:12px;font-weight:600;padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.04)}
+nav a:hover,nav a.on{border-color:var(--pri);background:rgba(249,115,22,.12)}
+main{flex:1;display:grid;grid-template-columns:1fr 340px;gap:14px;padding:14px;min-height:0}
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;position:relative;min-height:0;overflow:hidden}
+.board svg{width:100%;height:100%;display:block}
+.side{display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card h3{font-size:12px;color:var(--mut);font-weight:700;margin-bottom:10px;letter-spacing:.4px;text-transform:uppercase}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center}
+.kpi b{display:block;font-size:20px;font-weight:800}
+.kpi span{font-size:10px;color:var(--mut)}
+.inc{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:8px;padding:9px 10px;margin-bottom:8px;font-size:12px}
+.inc.WARNING{border-left-color:var(--warn)}
+.inc.RESOLVED{border-left-color:var(--ok);opacity:.55}
+.inc b{display:block;margin-bottom:2px}
+.inc small{color:var(--mut);display:block;margin-bottom:6px}
+.btn{background:linear-gradient(135deg,#ea580c,#c2410c);color:#fff;border:0;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.row span:first-child{color:var(--mut)}
+.bar{height:7px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;background:var(--pri)}
+.empty{color:var(--mut);font-size:12px;text-align:center;padding:10px}
+/* SVG */
+.road{fill:none;stroke:#1e293b;stroke-width:34;stroke-linejoin:round}
+.roadline{fill:none;stroke:#334155;stroke-width:2;stroke-dasharray:10 10;stroke-linejoin:round}
+.node rect{fill:#13203a;stroke:#2b3f63;stroke-width:1.5;rx:14;transition:.2s}
+.node:hover rect,.node.sel rect{stroke:var(--pri);fill:#1a2a4a}
+.node text.t{fill:#e2e8f0;font-size:15px;font-weight:700;text-anchor:middle}
+.node text.s{fill:#94a3b8;font-size:11px;text-anchor:middle}
+.node{cursor:pointer}
+.hq rect{fill:#0f2a3a;stroke:#0e7490}
+.ring{fill:none;stroke:var(--bad);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:p 1.6s infinite}
+@keyframes p{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+.truck{cursor:pointer}
+.truck circle{stroke:#fff;stroke-width:2}
+.truck text{font-size:10px;font-weight:700;fill:#fff;text-anchor:middle;paint-order:stroke;stroke:#0b1120;stroke-width:3px}
+.legend{position:absolute;left:14px;bottom:12px;display:flex;gap:14px;font-size:11px;color:var(--mut)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🗺️ SA BÀN 2D • MIỀN TÂY 01</h1><div class="sub">Bản đồ sơ đồ gọn — chỉ hiện thứ cần nhìn · cập nhật <span id="clock">--:--:--</span></div></div>
+  <nav>
+    <a href="/war-room">🛡️ War Room</a><a href="/">🧩 Luồng Node</a>
+    <a href="/sa-ban">🎮 Sa Bàn 3D</a><a href="/sa-ban-2d" class="on">🗺️ Sa Bàn 2D</a>
+    <a href="/phong-hop">🏛️ Phòng Họp AI</a>
+  </nav>
+</header>
+<main>
+  <div class="board">
+    <svg id="map" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet">
+      <path id="loop" class="road" d="M180 130 H820 V490 H180 Z"/>
+      <path class="roadline" d="M180 130 H820 V490 H180 Z"/>
+      <path class="road" d="M500 490 V590"/><path class="roadline" d="M500 490 V590"/>
+      <g id="nodes"></g>
+      <g id="trucks"></g>
+      <text x="500" y="612" fill="#64748b" font-size="11" text-anchor="middle">▲ Cổng MT01 · Quốc lộ 91</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>Ổn</span>
+      <span><i style="background:var(--bad)"></i>Có sự cố</span>
+      <span><i style="background:var(--pri)"></i>Xe tải (bấm để xem)</span>
+    </div>
+  </div>
+  <aside class="side">
+    <div class="card"><h3>Tổng quan</h3>
+      <div class="kpis">
+        <div class="kpi"><b id="kTrucks">-</b><span>Xe đang chạy</span></div>
+        <div class="kpi"><b id="kOpen" style="color:var(--bad)">-</b><span>Sự cố mở</span></div>
+        <div class="kpi"><b id="kPk">-</b><span>Kiện đang chở</span></div>
+      </div>
+    </div>
+    <div class="card"><h3>Sự cố cần xử lý</h3><div id="incList"></div></div>
+    <div class="card"><h3 id="detTitle">Chi tiết</h3><div id="detBody"><div class="empty">Bấm vào kho hoặc xe tải trên bản đồ</div></div></div>
+  </aside>
+</main>
+<script>
+const NODES=[
+ {key:'cairang', name:'Kho Cái Răng', x:70,  y:40,  w:200,h:70},
+ {key:'binhthuy',name:'Kho Bình Thủy',x:70,  y:215, w:200,h:70},
+ {key:'omon',    name:'Kho Ô Môn',    x:70,  y:400, w:200,h:70},
+ {key:'vithanh', name:'Kho Vị Thanh', x:730, y:40,  w:200,h:70},
+];
+const TRUCK_HOME={'truck-cairang':'cairang','truck-highway':'binhthuy','truck-omon':'omon','truck-vithanh':'vithanh'};
+const NS='http://www.w3.org/2000/svg';
+let FLEET={},INC=[],selNode=null,selTruck=null;
+const el=(n,a={},p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+
+function drawNodes(){
+  const g=document.getElementById('nodes');g.innerHTML='';
+  // HQ
+  const hq=el('g',{class:'node hq'},g);
+  el('rect',{x:360,y:215,width:280,height:100},hq);
+  el('text',{x:500,y:258,class:'t'},hq).textContent='🏢 Văn phòng MT01';
+  el('text',{x:500,y:280,class:'s'},hq).textContent='Vận hành · Camera · AI Core';
+  hq.onclick=()=>showHQ();
+  NODES.forEach(n=>{
+    const open=INC.filter(i=>i.hub_key===n.key&&i.status!=='RESOLVED');
+    const gg=el('g',{class:'node'+(selNode===n.key?' sel':'')},g);
+    el('rect',{x:n.x,y:n.y,width:n.w,height:n.h},gg);
+    el('text',{x:n.x+n.w/2,y:n.y+30,class:'t'},gg).textContent='🏭 '+n.name;
+    el('text',{x:n.x+n.w/2,y:n.y+52,class:'s'},gg).textContent=open.length?open.length+' sự cố đang mở':'Hoạt động ổn';
+    const bx=n.x+n.w-14,by=n.y+14;
+    if(open.length)el('circle',{cx:bx,cy:by,r:7,class:'ring'},gg);
+    el('circle',{cx:bx,cy:by,r:6,fill:open.length?'#ef4444':'#10b981'},gg);
+    gg.onclick=()=>showNode(n);
+  });
+}
+
+// ---- trucks run along the loop, evenly spread, no overlap ----
+const loop=document.getElementById('loop');
+const LEN=loop.getTotalLength();
+const trucks=[];
+function initTrucks(){
+  const g=document.getElementById('trucks');g.innerHTML='';
+  const ids=Object.keys(FLEET);
+  ids.forEach((id,i)=>{
+    const t=FLEET[id];
+    const gg=el('g',{class:'truck'},g);
+    el('circle',{r:9,fill:'#f97316'},gg);
+    const tx=el('text',{y:20},gg);tx.textContent=t.plate;
+    gg.onclick=()=>showTruck(id);
+    trucks.push({id,g:gg,pos:(LEN/ids.length)*i,speed:22+(i%2)*6});
+  });
+}
+let last=performance.now();
+function tick(now){
+  const dt=(now-last)/1000;last=now;
+  trucks.forEach(t=>{
+    t.pos=(t.pos+t.speed*dt)%LEN;
+    const p=loop.getPointAtLength(t.pos);
+    t.g.setAttribute('transform',`translate(${p.x},${p.y})`);
+  });
+  requestAnimationFrame(tick);
+}
+
+function rowsHTML(arr){return arr.map(([a,b])=>`<div class="row"><span>${a}</span><span>${b}</span></div>`).join('')}
+function setDet(title,html){document.getElementById('detTitle').textContent=title;document.getElementById('detBody').innerHTML=html}
+function showNode(n){
+  selNode=n.key;drawNodes();
+  const trs=Object.entries(FLEET).filter(([id])=>TRUCK_HOME[id]===n.key).map(([,t])=>t);
+  const open=INC.filter(i=>i.hub_key===n.key&&i.status!=='RESOLVED');
+  setDet(n.name,
+    rowsHTML([['Xe thuộc kho',trs.map(t=>t.plate).join(', ')||'—'],['Kiện đang chở',trs.reduce((s,t)=>s+t.payload.packageCount,0)],['Sự cố mở',open.length]])+
+    open.map(i=>`<div class="inc ${i.severity}"><b>${i.title}</b><small>${i.location}</small>${i.description}</div>`).join(''));
+}
+function showHQ(){setDet('Văn phòng MT01',rowsHTML([['Phòng','Vận hành, Camera, Thủ quỹ, Kế toán'],['AI Core','Tiger AI • trực 24/7']])+'<div style="margin-top:10px"><a class="btn" style="text-decoration:none;display:inline-block" href="/sa-ban">Xem bản 3D</a></div>')}
+function showTruck(id){
+  const t=FLEET[id];if(!t)return;
+  const p=t.payload;
+  setDet('🚛 '+t.plate,
+    rowsHTML([['Tài xế',t.driver.name],['SĐT',t.driver.phone],['Tuyến',t.routeName.replace('Tuyến Cố Định: ','').replace('Tuyến Trục: ','')],['Trạng thái',t.cargoStatus.stateText],['Tốc độ',t.telemetry.speedKmh+' km/h'],['Nhiên liệu',t.telemetry.fuelPercent+'%']])+
+    `<div class="row" style="border:0"><span>Tải trọng</span><span>${p.currentKg}/${p.maxKg} kg</span></div><div class="bar"><i style="width:${p.utilizationPercent}%"></i></div>`);
+}
+function renderInc(){
+  const open=INC.filter(i=>i.status!=='RESOLVED');
+  document.getElementById('kOpen').textContent=open.length;
+  const box=document.getElementById('incList');
+  box.innerHTML=open.length?open.map(i=>`<div class="inc ${i.severity}"><b>${i.title}</b><small>${i.location}</small>${i.description}<div style="margin-top:7px"><button class="btn" onclick="resolveInc('${i.id}')">⚡ Xử lý 1-click</button></div></div>`).join(''):'<div class="empty">✅ Không còn sự cố nào</div>';
+}
+async function resolveInc(id){
+  await fetch('/api/saban/incidents/resolve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+  await load();
+}
+async function load(){
+  try{
+    const [f,i]=await Promise.all([fetch('/api/saban/fleet-radar').then(r=>r.json()),fetch('/api/saban/incidents').then(r=>r.json())]);
+    const first=!Object.keys(FLEET).length;
+    FLEET=f.trucks||{};INC=i.incidents||[];
+    document.getElementById('kTrucks').textContent=Object.keys(FLEET).length;
+    document.getElementById('kPk').textContent=Object.values(FLEET).reduce((s,t)=>s+t.payload.packageCount,0);
+    drawNodes();renderInc();
+    if(first){initTrucks();requestAnimationFrame(tick)}
+  }catch(e){console.error(e)}
+}
+setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('vi-VN'),1000);
+load();setInterval(load,15000);
+</script>
+</body>
+</html>
+

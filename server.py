@@ -7442,6 +7442,12 @@ def api_saban_reset_incidents():
 # ==============================================================================
 import meeting_service
 
+@app.route("/sa-ban-2d")
+def route_sa_ban_2d():
+    """Sa bàn 2D tinh gọn — dễ nhìn, ít rối mắt"""
+    return render_template("sa_ban_2d.html")
+
+
 @app.route("/phong-hop")
 def route_phong_hop():
     """Giao diện Quản lý Phòng Họp AI & Phòng Truyền Thông"""
