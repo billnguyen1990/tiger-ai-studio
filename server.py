@@ -77,7 +77,7 @@ def get_current_mt01_user(req=None):
         if hdr_pin == "150917":
             return {
                 "email": "admin@giaohangnhanh.vn",
-                "name": "Sếp Lộc (Admin MT01)",
+                "name": "Quản Trị Vùng MT01",
                 "role": "admin",
                 "allowed_hub": None,
                 "can_access_studio": True
@@ -177,11 +177,11 @@ def api_auth_login():
     email_raw = str(data.get("email", "")).strip().lower()
     pin_raw = str(data.get("pin", "")).strip()
 
-    # 1. Nếu nhập Mã PIN Admin (150917) ở ô PIN hoặc ô Email -> Mở toàn quyền Admin Sếp Lộc
+    # 1. Nếu nhập Mã PIN Admin (150917) ở ô PIN hoặc ô Email -> Mở toàn quyền Admin
     if pin_raw == "150917" or email_raw == "150917":
         admin_user = {
-            "email": email_raw if "@" in email_raw else "locnp@giaohangnhanh.vn",
-            "name": "Sếp Lộc (Quản Trị Vùng MT01)",
+            "email": email_raw if "@" in email_raw else "admin@giaohangnhanh.vn",
+            "name": "Quản Trị Vùng MT01",
             "staff_id": "ADMIN",
             "role": "admin",
             "allowed_hub": None,
@@ -192,7 +192,7 @@ def api_auth_login():
         return jsonify({
             "success": True,
             "user": admin_user,
-            "message": "Chào mừng Sếp Lộc! Đã mở khóa toàn quyền 4 Kho MT01 & Studio."
+            "message": "Đã mở khóa toàn quyền 4 Kho MT01 & Studio."
         })
 
     # 2. Kiểm tra danh sách 4 Email NVXL được cấp quyền
@@ -826,8 +826,8 @@ def verify_admin_pin():
     if pin == ADMIN_MASTER_PIN:
         session.permanent = True
         session["mt01_user"] = {
-            "email": "locnp@giaohangnhanh.vn",
-            "name": "Sếp Lộc (Quản Trị Vùng MT01)",
+            "email": "admin@giaohangnhanh.vn",
+            "name": "Quản Trị Vùng MT01",
             "staff_id": "ADMIN",
             "role": "admin",
             "allowed_hub": None,
