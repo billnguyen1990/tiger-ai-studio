@@ -1783,6 +1783,762 @@
       background: rgba(239, 68, 68, 0.15);
     }
 
+    /* ========================================================================= */
+    /* FEATURE 1: LIVE INTERACTIVE TRUCK & CARGO FLEET RADAR STYLES              */
+    /* ========================================================================= */
+    .moving-ghn-truck {
+      cursor: pointer !important;
+      transition: filter 0.2s ease, transform 0.2s ease;
+    }
+    .moving-ghn-truck:hover {
+      filter: drop-shadow(0 0 10px #f97316) brightness(1.2);
+    }
+    .moving-ghn-truck.camera-focused {
+      animation: truckFocusGlow 1.5s ease-in-out infinite;
+    }
+    @keyframes truckFocusGlow {
+      0%, 100% { filter: drop-shadow(0 0 12px #f97316) drop-shadow(0 0 25px rgba(249, 115, 22, 0.8)); }
+      50% { filter: drop-shadow(0 0 24px #38bdf8) drop-shadow(0 0 35px rgba(56, 189, 248, 0.9)); }
+    }
+    .truck-radar-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(249, 115, 22, 0.2);
+      max-width: 820px;
+      width: 95vw;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px;
+    }
+    .fleet-tabs-row {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+      overflow-x: auto;
+    }
+    .fleet-tab-btn {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .fleet-tab-btn:hover {
+      border-color: #f97316;
+      color: #fdba74;
+      background: rgba(249, 115, 22, 0.1);
+    }
+    .fleet-tab-btn.active {
+      background: linear-gradient(135deg, #ea580c, #f97316);
+      border-color: #fdba74;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    }
+    .truck-radar-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 768px) {
+      .truck-radar-grid { grid-template-columns: 1fr; }
+    }
+    .truck-detail-box {
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .truck-box-title {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .driver-profile-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .driver-avatar-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      border: 2px solid #fdba74;
+      flex-shrink: 0;
+    }
+    .driver-meta-name {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .driver-meta-sub {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      display: flex;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .driver-phone-link {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .driver-phone-link:hover { text-decoration: underline; }
+    .route-viz-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0;
+      position: relative;
+    }
+    .route-viz-bar {
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      height: 4px;
+      background: #334155;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    .route-viz-progress {
+      position: absolute;
+      left: 12%;
+      width: 65%;
+      height: 4px;
+      background: linear-gradient(90deg, #f97316, #38bdf8);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      box-shadow: 0 0 8px #f97316;
+    }
+    .route-viz-truck-icon {
+      position: absolute;
+      left: calc(12% + 65% - 10px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      font-size: 0.9rem;
+      animation: truckBob 1s infinite alternate ease-in-out;
+    }
+    @keyframes truckBob { 0% { transform: translateY(-50%) scale(1); } 100% { transform: translateY(-65%) scale(1.15); } }
+    .route-hub-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #020617;
+      border: 2px solid #f97316;
+      z-index: 4;
+    }
+    .route-hub-dot.dest { border-color: #38bdf8; }
+    .payload-meter-track {
+      height: 10px;
+      background: #1e293b;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 6px 0 8px;
+      border: 1px solid #334155;
+    }
+    .payload-meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+    .seal-chip-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .tele-val {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tele-label {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* ========================================================================= */
+    /* FEATURE 2: CAMPUS LIFE & INTERACTIVE HOTSPOTS STYLES                      */
+    /* ========================================================================= */
+    /* Starbucks Order Modal */
+    .sb-order-card {
+      background: linear-gradient(145deg, rgba(6, 35, 25, 0.98), rgba(2, 20, 14, 0.95));
+      border: 1.5px solid #00D880;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 216, 128, 0.25);
+      max-width: 780px;
+      width: 95vw;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px;
+    }
+    .sb-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .sb-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(6, 40, 26, 0.7);
+      border: 1px solid rgba(0, 216, 128, 0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+    .sb-menu-item:hover {
+      border-color: #00D880;
+      background: rgba(6, 48, 32, 0.9);
+      box-shadow: 0 0 10px rgba(0, 216, 128, 0.2);
+    }
+    .sb-item-icon {
+      font-size: 1.8rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 112, 74, 0.35);
+      border-radius: 8px;
+      border: 1px solid rgba(0, 216, 128, 0.3);
+      flex-shrink: 0;
+    }
+    .sb-item-info { flex: 1; }
+    .sb-item-name { font-size: 0.88rem; font-weight: 700; color: #ffffff; }
+    .sb-item-badge {
+      font-size: 0.68rem;
+      background: rgba(254, 240, 138, 0.15);
+      color: #fde047;
+      border: 1px solid rgba(253, 224, 71, 0.3);
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      font-weight: 600;
+    }
+    .sb-item-price { font-size: 0.8rem; color: #34d399; font-weight: 700; margin-top: 3px; }
+    .sb-item-ctrls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sb-size-select {
+      background: #022014;
+      border: 1px solid #00D880;
+      color: #6ee7b7;
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .sb-qty-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #021a10;
+      border: 1px solid rgba(0, 216, 128, 0.4);
+      border-radius: 6px;
+      padding: 2px 4px;
+    }
+    .sb-qty-btn {
+      background: none;
+      border: none;
+      color: #34d399;
+      font-size: 1rem;
+      font-weight: 800;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .sb-qty-btn:hover { background: rgba(0, 216, 128, 0.25); color: #fff; }
+    .sb-qty-val {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #ffffff;
+      min-width: 20px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .btn-sb-submit {
+      background: linear-gradient(135deg, #00704A, #00D880);
+      color: #ffffff;
+      border: 1px solid #6ee7b7;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0, 216, 128, 0.4);
+      transition: all 0.2s ease;
+    }
+    .btn-sb-submit:hover {
+      background: linear-gradient(135deg, #005a3b, #00ba6f);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 216, 128, 0.6);
+    }
+
+    /* Starbucks Delivery Quadcopter */
+    .sb-drone-courier {
+      position: absolute;
+      width: 54px;
+      height: 44px;
+      z-index: 175;
+      pointer-events: none;
+      transition: left 3.8s cubic-bezier(0.25, 0.1, 0.25, 1), top 3.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .drone-inner-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      animation: droneBob 1.2s ease-in-out infinite;
+    }
+    @keyframes droneBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+    .drone-rotor {
+      position: absolute;
+      width: 16px;
+      height: 3px;
+      background: rgba(0, 216, 128, 0.85);
+      border-radius: 2px;
+      box-shadow: 0 0 6px #00D880;
+      animation: rotorSpin 0.12s linear infinite;
+    }
+    .rotor-tl { top: 2px; left: 2px; }
+    .rotor-tr { top: 2px; right: 2px; }
+    .rotor-bl { bottom: 16px; left: 2px; }
+    .rotor-br { bottom: 16px; right: 2px; }
+    @keyframes rotorSpin { 100% { transform: rotate(360deg); } }
+    .drone-light-beam {
+      position: absolute;
+      left: 50%;
+      top: 24px;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 28px solid rgba(0, 216, 128, 0.25);
+      filter: blur(1.5px);
+      pointer-events: none;
+    }
+    .drone-cargo-bag {
+      position: absolute;
+      left: 50%;
+      bottom: 2px;
+      transform: translateX(-50%);
+      background: #00704A;
+      border: 1px solid #00D880;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      box-shadow: 0 0 8px rgba(0, 216, 128, 0.6);
+      animation: payloadSwing 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes payloadSwing { 0% { transform: translateX(-50%) rotate(-6deg); } 100% { transform: translateX(-50%) rotate(6deg); } }
+
+    /* Riverside Fishing & Water Ripples */
+    .river-fisherman {
+      position: absolute;
+      width: 68px;
+      height: 68px;
+      z-index: 125;
+      cursor: pointer;
+    }
+    .fisherman-dock-wood {
+      position: absolute;
+      left: 8px;
+      top: 36px;
+      width: 44px;
+      height: 20px;
+      background: linear-gradient(135deg, #78350f, #92400e);
+      border: 1.5px solid #b45309;
+      border-radius: 3px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+      transform: rotate(8deg);
+    }
+    .fisherman-ripples-anchor {
+      position: absolute;
+      left: 52px;
+      top: 48px;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    .water-ripple-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid #38bdf8;
+      animation: rippleSpread 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+    .water-ripple-ring.r2 { animation-delay: 0.8s; }
+    .water-ripple-ring.r3 { animation-delay: 1.6s; }
+    @keyframes rippleSpread {
+      0% { width: 4px; height: 2px; opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
+      100% { width: 46px; height: 20px; opacity: 0; transform: translate(-50%, -50%) scale(2.2); }
+    }
+    .fisherman-rod-wrapper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 68px;
+      height: 68px;
+      animation: rodBreezeFlex 3s ease-in-out infinite alternate;
+      transform-origin: 32px 38px;
+      transition: transform 0.2s ease;
+    }
+    .fisherman-rod-wrapper.reeling-in {
+      transform: rotate(-28deg) !important;
+    }
+    @keyframes rodBreezeFlex {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(2.5deg); }
+      100% { transform: rotate(-1.5deg); }
+    }
+    .bobber-element {
+      animation: bobberBiteDip 2.2s ease-in-out infinite;
+    }
+    @keyframes bobberBiteDip {
+      0%, 100% { transform: translateY(0); }
+      35% { transform: translateY(2.5px); }
+      40% { transform: translateY(-1px); }
+      75% { transform: translateY(6.5px); }
+      80% { transform: translateY(1px); }
+    }
+    .jumping-fish-fx {
+      position: absolute;
+      left: 45px;
+      top: 40px;
+      font-size: 1.6rem;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 150;
+    }
+    .jumping-fish-fx.active {
+      animation: fishJumpArc 0.9s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+    }
+    @keyframes fishJumpArc {
+      0% { opacity: 0; transform: translate(0, 0) scale(0.3) rotate(0deg); }
+      40% { opacity: 1; transform: translate(-18px, -45px) scale(1.3) rotate(-30deg); }
+      80% { opacity: 1; transform: translate(-30px, -20px) scale(1.1) rotate(20deg); }
+      100% { opacity: 0; transform: translate(-36px, 10px) scale(0.4) rotate(45deg); }
+    }
+    .water-splash-fx {
+      position: absolute;
+      left: 45px;
+      top: 44px;
+      font-size: 1.4rem;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 150;
+    }
+    .water-splash-fx.active {
+      animation: splashBurst 0.6s ease-out forwards;
+    }
+    @keyframes splashBurst {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); }
+    }
+
+    /* Park Pedestrians */
+    .pedestrian-actor {
+      position: absolute;
+      cursor: pointer;
+      z-index: 120;
+      transition: left 2.2s linear, top 2.2s linear;
+    }
+    .pedestrian-actor.facing-left { transform: scaleX(-1); }
+    .puppy-companion {
+      position: absolute;
+      right: -16px;
+      bottom: 2px;
+      font-size: 1.1rem;
+    }
+    .puppy-tail {
+      display: inline-block;
+      transform-origin: left bottom;
+      animation: tailWag 0.25s infinite alternate ease-in-out;
+    }
+    @keyframes tailWag { 0% { transform: rotate(-20deg); } 100% { transform: rotate(25deg); } }
+
+    /* ========================================================================= */
+    /* FEATURE 3: REAL-TIME SMART INCIDENT & ANOMALY HUD STYLES                  */
+    /* ========================================================================= */
+    .incident-ticker-hud {
+      position: fixed;
+      top: 54px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 980px;
+      z-index: 190;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 16px rgba(239, 68, 68, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 14px;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+    .incident-ticker-hud.all-clear {
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+    .ticker-left-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .ticker-beacon-icon {
+      font-size: 1rem;
+      animation: beaconPulse 1.2s infinite ease-in-out;
+    }
+    @keyframes beaconPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #ef4444); }
+      50% { transform: scale(1.25); filter: drop-shadow(0 0 8px #ef4444); }
+    }
+    .incident-ticker-hud.all-clear .ticker-beacon-icon {
+      animation: none;
+      filter: none;
+    }
+    .ticker-badge-text {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #f87171;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .incident-ticker-hud.all-clear .ticker-badge-text {
+      color: #34d399;
+    }
+    .ticker-center-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .ticker-loc-tag {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid #38bdf8;
+      color: #7dd3fc;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .ticker-sev-pill {
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .ticker-sev-pill.CRITICAL {
+      background: rgba(239, 68, 68, 0.25);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+    }
+    .ticker-sev-pill.WARNING {
+      background: rgba(245, 158, 11, 0.25);
+      border: 1px solid #f59e0b;
+      color: #fde047;
+    }
+    .ticker-sev-pill.INFO {
+      background: rgba(59, 130, 246, 0.25);
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+    }
+    .ticker-desc-text {
+      font-size: 0.76rem;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ticker-nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .ticker-nav-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #94a3b8;
+      border-radius: 4px;
+      width: 22px;
+      height: 22px;
+      font-size: 0.68rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ticker-nav-btn:hover { background: #334155; color: #fff; border-color: #94a3b8; }
+    .ticker-page-info {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0 4px;
+    }
+    .btn-incident-resolve {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border: 1px solid #f87171;
+      color: #ffffff;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .btn-incident-resolve:hover {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.7);
+      transform: translateY(-1px);
+    }
+    .btn-incident-resolve.resolving {
+      background: #475569;
+      border-color: #64748b;
+      color: #cbd5e1;
+      cursor: wait;
+      box-shadow: none;
+    }
+    .btn-incident-resolve.resolved-flash {
+      background: #059669 !important;
+      border-color: #34d399 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.6) !important;
+    }
+
+    /* Global Sa Ban Toast Notification */
+    #sabanToastContainer {
+      position: fixed;
+      top: 104px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .saban-toast-pill {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #38bdf8;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(56, 189, 248, 0.3);
+      backdrop-filter: blur(12px);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 280px;
+      max-width: 420px;
+      pointer-events: auto;
+      animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .saban-toast-pill.success {
+      border-color: #10b981;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(16, 185, 129, 0.35);
+    }
+    .saban-toast-pill.warning {
+      border-color: #f59e0b;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(245, 158, 11, 0.35);
+    }
+    .saban-toast-pill.danger {
+      border-color: #ef4444;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(239, 68, 68, 0.35);
+    }
+    @keyframes toastSlideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
 </style>
 </head>
 <body>
@@ -1815,6 +2571,9 @@
           <span>🎮 Sa Bàn 3D</span>
           <span class="t-nav-badge">LIVE</span>
         </a>
+        <a href="/phong-hop" class="t-nav-item" title="Phòng Họp AI & Phòng Truyền Thông">
+          <span>🏛️ Phòng Họp AI</span>
+        </a>
       </nav>
     </div>
 
@@ -1822,6 +2581,7 @@
     <div class="light-switch-wrap">
       <div class="hud-menu-strip">
         <button class="hud-menu-btn" onclick="openDeptTasksModal()" style="border-color:#38bdf8;color:#7dd3fc;">📋 CÔNG VIỆC</button>
+        <button class="hud-menu-btn" onclick="openTruckRadarModal()" style="border-color:#f97316;color:#fdba74;">🚛 RADAR XE TẢI</button>
         <button class="hud-menu-btn highlight" onclick="openRoomModal('cairang')">CAMERA +</button>
         <button class="hud-menu-btn" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Kiểm tra & đồng bộ Đơn Tạo Ketqua')">BÁO CÁO +</button>
         <button class="hud-menu-btn" onclick="openTaskDrawer()">NHÂN SỰ</button>
@@ -1839,6 +2599,29 @@
       </div>
     </div>
   </header>
+
+  <!-- ================= REAL-TIME SMART INCIDENT & ANOMALY HUD ================= -->
+  <div class="incident-ticker-hud" id="incidentTickerHud">
+    <div class="ticker-left-badge">
+      <span class="ticker-beacon-icon" id="tickerBeacon">🚨</span>
+      <span class="ticker-badge-text" id="tickerBadge">SỰ CỐ CẦN XỬ LÝ (4)</span>
+    </div>
+    <div class="ticker-center-content" id="tickerCenterContent">
+      <span class="ticker-loc-tag" id="tickerLocTag">📍 Kho Cái Răng</span>
+      <span class="ticker-sev-pill CRITICAL" id="tickerSevPill">CRITICAL</span>
+      <span class="ticker-desc-text" id="tickerDescText">3 kiện hàng cồng kềnh tiếp xúc trực tiếp nền bê tông chưa kê pallet.</span>
+    </div>
+    <div class="ticker-nav-controls" id="tickerNavControls">
+      <button class="ticker-nav-btn" onclick="cycleIncident(-1)" title="Sự cố trước">◀</button>
+      <span class="ticker-page-info" id="tickerPageInfo">1/4</span>
+      <button class="ticker-nav-btn" onclick="cycleIncident(1)" title="Sự cố kế tiếp">▶</button>
+    </div>
+    <div class="ticker-action-btn">
+      <button class="btn-incident-resolve" id="btnIncidentResolve" onclick="resolveCurrentIncident()">
+        <span>⚡</span> XỬ LÝ 1-CLICK
+      </button>
+    </div>
+  </div>
 
   <!-- RIGHT EDGE VERTICAL TAB "VIỆC ▲" -->
   <div class="right-edge-tab" onclick="openTaskDrawer()">VIỆC ▲</div>
@@ -1874,7 +2657,7 @@
       <div class="warehouse-zone-sign" style="left: 67.5%; top: 4.5%;" onclick="openRoomModal('vithanh')">🏭 CỤM KHO VỊ THANH (GÓC TRÊN PHẢI)</div>
 
       <!-- 4. KHU DỊCH VỤ F&B, STARBUCKS, QUÁN ĂN, CAFE & CÔNG VIÊN BỜ SÔNG -->
-      <div class="starbucks-zone-sign" style="left: 29.5%; top: 71.5%;" onclick="openRoomModal('starbucks')">
+      <div class="starbucks-zone-sign" style="left: 29.5%; top: 71.5%; cursor:pointer;" onclick="openStarbucksOrderModal()" title="Bấm để mở Menu Đặt Món Starbucks & Trà Sữa">
         <img src="/static/img/starbucks_logo.svg" style="width:18px;height:18px;border-radius:50%;background:#fff;" alt="Starbucks">
         <span>STARBUCKS TRÀ SỮA & COFFEE</span>
       </div>
@@ -1882,7 +2665,7 @@
       <div class="food-zone-sign coffee-sign" style="left: 70.5%; top: 71.5%;" onclick="openRoomModal('garden_coffee')">☕ GARDEN COFFEE</div>
       <div class="dept-zone-sign" style="left: 49.8%; top: 80.0%;" onclick="openRoomModal('thanhtra')">🕵️ CỔNG KIỂM SOÁT XE TẢI</div>
       <div class="park-zone-sign" style="left: 88.0%; top: 38.0%;" onclick="toggleShiftSimulation()">🌳 CÔNG VIÊN & ĐƯỜNG CHẠY BỘ</div>
-      <div class="park-zone-sign" style="left: 78.5%; top: 86.0%;" onclick="toggleShiftSimulation()">🎣 BẾN CÂU CÁ 1</div>
+      <div class="park-zone-sign" style="left: 78.5%; top: 86.0%; cursor:pointer;" onclick="triggerFishingReelIn()" title="Bến Câu Cá 1 • Bấm Giật Cần!">🎣 BẾN CÂU CÁ 1 (GIẬT CẦN)</div>
       <div class="park-zone-sign" style="left: 90.5%; top: 72.0%;" onclick="toggleShiftSimulation()">🎣 BẾN CÂU CÁ 2 (CẦU GỖ)</div>
 
       <!-- HIỆU ỨNG BỐC XẾP KIỆN HÀNG TẠI CỬA BẾN XE TẢI 4 CỤM KHO -->
@@ -3254,7 +4037,7 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-cairang -->
-      <div class="moving-ghn-truck is-docking" id="truck-cairang" style="left: 19.5%; top: 32.0%;" onclick="openRoomModal('cairang')" title="Bấm để mở Phòng Giám Sát Tải">
+      <div class="moving-ghn-truck is-docking" id="truck-cairang" style="left: 19.5%; top: 32.0%;" onclick="openTruckRadarModal('truck-cairang')" title="Bấm để xem Radar & Dữ liệu Xe Tải Cái Răng">
         <div class="truck-plate-tag" id="tag-truck-cairang">📦 [ĐANG BỐC HÀNG] Bãi Cửa Cuốn Kho Cái Răng • 56 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
@@ -3291,7 +4074,7 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-omon -->
-      <div class="moving-ghn-truck is-docking" id="truck-omon" style="left: 20.5%; top: 63.0%;" onclick="openRoomModal('omon')" title="Bấm để mở Phòng Giám Sát Tải">
+      <div class="moving-ghn-truck is-docking" id="truck-omon" style="left: 20.5%; top: 63.0%;" onclick="openTruckRadarModal('truck-omon')" title="Bấm để xem Radar & Dữ liệu Xe Tải Ô Môn">
         <div class="truck-plate-tag" id="tag-truck-omon">📦 [ĐANG BỐC DỠ] Bãi Cửa Cuốn Kho Ô Môn • 42 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
@@ -3328,7 +4111,7 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-vithanh -->
-      <div class="moving-ghn-truck is-docking" id="truck-vithanh" style="left: 64.0%; top: 19.0%;" onclick="openRoomModal('vithanh')" title="Bấm để mở Phòng Giám Sát Tải">
+      <div class="moving-ghn-truck is-docking" id="truck-vithanh" style="left: 64.0%; top: 19.0%;" onclick="openTruckRadarModal('truck-vithanh')" title="Bấm để xem Radar & Dữ liệu Xe Tải Vị Thanh">
         <div class="truck-plate-tag" id="tag-truck-vithanh">📦 [ĐANG BỐC HÀNG] Bãi Nhận Cụm Kho Vị Thanh • 38 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
@@ -3365,7 +4148,7 @@
         </div>
       </div>
       <!-- Animated 3D GHN Box Truck: truck-highway -->
-      <div class="moving-ghn-truck is-docking" id="truck-highway" style="left: 24.5%; top: 20.0%;" onclick="openRoomModal('giamsattai')" title="Bấm để mở Phòng Giám Sát Tải">
+      <div class="moving-ghn-truck is-docking" id="truck-highway" style="left: 24.5%; top: 20.0%;" onclick="openTruckRadarModal('truck-highway')" title="Bấm để xem Radar & Dữ liệu Xe Tải Bình Thủy">
         <div class="truck-plate-tag" id="tag-truck-highway">📦 [ĐANG BỐC HÀNG] Bãi Nhận Cụm Kho Bình Thủy • 68 kiện</div>
         <div class="truck-svg-inner">
           <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
@@ -3474,7 +4257,7 @@
 
 
       <!-- Chibi Barista Starbucks: starbucks -->
-      <div class="agent-tag pose-work" id="agent-starbucks" style="left: 29.5%; top: 82.5%;" onclick="openRoomModal('starbucks')">
+      <div class="agent-tag pose-work" id="agent-starbucks" style="left: 29.5%; top: 82.5%; cursor:pointer;" onclick="openStarbucksOrderModal()" title="Bấm để mở Menu Đặt Món Starbucks & Trà Sữa">
         <div class="agent-bubble" id="bubble-starbucks">🧋 Starbucks • Trà Sữa Boba & Cold Brew</div>
         <div class="chibi-nameplate dept-plate" style="background:#00704A;border-color:#00D880;">🧋 Barista Starbucks</div>
         <div class="chibi-floor-ring"></div>
@@ -3571,6 +4354,118 @@
             </g>
           </svg>
         </div>
+      <!-- ================= RIVERSIDE FISHERMAN & WATER RIPPLES ================= -->
+      <div class="river-fisherman" id="river-fisherman-1" style="left: 78.5%; top: 86.5%;" onclick="triggerFishingReelIn()" title="Bến Câu Cá 1 • Bấm Giật Cần!">
+        <!-- Wooden Dock Platform -->
+        <div class="fisherman-dock-wood"></div>
+
+        <!-- Concentric Water Ripples on River Surface -->
+        <div class="fisherman-ripples-anchor">
+          <div class="water-ripple-ring r1"></div>
+          <div class="water-ripple-ring r2"></div>
+          <div class="water-ripple-ring r3"></div>
+        </div>
+
+        <!-- Animated Rod, Line, Bobber and Chibi Fisherman -->
+        <div class="fisherman-rod-wrapper" id="fishermanRodWrap">
+          <svg viewBox="0 0 80 80" width="80" height="80" style="overflow:visible;">
+            <!-- Tackle box stool -->
+            <rect x="22" y="38" width="16" height="12" rx="2" fill="#0284c7" stroke="#0369a1" stroke-width="1"/>
+            <!-- Chibi Fisherman Body (Casual Jeans + Blue Polo) -->
+            <ellipse cx="30" cy="48" rx="8" ry="4" fill="#1e293b"/>
+            <path d="M24,28 C24,26 36,26 36,28 L37,42 C37,44 23,44 23,42 Z" fill="#0284c7" stroke="#0f172a" stroke-width="1"/>
+            <!-- Head & Traditional Straw Hat (Nón Lá) -->
+            <circle cx="30" cy="22" r="7" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+            <ellipse cx="28" cy="22" rx="1.2" ry="1.5" fill="#0f172a"/>
+            <ellipse cx="33" cy="22" rx="1.2" ry="1.5" fill="#0f172a"/>
+            <!-- Straw Hat Cone / Brim -->
+            <polygon points="12,19 48,19 30,5" fill="#facc15" stroke="#ca8a04" stroke-width="1.2"/>
+            <ellipse cx="30" cy="19" rx="18" ry="3.5" fill="#fde047" stroke="#ca8a04" stroke-width="1"/>
+            <!-- Fishing Rod extending toward water -->
+            <line x1="33" y1="32" x2="62" y2="10" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round"/>
+            <!-- Nylon line dropping into river -->
+            <path d="M62,10 Q66,32 58,54" fill="none" stroke="#e0f2fe" stroke-width="1" stroke-dasharray="3,1.5"/>
+            <!-- Red/White Fishing Bobber -->
+            <g class="bobber-element">
+              <circle cx="58" cy="54" r="3.2" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+              <ellipse cx="58" cy="56" rx="5" ry="1.8" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.85"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="chibi-nameplate" style="background:#0369a1; border-color:#38bdf8; font-size:0.65rem;">🎣 Bến Câu Cá 1 (Bấm Giật Cần)</div>
+        <div class="jumping-fish-fx" id="jumpingFishFx">🐟</div>
+        <div class="water-splash-fx" id="waterSplashFx">💦</div>
+      </div>
+
+      <!-- ================= PARK PEDESTRIAN NETWORK ================= -->
+      <!-- 1. Park Stroller (Khách dạo bộ công viên ngắm cảnh sông) -->
+      <div class="pedestrian-actor" id="park-stroller" style="left: 82.0%; top: 40.0%;" onclick="speakPedestrian('stroller')" title="Khách dạo bộ công viên ven sông">
+        <div class="agent-bubble" id="bubble-park-stroller" style="font-size:0.7rem;">🌸 Thảnh thơi dạo bước công viên ven sông!</div>
+        <div class="chibi-nameplate" style="background:#0f766e; border-color:#2dd4bf; font-size:0.65rem;">🚶 Dạo Bộ Công Viên</div>
+        <div class="chibi-floor-ring"></div>
+        <svg viewBox="0 0 48 56" width="40" height="46">
+          <ellipse cx="24" cy="50" rx="14" ry="4" fill="rgba(0,0,0,0.35)"/>
+          <rect x="18" y="38" width="4.5" height="12" rx="2" fill="#1e293b"/>
+          <rect x="25.5" y="38" width="4.5" height="12" rx="2" fill="#1e293b"/>
+          <path d="M15,22 C15,20 33,20 33,22 L36,39 C36,41 12,41 12,39 Z" fill="#0d9488" stroke="#042f2e" stroke-width="1"/>
+          <circle cx="24" cy="14" r="7" fill="#ffedd5" stroke="#fdba74" stroke-width="0.8"/>
+          <ellipse cx="24" cy="9" rx="8" ry="3" fill="#1e293b"/>
+          <!-- Iced Boba Drink in Hand -->
+          <rect x="31" y="28" width="5" height="8" rx="1" fill="#fde047" stroke="#ca8a04" stroke-width="0.8"/>
+          <line x1="33.5" y1="28" x2="33.5" y2="24" stroke="#00D880" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- 2. Park Dog Walker (Dẫn chú cún cưng đi dạo với đuôi vẫy mừng) -->
+      <div class="pedestrian-actor" id="park-dog-walker" style="left: 85.0%; top: 48.0%;" onclick="speakPedestrian('dog_walker')" title="Dắt cún cưng đi dạo bờ sông">
+        <div class="agent-bubble" id="bubble-park-dog-walker" style="font-size:0.7rem;">🐕 Bé Vàng đang vui đùa ở công viên ven sông!</div>
+        <div class="chibi-nameplate" style="background:#c2410c; border-color:#fb923c; font-size:0.65rem;">🐕 Dắt Cún Đi Dạo</div>
+        <div class="chibi-floor-ring"></div>
+        <svg viewBox="0 0 64 56" width="54" height="46" style="overflow:visible;">
+          <ellipse cx="24" cy="50" rx="14" ry="4" fill="rgba(0,0,0,0.35)"/>
+          <!-- Walker legs and hoodie -->
+          <rect x="18" y="38" width="4.5" height="12" rx="2" fill="#1e293b"/>
+          <rect x="25.5" y="38" width="4.5" height="12" rx="2" fill="#1e293b"/>
+          <path d="M15,22 C15,20 33,20 33,22 L35,39 C35,41 13,41 13,39 Z" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/>
+          <circle cx="24" cy="14" r="7" fill="#ffedd5" stroke="#fdba74" stroke-width="0.8"/>
+          <!-- Orange Beanie -->
+          <ellipse cx="24" cy="11" rx="8" ry="4" fill="#f97316"/>
+          <!-- Leash line to puppy -->
+          <path d="M28,30 Q38,36 44,42" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="2,1"/>
+          <!-- Puppy Companion with Wagging Tail -->
+          <g class="puppy-companion-svg" transform="translate(42, 34)">
+            <ellipse cx="10" cy="12" rx="9" ry="5.5" fill="#f59e0b" stroke="#b45309" stroke-width="0.8"/>
+            <circle cx="16" cy="7" r="4.5" fill="#f59e0b" stroke="#b45309" stroke-width="0.8"/>
+            <circle cx="17.5" cy="6.5" r="0.9" fill="#0f172a"/>
+            <ellipse cx="14" cy="4" rx="2" ry="3.5" fill="#d97706"/>
+            <!-- Legs -->
+            <rect x="4" y="15" width="2.5" height="5" rx="1" fill="#d97706"/>
+            <rect x="13" y="15" width="2.5" height="5" rx="1" fill="#d97706"/>
+            <!-- Animated Wagging Tail -->
+            <g class="puppy-tail">
+              <path d="M2,9 Q-4,5 -5,1" fill="none" stroke="#b45309" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- 3. Park Bench Relaxer (Nhân sự ngồi ghế đá đọc tablet thư giãn) -->
+      <div class="pedestrian-actor" id="park-bench-relaxer" style="left: 89.5%; top: 44.0%;" onclick="speakPedestrian('bench_relaxer')" title="Thư giãn ghế đá ngắm sông">
+        <div class="agent-bubble" id="bubble-park-bench-relaxer" style="font-size:0.7rem;">📖 Không khí trong lành tại công viên campus MT01!</div>
+        <div class="chibi-nameplate" style="background:#4338ca; border-color:#818cf8; font-size:0.65rem;">🪑 Ghế Đá Công Viên</div>
+        <svg viewBox="0 0 54 50" width="46" height="42">
+          <!-- Wooden Park Bench -->
+          <rect x="6" y="24" width="42" height="6" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1"/>
+          <line x1="12" y1="30" x2="10" y2="44" stroke="#334155" stroke-width="2"/>
+          <line x1="42" y1="30" x2="44" y2="44" stroke="#334155" stroke-width="2"/>
+          <rect x="6" y="12" width="42" height="4" rx="1" fill="#92400e"/>
+          <!-- Sitting Character with Tablet -->
+          <rect x="20" y="22" width="14" height="12" rx="2" fill="#4338ca"/>
+          <circle cx="27" cy="14" r="6" fill="#ffedd5" stroke="#fdba74" stroke-width="0.8"/>
+          <!-- Glowing Tablet -->
+          <rect x="22" y="22" width="10" height="7" rx="1" fill="#38bdf8" stroke="#0284c7" stroke-width="0.8"/>
+        </svg>
       </div>
 
     </div>
@@ -3602,7 +4497,7 @@
 
     <!-- 1-CLICK COMMAND CHIPS -->
     <div class="chat-quick-bar">
-      <button class="quick-chip" style="border-color:#00D880;color:#00D880;" onclick="openRoomModal('starbucks')">🧋 Starbucks Trà Sữa</button>
+      <button class="quick-chip" style="border-color:#00D880;color:#00D880;" onclick="openStarbucksOrderModal()">🧋 Starbucks Trà Sữa</button>
       <button class="quick-chip" style="border-color:#f59e0b;color:#f59e0b;" onclick="openRoomModal('quan_an')">🍜 Quán Ăn</button>
       <button class="quick-chip" style="border-color:#d97706;color:#d97706;" onclick="openRoomModal('garden_coffee')">☕ Garden Coffee</button>
       <button class="quick-chip" onclick="openRoomModal('vanhanh')">🎯 Vận Hành (KPI)</button>
@@ -4381,10 +5276,779 @@
       }
     }, 2400);
 
+    // =========================================================================
+    // FEATURE 1: LIVE INTERACTIVE TRUCK & CARGO FLEET RADAR LOGIC
+    // =========================================================================
+    const FLEET_RADAR_DATA = {
+      'truck-cairang': {
+        id: 'truck-cairang',
+        plate: '65C-188.92',
+        truckType: 'Xe tải thùng kín 2.5 Tấn (Isuzu Euro 5)',
+        driver: {
+          name: 'Đặng Hoàng Phúc',
+          phone: '0918.452.188',
+          license: 'Bằng C',
+          seniority: '4 năm thâm niên',
+          rating: '4.95 ⭐'
+        },
+        origin: { hubId: '21088000', name: 'Cụm Kho Cái Răng', address: '531 Võ Nguyên Giáp, Cái Răng, Cần Thơ' },
+        destination: { hubId: '21985000', name: 'Cụm Kho Bình Thủy', address: 'Bình Thủy, Cần Thơ' },
+        routeName: 'Tuyến Cố Định: Cái Răng ⇄ Bình Thủy (Nội đô Cần Thơ)',
+        payload: {
+          currentKg: 1940,
+          maxKg: 2500,
+          utilizationPercent: 77.6,
+          packageCount: 56,
+          cargoCategory: 'B2B Shopee Mall & Hàng Tiêu Dùng Nhanh'
+        },
+        cargoStatus: {
+          stateText: 'Đang vận chuyển liên kho',
+          sealCode: 'GHN-SEAL-99812',
+          securityCheck: 'Đạt kiểm định niêm phong 100%',
+          dispatchTime: '07:30',
+          etaTime: '09:45'
+        },
+        telemetry: { speedKmh: 38, fuelPercent: 82, odoTodayKm: 84.6, gps: '10.0245° N, 105.7892° E' }
+      },
+      'truck-omon': {
+        id: 'truck-omon',
+        plate: '65C-209.45',
+        truckType: 'Xe tải nhẹ 1.9 Tấn (Hino XZU)',
+        driver: {
+          name: 'Nguyễn Văn Thắng',
+          phone: '0907.312.094',
+          license: 'Bằng C',
+          seniority: '6 năm thâm niên',
+          rating: '4.98 ⭐'
+        },
+        origin: { hubId: '22917000', name: 'Cụm Kho Ô Môn', address: 'Quốc Lộ 91, Ô Môn, Cần Thơ' },
+        destination: { hubId: '21088000', name: 'Cụm Kho Cái Răng', address: 'Hub Trung Tâm MT01' },
+        routeName: 'Tuyến Trục: Ô Môn ⇄ Cái Răng (QL91)',
+        payload: {
+          currentKg: 1420,
+          maxKg: 1900,
+          utilizationPercent: 74.7,
+          packageCount: 42,
+          cargoCategory: 'Kiện hàng cồng kềnh & Thiết bị điện gia dụng'
+        },
+        cargoStatus: {
+          stateText: 'Đang bốc dỡ tại bãi nhận',
+          sealCode: 'GHN-SEAL-88123',
+          securityCheck: 'Đã quét mã RFID qua cổng tự động',
+          dispatchTime: '08:15',
+          etaTime: '10:30'
+        },
+        telemetry: { speedKmh: 42, fuelPercent: 76, odoTodayKm: 102.3, gps: '10.1120° N, 105.6234° E' }
+      },
+      'truck-vithanh': {
+        id: 'truck-vithanh',
+        plate: '95C-086.19',
+        truckType: 'Xe tải bảo ôn 3.5 Tấn (Hyundai Mighty)',
+        driver: {
+          name: 'Trần Minh Tâm',
+          phone: '0939.871.950',
+          license: 'Bằng C',
+          seniority: '5 năm thâm niên',
+          rating: '4.92 ⭐'
+        },
+        origin: { hubId: '22862000', name: 'Cụm Kho Vị Thanh', address: 'TP Vị Thanh, Hậu Giang' },
+        destination: { hubId: '21985000', name: 'Cụm Kho Bình Thủy & Cái Răng', address: 'Cần Thơ' },
+        routeName: 'Tuyến Vành Đai: Hậu Giang ⇄ Cần Thơ',
+        payload: {
+          currentKg: 2850,
+          maxKg: 3500,
+          utilizationPercent: 81.4,
+          packageCount: 38,
+          cargoCategory: 'Bưu phẩm hỏa tốc & Thực phẩm tươi bảo ôn (18°C)'
+        },
+        cargoStatus: {
+          stateText: 'Đang hành trình trên Quốc Lộ',
+          sealCode: 'GHN-SEAL-77401',
+          securityCheck: 'Nhiệt độ đạt chuẩn 18°C • Seal nguyên vẹn',
+          dispatchTime: '06:50',
+          etaTime: '09:15'
+        },
+        telemetry: { speedKmh: 40, fuelPercent: 68, odoTodayKm: 136.8, gps: '9.7842° N, 105.4711° E' }
+      },
+      'truck-highway': {
+        id: 'truck-highway',
+        plate: '65H-365.01',
+        truckType: 'Xe tải nặng 5.0 Tấn Cố Định Tuyến (Isuzu Forward)',
+        driver: {
+          name: 'Lê Hoàng Khang',
+          phone: '0944.551.365',
+          license: 'Bằng D',
+          seniority: '8 năm thâm niên',
+          rating: '5.00 ⭐ (Đội trưởng)'
+        },
+        origin: { hubId: '21985000', name: 'Cụm Kho Bình Thủy', address: 'Bình Thủy, Cần Thơ' },
+        destination: { hubId: '21088000', name: 'Tuyến Liên Tỉnh: MT01 ⇄ An Giang / QL91', address: 'Đồng Bằng Sông Cửu Long' },
+        routeName: 'Tuyến Liên Tỉnh Nặng: Bình Thủy ⇄ QL91 ⇄ An Giang',
+        payload: {
+          currentKg: 4350,
+          maxKg: 5000,
+          utilizationPercent: 87.0,
+          packageCount: 68,
+          cargoCategory: 'Hàng nặng liên tỉnh & Pallet tổng hợp'
+        },
+        cargoStatus: {
+          stateText: 'Xuất bến thành công qua Trạm Cổng MT01',
+          sealCode: 'GHN-SEAL-66190',
+          securityCheck: 'Cân tải tự động hợp lệ (4.35 Tấn / 5.0 Tấn)',
+          dispatchTime: '07:00',
+          etaTime: '11:30'
+        },
+        telemetry: { speedKmh: 48, fuelPercent: 91, odoTodayKm: 168.4, gps: '10.0512° N, 105.7410° E' }
+      }
+    };
 
+    let currentTruckRadarId = 'truck-cairang';
+    let cachedFleetRadar = null;
 
+    async function fetchFleetRadarData() {
+      try {
+        const resp = await fetch('/api/saban/fleet-radar');
+        const data = await resp.json();
+        if (data.success && (data.trucks || data.fleet)) {
+          cachedFleetRadar = data.trucks || data.fleet;
+          return cachedFleetRadar;
+        }
+      } catch (e) {
+        console.warn('Sử dụng dữ liệu FLEET_RADAR_DATA cục bộ:', e);
+      }
+      return FLEET_RADAR_DATA;
+    }
 
+    async function openTruckRadarModal(truckId = null) {
+      if (truckId) currentTruckRadarId = truckId;
+      const modal = document.getElementById('truckRadarModal');
+      if (!modal) return;
 
+      const fleet = await fetchFleetRadarData();
+      renderTruckRadarDetails(currentTruckRadarId, fleet);
+      modal.classList.add('open');
+    }
+
+    function closeTruckRadarModal() {
+      const modal = document.getElementById('truckRadarModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function switchTruckRadarTab(truckId) {
+      currentTruckRadarId = truckId;
+      const fleet = cachedFleetRadar || FLEET_RADAR_DATA;
+      renderTruckRadarDetails(truckId, fleet);
+    }
+
+    function renderTruckRadarDetails(truckId, fleet) {
+      const t = (fleet && fleet[truckId]) ? fleet[truckId] : (FLEET_RADAR_DATA[truckId] || FLEET_RADAR_DATA['truck-cairang']);
+      
+      // Update Tab Buttons
+      document.querySelectorAll('.fleet-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `tab-${truckId}`);
+      });
+
+      // Header
+      const elPlate = document.getElementById('trPlate');
+      const elStateBadge = document.getElementById('trStateBadge');
+      const elTruckType = document.getElementById('trTruckType');
+      if (elPlate) elPlate.textContent = t.plate;
+      if (elStateBadge) elStateBadge.textContent = t.cargoStatus.stateText;
+      if (elTruckType) elTruckType.textContent = t.truckType;
+
+      // Driver
+      const elDriverName = document.getElementById('trDriverName');
+      const elDriverPhone = document.getElementById('trDriverPhone');
+      const elDriverLicense = document.getElementById('trDriverLicense');
+      const elDriverSeniority = document.getElementById('trDriverSeniority');
+      const elDriverRating = document.getElementById('trDriverRating');
+      if (elDriverName) elDriverName.textContent = t.driver.name;
+      if (elDriverPhone) {
+        elDriverPhone.textContent = t.driver.phone;
+        elDriverPhone.href = `tel:${t.driver.phone.replace(/[^0-9]/g, '')}`;
+      }
+      if (elDriverLicense) elDriverLicense.textContent = t.driver.license;
+      if (elDriverSeniority) elDriverSeniority.textContent = t.driver.seniority;
+      if (elDriverRating) elDriverRating.textContent = t.driver.rating;
+
+      // Route
+      const elRouteName = document.getElementById('trRouteName');
+      const elOriginName = document.getElementById('trOriginName');
+      const elDestName = document.getElementById('trDestName');
+      const elDispatchEta = document.getElementById('trDispatchEta');
+      if (elRouteName) elRouteName.textContent = t.routeName;
+      if (elOriginName) elOriginName.textContent = t.origin.name;
+      if (elDestName) elDestName.textContent = t.destination.name;
+      if (elDispatchEta) elDispatchEta.textContent = `${t.cargoStatus.dispatchTime} ➔ ${t.cargoStatus.etaTime}`;
+
+      // Payload
+      const elUtilPercent = document.getElementById('trUtilPercent');
+      const elPayloadFill = document.getElementById('trPayloadFill');
+      const elCurrentKg = document.getElementById('trCurrentKg');
+      const elMaxKg = document.getElementById('trMaxKg');
+      const elPackageCount = document.getElementById('trPackageCount');
+      const elCargoCategory = document.getElementById('trCargoCategory');
+      if (elUtilPercent) elUtilPercent.textContent = `${t.payload.utilizationPercent}%`;
+      if (elPayloadFill) elPayloadFill.style.width = `${Math.min(100, t.payload.utilizationPercent)}%`;
+      if (elCurrentKg) elCurrentKg.textContent = `${t.payload.currentKg.toLocaleString('vi-VN')} kg`;
+      if (elMaxKg) elMaxKg.textContent = `${t.payload.maxKg.toLocaleString('vi-VN')} kg`;
+      if (elPackageCount) elPackageCount.textContent = t.payload.packageCount;
+      if (elCargoCategory) elCargoCategory.textContent = t.payload.cargoCategory;
+
+      // Seal & Security
+      const elSealCode = document.getElementById('trSealCode');
+      const elSecurityCheck = document.getElementById('trSecurityCheck');
+      if (elSealCode) elSealCode.textContent = t.cargoStatus.sealCode;
+      if (elSecurityCheck) elSecurityCheck.textContent = t.cargoStatus.securityCheck;
+
+      // Telemetry
+      const elSpeed = document.getElementById('trSpeed');
+      const elFuel = document.getElementById('trFuel');
+      const elOdo = document.getElementById('trOdo');
+      const elGps = document.getElementById('trGps');
+      if (elSpeed) elSpeed.textContent = `${t.telemetry.speedKmh} km/h`;
+      if (elFuel) elFuel.textContent = `${t.telemetry.fuelPercent}%`;
+      if (elOdo) elOdo.textContent = `${t.telemetry.odoTodayKm} km`;
+      if (elGps) elGps.textContent = t.telemetry.gps;
+    }
+
+    function centerCameraOnTruck(truckId) {
+      const el = document.getElementById(truckId);
+      if (!el) {
+        showSabanToast('Radar Xe Tải', `Không tìm thấy xe ${truckId} trên sa bàn`, 'warning', '🚛');
+        return;
+      }
+      closeTruckRadarModal();
+      
+      const leftPct = parseFloat(el.style.left) || 50;
+      const topPct = parseFloat(el.style.top) || 50;
+      const targetX = (leftPct / 100) * 1600;
+      const targetY = (topPct / 100) * 900;
+      
+      // Calculate target pan to center truck in window
+      panX = (window.innerWidth / 2) - (targetX * scale);
+      panY = (window.innerHeight / 2) - (targetY * scale);
+      applyTransform();
+
+      // Trigger focus glow animation on the truck
+      el.classList.add('camera-focused');
+      setTimeout(() => el.classList.remove('camera-focused'), 3500);
+
+      showSabanToast('Camera Sa Bàn', `Đã định vị và khóa góc nhìn vào xe ${el.id}!`, 'success', '🎯');
+    }
+
+    // =========================================================================
+    // FEATURE 2: CAMPUS LIFE & INTERACTIVE HOTSPOTS ENGINE
+    // =========================================================================
+    const STARBUCKS_MENU = [
+      { id: 'sb_boba', name: 'Trà Sữa Trân Châu Hoàng Kim', basePrice: 65000, icon: '🧋', badge: 'Best Seller', size: 'Grande', qty: 1 },
+      { id: 'sb_coldbrew', name: 'Cold Brew Phin Sữa Tươi', basePrice: 75000, icon: '☕', badge: 'Ủ lạnh 16h', size: 'Grande', qty: 0 },
+      { id: 'sb_macchiato', name: 'Caramel Macchiato Nóng', basePrice: 80000, icon: '🍮', badge: 'Signature', size: 'Grande', qty: 0 },
+      { id: 'sb_matcha', name: 'Matcha Latte Đá Xay Uji', basePrice: 70000, icon: '🍵', badge: 'Mát lạnh', size: 'Grande', qty: 0 },
+      { id: 'sb_croissant', name: 'Bánh Croissant Bơ Tỏi Nướng', basePrice: 45000, icon: '🥐', badge: 'Nóng giòn', size: 'Grande', qty: 0 }
+    ];
+
+    const DELIVERY_DESTINATIONS = {
+      cairang: { name: 'Kho Cái Răng', agentId: 'cairang', x: 18.0, y: 18.0 },
+      binhthuy: { name: 'Kho Bình Thủy', agentId: 'binhthuy', x: 8.5, y: 21.0 },
+      omon: { name: 'Kho Ô Môn', agentId: 'omon', x: 11.0, y: 68.0 },
+      vithanh: { name: 'Kho Vị Thanh', agentId: 'vithanh', x: 67.5, y: 13.5 },
+      vanhanh: { name: 'Phòng Vận Hành', agentId: 'vanhanh', x: 37.0, y: 33.0 },
+      tigercore: { name: 'Trung Tâm Chỉ Huy Sếp Lộc', agentId: 'kythuat', x: 54.5, y: 32.0 },
+      fishing1: { name: 'Bến Câu Cá 1 Bờ Sông', agentId: 'river-fisherman-1', x: 78.5, y: 86.5 }
+    };
+
+    function openStarbucksOrderModal() {
+      const modal = document.getElementById('starbucksOrderModal');
+      if (!modal) return;
+      renderStarbucksMenu();
+      calculateStarbucksTotal();
+      modal.classList.add('open');
+    }
+
+    function closeStarbucksOrderModal() {
+      const modal = document.getElementById('starbucksOrderModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function renderStarbucksMenu() {
+      const container = document.getElementById('sbMenuList');
+      if (!container) return;
+      container.innerHTML = STARBUCKS_MENU.map(item => {
+        const itemPrice = item.size === 'Venti' ? item.basePrice + 10000 : item.basePrice;
+        return `
+          <div class="sb-menu-item" id="sb-item-row-${item.id}">
+            <div class="sb-item-icon">${item.icon}</div>
+            <div class="sb-item-info">
+              <div>
+                <span class="sb-item-name">${item.name}</span>
+                <span class="sb-item-badge">${item.badge}</span>
+              </div>
+              <div class="sb-item-price">${itemPrice.toLocaleString('vi-VN')} đ</div>
+            </div>
+            <div class="sb-item-ctrls">
+              <select class="sb-size-select" onchange="toggleStarbucksSize('${item.id}', this.value)">
+                <option value="Grande" ${item.size === 'Grande' ? 'selected' : ''}>Grande</option>
+                <option value="Venti" ${item.size === 'Venti' ? 'selected' : ''}>Venti (+10k)</option>
+              </select>
+              <div class="sb-qty-box">
+                <button type="button" class="sb-qty-btn" onclick="changeStarbucksQty('${item.id}', -1)">-</button>
+                <span class="sb-qty-val" id="qty-${item.id}">${item.qty}</span>
+                <button type="button" class="sb-qty-btn" onclick="changeStarbucksQty('${item.id}', 1)">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function changeStarbucksQty(itemId, delta) {
+      const it = STARBUCKS_MENU.find(i => i.id === itemId);
+      if (!it) return;
+      it.qty = Math.max(0, it.qty + delta);
+      const qtyEl = document.getElementById(`qty-${itemId}`);
+      if (qtyEl) qtyEl.textContent = it.qty;
+      calculateStarbucksTotal();
+    }
+
+    function toggleStarbucksSize(itemId, size) {
+      const it = STARBUCKS_MENU.find(i => i.id === itemId);
+      if (!it) return;
+      it.size = size;
+      renderStarbucksMenu();
+      calculateStarbucksTotal();
+    }
+
+    function calculateStarbucksTotal() {
+      let total = 0;
+      STARBUCKS_MENU.forEach(item => {
+        const price = item.size === 'Venti' ? item.basePrice + 10000 : item.basePrice;
+        total += price * item.qty;
+      });
+      const totalEl = document.getElementById('sbOrderTotal');
+      if (totalEl) totalEl.textContent = `${total.toLocaleString('vi-VN')} đ`;
+      return total;
+    }
+
+    async function submitStarbucksOrder() {
+      const total = calculateStarbucksTotal();
+      const selectedItems = STARBUCKS_MENU.filter(i => i.qty > 0);
+      if (selectedItems.length === 0) {
+        showSabanToast('Starbucks Order', 'Vui lòng chọn ít nhất 1 món để đặt!', 'warning', '🧋');
+        return;
+      }
+
+      const destKey = document.getElementById('sbDestinationSelect').value || 'cairang';
+      const note = document.getElementById('sbNoteInput').value.trim();
+      const targetDest = DELIVERY_DESTINATIONS[destKey] || DELIVERY_DESTINATIONS.cairang;
+      const primaryItem = selectedItems[0];
+
+      closeStarbucksOrderModal();
+      showSabanToast('Starbucks Order', `Đã xác nhận đơn hàng ${primaryItem.name}! Đang điều Quadcopter Drone giao đến ${targetDest.name}...`, 'success', '🛵');
+
+      try {
+        const payload = {
+          item_id: primaryItem.id,
+          item_name: primaryItem.name,
+          quantity: primaryItem.qty,
+          size: primaryItem.size,
+          destination_key: destKey,
+          note: note
+        };
+        const res = await fetch('/api/saban/starbucks/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        // Launch Animated Quadcopter Drone
+        launchStarbucksDeliveryDrone(Object.assign({}, primaryItem, {
+          destKey: destKey,
+          destName: targetDest.name,
+          destX: targetDest.x,
+          destY: targetDest.y,
+          agentId: targetDest.agentId,
+          orderId: (data && data.order_id) ? data.order_id : `SB-${Date.now()}`
+        }));
+      } catch (err) {
+        console.error('Lỗi gửi đơn Starbucks:', err);
+        // Fallback local drone launch
+        launchStarbucksDeliveryDrone(Object.assign({}, primaryItem, {
+          destKey: destKey,
+          destName: targetDest.name,
+          destX: targetDest.x,
+          destY: targetDest.y,
+          agentId: targetDest.agentId,
+          orderId: `SB-${Date.now()}`
+        }));
+      }
+    }
+
+    function launchStarbucksDeliveryDrone(order) {
+      const scene = document.getElementById('isoScene');
+      if (!scene) return;
+
+      // Remove any existing courier drone
+      const oldDrone = document.getElementById('sb-drone-courier');
+      if (oldDrone) oldDrone.remove();
+
+      // Create new Quadcopter Drone actor
+      const drone = document.createElement('div');
+      drone.id = 'sb-drone-courier';
+      drone.className = 'sb-drone-courier';
+      drone.style.left = '29.5%';
+      drone.style.top = '82.5%';
+
+      drone.innerHTML = `
+        <div class="drone-inner-wrap">
+          <div class="drone-rotor rotor-tl"></div>
+          <div class="drone-rotor rotor-tr"></div>
+          <div class="drone-rotor rotor-bl"></div>
+          <div class="drone-rotor rotor-br"></div>
+          <svg viewBox="0 0 54 36" width="54" height="36">
+            <!-- Drone Chassis -->
+            <ellipse cx="27" cy="18" rx="14" ry="7" fill="#06281a" stroke="#00D880" stroke-width="1.5"/>
+            <!-- Rotor Arms -->
+            <line x1="8" y1="9" x2="46" y2="27" stroke="#00D880" stroke-width="2"/>
+            <line x1="8" y1="27" x2="46" y2="9" stroke="#00D880" stroke-width="2"/>
+            <!-- Neon Central Core -->
+            <circle cx="27" cy="18" r="4.5" fill="#00D880"/>
+            <circle cx="27" cy="18" r="2" fill="#ffffff"/>
+          </svg>
+          <div class="drone-light-beam"></div>
+          <div class="drone-cargo-bag">
+            <span>${order.icon || '🧋'}</span>
+          </div>
+        </div>
+      `;
+
+      scene.appendChild(drone);
+
+      // Log dispatch in chat panel
+      appendChatLog('Barista Starbucks', 'Sếp Lộc', `🛵 Quadcopter Drone cất cánh giao ${order.qty || 1}x [${order.name}] đến ${order.destName}!`);
+
+      // Trigger flight animation towards destination
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          drone.style.left = `${order.destX}%`;
+          drone.style.top = `${order.destY - 6.0}%`;
+        }, 100);
+      });
+
+      // Arrival Handler after 3.8s flight
+      setTimeout(() => {
+        // Target Agent pops speech bubble
+        const targetAgentEl = document.getElementById(`agent-${order.agentId}`);
+        const bubble = document.getElementById(`bubble-${order.agentId}`);
+        if (bubble) {
+          const oldText = bubble.textContent;
+          bubble.textContent = `😋 "Cảm ơn Sếp Lộc! Đã nhận ${order.name} từ Starbucks!"`;
+          bubble.classList.add('show');
+          setTimeout(() => {
+            bubble.textContent = oldText;
+            bubble.classList.remove('show');
+          }, 4500);
+        }
+
+        showSabanToast('Starbucks Delivery', `✅ Giao thành công ${order.name} đến ${order.destName}!`, 'success', '😋');
+        appendChatLog('Quadcopter Drone', order.destName, `✅ Đã giao tận tay món [${order.name}] (${order.size}) cho nhân sự!`);
+
+        // Hover for 2.2s, then fade out and remove
+        setTimeout(() => {
+          drone.style.transition = 'opacity 1s ease, transform 1s ease';
+          drone.style.opacity = '0';
+          drone.style.transform = 'translateY(-20px) scale(0.6)';
+          setTimeout(() => drone.remove(), 1050);
+        }, 2200);
+
+      }, 3900);
+    }
+
+    // Riverside Fishing Reel-In Interaction
+    let isReeling = false;
+    const MEKONG_CATCHES = [
+      { name: 'Cá Lóc Đồng Cần Thơ', weight: '1.9 kg', quote: 'Nướng trui cho anh em ca sáng 4 kho!', icon: '🐟' },
+      { name: 'Cá Tai Tượng Chiên Xù', weight: '2.4 kg', quote: 'Chuẩn mồi bén miền Tây sông nước!', icon: '🐠' },
+      { name: 'Tôm Càng Xanh Sông Hậu', weight: 'Size Đại 500g', quote: 'Tuyệt đỉnh ẩm thực Tây Đô!', icon: '🦐' },
+      { name: 'Kiện Hàng GHN Thất Lạc', weight: '0.5 kg', quote: 'May quá anh cần thủ vớt được kịp thời!', icon: '📦' }
+    ];
+
+    function triggerFishingReelIn() {
+      if (isReeling) return;
+      isReeling = true;
+
+      const rodWrap = document.getElementById('fishermanRodWrap');
+      const jumpingFish = document.getElementById('jumpingFishFx');
+      const waterSplash = document.getElementById('waterSplashFx');
+
+      // 1. Sharp rod bend
+      if (rodWrap) rodWrap.classList.add('reeling-in');
+
+      // 2. Water splash effect
+      if (waterSplash) {
+        waterSplash.classList.remove('active');
+        void waterSplash.offsetWidth; // trigger reflow
+        waterSplash.classList.add('active');
+      }
+
+      // 3. Fish jumps out of water
+      const randomCatch = MEKONG_CATCHES[Math.floor(Math.random() * MEKONG_CATCHES.length)];
+      if (jumpingFish) {
+        jumpingFish.textContent = randomCatch.icon;
+        jumpingFish.classList.remove('active');
+        void jumpingFish.offsetWidth;
+        jumpingFish.classList.add('active');
+      }
+
+      // 4. Toast and Chat announcement
+      setTimeout(() => {
+        showSabanToast('Giật Cần Bến Câu Cá!', `🎣 Bạn vừa câu được: ${randomCatch.name} (${randomCatch.weight}) • "${randomCatch.quote}"`, 'success', randomCatch.icon);
+        appendChatLog('Bến Câu Cá MT01', 'Anh Lộc', `🎣 [GIẬT CẦN THÀNH CÔNG] Câu được: ${randomCatch.name} (${randomCatch.weight})!\n👉 "${randomCatch.quote}"`);
+      }, 500);
+
+      // Reset rod state after 1.8s
+      setTimeout(() => {
+        if (rodWrap) rodWrap.classList.remove('reeling-in');
+        isReeling = false;
+      }, 1800);
+    }
+
+    // Pedestrian Quotes & Interactive Clicks
+    function speakPedestrian(type) {
+      if (type === 'stroller') {
+        const bubble = document.getElementById('bubble-park-stroller');
+        if (bubble) {
+          bubble.classList.add('show');
+          setTimeout(() => bubble.classList.remove('show'), 3500);
+        }
+        showSabanToast('Dạo Bộ Bờ Sông', '🌸 "Không khí bên bờ sông Hậu buổi sớm thật trong lành!"', 'info', '🚶');
+      } else if (type === 'dog_walker') {
+        const bubble = document.getElementById('bubble-park-dog-walker');
+        if (bubble) {
+          bubble.classList.add('show');
+          setTimeout(() => bubble.classList.remove('show'), 3500);
+        }
+        showSabanToast('Dắt Cún Đi Dạo', '🐕 "Gâu gâu! Bé Vàng vẫy đuôi chào Sếp Lộc và anh em MT01!"', 'info', '🐕');
+      } else if (type === 'bench_relaxer') {
+        const bubble = document.getElementById('bubble-park-bench-relaxer');
+        if (bubble) {
+          bubble.classList.add('show');
+          setTimeout(() => bubble.classList.remove('show'), 3500);
+        }
+        showSabanToast('Ghế Đá Công Viên', '📖 "Đang tra cứu số liệu vận hành và ngắm tàu thuyền qua lại trên sông!"', 'info', '🪑');
+      }
+    }
+
+    // Pedestrian Patrol Routes
+    const PEDESTRIAN_STROLLER_ROUTE = [
+      { left: '82.0%', top: '40.0%' },
+      { left: '86.0%', top: '50.0%' },
+      { left: '84.0%', top: '64.0%' },
+      { left: '79.0%', top: '74.0%' },
+      { left: '84.0%', top: '64.0%' },
+      { left: '86.0%', top: '50.0%' }
+    ];
+    let pedStrollerIdx = 0;
+    setInterval(() => {
+      const el = document.getElementById('park-stroller');
+      if (el) {
+        const prevX = parseFloat(el.style.left) || 82;
+        pedStrollerIdx = (pedStrollerIdx + 1) % PEDESTRIAN_STROLLER_ROUTE.length;
+        const wp = PEDESTRIAN_STROLLER_ROUTE[pedStrollerIdx];
+        const nextX = parseFloat(wp.left) || 82;
+        el.classList.toggle('facing-left', nextX < prevX);
+        el.style.left = wp.left;
+        el.style.top = wp.top;
+      }
+    }, 3200);
+
+    const PEDESTRIAN_DOG_ROUTE = [
+      { left: '85.0%', top: '48.0%' },
+      { left: '88.0%', top: '38.0%' },
+      { left: '82.0%', top: '35.0%' },
+      { left: '80.0%', top: '52.0%' },
+      { left: '85.0%', top: '48.0%' }
+    ];
+    let pedDogIdx = 0;
+    setInterval(() => {
+      const el = document.getElementById('park-dog-walker');
+      if (el) {
+        const prevX = parseFloat(el.style.left) || 85;
+        pedDogIdx = (pedDogIdx + 1) % PEDESTRIAN_DOG_ROUTE.length;
+        const wp = PEDESTRIAN_DOG_ROUTE[pedDogIdx];
+        const nextX = parseFloat(wp.left) || 85;
+        el.classList.toggle('facing-left', nextX < prevX);
+        el.style.left = wp.left;
+        el.style.top = wp.top;
+      }
+    }, 2800);
+
+    // =========================================================================
+    // FEATURE 3: REAL-TIME SMART INCIDENT & ANOMALY HUD ENGINE
+    // =========================================================================
+    let activeIncidents = [];
+    let currentIncidentIdx = 0;
+    let isResolvingIncident = false;
+
+    async function fetchIncidents() {
+      try {
+        const resp = await fetch('/api/saban/incidents?status=all');
+        const data = await resp.json();
+        if (data.success && Array.isArray(data.incidents)) {
+          activeIncidents = data.incidents.filter(i => i.status === 'OPEN');
+          if (currentIncidentIdx >= activeIncidents.length) {
+            currentIncidentIdx = 0;
+          }
+          renderIncidentHud();
+        }
+      } catch (err) {
+        console.error('Lỗi nạp dữ liệu sự cố MT01:', err);
+      }
+    }
+
+    function renderIncidentHud() {
+      const hud = document.getElementById('incidentTickerHud');
+      const beacon = document.getElementById('tickerBeacon');
+      const badge = document.getElementById('tickerBadge');
+      const locTag = document.getElementById('tickerLocTag');
+      const sevPill = document.getElementById('tickerSevPill');
+      const descText = document.getElementById('tickerDescText');
+      const pageInfo = document.getElementById('tickerPageInfo');
+      const navCtrls = document.getElementById('tickerNavControls');
+      const btnResolve = document.getElementById('btnIncidentResolve');
+      if (!hud) return;
+
+      if (activeIncidents.length === 0) {
+        hud.classList.add('all-clear');
+        if (beacon) beacon.textContent = '🟢';
+        if (badge) badge.textContent = 'AN TOÀN VẬN HÀNH: 100%';
+        if (locTag) locTag.style.display = 'none';
+        if (sevPill) sevPill.style.display = 'none';
+        if (descText) descText.textContent = 'Tất cả 4 cụm kho và tuyến tải MT01 đang hoạt động bình thường, không có sự cố!';
+        if (pageInfo) pageInfo.textContent = '0/0';
+        if (navCtrls) navCtrls.style.display = 'none';
+        if (btnResolve) {
+          btnResolve.innerHTML = `<span>🔄</span> KIỂM TRA LẠI`;
+          btnResolve.className = 'btn-incident-resolve';
+          btnResolve.onclick = () => { fetchIncidents(); showSabanToast('Kiểm Tra MT01', 'Hệ thống vận hành an toàn 100%!', 'success', '🟢'); };
+        }
+        return;
+      }
+
+      // We have active incidents!
+      hud.classList.remove('all-clear');
+      if (beacon) beacon.textContent = '🚨';
+      if (badge) badge.textContent = `SỰ CỐ CẦN XỬ LÝ (${activeIncidents.length})`;
+      if (locTag) locTag.style.display = 'inline-block';
+      if (sevPill) sevPill.style.display = 'inline-block';
+      if (navCtrls) navCtrls.style.display = 'flex';
+
+      const cur = activeIncidents[currentIncidentIdx];
+      if (cur) {
+        if (locTag) locTag.textContent = `📍 ${cur.location || 'Kho MT01'}`;
+        if (sevPill) {
+          sevPill.textContent = cur.severity || 'CRITICAL';
+          sevPill.className = `ticker-sev-pill ${cur.severity || 'CRITICAL'}`;
+        }
+        if (descText) descText.textContent = `${cur.title ? cur.title + ' • ' : ''}${cur.description}`;
+        if (pageInfo) pageInfo.textContent = `${currentIncidentIdx + 1}/${activeIncidents.length}`;
+        if (btnResolve) {
+          btnResolve.innerHTML = `<span>⚡</span> XỬ LÝ 1-CLICK`;
+          btnResolve.className = 'btn-incident-resolve';
+          btnResolve.onclick = resolveCurrentIncident;
+        }
+      }
+    }
+
+    function cycleIncident(delta) {
+      if (activeIncidents.length === 0) return;
+      currentIncidentIdx = (currentIncidentIdx + delta + activeIncidents.length) % activeIncidents.length;
+      renderIncidentHud();
+    }
+
+    async function resolveCurrentIncident() {
+      if (isResolvingIncident || activeIncidents.length === 0) return;
+      isResolvingIncident = true;
+
+      const cur = activeIncidents[currentIncidentIdx];
+      const btnResolve = document.getElementById('btnIncidentResolve');
+      if (btnResolve) {
+        btnResolve.classList.add('resolving');
+        btnResolve.innerHTML = `<span>⏳</span> Đang xử lý...`;
+      }
+
+      try {
+        const payload = {
+          id: cur.id,
+          resolved_by: 'Sếp Lộc • Tiger AI',
+          note: `Đã xử lý 1-click thành công: ${cur.suggested_action || 'Điều phối nhân sự xử lý ngay'}`
+        };
+
+        const res = await fetch('/api/saban/incidents/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (btnResolve) {
+          btnResolve.classList.remove('resolving');
+          btnResolve.classList.add('resolved-flash');
+          btnResolve.innerHTML = `<span>✓</span> ĐÃ XỬ LÝ XONG`;
+        }
+
+        showSabanToast('Auto-Heal MT01', `✅ Đã xử lý 1-click sự cố: ${cur.title} tại ${cur.location}!`, 'success', '⚡');
+        appendChatLog('Auto-Heal Bot', 'Sếp Lộc', `✅ [1-CLICK AUTO-HEAL] Đã xử lý dứt điểm sự cố: ${cur.title} tại ${cur.location}!\n👉 Hành động: ${payload.note}`);
+
+        // Wait 900ms then reload incidents and advance
+        setTimeout(async () => {
+          await fetchIncidents();
+          isResolvingIncident = false;
+        }, 900);
+
+      } catch (err) {
+        console.error('Lỗi xử lý sự cố:', err);
+        if (btnResolve) {
+          btnResolve.classList.remove('resolving');
+          btnResolve.innerHTML = `<span>⚡</span> XỬ LÝ 1-CLICK`;
+        }
+        showSabanToast('Lỗi Xử Lý', 'Không thể kết nối máy chủ để xử lý sự cố!', 'danger', '⚠️');
+        isResolvingIncident = false;
+      }
+    }
+
+    // Auto-poll incidents every 6 seconds
+    setInterval(fetchIncidents, 6000);
+    // Initial fetch on page load
+    setTimeout(fetchIncidents, 400);
+
+    // =========================================================================
+    // GLOBAL SA BAN TOAST NOTIFICATION HELPER
+    // =========================================================================
+    function showSabanToast(title, message, type = 'info', icon = '💡') {
+      const container = document.getElementById('sabanToastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `saban-toast-pill ${type}`;
+      toast.innerHTML = `
+        <span style="font-size: 1.3rem; flex-shrink: 0;">${icon}</span>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 0.78rem; font-weight: 800; color: #ffffff;">${title}</div>
+          <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px; line-height: 1.4;">${message}</div>
+        </div>
+      `;
+
+      container.appendChild(toast);
+
+      // Auto remove toast after 4 seconds
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 350);
+      }, 4000);
+    }
 
     // =========================================================================
     // 2. REAL TASK DISPATCHER ENGINE (MOVES AGENT -> RUNS API -> REPLIES IN CHAT)
@@ -4646,7 +6310,7 @@
     }
 
     viewport.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.agent-tag') || e.target.closest('.room-stat-pill')) return;
+      if (e.target.closest('.agent-tag') || e.target.closest('.room-stat-pill') || e.target.closest('.moving-ghn-truck') || e.target.closest('.river-fisherman') || e.target.closest('.pedestrian-actor') || e.target.closest('.sb-drone-courier')) return;
       isDragging = true;
       startX = e.clientX - panX;
       startY = e.clientY - panY;
@@ -5548,6 +7212,210 @@
       </div>
     </div>
   </div>
+
+  <!-- ================= MODAL: LIVE TRUCK & CARGO FLEET RADAR ================= -->
+  <div class="modal-backdrop" id="truckRadarModal" onclick="if(event.target===this) closeTruckRadarModal()">
+    <div class="truck-radar-card">
+      <div class="modal-header" style="border-bottom:1px solid #334155; padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.4rem;">🚛</span>
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:900; color:#fdba74; background:#7c2d12; border:1px solid #f97316; padding:2px 8px; border-radius:4px;" id="trPlate">65C-188.92</span>
+              <span class="status-badge-ok" id="trStateBadge">Đang vận chuyển liên kho</span>
+            </div>
+            <div style="font-size:0.75rem; color:#94a3b8; margin-top:3px;" id="trTruckType">Xe tải thùng kín 2.5 Tấn (Isuzu Euro 5)</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeTruckRadarModal()">✕</button>
+      </div>
+
+      <!-- FLEET SELECTOR TABS -->
+      <div class="fleet-tabs-row" id="fleetTabsRow">
+        <button class="fleet-tab-btn active" id="tab-truck-cairang" onclick="switchTruckRadarTab('truck-cairang')">🚛 65C-188.92 (Cái Răng)</button>
+        <button class="fleet-tab-btn" id="tab-truck-omon" onclick="switchTruckRadarTab('truck-omon')">🚛 65C-209.45 (Ô Môn)</button>
+        <button class="fleet-tab-btn" id="tab-truck-vithanh" onclick="switchTruckRadarTab('truck-vithanh')">🚛 95C-086.19 (Vị Thanh)</button>
+        <button class="fleet-tab-btn" id="tab-truck-highway" onclick="switchTruckRadarTab('truck-highway')">🚛 65H-365.01 (Bình Thủy)</button>
+      </div>
+
+      <!-- MAIN TRUCK RADAR GRID -->
+      <div class="truck-radar-grid">
+        <!-- LEFT: DRIVER & ROUTE -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <!-- Driver Profile Card -->
+          <div class="truck-detail-box">
+            <div class="truck-box-title">
+              <span>👤 Hồ Sơ Tài Xế Phụ Trách</span>
+              <span class="seal-chip-badge" id="trDriverRating">4.95 ⭐</span>
+            </div>
+            <div class="driver-profile-row">
+              <div class="driver-avatar-circle" id="trDriverAvatar">👨‍✈️</div>
+              <div style="flex:1;">
+                <div class="driver-meta-name" id="trDriverName">Đặng Hoàng Phúc</div>
+                <div class="driver-meta-sub">
+                  <span>📞 <a href="tel:0918452188" class="driver-phone-link" id="trDriverPhone">0918.452.188</a></span>
+                  <span>•</span>
+                  <span id="trDriverLicense">Bằng C</span>
+                  <span>•</span>
+                  <span id="trDriverSeniority">4 năm thâm niên</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Route & Navigation Visualizer -->
+          <div class="truck-detail-box">
+            <div class="truck-box-title">
+              <span>🗺️ Hành Trình Tuyến Cố Định Liên Kho</span>
+              <span style="font-size:0.7rem; color:#38bdf8;" id="trDispatchEta">07:30 ➔ 09:45</span>
+            </div>
+            <div style="font-size:0.78rem; font-weight:700; color:#e2e8f0; margin-bottom:6px;" id="trRouteName">Tuyến Cố Định: Cái Răng ⇄ Bình Thủy (Nội đô Cần Thơ)</div>
+            
+            <div class="route-viz-track">
+              <div class="route-viz-bar"></div>
+              <div class="route-viz-progress" id="trRouteProgress"></div>
+              <div class="route-viz-truck-icon" id="trRouteTruckIcon">🚛</div>
+              <div class="route-hub-dot orig" title="Điểm xuất phát"></div>
+              <div class="route-hub-dot dest" title="Điểm đến"></div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem;">
+              <div>
+                <div style="color:#94a3b8;">Xuất phát:</div>
+                <div style="font-weight:700; color:#fdba74;" id="trOriginName">Cụm Kho Cái Răng</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="color:#94a3b8;">Đích đến:</div>
+                <div style="font-weight:700; color:#7dd3fc;" id="trDestName">Cụm Kho Bình Thủy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: PAYLOAD & STATUS -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <!-- Payload & Cargo Weight -->
+          <div class="truck-detail-box">
+            <div class="truck-box-title">
+              <span>⚖️ Tải Trọng & Kiện Hàng Trên Xe</span>
+              <span style="font-weight:800; color:#f97316;" id="trUtilPercent">77.6%</span>
+            </div>
+            <div class="payload-meter-track">
+              <div class="payload-meter-fill" id="trPayloadFill" style="width: 77.6%;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.74rem;">
+              <span style="color:#cbd5e1;">Tải hiện tại: <b style="color:#fff;" id="trCurrentKg">1.940 kg</b> / <span id="trMaxKg">2.500 kg</span></span>
+              <span style="color:#34d399; font-weight:700;">📦 <span id="trPackageCount">56</span> kiện</span>
+            </div>
+            <div style="font-size:0.7rem; color:#94a3b8; margin-top:8px; border-top:1px dashed #334155; padding-top:6px;">
+              Phân loại hàng: <span style="color:#e2e8f0; font-weight:600;" id="trCargoCategory">B2B Shopee Mall & Hàng Tiêu Dùng Nhanh</span>
+            </div>
+          </div>
+
+          <!-- Electronic Seal & Security -->
+          <div class="truck-detail-box">
+            <div class="truck-box-title">
+              <span>🔒 Niêm Phong Điện Tử & An Toàn</span>
+              <span style="color:#34d399; font-size:0.7rem;">✓ Đã Kiểm Định</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="seal-chip-badge" id="trSealCode">GHN-SEAL-99812</span>
+              <span style="font-size:0.72rem; color:#a7f3d0;" id="trSecurityCheck">Đạt kiểm định niêm phong 100%</span>
+            </div>
+          </div>
+
+          <!-- Telemetry Bar -->
+          <div class="telemetry-strip">
+            <div>
+              <div class="tele-val" id="trSpeed">38 km/h</div>
+              <div class="tele-label">Tốc Độ</div>
+            </div>
+            <div>
+              <div class="tele-val" id="trFuel">82%</div>
+              <div class="tele-label">Nhiên Liệu</div>
+            </div>
+            <div>
+              <div class="tele-val" id="trOdo">84.6 km</div>
+              <div class="tele-label">ODO Hôm Nay</div>
+            </div>
+            <div>
+              <div class="tele-val" id="trGps" style="font-size:0.68rem;">10.02°N, 105.78°E</div>
+              <div class="tele-label">GPS Tọa Độ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS FOOTER -->
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #334155; padding-top:12px;">
+        <span style="font-size:0.72rem; color:#94a3b8;">📡 Dữ liệu radar trực tiếp từ hệ thống định vị GPS GHN MT01</span>
+        <div style="display:flex; gap:10px;">
+          <button class="m-btn amber" id="btnLocateTruckCamera" onclick="centerCameraOnTruck(currentTruckRadarId)" style="background:linear-gradient(135deg, #ea580c, #f97316); border-color:#fdba74; color:#fff; font-weight:800;">
+            🎯 ĐỊNH VỊ CAMERA
+          </button>
+          <button class="m-btn blue" onclick="closeTruckRadarModal()">✕ Đóng Radar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: STARBUCKS ORDER & DRONE DELIVERY ================= -->
+  <div class="modal-backdrop" id="starbucksOrderModal" onclick="if(event.target===this) closeStarbucksOrderModal()">
+    <div class="sb-order-card">
+      <div class="modal-header" style="border-bottom:1px solid rgba(0,216,128,0.3); padding-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <img src="/static/img/starbucks_logo.svg" style="width:28px;height:28px;border-radius:50%;background:#fff;" alt="Starbucks">
+          <div>
+            <div style="font-size:1.05rem; font-weight:800; color:#ffffff;">STARBUCKS COFFEE & BOBA • ĐẶT MÓN GIAO NGAY</div>
+            <div style="font-size:0.72rem; color:#6ee7b7;">Dịch vụ giao thức uống hỏa tốc bằng Quadcopter Drone nội bộ Campus MT01</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeStarbucksOrderModal()">✕</button>
+      </div>
+
+      <!-- MENU LIST (5 CURATED ITEMS) -->
+      <div class="sb-menu-list" id="sbMenuList">
+        <!-- Rendered by renderStarbucksMenu() -->
+      </div>
+
+      <!-- DELIVERY CONFIG ROW -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; background:rgba(2,24,16,0.6); border:1px solid rgba(0,216,128,0.25); border-radius:8px; padding:12px;">
+        <div>
+          <label style="font-size:0.74rem; color:#6ee7b7; font-weight:700;">📍 Điểm Nhận Hàng (Delivery Target):</label>
+          <select class="td-select" id="sbDestinationSelect" style="margin-top:4px; background:#021b11; border-color:#00D880; color:#ecfdf5;">
+            <option value="cairang">🏭 Kho Cái Răng (NVXL Công Bằng)</option>
+            <option value="binhthuy">🏭 Kho Bình Thủy (NVXL Bảo Toàn)</option>
+            <option value="omon">🏭 Kho Ô Môn (NVXL Trọng Bằng)</option>
+            <option value="vithanh">🏭 Kho Vị Thanh (NVXL Đức Trung)</option>
+            <option value="vanhanh">🎯 Phòng Vận Hành (Khối VP Tầng 1)</option>
+            <option value="tigercore">🌐 Trung Tâm Chỉ Huy Sếp Lộc</option>
+            <option value="fishing1">🎣 Bến Câu Cá 1 Bờ Sông</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.74rem; color:#6ee7b7; font-weight:700;">📝 Ghi Chú Cho Barista:</label>
+          <input type="text" class="td-input" id="sbNoteInput" placeholder="VD: Ít đường, nhiều đá, giao gấp nhé..." style="margin-top:4px; background:#021b11; border-color:#00D880; color:#ecfdf5;">
+        </div>
+      </div>
+
+      <!-- ORDER FOOTER: TOTAL + SUBMIT -->
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(0,216,128,0.3); padding-top:12px;">
+        <div>
+          <div style="font-size:0.7rem; color:#a7f3d0;">Tổng thanh toán (VNĐ):</div>
+          <div style="font-size:1.3rem; font-weight:900; color:#fde047; font-family:'JetBrains Mono',monospace;" id="sbOrderTotal">0 đ</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="m-btn amber" onclick="closeStarbucksOrderModal()" style="background:#064e3b; border-color:#059669; color:#a7f3d0;">Hủy Bỏ</button>
+          <button class="btn-sb-submit" onclick="submitStarbucksOrder()">
+            <span>🚀</span> XÁC NHẬN ĐẶT & GIAO NGAY
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= GLOBAL TOAST CONTAINER ================= -->
+  <div id="sabanToastContainer"></div>
 
 </body>
 </html>

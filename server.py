@@ -3507,7 +3507,7 @@ TELEGRAM_TOPICS_MAP = {
     3365: "📸 Camera Giám Sát Kho",
     2690: "🔥 Báo Cáo",
     506: "📅 Đơn Tạo",
-    2692: "📓 Quan Trọng",
+    2046: "📓 Quan Trọng",
     1: "💬 # Chat",
     0: "💬 # Chat chung"
 }
@@ -6987,6 +6987,537 @@ def api_report_all_dept_tasks():
         "count": len(tasks),
         "timestamp": now_str
     })
+
+
+# ==============================================================================
+# API SA BÀN 3D: LIVE FLEET RADAR & CARGO TELEMETRY (4 XE TẢI GHN LIÊN CỤM KHO)
+# ==============================================================================
+FLEET_RADAR_DATA = {
+    "truck-cairang": {
+        "id": "truck-cairang",
+        "plate": "65C-188.92",
+        "truckType": "Xe tải thùng kín 2.5 Tấn (Isuzu Euro 5)",
+        "driver": {
+            "name": "Đặng Hoàng Phúc",
+            "phone": "0918.452.188",
+            "license": "Bằng C",
+            "seniority": "4 năm thâm niên",
+            "rating": "4.95 ⭐"
+        },
+        "origin": {
+            "hubId": "21088000",
+            "name": "Cụm Kho Cái Răng",
+            "address": "531 Võ Nguyên Giáp, Cái Răng, Cần Thơ"
+        },
+        "destination": {
+            "hubId": "21985000",
+            "name": "Cụm Kho Bình Thủy",
+            "address": "Bình Thủy, Cần Thơ"
+        },
+        "routeName": "Tuyến Cố Định: Cái Răng ⇄ Bình Thủy (Nội đô Cần Thơ)",
+        "payload": {
+            "currentKg": 1940,
+            "maxKg": 2500,
+            "utilizationPercent": 77.6,
+            "packageCount": 56,
+            "cargoCategory": "B2B Shopee Mall & Hàng Tiêu Dùng Nhanh"
+        },
+        "cargoStatus": {
+            "stateText": "Đang vận chuyển liên kho",
+            "sealCode": "GHN-SEAL-99812",
+            "securityCheck": "Đạt kiểm định niêm phong 100%",
+            "dispatchTime": "07:30",
+            "etaTime": "09:45"
+        },
+        "telemetry": {
+            "speedKmh": 38,
+            "fuelPercent": 82,
+            "odoTodayKm": 84.6,
+            "gps": "10.0245° N, 105.7892° E"
+        }
+    },
+    "truck-omon": {
+        "id": "truck-omon",
+        "plate": "65C-209.45",
+        "truckType": "Xe tải nhẹ 1.9 Tấn (Hino XZU)",
+        "driver": {
+            "name": "Nguyễn Văn Thắng",
+            "phone": "0907.312.094",
+            "license": "Bằng C",
+            "seniority": "6 năm thâm niên",
+            "rating": "4.98 ⭐"
+        },
+        "origin": {
+            "hubId": "22917000",
+            "name": "Cụm Kho Ô Môn",
+            "address": "Quốc Lộ 91, Ô Môn, Cần Thơ"
+        },
+        "destination": {
+            "hubId": "21088000",
+            "name": "Cụm Kho Cái Răng",
+            "address": "Hub Trung Tâm MT01"
+        },
+        "routeName": "Tuyến Trục: Ô Môn ⇄ Cái Răng (QL91)",
+        "payload": {
+            "currentKg": 1420,
+            "maxKg": 1900,
+            "utilizationPercent": 74.7,
+            "packageCount": 42,
+            "cargoCategory": "Kiện hàng cồng kềnh & Thiết bị điện gia dụng"
+        },
+        "cargoStatus": {
+            "stateText": "Đang bốc dỡ tại bãi nhận",
+            "sealCode": "GHN-SEAL-88123",
+            "securityCheck": "Đã quét mã RFID qua cổng tự động",
+            "dispatchTime": "08:15",
+            "etaTime": "10:30"
+        },
+        "telemetry": {
+            "speedKmh": 42,
+            "fuelPercent": 76,
+            "odoTodayKm": 102.3,
+            "gps": "10.1120° N, 105.6234° E"
+        }
+    },
+    "truck-vithanh": {
+        "id": "truck-vithanh",
+        "plate": "95C-086.19",
+        "truckType": "Xe tải bảo ôn 3.5 Tấn (Hyundai Mighty)",
+        "driver": {
+            "name": "Trần Minh Tâm",
+            "phone": "0939.871.950",
+            "license": "Bằng C",
+            "seniority": "5 năm thâm niên",
+            "rating": "4.92 ⭐"
+        },
+        "origin": {
+            "hubId": "22862000",
+            "name": "Cụm Kho Vị Thanh",
+            "address": "TP Vị Thanh, Hậu Giang"
+        },
+        "destination": {
+            "hubId": "21985000",
+            "name": "Cụm Kho Bình Thủy & Cái Răng",
+            "address": "Cần Thơ"
+        },
+        "routeName": "Tuyến Vành Đai: Hậu Giang ⇄ Cần Thơ",
+        "payload": {
+            "currentKg": 2850,
+            "maxKg": 3500,
+            "utilizationPercent": 81.4,
+            "packageCount": 38,
+            "cargoCategory": "Bưu phẩm hỏa tốc & Thực phẩm tươi bảo ôn (18°C)"
+        },
+        "cargoStatus": {
+            "stateText": "Đang hành trình trên Quốc Lộ",
+            "sealCode": "GHN-SEAL-77401",
+            "securityCheck": "Nhiệt độ đạt chuẩn 18°C • Seal nguyên vẹn",
+            "dispatchTime": "06:50",
+            "etaTime": "09:15"
+        },
+        "telemetry": {
+            "speedKmh": 40,
+            "fuelPercent": 68,
+            "odoTodayKm": 136.8,
+            "gps": "9.7842° N, 105.4711° E"
+        }
+    },
+    "truck-highway": {
+        "id": "truck-highway",
+        "plate": "65H-365.01",
+        "truckType": "Xe tải nặng 5.0 Tấn Cố Định Tuyến (Isuzu Forward)",
+        "driver": {
+            "name": "Lê Hoàng Khang",
+            "phone": "0944.551.365",
+            "license": "Bằng D",
+            "seniority": "8 năm thâm niên",
+            "rating": "5.00 ⭐ (Đội trưởng)"
+        },
+        "origin": {
+            "hubId": "21985000",
+            "name": "Cụm Kho Bình Thủy",
+            "address": "Bình Thủy, Cần Thơ"
+        },
+        "destination": {
+            "hubId": "21088000",
+            "name": "Tuyến Liên Tỉnh: MT01 ⇄ An Giang / QL91",
+            "address": "Đồng Bằng Sông Cửu Long"
+        },
+        "routeName": "Tuyến Liên Tỉnh Nặng: Bình Thủy ⇄ QL91 ⇄ An Giang",
+        "payload": {
+            "currentKg": 4350,
+            "maxKg": 5000,
+            "utilizationPercent": 87.0,
+            "packageCount": 68,
+            "cargoCategory": "Hàng nặng liên tỉnh & Pallet tổng hợp"
+        },
+        "cargoStatus": {
+            "stateText": "Xuất bến thành công qua Trạm Cổng MT01",
+            "sealCode": "GHN-SEAL-66190",
+            "securityCheck": "Cân tải tự động hợp lệ (4.35 Tấn / 5.0 Tấn)",
+            "dispatchTime": "07:00",
+            "etaTime": "11:30"
+        },
+        "telemetry": {
+            "speedKmh": 48,
+            "fuelPercent": 91,
+            "odoTodayKm": 168.4,
+            "gps": "10.0512° N, 105.7410° E"
+        }
+    }
+}
+
+@app.route("/api/saban/fleet-radar", methods=["GET"])
+def api_saban_fleet_radar():
+    """Cung cấp dữ liệu radar trực tiếp cho 4 xe tải thùng GHN đang vận hành giữa 4 cụm kho MT01"""
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return jsonify({
+        "success": True,
+        "trucks": FLEET_RADAR_DATA,
+        "fleet": FLEET_RADAR_DATA,
+        "total": len(FLEET_RADAR_DATA),
+        "timestamp": now_str
+    })
+
+
+# ==============================================================================
+# API SA BÀN 3D: STARBUCKS ORDER & DRONE COURIER DISPATCH
+# ==============================================================================
+DESTINATION_COORDINATES = {
+    "cairang": {"key": "cairang", "name": "Cụm Kho Cái Răng", "x": 19.5, "y": 32.0, "hub_id": "21088000"},
+    "binhthuy": {"key": "binhthuy", "name": "Cụm Kho Bình Thủy", "x": 84.4, "y": 61.5, "hub_id": "21985000"},
+    "omon": {"key": "omon", "name": "Cụm Kho Ô Môn", "x": 36.0, "y": 61.5, "hub_id": "22917000"},
+    "vithanh": {"key": "vithanh", "name": "Cụm Kho Vị Thanh", "x": 64.0, "y": 61.5, "hub_id": "22862000"},
+    "vanhanh": {"key": "vanhanh", "name": "Phòng Vận Hành (MT01)", "x": 50.0, "y": 38.0},
+    "kythuat": {"key": "kythuat", "name": "Phòng Server & AI Bot", "x": 52.0, "y": 42.0},
+    "ben_thuyen": {"key": "ben_thuyen", "name": "Bến Thuyền & Bờ Sông Mekong", "x": 88.0, "y": 78.0}
+}
+
+@app.route("/api/saban/starbucks/order", methods=["POST"])
+def api_saban_starbucks_order():
+    """Đặt món nước Starbucks và kích hoạt Drone Courier chuyển phát siêu tốc trên Sa Bàn 3D"""
+    from pipeline_tracer import record_pipeline_event
+    data = request.get_json(silent=True, force=True) or {}
+    if not data and request.data:
+        try:
+            data = json.loads(request.data.decode("utf-8-sig", "ignore"))
+        except Exception:
+            data = {}
+    item_id = str(data.get("item_id", "sb-1")).strip()
+    item_name = str(data.get("item_name", "Trà Sữa Trân Châu Hoàng Kim")).strip()
+    try:
+        quantity = int(data.get("quantity", 1))
+    except (ValueError, TypeError):
+        quantity = 1
+    size = str(data.get("size", "Grande")).strip().upper()
+    dest_key = str(data.get("destination_key", "cairang")).strip().lower()
+    note = str(data.get("note", "")).strip()
+
+    dest_info = DESTINATION_COORDINATES.get(dest_key, {
+        "key": dest_key,
+        "name": f"Điểm Nhận {dest_key.upper()}",
+        "x": 50.0,
+        "y": 50.0
+    })
+
+    order_id = f"SB-ORD-{int(time.time()*1000)}"
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    order_record = {
+        "order_id": order_id,
+        "item_id": item_id,
+        "item_name": item_name,
+        "quantity": quantity,
+        "size": size,
+        "destination_key": dest_key,
+        "destination_name": dest_info["name"],
+        "note": note,
+        "created_at": now_str
+    }
+
+    record_pipeline_event(
+        task_name=f"Starbucks Drone Delivery: {item_name}",
+        department="🧋 Quán Trà Sữa & Coffee Starbucks",
+        current_step=f"Drone cất cánh vận chuyển {quantity}x {item_name} (Size {size}) tới {dest_info['name']}",
+        total_steps=1,
+        status="SUCCESS",
+        handler_dept="Barista Starbucks • Drone Courier MT01",
+        healing_action=f"Điều phối Drone tự hành bay giao tận nơi tại {dest_info['name']}",
+        can_resume=True
+    )
+
+    return jsonify({
+        "success": True,
+        "order_id": order_id,
+        "message": f"Đặt đơn Starbucks thành công! Drone đang bay giao {quantity}x {item_name} (Size {size}) tới {dest_info['name']}.",
+        "destination": dest_info,
+        "order": order_record
+    })
+
+
+# ==============================================================================
+# API SA BÀN 3D: SỰ CỐ & GIẢI QUYẾT 1-CLICK (INCIDENT HUD & ANOMALY RESOLVER)
+# ==============================================================================
+DEFAULT_SEED_INCIDENTS = [
+    {
+        "id": "INC-20261106-001",
+        "type": "5S_VIOLATION",
+        "title": "Cảnh báo vi phạm 5S sàn kho",
+        "location": "Kho Cái Răng • Sàn Phân Loại",
+        "hub_key": "cairang",
+        "severity": "CRITICAL",
+        "timestamp": "12:35:10 06/11/2026",
+        "status": "OPEN",
+        "description": "3 kiện hàng cồng kềnh tiếp xúc trực tiếp nền bê tông chưa kê pallet.",
+        "suggested_action": "Điều xe nâng và nhân sự kê pallet chuẩn 5S",
+        "resolved_by": None,
+        "resolved_at": None,
+        "resolution_note": None
+    },
+    {
+        "id": "INC-20261106-002",
+        "type": "TRUCK_CONGESTION",
+        "title": "Nghẽn bãi xe và quá giờ bốc dỡ",
+        "location": "Kho Bình Thủy • Cửa Nhận Dock 02",
+        "hub_key": "binhthuy",
+        "severity": "WARNING",
+        "timestamp": "12:38:22 06/11/2026",
+        "status": "OPEN",
+        "description": "Xe tải 65H-365.01 dừng bốc dỡ tại Dock vượt quá 45 phút.",
+        "suggested_action": "Điều phối đội bốc dỡ tăng cường giải phóng Dock",
+        "resolved_by": None,
+        "resolved_at": None,
+        "resolution_note": None
+    },
+    {
+        "id": "INC-20261106-003",
+        "type": "CAMERA_OFFLINE",
+        "title": "Mất tín hiệu camera an ninh",
+        "location": "Kho Vị Thanh • Cổng Ra Vào",
+        "hub_key": "vithanh",
+        "severity": "WARNING",
+        "timestamp": "12:40:05 06/11/2026",
+        "status": "OPEN",
+        "description": "Mất kết nối RTSP Camera 02 do hết hạn xác thực JWT.",
+        "suggested_action": "Kích hoạt Auto-Heal Bot làm mới Token Hikvision",
+        "resolved_by": None,
+        "resolved_at": None,
+        "resolution_note": None
+    },
+    {
+        "id": "INC-20261106-004",
+        "type": "SHIPPER_ANOMALY",
+        "title": "Phát hiện shipper hoãn giao bất thường",
+        "location": "Kho Ô Môn • Tuyến Giao Nhanh",
+        "hub_key": "omon",
+        "severity": "INFO",
+        "timestamp": "12:41:30 06/11/2026",
+        "status": "OPEN",
+        "description": "Shipper báo hoãn đơn hàng nhưng thời lượng cuộc gọi app = 0s.",
+        "suggested_action": "Chuyển Ban Thanh Tra thẩm tra và lập biên bản",
+        "resolved_by": None,
+        "resolved_at": None,
+        "resolution_note": None
+    }
+]
+
+def get_incidents_file():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(base_dir, "data")
+    os.makedirs(data_dir, exist_ok=True)
+    return os.path.join(data_dir, "incidents.json")
+
+def load_incidents():
+    fpath = get_incidents_file()
+    if os.path.exists(fpath):
+        try:
+            with open(fpath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, list) and len(data) > 0:
+                    return data
+        except Exception:
+            pass
+    # If not present or empty, seed and save
+    save_incidents(DEFAULT_SEED_INCIDENTS)
+    return [dict(x) for x in DEFAULT_SEED_INCIDENTS]
+
+def save_incidents(incidents):
+    fpath = get_incidents_file()
+    with open(fpath, "w", encoding="utf-8") as f:
+        json.dump(incidents, f, ensure_ascii=False, indent=2)
+
+@app.route("/api/saban/incidents", methods=["GET"])
+def api_saban_get_incidents():
+    """Lấy danh sách các sự cố vận hành Sa Bàn MT01 (hỗ trợ lọc status=all|open|resolved)"""
+    status_filter = request.args.get("status", "all").strip().lower()
+    all_incidents = load_incidents()
+
+    if status_filter == "open":
+        incidents = [i for i in all_incidents if str(i.get("status", "")).upper() == "OPEN"]
+    elif status_filter == "resolved":
+        incidents = [i for i in all_incidents if str(i.get("status", "")).upper() == "RESOLVED"]
+    else:
+        incidents = all_incidents
+
+    open_count = sum(1 for i in all_incidents if str(i.get("status", "")).upper() == "OPEN")
+    critical_count = sum(1 for i in all_incidents if str(i.get("status", "")).upper() == "OPEN" and str(i.get("severity", "")).upper() == "CRITICAL")
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    return jsonify({
+        "success": True,
+        "incidents": incidents,
+        "total": len(incidents),
+        "open_count": open_count,
+        "critical_count": critical_count,
+        "timestamp": now_str
+    })
+
+@app.route("/api/saban/incidents/resolve", methods=["POST"])
+def api_saban_resolve_incident():
+    """Giải quyết 1-click sự cố vận hành trên Sa Bàn và ghi nhận trace vào War Room"""
+    from pipeline_tracer import record_pipeline_event
+    data = request.get_json(silent=True, force=True) or {}
+    if not data and request.data:
+        try:
+            data = json.loads(request.data.decode("utf-8-sig", "ignore"))
+        except Exception:
+            data = {}
+    inc_id = str(data.get("id", "")).strip()
+    resolved_by = str(data.get("resolved_by", "Sếp Lộc • Tiger AI")).strip()
+    note = str(data.get("note", "Đã xử lý 1-click thành công")).strip()
+
+    if not inc_id:
+        return jsonify({"success": False, "error": "Thiếu mã sự cố (id)"}), 400
+
+    all_incidents = load_incidents()
+    target_inc = None
+    for inc in all_incidents:
+        if inc.get("id") == inc_id:
+            target_inc = inc
+            break
+
+    if not target_inc:
+        return jsonify({"success": False, "error": f"Không tìm thấy sự cố với mã {inc_id}"}), 404
+
+    target_inc["status"] = "RESOLVED"
+    target_inc["resolved_by"] = resolved_by
+    target_inc["resolved_at"] = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    target_inc["resolution_note"] = note
+
+    save_incidents(all_incidents)
+
+    record_pipeline_event(
+        task_name=f"Xử Lý Sự Cố: {target_inc.get('title')}",
+        department=f"Cụm Kho {target_inc.get('hub_key', '').upper()}",
+        current_step=f"Đã xử lý 1-click sự cố {target_inc.get('id')} ({target_inc.get('title')}) tại {target_inc.get('location')}",
+        total_steps=1,
+        status="SUCCESS",
+        handler_dept=resolved_by,
+        healing_action=f"Khắc phục sự cố: {target_inc.get('suggested_action')}",
+        can_resume=True
+    )
+
+    return jsonify({
+        "success": True,
+        "message": f"Sự cố {target_inc.get('id')} đã được giải quyết thành công!",
+        "incident": target_inc
+    })
+
+@app.route("/api/saban/incidents/reset", methods=["POST"])
+def api_saban_reset_incidents():
+    """Khôi phục danh sách sự cố về trạng thái seed ban đầu (phục vụ kiểm thử tự động)"""
+    import copy
+    fresh_seeds = copy.deepcopy(DEFAULT_SEED_INCIDENTS)
+    save_incidents(fresh_seeds)
+    return jsonify({
+        "success": True,
+        "message": "Đã khôi phục danh sách sự cố MT01 về trạng thái seed mặc định",
+        "count": len(fresh_seeds),
+        "incidents": fresh_seeds
+    })
+
+
+# ==============================================================================
+# 🏛️ PHÒNG HỌP & PHÒNG TRUYỀN THÔNG AI (MEETING & MEDIA SUITE)
+# ==============================================================================
+import meeting_service
+
+@app.route("/phong-hop")
+def route_phong_hop():
+    """Giao diện Quản lý Phòng Họp AI & Phòng Truyền Thông"""
+    return render_template("phong_hop.html")
+
+@app.route("/api/meetings/live-feed")
+def api_meetings_live_feed():
+    return jsonify(meeting_service.get_live_status())
+
+@app.route("/api/meetings/start", methods=["POST"])
+def api_meetings_start():
+    data = request.get_json() or {}
+    meet_url = data.get("meet_url", "").strip()
+    title = data.get("title", "").strip()
+    dept = data.get("department", "").strip()
+    meeting = meeting_service.create_and_start_meeting(title, meet_url, dept)
+    return jsonify({"success": True, "meeting": meeting})
+
+@app.route("/api/meetings/stop", methods=["POST"])
+def api_meetings_stop():
+    data = request.get_json() or {}
+    mid = data.get("meeting_id")
+    meeting = meeting_service.stop_meeting(mid)
+    return jsonify({"success": True, "meeting": meeting})
+
+@app.route("/api/meetings/list")
+def api_meetings_list():
+    return jsonify(meeting_service.load_meetings())
+
+@app.route("/api/meetings/<meeting_id>")
+def api_meetings_detail(meeting_id):
+    meeting = meeting_service.get_meeting(meeting_id)
+    if not meeting:
+        return jsonify({"error": "Not found"}), 404
+    return jsonify(meeting)
+
+@app.route("/api/meetings/<meeting_id>/review", methods=["POST"])
+def api_meetings_review(meeting_id):
+    data = request.get_json() or {}
+    title = data.get("title")
+    chair = data.get("chair")
+    summary = data.get("summary")
+    notes_md = data.get("notes_markdown")
+    updated = meeting_service.update_meeting_review(meeting_id, title, summary, notes_md, chair)
+    return jsonify({"success": True, "meeting": updated})
+
+@app.route("/api/meetings/<meeting_id>/render-pdf", methods=["POST"])
+def api_meetings_render_pdf(meeting_id):
+    pdf_path, err = meeting_service.generate_meeting_pdf_render(meeting_id)
+    if err:
+        return jsonify({"success": False, "message": err}), 500
+    fname = os.path.basename(pdf_path)
+    return jsonify({
+        "success": True,
+        "pdf_url": f"/api/meetings/download-pdf/{fname}",
+        "filename": fname
+    })
+
+@app.route("/api/meetings/<meeting_id>/publish", methods=["POST"])
+def api_meetings_publish(meeting_id):
+    data = request.get_json() or {}
+    top_id = data.get("topic_id", 2046)
+    ok, msg = meeting_service.publish_meeting_telegram(meeting_id, topic_id=top_id)
+    return jsonify({"success": ok, "message": msg})
+
+@app.route("/api/meetings/download-pdf/<path:filename>")
+def api_meetings_download_pdf(filename):
+    dirs = [
+        meeting_service.PDF_EXPORT_DIR,
+        meeting_service.SCRATCH_DIR
+    ]
+    for d in dirs:
+        p = os.path.join(d, filename)
+        if os.path.exists(p):
+            return send_from_directory(d, filename)
+    return "File not found", 404
 
 
 if __name__ == "__main__":

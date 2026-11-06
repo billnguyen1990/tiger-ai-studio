@@ -3507,7 +3507,7 @@ TELEGRAM_TOPICS_MAP = {
     3365: "📸 Camera Giám Sát Kho",
     2690: "🔥 Báo Cáo",
     506: "📅 Đơn Tạo",
-    2692: "📓 Quan Trọng",
+    2046: "📓 Quan Trọng",
     1: "💬 # Chat",
     0: "💬 # Chat chung"
 }

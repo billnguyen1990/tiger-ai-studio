@@ -1,0 +1,62 @@
+[
+  {
+    "id": "INC-20261106-001",
+    "type": "5S_VIOLATION",
+    "title": "Cảnh báo vi phạm 5S sàn kho",
+    "location": "Kho Cái Răng • Sàn Phân Loại",
+    "hub_key": "cairang",
+    "severity": "CRITICAL",
+    "timestamp": "12:35:10 06/11/2026",
+    "status": "OPEN",
+    "description": "3 kiện hàng cồng kềnh tiếp xúc trực tiếp nền bê tông chưa kê pallet.",
+    "suggested_action": "Điều xe nâng và nhân sự kê pallet chuẩn 5S",
+    "resolved_by": null,
+    "resolved_at": null,
+    "resolution_note": null
+  },
+  {
+    "id": "INC-20261106-002",
+    "type": "TRUCK_CONGESTION",
+    "title": "Nghẽn bãi xe và quá giờ bốc dỡ",
+    "location": "Kho Bình Thủy • Cửa Nhận Dock 02",
+    "hub_key": "binhthuy",
+    "severity": "WARNING",
+    "timestamp": "12:38:22 06/11/2026",
+    "status": "OPEN",
+    "description": "Xe tải 65H-365.01 dừng bốc dỡ tại Dock vượt quá 45 phút.",
+    "suggested_action": "Điều phối đội bốc dỡ tăng cường giải phóng Dock",
+    "resolved_by": null,
+    "resolved_at": null,
+    "resolution_note": null
+  },
+  {
+    "id": "INC-20261106-003",
+    "type": "CAMERA_OFFLINE",
+    "title": "Mất tín hiệu camera an ninh",
+    "location": "Kho Vị Thanh • Cổng Ra Vào",
+    "hub_key": "vithanh",
+    "severity": "WARNING",
+    "timestamp": "12:40:05 06/11/2026",
+    "status": "OPEN",
+    "description": "Mất kết nối RTSP Camera 02 do hết hạn xác thực JWT.",
+    "suggested_action": "Kích hoạt Auto-Heal Bot làm mới Token Hikvision",
+    "resolved_by": null,
+    "resolved_at": null,
+    "resolution_note": null
+  },
+  {
+    "id": "INC-20261106-004",
+    "type": "SHIPPER_ANOMALY",
+    "title": "Phát hiện shipper hoãn giao bất thường",
+    "location": "Kho Ô Môn • Tuyến Giao Nhanh",
+    "hub_key": "omon",
+    "severity": "INFO",
+    "timestamp": "12:41:30 06/11/2026",
+    "status": "OPEN",
+    "description": "Shipper báo hoãn đơn hàng nhưng thời lượng cuộc gọi app = 0s.",
+    "suggested_action": "Chuyển Ban Thanh Tra thẩm tra và lập biên bản",
+    "resolved_by": null,
+    "resolved_at": null,
+    "resolution_note": null
+  }
+]
