@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TIGER AI • DASHBOARD CHI PHÍ VẬN HÀNH MIỀN TÂY 01</title>
   <link rel="icon" type="image/png" href="/static/img/ghn_tiger_logo.png">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+    rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+  <style>
     /* ==========================================================================
        MULTI-THEME PALETTE SYSTEM - DYNAMIC ROOT & THEMES
        ========================================================================== */
-    :root, body.theme-ghn-teal {
+    :root,
+    body.theme-ghn-teal {
       --bg-primary: #051218;
       --bg-header: rgba(8, 26, 36, 0.95);
       --bg-card: #0b1c26;
@@ -193,7 +197,12 @@
       --chart-tick: #475569;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background-color: var(--bg-primary);
       color: var(--text-main);
@@ -502,6 +511,7 @@
       color: #fff;
       box-shadow: 0 2px 8px rgba(0, 229, 190, 0.3);
     }
+
     .btn-primary:hover {
       box-shadow: 0 4px 16px rgba(0, 229, 190, 0.5);
       transform: translateY(-1px);
@@ -512,6 +522,7 @@
       color: var(--text-main);
       border-color: var(--border-color);
     }
+
     .btn-outline:hover {
       background: var(--bg-card-hover);
       border-color: var(--border-accent);
@@ -698,10 +709,21 @@
       background: var(--accent-blue);
     }
 
-    .kpi-card.green::before { background: var(--accent-green); }
-    .kpi-card.amber::before { background: var(--accent-amber); }
-    .kpi-card.purple::before { background: var(--accent-purple); }
-    .kpi-card.red::before { background: var(--accent-red); }
+    .kpi-card.green::before {
+      background: var(--accent-green);
+    }
+
+    .kpi-card.amber::before {
+      background: var(--accent-amber);
+    }
+
+    .kpi-card.purple::before {
+      background: var(--accent-purple);
+    }
+
+    .kpi-card.red::before {
+      background: var(--accent-red);
+    }
 
     .kpi-top {
       display: flex;
@@ -733,10 +755,25 @@
       color: var(--accent-blue);
     }
 
-    .kpi-badge.green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
-    .kpi-badge.amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
-    .kpi-badge.purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
-    .kpi-badge.red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+    .kpi-badge.green {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+    }
+
+    .kpi-badge.amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+    }
+
+    .kpi-badge.purple {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+    }
+
+    .kpi-badge.red {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--accent-red);
+    }
 
     /* CHARTS ROW */
     .charts-row {
@@ -746,7 +783,9 @@
     }
 
     @media (max-width: 1200px) {
-      .charts-row { grid-template-columns: 1fr; }
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     .content-box {
@@ -790,7 +829,7 @@
       width: 100%;
     }
 
-    .dashboard-row > .content-box {
+    .dashboard-row>.content-box {
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -868,9 +907,11 @@
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
       text-decoration: none;
     }
+
     .floating-tiger-mascot:hover {
       filter: drop-shadow(0 0 16px rgba(0, 229, 190, 0.7));
     }
+
     .floating-tiger-mascot.is-dragging {
       cursor: grabbing !important;
       animation: none !important;
@@ -878,6 +919,7 @@
       transition: none !important;
       filter: drop-shadow(0 0 24px rgba(0, 229, 190, 0.9)) !important;
     }
+
     .floating-tiger-mascot .mascot-aura {
       position: absolute;
       top: 50%;
@@ -890,6 +932,7 @@
       animation: mascotPulse 2.6s ease-in-out infinite alternate;
       pointer-events: none;
     }
+
     .floating-tiger-mascot .mascot-avatar-wrapper {
       position: relative;
       width: 62px;
@@ -905,6 +948,7 @@
       flex-shrink: 0;
       overflow: hidden;
     }
+
     .mascot-avatar-img {
       width: 100%;
       height: 100%;
@@ -913,9 +957,11 @@
       pointer-events: none;
       transition: transform 0.25s ease;
     }
+
     .floating-tiger-mascot:hover .mascot-avatar-img {
       transform: scale(1.15) rotate(4deg);
     }
+
     .floating-tiger-mascot .mascot-emoji {
       font-size: 32px;
       line-height: 1;
@@ -923,9 +969,11 @@
       transition: transform 0.25s ease;
       pointer-events: none;
     }
+
     .floating-tiger-mascot:hover .mascot-emoji {
       transform: scale(1.18) rotate(6deg);
     }
+
     .floating-tiger-mascot .mascot-online-ping {
       position: absolute;
       top: 2px;
@@ -938,6 +986,7 @@
       box-shadow: 0 0 10px #10b981;
       pointer-events: none;
     }
+
     .floating-tiger-mascot .mascot-label-pill {
       position: absolute;
       right: 70px;
@@ -958,50 +1007,75 @@
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
+
     .floating-tiger-mascot .mascot-sparkle {
       color: #fbbf24;
       font-size: 13px;
     }
+
     .floating-tiger-mascot.flip-pill .mascot-label-pill {
       right: auto;
       left: 70px;
     }
+
     body.theme-light .floating-tiger-mascot .mascot-avatar-wrapper {
       background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
       border-color: #0284c7;
       box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3), 0 0 15px rgba(2, 132, 199, 0.25);
     }
+
     body.theme-light .floating-tiger-mascot .mascot-label-pill {
       background: rgba(255, 255, 255, 0.95);
       border-color: rgba(2, 132, 199, 0.4);
       color: #0f172a;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 0 12px rgba(2, 132, 199, 0.2);
     }
+
     @keyframes mascotFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
     }
+
     @keyframes mascotPulse {
-      0% { transform: translate(-50%, -50%) scale(0.88); opacity: 0.45; }
-      100% { transform: translate(-50%, -50%) scale(1.28); opacity: 0.95; }
+      0% {
+        transform: translate(-50%, -50%) scale(0.88);
+        opacity: 0.45;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1.28);
+        opacity: 0.95;
+      }
     }
   </style>
 </head>
+
 <body class="theme-ghn-teal">
 
   <!-- HEADER -->
   <header class="dashboard-header">
     <div class="brand-group">
-      <div class="brand-logo"><img src="/static/img/tiger_avatar.jpg" alt="Tiger AI" style="width: 44px; height: 44px; object-fit: cover; border-radius: 12px; border: 1.5px solid rgba(0, 229, 190, 0.6);"></div>
+      <div class="brand-logo"><img src="/static/img/tiger_avatar.jpg" alt="Tiger AI"
+          style="width: 44px; height: 44px; object-fit: cover; border-radius: 12px; border: 1.5px solid rgba(0, 229, 190, 0.6);">
+      </div>
       <div>
         <div class="brand-title">TIGER AI • CHI PHÍ & VẬN HÀNH MIỀN TÂY 01</div>
-        <div class="brand-subtitle">Theo dõi chính xác 11 chỉ số chi phí, lương & xe tải cố định theo Vùng, Kho, Tháng, Tuần, Ngày</div>
+        <div class="brand-subtitle">Theo dõi chính xác 11 chỉ số chi phí, lương & xe tải cố định theo Vùng, Kho, Tháng,
+          Tuần, Ngày</div>
       </div>
     </div>
     <div class="header-right">
 
-            <!-- NÚT 1-CLICK SÁNG / TỐI TRỰC TIẾP -->
-      <button id="btnQuickHeaderMode" class="btn-quick-theme-toggle" type="button" title="Bấm 1-Click để chuyển nhanh Chế độ Sáng / Tối">
+      <!-- NÚT 1-CLICK SÁNG / TỐI TRỰC TIẾP -->
+      <button id="btnQuickHeaderMode" class="btn-quick-theme-toggle" type="button"
+        title="Bấm 1-Click để chuyển nhanh Chế độ Sáng / Tối">
         <span id="txtQuickHeaderModeIcon">☀️</span>
         <span id="txtQuickHeaderModeLabel">Sáng</span>
       </button>
@@ -1019,14 +1093,15 @@
             <span>🎨 BỘ SƯU TẬP GIAO DIỆN & MÀU SẮC</span>
             <button type="button" class="theme-dd-close" id="btnCloseThemePalette">&times;</button>
           </div>
-          
+
           <div class="theme-quick-switch-box">
             <span class="theme-quick-label">⚡ Chỉnh Nhanh:</span>
             <div class="theme-quick-buttons">
               <button type="button" class="btn-mode-quick" id="btnQuickThemeDark" title="Chế độ Tối (Dịu mắt ban đêm)">
                 <span>🌙 Tối</span>
               </button>
-              <button type="button" class="btn-mode-quick" id="btnQuickThemeLight" title="Chế độ Sáng (Thanh lịch ban ngày)">
+              <button type="button" class="btn-mode-quick" id="btnQuickThemeLight"
+                title="Chế độ Sáng (Thanh lịch ban ngày)">
                 <span>☀️ Sáng</span>
               </button>
             </div>
@@ -1037,7 +1112,8 @@
 
           <div class="theme-dd-list">
             <div class="theme-item active" data-theme="theme-ghn-teal">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #00e5be 0%, #051218 100%); border: 2px solid #00e5be;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #00e5be 0%, #051218 100%); border: 2px solid #00e5be;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">🟢 Xanh Đen GHN (Chuẩn Logo)</div>
                 <div class="theme-item-desc">Màu xanh ngọc logo GHN trên nền đen sâu</div>
@@ -1046,7 +1122,8 @@
             </div>
 
             <div class="theme-item" data-theme="theme-ghn-orange">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #ff6600 0%, #060e18 100%); border: 2px solid #ff6600;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #ff6600 0%, #060e18 100%); border: 2px solid #ff6600;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">🟠 Cam & Xanh Đen (Đồng Phục GHN)</div>
                 <div class="theme-item-desc">Màu cam nhiệt huyết GHN phối nền xanh đen</div>
@@ -1055,7 +1132,8 @@
             </div>
 
             <div class="theme-item" data-theme="theme-ghn-blue">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #0ea5e9 0%, #030d1a 100%); border: 2px solid #0ea5e9;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #0ea5e9 0%, #030d1a 100%); border: 2px solid #0ea5e9;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">🔵 Xanh Dương GHN Express (Ocean Navy)</div>
                 <div class="theme-item-desc">Màu xanh biển sâu tốc hành tin cậy</div>
@@ -1064,7 +1142,8 @@
             </div>
 
             <div class="theme-item" data-theme="theme-amber">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #f59e0b 0%, #080c14 100%); border: 2px solid #f59e0b;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #f59e0b 0%, #080c14 100%); border: 2px solid #f59e0b;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">🐯 Cam Hổ Cyberpunk (Tiger AI Gold)</div>
                 <div class="theme-item-desc">Vàng cam mãnh hổ, độ tương phản cao</div>
@@ -1073,7 +1152,8 @@
             </div>
 
             <div class="theme-item" data-theme="theme-purple">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #a855f7 0%, #0d0818 100%); border: 2px solid #a855f7;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #a855f7 0%, #0d0818 100%); border: 2px solid #a855f7;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">🟣 Tím Neon Huyền Bí (Galaxy Sci-Fi)</div>
                 <div class="theme-item-desc">Tím công nghệ tương lai hiện đại</div>
@@ -1082,7 +1162,8 @@
             </div>
 
             <div class="theme-item" data-theme="theme-midnight">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #475569 0%, #000000 100%); border: 2px solid #64748b;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #475569 0%, #000000 100%); border: 2px solid #64748b;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">🌑 Đen OLED Siêu Tối (Midnight Black)</div>
                 <div class="theme-item-desc">Tối giản 100%, bảo vệ mắt & tiết kiệm pin</div>
@@ -1091,7 +1172,8 @@
             </div>
 
             <div class="theme-item" data-theme="theme-light">
-              <span class="theme-badge-color" style="background: linear-gradient(135deg, #0d9488 0%, #f1f5f9 100%); border: 2px solid #0d9488;"></span>
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #0d9488 0%, #f1f5f9 100%); border: 2px solid #0d9488;"></span>
               <div class="theme-item-info">
                 <div class="theme-item-name">☀️ Sáng Thanh Lịch (Light Professional)</div>
                 <div class="theme-item-desc">Giao diện ban ngày dịu mắt văn phòng</div>
@@ -1298,38 +1380,44 @@
 
     <!-- SECTION 3: BẢNG SO SÁNH CHI TIẾT TỪNG KHO -->
     <section class="content-box">
-      <div class="box-header" style="flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
-          <span id="badgeHubTablePeriod" style="background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;">
-            📅 Đang tải kỳ báo cáo...
-          </span>
+      <div class="box-header">
+        <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
+        <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết</span>
+        <div class="box-header" style="flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div class="box-title">📋 BẢNG ĐỐI SOÁT & SO SÁNH 4 KHO MIỀN TÂY 01</div>
+            <span id="badgeHubTablePeriod"
+              style="background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;">
+              📅 Đang tải kỳ báo cáo...
+            </span>
+          </div>
+          <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết theo đúng kỳ đang chọn</span>
         </div>
-        <span style="font-size: 12px; color: var(--text-sub);">Đầy đủ 11 chỉ số chi tiết theo đúng kỳ đang chọn</span>
-      </div>
-      <div class="table-wrapper">
-        <table id="tblBreakdown">
-          <thead>
-            <tr>
-              <th>Kho Vận Hành</th>
-              <th style="text-align: right;">Volume Gán</th>
-              <th style="text-align: right;">Volume GTC</th>
-              <th style="text-align: right;">Kg GTC</th>
-              <th style="text-align: right;">Tỷ Lệ GTC</th>
-              <th style="text-align: right;">Stop GTC</th>
-              <th style="text-align: right;">Lương Giao</th>
-              <th style="text-align: right;">Lương NVXL</th>
-              <th style="text-align: right;">Chi Phí Xe</th>
-              <th style="text-align: right;">Cost/Đơn</th>
-              <th style="text-align: right;">Cost/Stop</th>
-              <th style="text-align: right;">Cost/Kg</th>
-            </tr>
-          </thead>
-          <tbody id="tblBodyBreakdown">
-            <tr><td colspan="12" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="table-wrapper">
+          <table id="tblBreakdown">
+            <thead>
+              <tr>
+                <th>Kho Vận Hành</th>
+                <th style="text-align: right;">Volume Gán</th>
+                <th style="text-align: right;">Volume GTC</th>
+                <th style="text-align: right;">Kg GTC</th>
+                <th style="text-align: right;">Tỷ Lệ GTC</th>
+                <th style="text-align: right;">Stop GTC</th>
+                <th style="text-align: right;">Lương Giao</th>
+                <th style="text-align: right;">Lương NVXL</th>
+                <th style="text-align: right;">Chi Phí Xe</th>
+                <th style="text-align: right;">Cost/Đơn</th>
+                <th style="text-align: right;">Cost/Stop</th>
+                <th style="text-align: right;">Cost/Kg</th>
+              </tr>
+            </thead>
+            <tbody id="tblBodyBreakdown">
+              <tr>
+                <td colspan="12" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
     </section>
 
     <!-- SECTION 4: BẢNG LƯƠNG & SẢN LƯỢNG CHI TIẾT (TÍCH HỢP 2 TAB: NVGH & NVXL + BỘ CHỌN KỲ NGAY TẠI BẢNG) -->
@@ -1396,11 +1484,11 @@
           <b id="txtSumDonGan" style="color: #e2e8f0; margin-left: 5px; font-size: 14px;">0</b>
         </div>
         <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
-          <span style="color: var(--text-sub);">Đơn Giao TC (GTC):</span>
+          <span style="color: var(--text-sub);">Đơn GTC:</span>
           <b id="txtSumDonGtc" style="color: #34d399; margin-left: 5px; font-size: 14px;">0</b>
         </div>
         <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
-          <span style="color: var(--text-sub);">Đơn Lấy TC (LTC):</span>
+          <span style="color: var(--text-sub);">Đơn LTC:</span>
           <b id="txtSumDonLtc" style="color: #fbbf24; margin-left: 5px; font-size: 14px;">0</b>
         </div>
         <div style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
@@ -1408,7 +1496,7 @@
           <b id="txtSumGtcRate" style="color: #38bdf8; margin-left: 5px; font-size: 14px;">0%</b>
         </div>
         <div style="background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
-          <span id="lblTotalSalMain" style="color: var(--text-sub);">Tổng thu nhập NVGH:</span>
+          <span id="lblTotalSalMain" style="color: var(--text-sub);">Tổng lương NVGH:</span>
           <b id="txtTotalDriverSalary" style="color: var(--accent-green); margin-left: 5px; font-size: 14.5px;">0 đ</b>
         </div>
         <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
@@ -1416,7 +1504,7 @@
           <b id="txtTotalGtcSalary" style="color: #38bdf8; margin-left: 5px;">0 đ</b>
         </div>
         <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
-          <span id="lblSubSal2" style="color: var(--text-sub);">LHH LTC (Lấy):</span>
+          <span id="lblSubSal2" style="color: var(--text-sub);">LHH LTC:</span>
           <b id="txtTotalLtcSalary" style="color: #f59e0b; margin-left: 5px;">0 đ</b>
         </div>
         <div style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
@@ -1429,6 +1517,7 @@
         #tblDrivers th, #tblDrivers td {
           padding: 8px 8px !important;
           font-size: 12.5px !important;
+          white-space: nowrap;
         }
       </style>
       <div class="table-wrapper">
@@ -1439,8 +1528,8 @@
               <th id="thStaffName">Họ & Tên Nhân Viên (NVGH)</th>
               <th>Kho Trực Thuộc</th>
               <th style="text-align: right; color: #e2e8f0;">Đơn Gán</th>
-              <th style="text-align: right; color: #34d399;">Đơn GTC (Giao TC)</th>
-              <th style="text-align: right; color: #fbbf24;">Đơn LTC (Lấy TC)</th>
+              <th style="text-align: right; color: #34d399;">Đơn GTC</th>
+              <th style="text-align: right; color: #fbbf24;">Đơn LTC</th>
               <th style="text-align: center; color: #38bdf8;">Tỷ Lệ GTC</th>
               <th id="thSalCol1" style="text-align: right; color: #38bdf8;">Lương GTC (VNĐ)</th>
               <th id="thSalCol2" style="text-align: right; color: #f59e0b;">LHH LTC (VNĐ)</th>
@@ -1480,7 +1569,7 @@
         document.getElementById("pillDay").classList.add("active");
         if (document.getElementById("inlinePillDay")) document.getElementById("inlinePillDay").classList.add("active");
       }
-      
+
       updatePeriodDropdown();
       fetchData();
     }
@@ -1580,7 +1669,7 @@
     function renderData(data) {
       window.lastRenderedData = data;
       const m = data.metrics || {};
-      const getVal = (name, def="0") => (m[name] ? (m[name].formatted || m[name].raw || def) : def);
+      const getVal = (name, def = "0") => (m[name] ? (m[name].formatted || m[name].raw || def) : def);
 
       document.getElementById("val_vol_gan").innerText = getVal("Volume gán");
       document.getElementById("val_vol_gtc").innerText = getVal("Volume GTC");
@@ -1682,10 +1771,10 @@
       // Cập nhật nhãn tiêu đề cột & thẻ tổng theo Tab đang chọn
       document.getElementById("thStaffName").innerText = isNvxl ? "Họ & Tên NV Xử Lý Kho (NVXL)" : "Họ & Tên NV Giao Hàng (NVGH)";
       document.getElementById("thSalCol1").innerText = isNvxl ? "Lương Xử Lý Kho (VNĐ)" : "Lương GTC (VNĐ)";
-      document.getElementById("thSalCol2").innerText = isNvxl ? "Lương Giao Nhận Kiêm Nhiệm" : "LHH LTC - Lấy Hàng (VNĐ)";
+      document.getElementById("thSalCol2").innerText = isNvxl ? "Lương Giao Nhận Kiêm Nhiệm" : "LHH LTC (VNĐ)";
       document.getElementById("lblTotalSalMain").innerText = isNvxl ? "Tổng thu nhập NVXL:" : "Tổng lương NVGH:";
       document.getElementById("lblSubSal1").innerText = isNvxl ? "Lương Xử Lý:" : "Lương GTC:";
-      document.getElementById("lblSubSal2").innerText = isNvxl ? "Kiêm nhiệm GN:" : "LHH LTC (Lấy):";
+      document.getElementById("lblSubSal2").innerText = isNvxl ? "Kiêm nhiệm GN:" : "LHH LTC:";
       document.getElementById("lblAvgSal").innerText = isNvxl ? "Bình quân/NVXL:" : "Bình quân/NVGH:";
 
       document.getElementById("txtSumDonGan").innerText = sumObj.formatted_don_gan || "0";
@@ -1790,13 +1879,13 @@
     }
 
     function renderTable(hubs) {
-      const tbody = document.getElementById("tblBodyBreakdown");
-      if (!hubs || hubs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px;">Không có dữ liệu phân rã kho</td></tr>';
-        return;
-      }
+                const tbody = document.getElementById("tblBodyBreakdown");
+                if (!hubs || hubs.length === 0) {
+                  tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 20px;">Không có dữ liệu phân rã kho</td></tr>';
+                  return;
+                }
 
-      tbody.innerHTML = hubs.map(h => `
+                tbody.innerHTML = hubs.map(h => `
         <tr>
           <td class="hub-highlight">📍 ${h.hub_name || ""}</td>
           <td class="td-num">${h["Volume gán"] || "-"}</td>
@@ -1812,218 +1901,219 @@
           <td class="td-num">${h["Chi phí giao hàng + Cost / kg"] || "-"}</td>
         </tr>
       `).join("");
-    }
+              }
 
     function renderCharts(data) {
-      const tc = data.trend_chart || {};
-      const ctxTrend = document.getElementById("trendChart").getContext("2d");
+                const tc = data.trend_chart || {};
+                const ctxTrend = document.getElementById("trendChart").getContext("2d");
 
-      if (trendChartInstance) trendChartInstance.destroy();
+                if (trendChartInstance) trendChartInstance.destroy();
 
-      trendChartInstance = new Chart(ctxTrend, {
-        type: 'bar',
-        data: {
-          labels: tc.labels || [],
-          datasets: [
-            {
-              label: 'Volume GTC (Đơn)',
-              data: tc.volume_gtc || [],
-              backgroundColor: 'rgba(56, 189, 248, 0.4)',
-              borderColor: '#38bdf8',
-              borderWidth: 1.5,
-              borderRadius: 6,
-              yAxisID: 'y'
-            },
-            {
-              label: 'Chi Phí / Đơn (VNĐ)',
-              data: tc.cost_per_order || [],
-              type: 'line',
-              borderColor: '#f43f5e',
-              backgroundColor: '#f43f5e',
-              borderWidth: 2.5,
-              tension: 0.35,
-              yAxisID: 'y1',
-              pointRadius: 3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          scales: {
-            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: (currentThemeKey === 'theme-light' ? '#475569' : '#94a3b8') } },
-            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#38bdf8' }, title: { display: true, text: 'Volume (Đơn)', color: '#38bdf8' } },
-            y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#f43f5e' }, title: { display: true, text: 'Chi phí/Đơn (VNĐ)', color: '#f43f5e' } }
-          },
-          plugins: {
-            legend: { labels: { color: '#cbd5e1' } }
-          }
-        }
-      });
+                trendChartInstance = new Chart(ctxTrend, {
+                  type: 'bar',
+                  data: {
+                    labels: tc.labels || [],
+                    datasets: [
+                      {
+                        label: 'Volume GTC (Đơn)',
+                        data: tc.volume_gtc || [],
+                        backgroundColor: 'rgba(56, 189, 248, 0.4)',
+                        borderColor: '#38bdf8',
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        yAxisID: 'y'
+                      },
+                      {
+                        label: 'Chi Phí / Đơn (VNĐ)',
+                        data: tc.cost_per_order || [],
+                        type: 'line',
+                        borderColor: '#f43f5e',
+                        backgroundColor: '#f43f5e',
+                        borderWidth: 2.5,
+                        tension: 0.35,
+                        yAxisID: 'y1',
+                        pointRadius: 3
+                      }
+                    ]
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                      x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: (currentThemeKey === 'theme-light' ? '#475569' : '#94a3b8') } },
+                      y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#38bdf8' }, title: { display: true, text: 'Volume (Đơn)', color: '#38bdf8' } },
+                      y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#f43f5e' }, title: { display: true, text: 'Chi phí/Đơn (VNĐ)', color: '#f43f5e' } }
+                    },
+                    plugins: {
+                      legend: { labels: { color: '#cbd5e1' } }
+                    }
+                  }
+                });
 
-      // Pie chart
-      const ctxPie = document.getElementById("costPieChart").getContext("2d");
-      if (pieChartInstance) pieChartInstance.destroy();
+                // Pie chart
+                const ctxPie = document.getElementById("costPieChart").getContext("2d");
+                if (pieChartInstance) pieChartInstance.destroy();
 
-      const m = data.metrics || {};
-      const luongGiao = m["Lương giao"] ? m["Lương giao"].numeric : 0;
-      const luongXl = m["Lương NVXL"] ? m["Lương NVXL"].numeric : 0;
-      const chiPhiXe = m["Chi phí xe tải"] ? m["Chi phí xe tải"].numeric : 0;
+                const m = data.metrics || {};
+                const luongGiao = m["Lương giao"] ? m["Lương giao"].numeric : 0;
+                const luongXl = m["Lương NVXL"] ? m["Lương NVXL"].numeric : 0;
+                const chiPhiXe = m["Chi phí xe tải"] ? m["Chi phí xe tải"].numeric : 0;
 
-      pieChartInstance = new Chart(ctxPie, {
-        type: 'doughnut',
-        data: {
-          labels: ['Lương Giao', 'Lương NVXL', 'Xe Tải 365'],
-          datasets: [{
-            data: [luongGiao, luongXl, chiPhiXe],
-            backgroundColor: ['#fbbf24', '#34d399', '#38bdf8'],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom', labels: { color: '#cbd5e1', padding: 14 } }
-          }
-        }
-      });
-    }
+                pieChartInstance = new Chart(ctxPie, {
+                  type: 'doughnut',
+                  data: {
+                    labels: ['Lương Giao', 'Lương NVXL', 'Xe Tải 365'],
+                    datasets: [{
+                      data: [luongGiao, luongXl, chiPhiXe],
+                      backgroundColor: ['#fbbf24', '#34d399', '#38bdf8'],
+                      borderWidth: 0
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { position: 'bottom', labels: { color: '#cbd5e1', padding: 14 } }
+                    }
+                  }
+                });
+              }
 
     async function triggerSync() {
-      const btn = document.getElementById("btnSyncLive");
-      btn.innerHTML = "<span>⏳ Đang Kéo Sheets...</span>";
-      try {
-        const res = await fetch("/api/cost-dashboard/sync", { method: "POST" });
-        const json = await res.json();
-        alert(json.message || "Đồng bộ thành công!");
-        loadInitial();
-      } catch (e) {
-        alert("Lỗi đồng bộ: " + e);
-      } finally {
-        btn.innerHTML = "<span>🔄 Đồng Bộ Sheets</span>";
-      }
-    }
+                const btn = document.getElementById("btnSyncLive");
+                btn.innerHTML = "<span>⏳ Đang Kéo Sheets...</span>";
+                try {
+                  const res = await fetch("/api/cost-dashboard/sync", { method: "POST" });
+                  const json = await res.json();
+                  alert(json.message || "Đồng bộ thành công!");
+                  loadInitial();
+                } catch (e) {
+                  alert("Lỗi đồng bộ: " + e);
+                } finally {
+                  btn.innerHTML = "<span>🔄 Đồng Bộ Sheets</span>";
+                }
+              }
 
-    
+
     // =========================================================================
     // 🎨 THEME PALETTE CONTROLLER - COST DASHBOARD (FULL RESPONSIVE)
     // =========================================================================
     const themeMap = {
-      "theme-ghn-teal": { icon: "🟢", label: "Xanh Đen GHN", isDark: true },
-      "theme-ghn-orange": { icon: "🟠", label: "Cam & Xanh GHN", isDark: true },
-      "theme-ghn-blue": { icon: "🔵", label: "Xanh Express", isDark: true },
-      "theme-amber": { icon: "🐯", label: "Cam Hổ Cyber", isDark: true },
-      "theme-purple": { icon: "🟣", label: "Tím Neon", isDark: true },
-      "theme-midnight": { icon: "🌑", label: "Đen OLED", isDark: true },
-      "theme-light": { icon: "☀️", label: "Sáng Thanh Lịch", isDark: false }
-    };
+              "theme-ghn-teal": { icon: "🟢", label: "Xanh Đen GHN", isDark: true },
+              "theme-ghn-orange": { icon: "🟠", label: "Cam & Xanh GHN", isDark: true },
+              "theme-ghn-blue": { icon: "🔵", label: "Xanh Express", isDark: true },
+              "theme-amber": { icon: "🐯", label: "Cam Hổ Cyber", isDark: true },
+              "theme-purple": { icon: "🟣", label: "Tím Neon", isDark: true },
+              "theme-midnight": { icon: "🌑", label: "Đen OLED", isDark: true },
+              "theme-light": { icon: "☀️", label: "Sáng Thanh Lịch", isDark: false }
+            };
 
-    let currentThemeKey = "theme-ghn-teal";
+            let currentThemeKey = "theme-ghn-teal";
 
-    function updateQuickButton(themeKey) {
-      const isLight = (themeKey === "theme-light");
-      const qIcon = document.getElementById("txtQuickHeaderModeIcon");
-      const qLabel = document.getElementById("txtQuickHeaderModeLabel");
-      const qBtn = document.getElementById("btnQuickHeaderMode");
-      if (qIcon) qIcon.textContent = isLight ? "🌙" : "☀️";
-      if (qLabel) qLabel.textContent = isLight ? "Tối" : "Sáng";
-      if (qBtn) qBtn.title = isLight ? "Đang ở chế độ Sáng. Bấm để chuyển sang Tối (Xanh Đen GHN)" : "Đang ở chế độ Tối. Bấm để chuyển sang Sáng (Light Mode)";
-    }
+            function updateQuickButton(themeKey) {
+              const isLight = (themeKey === "theme-light");
+              const qIcon = document.getElementById("txtQuickHeaderModeIcon");
+              const qLabel = document.getElementById("txtQuickHeaderModeLabel");
+              const qBtn = document.getElementById("btnQuickHeaderMode");
+              if (qIcon) qIcon.textContent = isLight ? "🌙" : "☀️";
+              if (qLabel) qLabel.textContent = isLight ? "Tối" : "Sáng";
+              if (qBtn) qBtn.title = isLight ? "Đang ở chế độ Sáng. Bấm để chuyển sang Tối (Xanh Đen GHN)" : "Đang ở chế độ Tối. Bấm để chuyển sang Sáng (Light Mode)";
+            }
 
-    function applyTheme(themeKey) {
-      if (!themeMap[themeKey]) themeKey = "theme-ghn-teal";
-      currentThemeKey = themeKey;
-      document.body.className = themeKey;
-      localStorage.setItem("tiger_ai_theme", themeKey);
+            function applyTheme(themeKey) {
+              if (!themeMap[themeKey]) themeKey = "theme-ghn-teal";
+              currentThemeKey = themeKey;
+              document.body.className = themeKey;
+              localStorage.setItem("tiger_ai_theme", themeKey);
 
-      const info = themeMap[themeKey];
-      const pIcon = document.getElementById("themePillIcon");
-      const pLabel = document.getElementById("themePillLabel");
-      if (pIcon) pIcon.textContent = info.icon;
-      if (pLabel) pLabel.textContent = info.label;
+              const info = themeMap[themeKey];
+              const pIcon = document.getElementById("themePillIcon");
+              const pLabel = document.getElementById("themePillLabel");
+              if (pIcon) pIcon.textContent = info.icon;
+              if (pLabel) pLabel.textContent = info.label;
 
-      document.querySelectorAll(".theme-item").forEach(item => {
-        if (item.getAttribute("data-theme") === themeKey) item.classList.add("active");
-        else item.classList.remove("active");
-      });
+              document.querySelectorAll(".theme-item").forEach(item => {
+                if (item.getAttribute("data-theme") === themeKey) item.classList.add("active");
+                else item.classList.remove("active");
+              });
 
-      updateQuickButton(themeKey);
+              updateQuickButton(themeKey);
 
-      // Cập nhật lại màu biểu đồ Chart.js nếu đã render
-      if (window.lastRenderedData) {
-        renderCharts(window.lastRenderedData);
-      }
-    }
+              // Cập nhật lại màu biểu đồ Chart.js nếu đã render
+              if (window.lastRenderedData) {
+                renderCharts(window.lastRenderedData);
+              }
+            }
 
-    const initialTheme = localStorage.getItem("tiger_ai_theme") || "theme-ghn-teal";
-    applyTheme(initialTheme);
+            const initialTheme = localStorage.getItem("tiger_ai_theme") || "theme-ghn-teal";
+            applyTheme(initialTheme);
 
-    const btnThemeToggle = document.getElementById("btnThemeToggle");
-    const themePaletteDropdown = document.getElementById("themePaletteDropdown");
-    const btnCloseThemePalette = document.getElementById("btnCloseThemePalette");
-    const btnQuickHeaderMode = document.getElementById("btnQuickHeaderMode");
+            const btnThemeToggle = document.getElementById("btnThemeToggle");
+            const themePaletteDropdown = document.getElementById("themePaletteDropdown");
+            const btnCloseThemePalette = document.getElementById("btnCloseThemePalette");
+            const btnQuickHeaderMode = document.getElementById("btnQuickHeaderMode");
 
-    if (btnQuickHeaderMode) {
-      btnQuickHeaderMode.addEventListener("click", () => {
-        if (currentThemeKey === "theme-light") {
-          applyTheme("theme-ghn-teal");
-        } else {
-          applyTheme("theme-light");
-        }
-      });
-    }
+            if (btnQuickHeaderMode) {
+              btnQuickHeaderMode.addEventListener("click", () => {
+                if (currentThemeKey === "theme-light") {
+                  applyTheme("theme-ghn-teal");
+                } else {
+                  applyTheme("theme-light");
+                }
+              });
+            }
 
-    if (btnThemeToggle && themePaletteDropdown) {
-      btnThemeToggle.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isVisible = themePaletteDropdown.style.display !== "none";
-        themePaletteDropdown.style.display = isVisible ? "none" : "block";
-      });
+            if (btnThemeToggle && themePaletteDropdown) {
+              btnThemeToggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isVisible = themePaletteDropdown.style.display !== "none";
+                themePaletteDropdown.style.display = isVisible ? "none" : "block";
+              });
 
-      if (btnCloseThemePalette) {
-        btnCloseThemePalette.addEventListener("click", (e) => {
-          e.stopPropagation();
-          themePaletteDropdown.style.display = "none";
-        });
-      }
+              if (btnCloseThemePalette) {
+                btnCloseThemePalette.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  themePaletteDropdown.style.display = "none";
+                });
+              }
 
-      document.addEventListener("click", (e) => {
-        const wrapper = document.getElementById("themePaletteWrapper");
-        if (wrapper && !wrapper.contains(e.target)) {
-          themePaletteDropdown.style.display = "none";
-        }
-      });
-    }
+              document.addEventListener("click", (e) => {
+                const wrapper = document.getElementById("themePaletteWrapper");
+                if (wrapper && !wrapper.contains(e.target)) {
+                  themePaletteDropdown.style.display = "none";
+                }
+              });
+            }
 
-    document.querySelectorAll(".theme-item").forEach(item => {
-      item.addEventListener("click", () => {
-        applyTheme(item.getAttribute("data-theme"));
-        if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
-      });
-    });
+            document.querySelectorAll(".theme-item").forEach(item => {
+              item.addEventListener("click", () => {
+                applyTheme(item.getAttribute("data-theme"));
+                if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+              });
+            });
 
-    const btnQuickThemeDark = document.getElementById("btnQuickThemeDark");
-    const btnQuickThemeLight = document.getElementById("btnQuickThemeLight");
-    if (btnQuickThemeDark) {
-      btnQuickThemeDark.addEventListener("click", () => {
-        applyTheme("theme-ghn-teal");
-        if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
-      });
-    }
-    if (btnQuickThemeLight) {
-      btnQuickThemeLight.addEventListener("click", () => {
-        applyTheme("theme-light");
-        if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
-      });
-    }
+            const btnQuickThemeDark = document.getElementById("btnQuickThemeDark");
+            const btnQuickThemeLight = document.getElementById("btnQuickThemeLight");
+            if (btnQuickThemeDark) {
+              btnQuickThemeDark.addEventListener("click", () => {
+                applyTheme("theme-ghn-teal");
+                if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+              });
+            }
+            if (btnQuickThemeLight) {
+              btnQuickThemeLight.addEventListener("click", () => {
+                applyTheme("theme-light");
+                if (themePaletteDropdown) themePaletteDropdown.style.display = "none";
+              });
+            }
 
-    window.onload = loadInitial;
+            window.onload = loadInitial;
   </script>
 
   <!-- FLOATING DRAGGABLE TIGER AI MASCOT -->
-  <div id="floatingTigerAICost" class="floating-tiger-mascot" title="Hỏi Tiger AI • Bấm để trò chuyện, Kéo giữ để di dời khắp màn hình">
+  <div id="floatingTigerAICost" class="floating-tiger-mascot"
+    title="Hỏi Tiger AI • Bấm để trò chuyện, Kéo giữ để di dời khắp màn hình">
     <div class="mascot-aura"></div>
     <div class="mascot-avatar-wrapper">
       <img src="/static/img/tiger_avatar.jpg" alt="Tiger AI" class="mascot-avatar-img">
@@ -2036,109 +2126,110 @@
   </div>
 
   <script>
-    (function() {
-      const mascot = document.getElementById("floatingTigerAICost");
-      if (!mascot) return;
+            (function () {
+              const mascot = document.getElementById("floatingTigerAICost");
+              if (!mascot) return;
 
-      let isDragging = false;
-      let hasMoved = false;
-      let startX = 0, startY = 0;
-      let initialLeft = 0, initialTop = 0;
-      const dragThreshold = 6;
+              let isDragging = false;
+              let hasMoved = false;
+              let startX = 0, startY = 0;
+              let initialLeft = 0, initialTop = 0;
+              const dragThreshold = 6;
 
-      try {
-        const savedX = localStorage.getItem("tiger_mascot_x");
-        const savedY = localStorage.getItem("tiger_mascot_y");
-        if (savedX !== null && savedY !== null) {
-          const px = parseFloat(savedX);
-          const py = parseFloat(savedY);
-          if (!isNaN(px) && !isNaN(py) && px >= 0 && px < window.innerWidth - 50 && py >= 0 && py < window.innerHeight - 50) {
-            mascot.style.left = px + "px";
-            mascot.style.top = py + "px";
-            mascot.style.right = "auto";
-            mascot.style.bottom = "auto";
-            if (px < 160) mascot.classList.add("flip-pill");
-          }
-        }
-      } catch (e) {}
+              try {
+                const savedX = localStorage.getItem("tiger_mascot_x");
+                const savedY = localStorage.getItem("tiger_mascot_y");
+                if (savedX !== null && savedY !== null) {
+                  const px = parseFloat(savedX);
+                  const py = parseFloat(savedY);
+                  if (!isNaN(px) && !isNaN(py) && px >= 0 && px < window.innerWidth - 50 && py >= 0 && py < window.innerHeight - 50) {
+                    mascot.style.left = px + "px";
+                    mascot.style.top = py + "px";
+                    mascot.style.right = "auto";
+                    mascot.style.bottom = "auto";
+                    if (px < 160) mascot.classList.add("flip-pill");
+                  }
+                }
+              } catch (e) { }
 
-      function startDrag(clientX, clientY) {
-        isDragging = true;
-        hasMoved = false;
-        startX = clientX;
-        startY = clientY;
-        const rect = mascot.getBoundingClientRect();
-        initialLeft = rect.left;
-        initialTop = rect.top;
-        mascot.style.right = "auto";
-        mascot.style.bottom = "auto";
-        mascot.style.left = initialLeft + "px";
-        mascot.style.top = initialTop + "px";
-      }
+              function startDrag(clientX, clientY) {
+                isDragging = true;
+                hasMoved = false;
+                startX = clientX;
+                startY = clientY;
+                const rect = mascot.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                mascot.style.right = "auto";
+                mascot.style.bottom = "auto";
+                mascot.style.left = initialLeft + "px";
+                mascot.style.top = initialTop + "px";
+              }
 
-      function doDrag(clientX, clientY) {
-        if (!isDragging) return;
-        const dx = clientX - startX;
-        const dy = clientY - startY;
-        if (!hasMoved && Math.hypot(dx, dy) > dragThreshold) {
-          hasMoved = true;
-          mascot.classList.add("is-dragging");
-        }
-        if (hasMoved) {
-          const rect = mascot.getBoundingClientRect();
-          const maxLeft = window.innerWidth - rect.width - 12;
-          const maxTop = window.innerHeight - rect.height - 12;
-          const newLeft = Math.max(12, Math.min(maxLeft, initialLeft + dx));
-          const newTop = Math.max(12, Math.min(maxTop, initialTop + dy));
-          mascot.style.left = newLeft + "px";
-          mascot.style.top = newTop + "px";
-          if (newLeft < 160) mascot.classList.add("flip-pill");
-          else mascot.classList.remove("flip-pill");
-        }
-      }
+              function doDrag(clientX, clientY) {
+                if (!isDragging) return;
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+                if (!hasMoved && Math.hypot(dx, dy) > dragThreshold) {
+                  hasMoved = true;
+                  mascot.classList.add("is-dragging");
+                }
+                if (hasMoved) {
+                  const rect = mascot.getBoundingClientRect();
+                  const maxLeft = window.innerWidth - rect.width - 12;
+                  const maxTop = window.innerHeight - rect.height - 12;
+                  const newLeft = Math.max(12, Math.min(maxLeft, initialLeft + dx));
+                  const newTop = Math.max(12, Math.min(maxTop, initialTop + dy));
+                  mascot.style.left = newLeft + "px";
+                  mascot.style.top = newTop + "px";
+                  if (newLeft < 160) mascot.classList.add("flip-pill");
+                  else mascot.classList.remove("flip-pill");
+                }
+              }
 
-      function endDrag() {
-        if (!isDragging) return;
-        isDragging = false;
-        mascot.classList.remove("is-dragging");
-        if (hasMoved) {
-          try {
-            localStorage.setItem("tiger_mascot_x", parseFloat(mascot.style.left));
-            localStorage.setItem("tiger_mascot_y", parseFloat(mascot.style.top));
-          } catch (e) {}
-        } else {
-          // Click: navigate to studio with open_copilot=1
-          window.location.href = "/?open_copilot=1";
-        }
-      }
+              function endDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                mascot.classList.remove("is-dragging");
+                if (hasMoved) {
+                  try {
+                    localStorage.setItem("tiger_mascot_x", parseFloat(mascot.style.left));
+                    localStorage.setItem("tiger_mascot_y", parseFloat(mascot.style.top));
+                  } catch (e) { }
+                } else {
+                  // Click: navigate to studio with open_copilot=1
+                  window.location.href = "/?open_copilot=1";
+                }
+              }
 
-      mascot.addEventListener("mousedown", (e) => {
-        if (e.button !== 0) return;
-        startDrag(e.clientX, e.clientY);
-        const onMouseMove = (ev) => doDrag(ev.clientX, ev.clientY);
-        const onMouseUp = () => {
-          window.removeEventListener("mousemove", onMouseMove);
-          window.removeEventListener("mouseup", onMouseUp);
-          endDrag();
-        };
-        window.addEventListener("mousemove", onMouseMove);
-        window.addEventListener("mouseup", onMouseUp);
-      });
+              mascot.addEventListener("mousedown", (e) => {
+                if (e.button !== 0) return;
+                startDrag(e.clientX, e.clientY);
+                const onMouseMove = (ev) => doDrag(ev.clientX, ev.clientY);
+                const onMouseUp = () => {
+                  window.removeEventListener("mousemove", onMouseMove);
+                  window.removeEventListener("mouseup", onMouseUp);
+                  endDrag();
+                };
+                window.addEventListener("mousemove", onMouseMove);
+                window.addEventListener("mouseup", onMouseUp);
+              });
 
-      mascot.addEventListener("touchstart", (e) => {
-        if (e.touches.length !== 1) return;
-        startDrag(e.touches[0].clientX, e.touches[0].clientY);
-      }, { passive: true });
+              mascot.addEventListener("touchstart", (e) => {
+                if (e.touches.length !== 1) return;
+                startDrag(e.touches[0].clientX, e.touches[0].clientY);
+              }, { passive: true });
 
-      window.addEventListener("touchmove", (e) => {
-        if (!isDragging || e.touches.length !== 1) return;
-        doDrag(e.touches[0].clientX, e.touches[0].clientY);
-      }, { passive: true });
+              window.addEventListener("touchmove", (e) => {
+                if (!isDragging || e.touches.length !== 1) return;
+                doDrag(e.touches[0].clientX, e.touches[0].clientY);
+              }, { passive: true });
 
-      window.addEventListener("touchend", () => {
-        if (isDragging) endDrag();
-      });
-    })();
+              window.addEventListener("touchend", () => {
+                if (isDragging) endDrag();
+              });
+            })();
   </script>
 </body>
+
 </html>
