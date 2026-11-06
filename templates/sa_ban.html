@@ -2539,9 +2539,92 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
+    /* ================= 🌿 ZEN MODE (CHẾ ĐỘ TINH GIẢN - MẶC ĐỊNH BẬT) ================= */
+    /* Zone signs: faded but still hoverable so hover can reveal them */
+    body.zen-mode .warehouse-zone-sign,
+    body.zen-mode .food-zone-sign,
+    body.zen-mode .park-zone-sign,
+    body.zen-mode .dept-zone-sign {
+      opacity: 0.12 !important;
+      transition: opacity 0.25s ease !important;
+    }
+    /* Agent bubbles & nameplates: hidden, revealed by hovering the agent itself */
+    body.zen-mode .agent-bubble,
+    body.zen-mode .chibi-nameplate {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.25s ease !important;
+    }
+    /* Truck heading/tilt lives on the inner SVG so the engine-rumble animation cannot override it */
+    .truck-svg-inner svg {
+      transition: transform 0.35s ease;
+      transform-origin: 50% 60%;
+    }
+    
+    /* Hover on zone reveals the sign with sleek glow */
+    body.zen-mode .warehouse-zone-sign:hover,
+    body.zen-mode .food-zone-sign:hover,
+    body.zen-mode .park-zone-sign:hover,
+    body.zen-mode .dept-zone-sign:hover,
+    body.zen-mode .agent-tag:hover .agent-bubble,
+    body.zen-mode .agent-tag:hover .chibi-nameplate {
+      opacity: 1 !important;
+      z-index: 120 !important;
+    }
+
+    /* In Zen Mode, hide truck roof tags during cruising (only show when docking or hovering) */
+    body.zen-mode .moving-ghn-truck:not(:hover):not(.is-docking) .truck-plate-tag {
+      opacity: 0 !important;
+      transform: translateX(-50%) translateY(4px) scale(0.85) !important;
+      transition: opacity 0.25s ease, transform 0.25s ease !important;
+    }
+
+    /* Collapsed chat panel styling */
+    .studio-chat-panel.chat-panel-collapsed {
+      width: auto !important;
+      max-width: 340px !important;
+      border-radius: 9999px !important;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5) !important;
+    }
+    .studio-chat-panel.chat-panel-collapsed .chat-header {
+      border-bottom: none !important;
+      padding: 7px 16px !important;
+      border-radius: 9999px !important;
+      background: rgba(15, 23, 42, 0.95) !important;
+      cursor: pointer;
+    }
+    .studio-chat-panel.chat-panel-collapsed .chat-header:hover {
+      background: rgba(30, 41, 59, 0.98) !important;
+      border-color: #f97316 !important;
+    }
+
+    /* Keep the top menu on a single line so it never overlaps the incident ticker */
+    .hud-menu-strip .hud-menu-btn { white-space: nowrap; }
+
+    /* Zen toggle button styling */
+    .hud-menu-btn.zen-btn {
+      background: rgba(16, 185, 129, 0.18) !important;
+      border: 1.5px solid #10b981 !important;
+      color: #6ee7b7 !important;
+      font-weight: 800 !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .hud-menu-btn.zen-btn:hover {
+      background: rgba(16, 185, 129, 0.3) !important;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
+    }
+    .hud-menu-btn.zen-btn.detailed-active {
+      background: rgba(245, 158, 11, 0.18) !important;
+      border-color: #f59e0b !important;
+      color: #fde68a !important;
+    }
+
 </style>
 </head>
-<body>
+<body class="zen-mode">
 
   <!-- ================= TOP STUDIO HUD BAR ================= -->
   <header class="studio-hud-top">
@@ -2580,6 +2663,9 @@
     <!-- RIGHT ACTION MENU & DAY/NIGHT SWITCH -->
     <div class="light-switch-wrap">
       <div class="hud-menu-strip">
+        <button class="hud-menu-btn zen-btn" id="btnZenToggle" onclick="toggleZenMode()" title="Bật/Tắt chế độ Tinh Giản (Ẩn các nhãn chữ rườm rà, ngắm trọn Campus 3D)">
+          <span id="zenIcon">🌿</span> <span id="zenText">ZEN</span>
+        </button>
         <button class="hud-menu-btn" onclick="openDeptTasksModal()" style="border-color:#38bdf8;color:#7dd3fc;">📋 CÔNG VIỆC</button>
         <button class="hud-menu-btn" onclick="openTruckRadarModal()" style="border-color:#f97316;color:#fdba74;">🚛 RADAR XE TẢI</button>
         <button class="hud-menu-btn highlight" onclick="openRoomModal('cairang')">CAMERA +</button>
@@ -4472,9 +4558,9 @@
   </main>
 
   <!-- ================= BOTTOM-LEFT 2-WAY CHAT & COMMAND PANEL (PHÒNG HỘI THOẠI) ================= -->
-  <aside class="studio-chat-panel" id="studioChatPanel">
+  <aside class="studio-chat-panel chat-panel-collapsed" id="studioChatPanel">
     <div class="chat-header" onclick="toggleChatPanel()">
-      <span id="chatHeaderTitle">▾ PHÒNG HỘI THOẠI · RA LỆNH & BÁO CÁO 2 CHIỀU</span>
+      <span id="chatHeaderTitle">💬 PHÒNG HỘI THOẠI · BẤM ĐỂ MỞ CHAT</span>
       <button class="chat-header-btn" onclick="event.stopPropagation(); openTaskDrawer()">GIAO VIỆC →</button>
     </div>
 
@@ -5191,7 +5277,10 @@
       ]
     };
 
-    function startAutonomousTruck(truckId, startIndex = 0) {
+    // Global fleet coordinator to prevent bunching & collisions
+    const ACTIVE_TRUCK_COORDS = {};
+
+    function startAutonomousTruck(truckId, startIndex = 0, initialDelayMs = 0) {
       const el = document.getElementById(truckId);
       const tagEl = document.getElementById('tag-' + truckId);
       const route = TRUCK_NAV_ROUTES[truckId];
@@ -5202,6 +5291,7 @@
       el.style.transition = 'none';
       el.style.left = initial.x + '%';
       el.style.top = initial.y + '%';
+      ACTIVE_TRUCK_COORDS[truckId] = { x: initial.x, y: initial.y };
       if (tagEl && initial.label) tagEl.textContent = initial.label;
 
       async function navigateStep() {
@@ -5209,7 +5299,24 @@
         const nextIdx = (idx + 1) % route.length;
         const nxt = route[nextIdx];
 
-        // Handle pause at loading dock or gate barrier
+        // 1. Anti-collision Adaptive Separation: Check if path ahead is congested
+        let isCongested = false;
+        for (const otherId in ACTIVE_TRUCK_COORDS) {
+          if (otherId !== truckId) {
+            const otherPos = ACTIVE_TRUCK_COORDS[otherId];
+            const distToOther = Math.hypot(nxt.x - otherPos.x, nxt.y - otherPos.y);
+            if (distToOther < 8.5) {
+              isCongested = true;
+              break;
+            }
+          }
+        }
+        if (isCongested) {
+          // Slow down and wait for intersection to clear
+          await new Promise(res => setTimeout(res, 2200));
+        }
+
+        // 2. Handle pause at loading dock or gate barrier
         if (cur.pause && cur.pause > 0) {
           if (cur.loading) el.classList.add('is-docking');
           if (tagEl && cur.label) tagEl.textContent = cur.label;
@@ -5220,32 +5327,40 @@
         const dx = nxt.x - cur.x;
         const dy = nxt.y - cur.y;
         const dist = Math.hypot(dx, dy);
-        const durationSec = Math.max(0.65, dist / TRUCK_CRUISING_SPEED);
+        const durationSec = Math.max(0.85, dist / TRUCK_CRUISING_SPEED);
 
-        // Turn cab left or right
-        if (Math.abs(dx) > 0.35) {
-          el.classList.toggle('flip-x', dx < 0);
+        // 3. Smooth isometric tilt and directional heading
+        const flipX = dx < -0.15 ? -1 : 1;
+        let tilt = 0;
+        if (dy < -0.35) tilt = -7;
+        else if (dy > 0.35) tilt = 7;
+        
+        el.classList.remove('flip-x'); // legacy class no longer used for heading
+        const svgEl = el.querySelector('.truck-svg-inner svg');
+        if (svgEl) {
+          svgEl.style.transform = `scaleX(${flipX}) rotate(${flipX * tilt}deg)`;
         }
 
-        // Smooth on-road transition
-        el.style.transition = `left ${durationSec.toFixed(2)}s linear, top ${durationSec.toFixed(2)}s linear`;
+        // 4. Smooth on-road transition
+        el.style.transition = `left ${durationSec.toFixed(2)}s cubic-bezier(0.25, 1, 0.5, 1), top ${durationSec.toFixed(2)}s cubic-bezier(0.25, 1, 0.5, 1)`;
         el.style.left = nxt.x + '%';
         el.style.top = nxt.y + '%';
+        ACTIVE_TRUCK_COORDS[truckId] = { x: nxt.x, y: nxt.y };
         if (tagEl && nxt.label) tagEl.textContent = nxt.label;
 
         idx = nextIdx;
         setTimeout(navigateStep, Math.round(durationSec * 1000));
       }
 
-      // Stagger initial departures so they don't all move at the same split-second
-      setTimeout(navigateStep, 800 + (startIndex * 1200));
+      // Stagger departures with dedicated delay so trucks don't group together
+      setTimeout(navigateStep, initialDelayMs);
     }
 
-    // Launch all 4 trucks from their respective docks/positions
-    startAutonomousTruck('truck-omon', 0);     // Starts at Kho Ô Môn Dock
-    startAutonomousTruck('truck-cairang', 0);  // Starts at Kho Cái Răng Dock
-    startAutonomousTruck('truck-vithanh', 0);  // Starts at Kho Vị Thanh Dock
-    startAutonomousTruck('truck-highway', 0);  // Starts at Kho Bình Thủy Dock
+    // Launch all 4 trucks with anti-bunching phase shifts & distinct routes
+    startAutonomousTruck('truck-cairang', 0, 500);     // Starts at Kho Cái Răng Dock
+    startAutonomousTruck('truck-omon', 6, 7500);       // Starts on South road (shifted by 7.5s)
+    startAutonomousTruck('truck-vithanh', 0, 16000);   // Starts at Kho Vị Thanh Dock (shifted by 16s)
+    startAutonomousTruck('truck-highway', 0, 11000);   // Starts on Outer Highway Route (shifted by 11s)
 
     // 2. Scenic Riverside Park Jogger
     const PARK_JOG_ROUTE = [
@@ -6332,10 +6447,32 @@
     function toggleChatPanel() {
       const panel = document.getElementById('studioChatPanel');
       const title = document.getElementById('chatHeaderTitle');
-      panel.classList.toggle('chat-panel-collapsed');
-      title.textContent = panel.classList.contains('chat-panel-collapsed')
-        ? '▸ PHÒNG HỘI THOẠI · RA LỆNH & BÁO CÁO 2 CHIỀU'
-        : '▾ PHÒNG HỘI THOẠI · RA LỆNH & BÁO CÁO 2 CHIỀU';
+      const isCollapsed = panel.classList.toggle('chat-panel-collapsed');
+      title.textContent = isCollapsed
+        ? '💬 PHÒNG HỘI THOẠI · BẤM ĐỂ MỞ CHAT'
+        : '▾ PHÒNG HỘI THOẠI · THU GỌN';
+    }
+
+    function toggleZenMode() {
+      const isZen = document.body.classList.toggle('zen-mode');
+      const btn = document.getElementById('btnZenToggle');
+      const icon = document.getElementById('zenIcon');
+      const text = document.getElementById('zenText');
+      if (isZen) {
+        btn.classList.remove('detailed-active');
+        icon.textContent = '🌿';
+        text.textContent = 'ZEN';
+        if (typeof showSabanToast === 'function') {
+          showSabanToast('🌿 Đã bật Chế độ Tinh Giản: Không gian 3D thoáng đãng, rê chuột vào từng khu vực để xem chi tiết!', 'success');
+        }
+      } else {
+        btn.classList.add('detailed-active');
+        icon.textContent = '🏷️';
+        text.textContent = 'ĐẦY ĐỦ';
+        if (typeof showSabanToast === 'function') {
+          showSabanToast('🏷️ Đã bật Chế độ Đầy Đủ: Hiển thị toàn bộ nhãn tên phòng ban, kho bãi & xe tải.', 'warning');
+        }
+      }
     }
 
     let currentRoomKey = 'cairang';
