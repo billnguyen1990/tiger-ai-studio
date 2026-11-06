@@ -50,5 +50,18 @@
     "handler_dept": "🛠️ Phòng Kỹ Thuật",
     "healing_action": "Đã đồng bộ trực tiếp qua Google Sheets API Service Account (5 giây) & gửi báo cáo vào Topic 506 (Đơn Tạo).",
     "can_resume": true
+  },
+  {
+    "id": "EVT_1793941277374",
+    "time": "12:01:17 06/11/2026",
+    "task_name": "Xuất Đơn B2B (18:00)",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu",
+    "current_step": "Bước 1/4: Khởi tạo kết nối phiên Google",
+    "total_steps": 4,
+    "status": "RUNNING",
+    "error_info": null,
+    "handler_dept": null,
+    "healing_action": null,
+    "can_resume": true
   }
 ]
