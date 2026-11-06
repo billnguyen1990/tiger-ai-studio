@@ -222,44 +222,10 @@ def sync_mt01_cost_data(force=False):
         with open(COST_CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(final_payload, f, ensure_ascii=False, indent=2)
 
-        # Xuất Excel
+        # Xuất Excel chuẩn Executive (tự động căn chỉnh cột, định dạng VNĐ, màu KPI)
         try:
-            truck_rows = []
-            for d in daily_trucks:
-                row = {
-                    "Ngày": d["date"],
-                    "Cái Răng (Chuẩn 6)": d["hubs"].get("Cái Răng", {}).get("running", 0),
-                    "Bình Thủy (Chuẩn 3)": d["hubs"].get("Bình Thủy", {}).get("running", 0),
-                    "Vị Thanh (Chuẩn 2)": d["hubs"].get("Vị Thanh", {}).get("running", 0),
-                    "Ô Môn (Chuẩn 2)": d["hubs"].get("Ô Môn", {}).get("running", 0),
-                    "Tổng Xe Chạy": d["total_running"],
-                    "Định Mức Vùng": 13,
-                    "Chênh Lệch": d["diff"]
-                }
-                truck_rows.append(row)
-            
-            nvgh_rows = []
-            for h, d_list in nvgh_by_hub.items():
-                for d_item in d_list:
-                    nvgh_rows.append({
-                        "Kho": h,
-                        "Tài Xế": d_item["driver_name"],
-                        "Lương Tháng 10 (VNĐ)": d_item["total_salary"]
-                    })
-
-            xl_rows = []
-            for h, emp_dict in xl_by_emp.items():
-                for e_name, sal in emp_dict.items():
-                    xl_rows.append({
-                        "Kho": h,
-                        "Nhân Viên Xử Lý": e_name,
-                        "Lương Tháng 10 (VNĐ)": sal
-                    })
-
-            with pd.ExcelWriter(EXCEL_EXPORT_FILE, engine="openpyxl") as writer:
-                pd.DataFrame(truck_rows).to_excel(writer, sheet_name="Xe_Co_Dinh", index=False)
-                pd.DataFrame(nvgh_rows).to_excel(writer, sheet_name="Luong_NVGH", index=False)
-                pd.DataFrame(xl_rows).to_excel(writer, sheet_name="Luong_NVXL", index=False)
+            from tiger_cost_dashboard_service import generate_mt01_cost_excel_report
+            generate_mt01_cost_excel_report(hub="all", mode="month", key=None)
         except Exception as ex:
             print(f"Warning: Không thể xuất file Excel đối soát: {ex}")
 
@@ -293,7 +259,7 @@ def generate_quick_cost_telegram_report():
     nvgh_info = data.get("salary_nvgh", {})
 
     lines = [
-        "💰 <b>BÁO CÁO TỪ PHÒNG KẾ TOÁN - TÀI CHÍNH TIGER AI</b>\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n<i>(Đã thẩm tra & hạch toán tự động bởi Kế Toán Trưởng Heo Tài Lộc)</i>",
+        "💰 <b>TIGER AI • BÁO CÁO NHANH CHI PHÍ & ĐỐI SOÁT VẬN TẢI MT01</b>",
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━",
         f"📅 <i>Đồng bộ lần cuối: {data.get('last_sync', 'Mới nhất')}</i>\n",
         "🚚 <b>1. XE CỐ ĐỊNH & ĐỐI SOÁT NCC 365 (26/09 - 25/10):</b>",

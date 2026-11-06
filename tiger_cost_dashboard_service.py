@@ -902,6 +902,645 @@ def query_mt01_cost_data(hub="all", mode="month", key=None):
         }
     }
 
+
+def generate_mt01_cost_excel_report(hub="all", mode="month", key=None):
+    """
+    Xuất báo cáo Excel đối soát Chi Phí, Sản Lượng Đơn & Bảng Lương (NVGH + NVXL + Xe Tải 365)
+    được thiết kế chuẩn Executive: tự động căn chỉnh độ rộng cột, định dạng số nguyên VNĐ (#,##0 "đ"),
+    tô màu cảnh báo KPI, đóng khung viền và ghim dòng tiêu đề.
+    """
+    import re
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+
+    data = query_mt01_cost_data(hub=hub, mode=mode, key=key)
+    p_info = data.get("period_info", {})
+    flt = data.get("filter", {})
+    hub_label = flt.get("hub", "Toàn Vùng MT01")
+    period_title = p_info.get("period_title") or flt.get("key") or "Kỳ Hiện Tại"
+    date_range_str = p_info.get("date_range_str") or "Đang cập nhật"
+    active_days_cnt = p_info.get("active_days_count", 0)
+    total_days_cnt = p_info.get("total_days_in_period", 0)
+    last_sync_str = data.get("last_sync") or datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+
+    wb = Workbook()
+
+    # Bảng màu & Style chuẩn GHN Executive
+    FONT_FAMILY = "Segoe UI"
+    f_banner_title = Font(name=FONT_FAMILY, size=14, bold=True, color="FFFFFF")
+    f_banner_sub = Font(name=FONT_FAMILY, size=10, bold=True, color="065F46")
+    f_sec_title = Font(name=FONT_FAMILY, size=11, bold=True, color="0F172A")
+    f_tbl_header = Font(name=FONT_FAMILY, size=10, bold=True, color="FFFFFF")
+    f_total_row = Font(name=FONT_FAMILY, size=10, bold=True, color="065F46")
+    f_data_reg = Font(name=FONT_FAMILY, size=10, bold=False, color="0F172A")
+    f_data_bold = Font(name=FONT_FAMILY, size=10, bold=True, color="0F172A")
+    f_data_muted = Font(name=FONT_FAMILY, size=9, italic=True, color="475569")
+
+    fill_banner = PatternFill("solid", fgColor="064E3B")      # Deep Emerald
+    fill_sub = PatternFill("solid", fgColor="ECFDF5")         # Mint Tint
+    fill_sec = PatternFill("solid", fgColor="E2E8F0")         # Slate Section Header
+    fill_header = PatternFill("solid", fgColor="0F172A")      # Dark Slate Header
+    fill_header_nvxl = PatternFill("solid", fgColor="1E3A8A") # Navy Header for NVXL
+    fill_total = PatternFill("solid", fgColor="D1FAE5")       # Emerald Summary Row
+    fill_zebra_even = PatternFill("solid", fgColor="FFFFFF")
+    fill_zebra_odd = PatternFill("solid", fgColor="F8FAFC")
+
+    # Màu cảnh báo KPI
+    fill_good = PatternFill("solid", fgColor="DCFCE7")
+    font_good = Font(name=FONT_FAMILY, size=10, bold=True, color="166534")
+    fill_warn = PatternFill("solid", fgColor="FEF3C7")
+    font_warn = Font(name=FONT_FAMILY, size=10, bold=True, color="92400E")
+    fill_bad = PatternFill("solid", fgColor="FEE2E2")
+    font_bad = Font(name=FONT_FAMILY, size=10, bold=True, color="991B1B")
+    fill_info = PatternFill("solid", fgColor="DBEAFE")
+    font_info = Font(name=FONT_FAMILY, size=10, bold=True, color="1E40AF")
+
+    thin_side = Side(style="thin", color="CBD5E1")
+    med_emerald = Side(style="medium", color="059669")
+    med_dark = Side(style="medium", color="0F172A")
+
+    b_data = Border(left=thin_side, right=thin_side, top=thin_side, bottom=thin_side)
+    b_header = Border(left=thin_side, right=thin_side, top=med_dark, bottom=med_dark)
+    b_total = Border(left=thin_side, right=thin_side, top=med_emerald, bottom=med_emerald)
+
+    al_center = Alignment(horizontal="center", vertical="center", wrap_text=False)
+    al_left = Alignment(horizontal="left", vertical="center", wrap_text=False)
+    al_right = Alignment(horizontal="right", vertical="center", wrap_text=False)
+
+    FMT_VND = '#,##0 "đ"'
+    FMT_INT = '#,##0'
+    FMT_PCT = '0.0%'
+
+    def _add_sheet_banner(ws, title_text, max_col):
+        last_col_letter = get_column_letter(max_col)
+        ws.merge_cells(f"A1:{last_col_letter}1")
+        ws.merge_cells(f"A2:{last_col_letter}2")
+
+        c1 = ws["A1"]
+        c1.value = title_text
+        c1.font = f_banner_title
+        c1.fill = fill_banner
+        c1.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+        ws.row_dimensions[1].height = 34
+
+        c2 = ws["A2"]
+        c2.value = (
+            f"📅 Kỳ báo cáo: {period_title}   |   📆 Ngày có số liệu: {date_range_str} "
+            f"({active_days_cnt}/{total_days_cnt} ngày)   |   📍 Phạm vi: {hub_label}   |   🕒 Đồng bộ: {last_sync_str}"
+        )
+        c2.font = f_banner_sub
+        c2.fill = fill_sub
+        c2.alignment = Alignment(horizontal="left", vertical="center", indent=1)
+        ws.row_dimensions[2].height = 24
+        ws.row_dimensions[3].height = 10
+
+    def _style_rate_cell(cell, rate_pct):
+        if rate_pct >= 85.0:
+            cell.fill = fill_good
+            cell.font = font_good
+        elif rate_pct >= 80.0:
+            cell.fill = fill_warn
+            cell.font = font_warn
+        else:
+            cell.fill = fill_bad
+            cell.font = font_bad
+
+    def _style_badge_cell(cell, badge_text):
+        txt = str(badge_text or "")
+        if "Top" in txt or "Đạt Chuẩn" in txt or "Chuẩn Đối Soát" in txt:
+            cell.fill = fill_good
+            cell.font = font_good
+        elif "Đạt KPI" in txt:
+            cell.fill = fill_info
+            cell.font = font_info
+        elif "Cố Gắng" in txt or "Tích Cực" in txt:
+            cell.fill = fill_warn
+            cell.font = font_warn
+        elif "Cảnh Báo" in txt:
+            cell.fill = fill_bad
+            cell.font = font_bad
+        else:
+            cell.font = f_data_muted
+
+    def _auto_fit_and_polish_sheet(ws, start_row=4, freeze_cell="A6", filter_range=None):
+        ws.views.sheetView[0].showGridLines = True
+        if freeze_cell:
+            ws.freeze_panes = freeze_cell
+        if filter_range:
+            ws.auto_filter.ref = filter_range
+
+        ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
+        ws.page_setup.paperSize = ws.PAPERSIZE_A4
+        ws.sheet_properties.pageSetUpPr.fitToPage = True
+        ws.page_setup.fitToWidth = 1
+        ws.page_setup.fitToHeight = 0
+
+        for col_idx in range(1, ws.max_column + 1):
+            col_letter = get_column_letter(col_idx)
+            max_len = 0
+            for row_idx in range(start_row, ws.max_row + 1):
+                cell = ws.cell(row=row_idx, column=col_idx)
+                val = cell.value
+                if val is None:
+                    continue
+                num_fmt = cell.number_format or ""
+                if isinstance(val, (int, float)):
+                    if "đ" in num_fmt:
+                        s_len = len(f"{int(round(val)):,} đ") + 2
+                    elif "%" in num_fmt:
+                        s_len = len(f"{val * 100:.1f}%") + 2
+                    else:
+                        s_len = len(f"{int(round(val)):,}") + 2
+                else:
+                    s_len = len(str(val).strip())
+                if s_len > max_len:
+                    max_len = s_len
+            ws.column_dimensions[col_letter].width = max(max_len + 5, 13)
+
+    # =========================================================================
+    # SHEET 1: TỔNG QUAN 11 CHỈ SỐ & SO SÁNH 4 KHO MIỀN TÂY 01
+    # =========================================================================
+    ws1 = wb.active
+    ws1.title = "1_Tong_Quan_&_4_Kho_MT01"
+    _add_sheet_banner(ws1, f"BÁO CÁO ĐỐI SOÁT CHI PHÍ & HIỆU QUẢ VẬN HÀNH MIỀN TÂY 01 — {period_title.upper()}", 12)
+
+    headers_s1 = [
+        "Đơn Vị / Kho Vận Hành",
+        "Volume Gán",
+        "Volume GTC",
+        "Kg GTC",
+        "Tỷ Lệ GTC",
+        "Stop GTC",
+        "Lương Giao NVGH (VNĐ)",
+        "Lương NVXL Kho (VNĐ)",
+        "Chi Phí Xe Tải 365 (VNĐ)",
+        "CP Giao + Xe / Đơn",
+        "CP Giao + Xe / Stop",
+        "CP Giao + Cost / Kg"
+    ]
+    metric_keys_s1 = [
+        "Volume gán",
+        "Volume GTC",
+        "Kg GTC",
+        "Tỷ lệ GTC",
+        "Stop GTC",
+        "Lương giao",
+        "Lương NVXL",
+        "Chi phí xe tải",
+        "Chi phí giao hàng + xe tải / đơn",
+        "Chi phí giao hàng + xe tải / stop",
+        "Chi phí giao hàng + Cost / kg"
+    ]
+    money_metrics_s1 = {
+        "Lương giao", "Lương NVXL", "Chi phí xe tải",
+        "Chi phí giao hàng + xe tải / đơn", "Chi phí giao hàng + xe tải / stop", "Chi phí giao hàng + Cost / kg"
+    }
+
+    r_idx = 4
+    ws1.row_dimensions[r_idx].height = 28
+    for c_idx, h_text in enumerate(headers_s1, 1):
+        c = ws1.cell(row=r_idx, column=c_idx, value=h_text)
+        c.font = f_tbl_header
+        c.fill = fill_header
+        c.border = b_header
+        c.alignment = al_center if c_idx > 1 else al_left
+
+    # Dòng Tổng Toàn Vùng MT01 (ghim đầu bảng)
+    r_idx = 5
+    ws1.row_dimensions[r_idx].height = 25
+    tot_metrics = data.get("metrics", {})
+    c_hub = ws1.cell(row=r_idx, column=1, value=f"∑ {hub_label.upper()} (TỔNG HỢP)")
+    c_hub.font = f_total_row
+    c_hub.fill = fill_total
+    c_hub.border = b_total
+    c_hub.alignment = al_left
+
+    for c_idx, m_key in enumerate(metric_keys_s1, 2):
+        m_obj = tot_metrics.get(m_key, {})
+        num_val = float(m_obj.get("numeric", 0.0) or 0.0)
+        cell = ws1.cell(row=r_idx, column=c_idx)
+        cell.fill = fill_total
+        cell.border = b_total
+        if m_key == "Tỷ lệ GTC":
+            cell.value = round(num_val / 100.0, 4)
+            cell.number_format = FMT_PCT
+            cell.alignment = al_center
+            _style_rate_cell(cell, num_val)
+        elif m_key in money_metrics_s1:
+            cell.value = int(round(num_val))
+            cell.number_format = FMT_VND
+            cell.font = f_total_row
+            cell.alignment = al_right
+        else:
+            cell.value = int(round(num_val))
+            cell.number_format = FMT_INT
+            cell.font = f_total_row
+            cell.alignment = al_right
+
+    # 4 Kho chi tiết
+    for idx_h, h_row in enumerate(data.get("hubs_breakdown", []), 1):
+        r_idx += 1
+        ws1.row_dimensions[r_idx].height = 23
+        z_fill = fill_zebra_odd if idx_h % 2 == 1 else fill_zebra_even
+
+        c_name = ws1.cell(row=r_idx, column=1, value=h_row.get("hub_name", ""))
+        c_name.font = f_data_bold
+        c_name.fill = z_fill
+        c_name.border = b_data
+        c_name.alignment = al_left
+
+        for c_idx, m_key in enumerate(metric_keys_s1, 2):
+            raw_str = h_row.get(m_key, "0")
+            num_val = _clean_num(raw_str)
+            cell = ws1.cell(row=r_idx, column=c_idx)
+            cell.fill = z_fill
+            cell.border = b_data
+            if m_key == "Tỷ lệ GTC":
+                cell.value = round(num_val / 100.0, 4)
+                cell.number_format = FMT_PCT
+                cell.alignment = al_center
+                _style_rate_cell(cell, num_val)
+            elif m_key in money_metrics_s1:
+                cell.value = int(round(num_val))
+                cell.number_format = FMT_VND
+                cell.font = f_data_reg
+                cell.alignment = al_right
+            else:
+                cell.value = int(round(num_val))
+                cell.number_format = FMT_INT
+                cell.font = f_data_reg
+                cell.alignment = al_right
+
+    _auto_fit_and_polish_sheet(ws1, start_row=4, freeze_cell="B6", filter_range=f"A4:L{r_idx}")
+
+    # =========================================================================
+    # SHEET 2: BẢNG LƯƠNG & ĐƠN CHI TIẾT NV GIAO HÀNG (NVGH)
+    # =========================================================================
+    ws2 = wb.create_sheet(title="2_Bang_Luong_&_Don_NVGH")
+    _add_sheet_banner(ws2, f"BẢNG LƯƠNG & SẢN LƯỢNG ĐƠN NHÂN VIÊN GIAO HÀNG (NVGH) — {period_title.upper()}", 12)
+
+    headers_s2 = [
+        "Hạng",
+        "Họ & Tên NV Giao Hàng (NVGH)",
+        "Kho Trực Thuộc",
+        "Đơn Gán",
+        "Đơn GTC",
+        "Đơn LTC",
+        "Tỷ Lệ GTC",
+        "Lương GTC (VNĐ)",
+        "LHH LTC (VNĐ)",
+        "Tổng Thu Nhập (VNĐ)",
+        "Tỷ Trọng",
+        "Đánh Giá KPI"
+    ]
+    ws2.row_dimensions[4].height = 28
+    for c_idx, h_text in enumerate(headers_s2, 1):
+        c = ws2.cell(row=4, column=c_idx, value=h_text)
+        c.font = f_tbl_header
+        c.fill = fill_header
+        c.border = b_header
+        c.alignment = al_center if c_idx not in (2, 3) else al_left
+
+    drv_sum = data.get("drivers_breakdown", {}).get("summary", {})
+    drv_list = data.get("drivers_breakdown", {}).get("list", [])
+    tot_drv_sal = float(drv_sum.get("total_salary", 0.0) or 0.0)
+    tot_drv_gan = int(round(drv_sum.get("total_don_gan", 0) or 0))
+    tot_drv_gtc = int(round(drv_sum.get("total_don_gtc", 0) or 0))
+    tot_drv_ltc = int(round(drv_sum.get("total_don_ltc", 0) or 0))
+    tot_drv_rate = (tot_drv_gtc / tot_drv_gan * 100.0) if tot_drv_gan > 0 else 0.0
+
+    # Dòng Tổng Cộng NVGH (Row 5)
+    ws2.row_dimensions[5].height = 25
+    sum_row_s2 = [
+        "∑",
+        f"TỔNG CỘNG TOÀN BẢNG ({drv_sum.get('active_count', len(drv_list))} NVGH có phát sinh)",
+        hub_label,
+        tot_drv_gan,
+        tot_drv_gtc,
+        tot_drv_ltc,
+        round(tot_drv_rate / 100.0, 4),
+        int(round(drv_sum.get("total_gtc", 0.0) or 0.0)),
+        int(round(drv_sum.get("total_ltc", 0.0) or 0.0)),
+        int(round(tot_drv_sal)),
+        1.0,
+        "Chuẩn Đối Soát"
+    ]
+    for c_idx, val in enumerate(sum_row_s2, 1):
+        c = ws2.cell(row=5, column=c_idx, value=val)
+        c.font = f_total_row
+        c.fill = fill_total
+        c.border = b_total
+        if c_idx in (1, 7, 11, 12):
+            c.alignment = al_center
+        elif c_idx in (2, 3):
+            c.alignment = al_left
+        else:
+            c.alignment = al_right
+
+        if c_idx in (4, 5, 6):
+            c.number_format = FMT_INT
+        elif c_idx in (7, 11):
+            c.number_format = FMT_PCT
+        elif c_idx in (8, 9, 10):
+            c.number_format = FMT_VND
+
+    r_idx = 5
+    for idx_d, d in enumerate(drv_list, 1):
+        r_idx += 1
+        ws2.row_dimensions[r_idx].height = 22
+        z_fill = fill_zebra_odd if idx_d % 2 == 1 else fill_zebra_even
+        pct_ratio = (float(d.get("period_salary", 0.0)) / tot_drv_sal) if tot_drv_sal > 0 else 0.0
+        rate_val = float(d.get("gtc_rate", 0.0) or 0.0)
+
+        row_vals = [
+            f"#{d.get('rank', idx_d)}",
+            d.get("driver_name", ""),
+            d.get("hub_name", ""),
+            int(round(d.get("don_gan", 0) or 0)),
+            int(round(d.get("don_gtc", 0) or 0)),
+            int(round(d.get("don_ltc", 0) or 0)),
+            round(rate_val / 100.0, 4),
+            int(round(d.get("gtc_salary", 0.0) or 0.0)),
+            int(round(d.get("ltc_salary", 0.0) or 0.0)),
+            int(round(d.get("period_salary", 0.0) or 0.0)),
+            round(pct_ratio, 4),
+            d.get("badge", "")
+        ]
+        for c_idx, val in enumerate(row_vals, 1):
+            c = ws2.cell(row=r_idx, column=c_idx, value=val)
+            c.fill = z_fill
+            c.border = b_data
+            c.font = f_data_bold if c_idx in (1, 2, 10) else f_data_reg
+
+            if c_idx in (1, 7, 11, 12):
+                c.alignment = al_center
+            elif c_idx in (2, 3):
+                c.alignment = al_left
+            else:
+                c.alignment = al_right
+
+            if c_idx in (4, 5, 6):
+                c.number_format = FMT_INT
+            elif c_idx == 7:
+                c.number_format = FMT_PCT
+                if d.get("don_gan", 0) > 0:
+                    _style_rate_cell(c, rate_val)
+            elif c_idx in (8, 9, 10):
+                c.number_format = FMT_VND
+            elif c_idx == 11:
+                c.number_format = FMT_PCT
+            elif c_idx == 12:
+                _style_badge_cell(c, val)
+
+    _auto_fit_and_polish_sheet(ws2, start_row=4, freeze_cell="C6", filter_range=f"A4:L{r_idx}")
+
+    # =========================================================================
+    # SHEET 3: BẢNG LƯƠNG & ĐƠN CHI TIẾT NV XỬ LÝ KHO (NVXL)
+    # =========================================================================
+    ws3 = wb.create_sheet(title="3_Bang_Luong_&_Don_NVXL")
+    _add_sheet_banner(ws3, f"BẢNG LƯƠNG & SẢN LƯỢNG ĐƠN NHÂN VIÊN XỬ LÝ KHO (NVXL) — {period_title.upper()}", 14)
+
+    headers_s3 = [
+        "Hạng",
+        "Mã NV",
+        "Họ & Tên NV Xử Lý Kho (NVXL)",
+        "Kho Trực Thuộc",
+        "Số Ngày Có Số Liệu",
+        "Đơn Gán",
+        "Đơn GTC",
+        "Đơn LTC",
+        "Tỷ Lệ GTC",
+        "Lương Xử Lý Kho (VNĐ)",
+        "Lương Giao Nhận Kiêm Nhiệm (VNĐ)",
+        "Tổng Thu Nhập (VNĐ)",
+        "Tỷ Trọng",
+        "Đánh Giá KPI"
+    ]
+    ws3.row_dimensions[4].height = 28
+    for c_idx, h_text in enumerate(headers_s3, 1):
+        c = ws3.cell(row=4, column=c_idx, value=h_text)
+        c.font = f_tbl_header
+        c.fill = fill_header_nvxl
+        c.border = b_header
+        c.alignment = al_center if c_idx not in (3, 4) else al_left
+
+    nvxl_sum = data.get("nvxl_breakdown", {}).get("summary", {})
+    nvxl_list = data.get("nvxl_breakdown", {}).get("list", [])
+    tot_nvxl_sal = float(nvxl_sum.get("total_salary", 0.0) or 0.0)
+    tot_nvxl_gan = int(round(nvxl_sum.get("total_don_gan", 0) or 0))
+    tot_nvxl_gtc = int(round(nvxl_sum.get("total_don_gtc", 0) or 0))
+    tot_nvxl_ltc = int(round(nvxl_sum.get("total_don_ltc", 0) or 0))
+    tot_nvxl_rate = (tot_nvxl_gtc / tot_nvxl_gan * 100.0) if tot_nvxl_gan > 0 else 0.0
+
+    ws3.row_dimensions[5].height = 25
+    sum_row_s3 = [
+        "∑",
+        "ALL",
+        f"TỔNG CỘNG TOÀN BẢNG ({nvxl_sum.get('count', len(nvxl_list))} NVXL)",
+        hub_label,
+        active_days_cnt,
+        tot_nvxl_gan,
+        tot_nvxl_gtc,
+        tot_nvxl_ltc,
+        round(tot_nvxl_rate / 100.0, 4),
+        int(round(nvxl_sum.get("total_luong_xl", 0.0) or 0.0)),
+        int(round(nvxl_sum.get("total_luong_gn", 0.0) or 0.0)),
+        int(round(tot_nvxl_sal)),
+        1.0,
+        "Chuẩn Đối Soát"
+    ]
+    for c_idx, val in enumerate(sum_row_s3, 1):
+        c = ws3.cell(row=5, column=c_idx, value=val)
+        c.font = f_total_row
+        c.fill = fill_total
+        c.border = b_total
+        if c_idx in (1, 2, 5, 9, 13, 14):
+            c.alignment = al_center
+        elif c_idx in (3, 4):
+            c.alignment = al_left
+        else:
+            c.alignment = al_right
+
+        if c_idx in (5, 6, 7, 8):
+            c.number_format = FMT_INT
+        elif c_idx in (9, 13):
+            c.number_format = FMT_PCT
+        elif c_idx in (10, 11, 12):
+            c.number_format = FMT_VND
+
+    r_idx = 5
+    for idx_nv, nv in enumerate(nvxl_list, 1):
+        r_idx += 1
+        ws3.row_dimensions[r_idx].height = 23
+        z_fill = fill_zebra_odd if idx_nv % 2 == 1 else fill_zebra_even
+        pct_ratio = (float(nv.get("period_salary", 0.0)) / tot_nvxl_sal) if tot_nvxl_sal > 0 else 0.0
+        rate_val = float(nv.get("gtc_rate", 0.0) or 0.0)
+
+        row_vals = [
+            f"#{nv.get('rank', idx_nv)}",
+            nv.get("staff_id", "") or "-",
+            nv.get("nvxl_name", "") or nv.get("full_label", ""),
+            nv.get("hub_name", ""),
+            int(nv.get("days_worked", 0) or 0),
+            int(round(nv.get("don_gan", 0) or 0)),
+            int(round(nv.get("don_gtc", 0) or 0)),
+            int(round(nv.get("don_ltc", 0) or 0)),
+            round(rate_val / 100.0, 4),
+            int(round(nv.get("luong_xl", 0.0) or 0.0)),
+            int(round(nv.get("luong_gn", 0.0) or 0.0)),
+            int(round(nv.get("period_salary", 0.0) or 0.0)),
+            round(pct_ratio, 4),
+            nv.get("badge", "")
+        ]
+        for c_idx, val in enumerate(row_vals, 1):
+            c = ws3.cell(row=r_idx, column=c_idx, value=val)
+            c.fill = z_fill
+            c.border = b_data
+            c.font = f_data_bold if c_idx in (1, 3, 12) else f_data_reg
+
+            if c_idx in (1, 2, 5, 9, 13, 14):
+                c.alignment = al_center
+            elif c_idx in (3, 4):
+                c.alignment = al_left
+            else:
+                c.alignment = al_right
+
+            if c_idx in (5, 6, 7, 8):
+                c.number_format = FMT_INT
+            elif c_idx == 9:
+                c.number_format = FMT_PCT
+                if nv.get("don_gan", 0) > 0:
+                    _style_rate_cell(c, rate_val)
+            elif c_idx in (10, 11, 12):
+                c.number_format = FMT_VND
+            elif c_idx == 13:
+                c.number_format = FMT_PCT
+            elif c_idx == 14:
+                _style_badge_cell(c, val)
+
+    _auto_fit_and_polish_sheet(ws3, start_row=4, freeze_cell="D6", filter_range=f"A4:N{r_idx}")
+
+    # =========================================================================
+    # SHEET 4: ĐỐI SOÁT XE TẢI CỐ ĐỊNH NCC VẬN TẢI 365
+    # =========================================================================
+    ws4 = wb.create_sheet(title="4_Xe_Co_Dinh_NCC_365")
+    _add_sheet_banner(ws4, f"BẢNG ĐỐI SOÁT XE TẢI CỐ ĐỊNH (NCC VẬN TẢI 365) — {period_title.upper()}", 9)
+
+    headers_s4 = [
+        "Ngày Vận Hành",
+        "Kho Cái Răng (Chuẩn 6)",
+        "Kho Bình Thủy (Chuẩn 3)",
+        "Kho Vị Thanh (Chuẩn 2)",
+        "Kho Ô Môn (Chuẩn 2)",
+        "Tổng Xe Chạy Thực Tế",
+        "Định Mức Vùng (13 Xe)",
+        "Chênh Lệch (Xe)",
+        "Ghi Chú / Trạng Thái"
+    ]
+    ws4.row_dimensions[4].height = 28
+    for c_idx, h_text in enumerate(headers_s4, 1):
+        c = ws4.cell(row=4, column=c_idx, value=h_text)
+        c.font = f_tbl_header
+        c.fill = fill_header
+        c.border = b_header
+        c.alignment = al_center if c_idx < 9 else al_left
+
+    truck_records = []
+    cost_cache_path = os.path.join(DATA_DIR, "mt01_cost_analytics.json")
+    if os.path.exists(cost_cache_path):
+        try:
+            with open(cost_cache_path, "r", encoding="utf-8") as f:
+                t_cache = json.load(f)
+                truck_records = t_cache.get("truck_analytics", {}).get("daily_records", [])
+        except Exception:
+            truck_records = []
+
+    tot_cr = sum(int(r.get("hubs", {}).get("Cái Răng", {}).get("running", 0)) for r in truck_records)
+    tot_bt = sum(int(r.get("hubs", {}).get("Bình Thủy", {}).get("running", 0)) for r in truck_records)
+    tot_vt = sum(int(r.get("hubs", {}).get("Vị Thanh", {}).get("running", 0)) for r in truck_records)
+    tot_om = sum(int(r.get("hubs", {}).get("Ô Môn", {}).get("running", 0)) for r in truck_records)
+    tot_run = sum(int(r.get("total_running", 0)) for r in truck_records)
+    tot_norm = len(truck_records) * 13
+    tot_diff = tot_run - tot_norm
+
+    ws4.row_dimensions[5].height = 25
+    sum_row_s4 = [
+        f"∑ TỔNG ({len(truck_records)} ngày)",
+        tot_cr,
+        tot_bt,
+        tot_vt,
+        tot_om,
+        tot_run,
+        tot_norm,
+        tot_diff,
+        "Tổng hợp lượt xe chạy thực tế so với định mức"
+    ]
+    for c_idx, val in enumerate(sum_row_s4, 1):
+        c = ws4.cell(row=5, column=c_idx, value=val)
+        c.font = f_total_row
+        c.fill = fill_total
+        c.border = b_total
+        c.alignment = al_center if c_idx < 9 else al_left
+        if 2 <= c_idx <= 8:
+            c.number_format = FMT_INT
+
+    r_idx = 5
+    for idx_t, rec in enumerate(truck_records, 1):
+        r_idx += 1
+        ws4.row_dimensions[r_idx].height = 22
+        z_fill = fill_zebra_odd if idx_t % 2 == 1 else fill_zebra_even
+
+        cr_v = int(rec.get("hubs", {}).get("Cái Răng", {}).get("running", 0))
+        bt_v = int(rec.get("hubs", {}).get("Bình Thủy", {}).get("running", 0))
+        vt_v = int(rec.get("hubs", {}).get("Vị Thanh", {}).get("running", 0))
+        om_v = int(rec.get("hubs", {}).get("Ô Môn", {}).get("running", 0))
+        tot_v = int(rec.get("total_running", 0))
+        norm_v = int(rec.get("standard_norm", 13))
+        diff_v = int(rec.get("diff", tot_v - norm_v))
+
+        if tot_v == 0:
+            note_str = "Chưa phát sinh / Nghỉ"
+        elif diff_v == 0:
+            note_str = "Đủ định mức (13/13 xe)"
+        elif diff_v < 0:
+            notes = []
+            if cr_v < 6: notes.append(f"CR -{6-cr_v}")
+            if bt_v < 3: notes.append(f"BT -{3-bt_v}")
+            if vt_v < 2: notes.append(f"VT -{2-vt_v}")
+            if om_v < 2: notes.append(f"OM -{2-om_v}")
+            note_str = f"Giảm {abs(diff_v)} xe ({', '.join(notes)})"
+        else:
+            note_str = f"Tăng cường +{diff_v} xe"
+
+        row_vals = [rec.get("date", ""), cr_v, bt_v, vt_v, om_v, tot_v, norm_v, diff_v, note_str]
+        for c_idx, val in enumerate(row_vals, 1):
+            c = ws4.cell(row=r_idx, column=c_idx, value=val)
+            c.fill = z_fill
+            c.border = b_data
+            c.font = f_data_bold if c_idx in (1, 6) else f_data_reg
+            c.alignment = al_center if c_idx < 9 else al_left
+            if 2 <= c_idx <= 8:
+                c.number_format = FMT_INT
+            if c_idx == 8:
+                if diff_v == 0 and tot_v > 0:
+                    c.fill = fill_good
+                    c.font = font_good
+                elif diff_v < 0 and tot_v > 0:
+                    c.fill = fill_warn
+                    c.font = font_warn
+
+    _auto_fit_and_polish_sheet(ws4, start_row=4, freeze_cell="B6", filter_range=f"A4:I{r_idx}")
+
+    # Lưu ra file chuẩn và trả về tên file tải về theo kỳ báo cáo
+    excel_path = os.path.join(DATA_DIR, "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+    wb.save(excel_path)
+
+    safe_key = re.sub(r"[^0-9A-Za-zÀ-ỹ_\-]+", "_", str(flt.get("key") or "Latest")).strip("_")
+    download_filename = f"Bao_Cao_Doi_Soat_MT01_{safe_key}.xlsx"
+    return excel_path, download_filename
+
+
 if __name__ == "__main__":
     build_cost_dashboard_matrix(force=True)
     res = query_mt01_cost_data(hub="all", mode="month", key="Tháng 10-Năm 2026")

@@ -1187,9 +1187,9 @@
       <button class="btn btn-primary" id="btnSyncLive" onclick="triggerSync()">
         <span>🔄 Đồng Bộ Sheets</span>
       </button>
-      <a href="/api/cost-analytics/excel" class="btn btn-outline" download>
+      <button type="button" class="btn btn-outline" id="btnExportExcelTop" onclick="exportCostExcel()">
         <span>📥 Xuất Excel</span>
-      </a>
+      </button>
       <a href="/" class="btn btn-outline">
         <span>🔙 Về Studio</span>
       </a>
@@ -1471,6 +1471,9 @@
             <span>Chỉ hiện NV có phát sinh trong kỳ</span>
           </label>
           <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm tên NV hoặc Kho..." oninput="filterDriversTable()" style="background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 195px;">
+          <button type="button" onclick="exportCostExcel()" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--accent-green); background: rgba(16, 185, 129, 0.14); color: var(--accent-green);">
+            <span>📥 Xuất Excel Kỳ Này</span>
+          </button>
         </div>
       </div>
 
@@ -1987,6 +1990,13 @@
                     }
                   }
                 });
+              }
+
+    function exportCostExcel() {
+                const hub = (document.getElementById("selHub") && document.getElementById("selHub").value) || "all";
+                const key = (document.getElementById("selPeriodKey") && document.getElementById("selPeriodKey").value) || "";
+                const url = `/api/cost-analytics/excel?hub=${encodeURIComponent(hub)}&mode=${encodeURIComponent(currentMode)}&key=${encodeURIComponent(key)}`;
+                window.location.href = url;
               }
 
     async function triggerSync() {

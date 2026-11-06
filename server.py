@@ -5378,11 +5378,21 @@ def api_sync_cost_analytics():
 
 @app.route("/api/cost-analytics/excel", methods=["GET"])
 def api_download_cost_excel():
-    """Tải file Excel đối soát chi phí & xe tải mới nhất"""
-    from flask import send_file
-    excel_path = os.path.join(BASE_DIR, "data", "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
-    if os.path.exists(excel_path):
-        return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+    """Tải file Excel đối soát chi phí, bảng lương NVGH/NVXL & xe tải theo đúng kỳ báo cáo đang chọn"""
+    from flask import send_file, request
+    try:
+        from tiger_cost_dashboard_service import generate_mt01_cost_excel_report
+        hub = request.args.get("hub", "all")
+        mode = request.args.get("mode", "month")
+        key = request.args.get("key") or None
+        excel_path, download_filename = generate_mt01_cost_excel_report(hub=hub, mode=mode, key=key)
+        if os.path.exists(excel_path):
+            return send_file(excel_path, as_attachment=True, download_name=download_filename)
+    except Exception as e:
+        print(f"[Cost Excel Export Error] {e}")
+        excel_path = os.path.join(BASE_DIR, "data", "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
+        if os.path.exists(excel_path):
+            return send_file(excel_path, as_attachment=True, download_name="Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
     return jsonify({"success": False, "error": "Chưa có file Excel đối soát"}), 404
 
 
