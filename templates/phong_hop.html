@@ -416,8 +416,8 @@
       </div>
     </div>
     <div class="nav-actions">
-      <a href="/" class="btn-nav">📊 Dashboard Tổng</a>
-      <a href="/sa-ban" class="btn-nav">🗺️ Sa Bàn 3D</a>
+      <a href="/" class="btn-nav">🧩 Sơ Đồ Node Flow (24/7)</a>
+      <a href="/cost-dashboard" class="btn-nav">📊 Dashboard Vận Hành</a>
       <a href="#" class="btn-nav" onclick="refreshAll(); return false;">🔄 Làm mới</a>
     </div>
   </header>
@@ -526,7 +526,12 @@
       <div class="card">
         <div class="card-header">
           <h2>🔍 Kiểm Duyệt Nội Dung Biên Bản Cuộc Họp</h2>
-          <span class="badge badge-pending">Giai đoạn: Sếp / Quản lý duyệt</span>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button class="btn btn-outline" id="btnAiSummarize" style="font-size:11.5px; padding:6px 12px; border-color:#38bdf8; color:#38bdf8;" onclick="runLocalAiSummarize()">
+              🤖 Local AI (Qwen 2.5) Tự Tóm Tắt Phụ Đề
+            </button>
+            <span class="badge badge-pending">Giai đoạn: Sếp / Quản lý duyệt</span>
+          </div>
         </div>
 
         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
@@ -743,6 +748,28 @@
       }
     }
 
+    async function runLocalAiSummarize() {
+      const btn = document.getElementById('btnAiSummarize');
+      const oldText = btn.innerText;
+      btn.disabled = true;
+      btn.innerText = '⏳ Local AI (Qwen 2.5 3B) đang biên tập...';
+      try {
+        const res = await fetch(`/api/meetings/${currentMeetingId}/ai-summarize`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success && data.meeting) {
+          document.getElementById('reviewSummary').value = data.meeting.summary || '';
+          document.getElementById('reviewNotesMarkdown').value = data.meeting.notes_markdown || '';
+        } else {
+          alert('Thông báo Local AI: ' + (data.message || 'Không thể tóm tắt'));
+        }
+      } catch (err) {
+        alert('Lỗi gọi Local AI: ' + err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = oldText;
+      }
+    }
+
     async function startMeetingBot() {
       const url = document.getElementById('meetUrlInput').value.trim();
       const title = document.getElementById('meetTitleInput').value.trim();
@@ -808,6 +835,28 @@
         }
       } catch (err) {
         console.error(err);
+      }
+    }
+
+    async function runLocalAiSummarize() {
+      const btn = document.getElementById('btnAiSummarize');
+      const oldText = btn.innerText;
+      btn.disabled = true;
+      btn.innerText = '⏳ Local AI (Qwen 2.5 3B) đang biên tập...';
+      try {
+        const res = await fetch(`/api/meetings/${currentMeetingId}/ai-summarize`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success && data.meeting) {
+          document.getElementById('reviewSummary').value = data.meeting.summary || '';
+          document.getElementById('reviewNotesMarkdown').value = data.meeting.notes_markdown || '';
+        } else {
+          alert('Thông báo Local AI: ' + (data.message || 'Không thể tóm tắt'));
+        }
+      } catch (err) {
+        alert('Lỗi gọi Local AI: ' + err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = oldText;
       }
     }
 
@@ -939,3 +988,4 @@
   </script>
 </body>
 </html>
+

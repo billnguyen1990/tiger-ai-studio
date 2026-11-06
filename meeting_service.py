@@ -149,6 +149,79 @@ def get_live_status():
         "recent_speeches": recent_speeches[-10:]
     }
 
+def ai_summarize_meeting_transcript(meeting_id):
+    """Dùng Local AI (Ollama Qwen 2.5 3B • Auto-Unload 2m) tự động bóc tách phụ đề Google Meet thành Biên bản chuẩn"""
+    meeting = get_meeting(meeting_id)
+    if not meeting:
+        return None, "Không tìm thấy cuộc họp"
+
+    transcript_file = os.path.join(SCRATCH_DIR, "MEET_TRANSCRIPT.txt")
+    raw_lines = []
+    if os.path.exists(transcript_file):
+        try:
+            with open(transcript_file, "r", encoding="utf-8") as f:
+                for l in f.readlines()[-120:]:
+                    l = l.strip()
+                    if l and not any(ign in l for ign in ['language', 'format_size', 'circle', 'settings']):
+                        raw_lines.append(l)
+        except Exception:
+            pass
+
+    raw_text = "\n".join(raw_lines[-60:]) if raw_lines else meeting.get("notes_markdown", "")
+    if not raw_text:
+        return meeting, None
+
+    ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+    ollama_model = os.environ.get("OLLAMA_MODEL", "qwen2.5:3b")
+    sys_prompt = (
+        "Bạn là Thư Ký Điều Hành Cấp Cao Tiger AI của Giao Hàng Nhanh (GHN - Cụm Miền Tây 01).\n"
+        "Nhiệm vụ: Đọc bản ghi phụ đề cuộc họp tiếng Việt dưới đây, sửa lỗi chính tả/lặp từ của Google Meet và viết thành Biên Bản Họp chuyên nghiệp, súc tích.\n"
+        "Hãy trả lời theo đúng định dạng:\n"
+        "TOM_TAT: <Đoạn tóm tắt điều hành cốt lõi 3-4 câu>\n"
+        "CHI_TIET:\n"
+        "# BIÊN BẢN HỌP: <Tiêu đề>\n"
+        "## 1. Nội dung trọng tâm & Số liệu\n"
+        "- **...**\n"
+        "## 2. Các điểm nóng & Quy định vận hành bắt buộc\n"
+        "- **...**\n"
+        "## 3. Phân công & Hành động tiếp theo\n"
+        "- **...**"
+    )
+    payload = {
+        "model": ollama_model,
+        "messages": [
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": f"Tiêu đề cuộc họp: {meeting.get('title', '')}\nNội dung ghi nhận:\n{raw_text[:3500]}"}
+        ],
+        "stream": False,
+        "keep_alive": "2m",
+        "options": {"temperature": 0.25, "num_predict": 700, "num_ctx": 4096}
+    }
+    try:
+        r = requests.post(f"{ollama_url}/api/chat", json=payload, timeout=40)
+        if r.status_code == 200:
+            content = (r.json().get("message") or {}).get("content", "").strip()
+            if content:
+                summary_part = meeting.get("summary", "")
+                notes_part = content
+                if "CHI_TIET:" in content:
+                    parts = content.split("CHI_TIET:", 1)
+                    s_raw = parts[0].replace("TOM_TAT:", "").strip()
+                    if s_raw:
+                        summary_part = s_raw
+                    notes_part = parts[1].strip()
+                updated = update_meeting_review(
+                    meeting_id,
+                    meeting.get("title"),
+                    summary_part,
+                    notes_part,
+                    meeting.get("chair")
+                )
+                return updated, None
+    except Exception as e:
+        return None, f"Local AI Error: {e}"
+    return meeting, None
+
 def stop_meeting(meeting_id):
     global _ACTIVE_MEETING_PROCESS, _ACTIVE_MEETING_ID
     if _ACTIVE_MEETING_PROCESS:
@@ -399,3 +472,4 @@ def publish_meeting_telegram(meeting_id, topic_id=2046):
                 return False, res_json.get("description", "Telegram API Error")
     except Exception as e:
         return False, str(e)
+
