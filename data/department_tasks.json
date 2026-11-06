@@ -1,0 +1,227 @@
+[
+  {
+    "id": "TASK-CCDC-01",
+    "dept_id": "ccdc",
+    "dept_name": "Phòng Quản Lý CCDC & Thiết Bị",
+    "task_title": "Quản lý & Kiểm kê danh mục Pallet + Xe nâng 4 kho hàng ngày",
+    "assignee": "Phan Văn CCDC (Trưởng bộ phận CCDC MT01)",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_CCDC_Inventory_Master/edit#gid=0",
+    "check_frequency": "Hàng ngày (Đầu ca 07h30 & Cuối ca 17h30)",
+    "description": "Tự động truy cập file kiểm kê mỗi ngày. Theo dõi số lượng pallet gỗ/nhựa luân chuyển giữa các kho, ghi nhận xe nâng tay bị hư bánh hoặc kích thủy lực yếu để kịp thời sửa chữa.",
+    "key_metrics": "Tổng Pallet: 1.450 cái (Đang dùng: 1.380, Cần sửa: 70) | Xe nâng tay: 18 chiếc (Tốt: 16, Bảo dưỡng: 2) | Cân điện tử: 8 cái (100% chuẩn)",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:05:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "total_pallets": 1450,
+      "pallets_in_use": 1380,
+      "pallets_damaged": 70,
+      "pallet_ready_rate": "95.2%",
+      "forklifts_total": 18,
+      "forklifts_operational": 16,
+      "forklifts_maintenance": 2,
+      "scales_calibrated": "8/8 (100%)",
+      "hub_breakdown": {
+        "Cái Răng": {
+          "pallet": 480,
+          "forklift": 5,
+          "scale": 2
+        },
+        "Bình Thủy": {
+          "pallet": 350,
+          "forklift": 4,
+          "scale": 2
+        },
+        "Vị Thanh": {
+          "pallet": 320,
+          "forklift": 4,
+          "scale": 2
+        },
+        "Ô Môn": {
+          "pallet": 300,
+          "forklift": 5,
+          "scale": 2
+        }
+      }
+    },
+    "report_template": "📦 BÁO CÁO CHÍNH XÁC PHÒNG QUẢN LÝ CCDC (THIẾT BỊ VẬN HÀNH):\n- Tổng số Pallet tại 4 cụm: 1.450 cái (Cái Răng: 480, Bình Thủy: 350, Vị Thanh: 320, Ô Môn: 300).\n- Tỷ lệ sẵn sàng sử dụng: 95.2% (1.380 cái đang tải hàng, 70 cái nứt ván đang tập kết sửa chữa).\n- Xe nâng tay: 16/18 xe hoạt động tốt; 2 xe tại Kho Ô Môn đang thay phốt kích thủy lực (dự kiến xong 11h30 trưa nay).\n- Cân điện tử tải nặng: 8/8 cân đã chuẩn hóa sai số 0%."
+  },
+  {
+    "id": "TASK-VH-01",
+    "dept_id": "vanhanh",
+    "dept_name": "Phòng Vận Hành (KPI & Chi Phí)",
+    "task_title": "Giám sát tỷ lệ đơn giao thành công (GTC) & Kiểm soát chi phí vận hành 4 kho",
+    "assignee": "Nguyễn Vận Hành (Điều Phối Vận Hành Cụm)",
+    "document_url": "https://datastudio.google.com/u/0/reporting/24e3b6f7-8f28-4f42-bc94-fda815a0c64f/page/p_m3rsgqzjgd",
+    "check_frequency": "Mỗi ngày 3 lần (09h00, 14h00, 18h30)",
+    "description": "Kiểm tra báo cáo Looker Studio. Nắm tỷ lệ GTC từng kho, tỷ lệ đơn giao trễ, các trường hợp hoãn giao bất thường để can thiệp kịp thời.",
+    "key_metrics": "Tỷ lệ GTC toàn cụm: 87.8% | Tổng đơn hôm nay: 24.878 đơn | Chi phí vận hành: 13.039.619 VNĐ (Đạt định mức)",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:00:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "overall_gtc_rate": "87.8%",
+      "total_assigned_orders": 24878,
+      "success_orders": 21842,
+      "pending_orders": 2236,
+      "delay_rate": "3.2%",
+      "operating_cost_vnd": "13.039.619",
+      "kpi_compliance": "98.4%"
+    },
+    "report_template": "🎯 BÁO CÁO VẬN HÀNH KPI & CHI PHÍ MT01:\n- Tỷ lệ GTC toàn cụm: 87.8% (Cái Răng: 88.5%, Bình Thủy: 86.2%, Vị Thanh: 89.1%, Ô Môn: 84.7%).\n- Tổng số đơn tạo luồng gán: 24.878 đơn.\n- Đơn đã giao thành công: 21.842 đơn; Đơn đang phát ca 2: 2.236 đơn.\n- Tỷ lệ hoãn giao: 3.2% (chủ yếu do khách hẹn lại giờ hành chính).\n- Chi phí vận hành thực tế: 13.039.619 VNĐ (Đạt 98.4% định mức ngân sách)."
+  },
+  {
+    "id": "TASK-HR-01",
+    "dept_id": "nhansu",
+    "dept_name": "Phòng Nhân Sự (HR & Chấm Công)",
+    "task_title": "Quản lý quân số NVXL, Chấm công giờ giấc đi làm & Nghỉ phép 4 cụm kho",
+    "assignee": "Lê Thị Nhân Sự (HR Lead MT01)",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_HR_Timesheet_Daily/edit#gid=105",
+    "check_frequency": "Hàng ngày (Chốt quân số 07h15 & 13h15)",
+    "description": "Kiểm tra danh sách chấm công vân tay/FaceID của nhân viên xử lý và tài xế tại 4 kho. Ghi nhận ai đi làm đúng giờ, ai đi trễ, ai xin nghỉ phép để điều chuyển nhân lực hỗ trợ.",
+    "key_metrics": "Tổng nhân sự: 42 người | Đi làm đúng giờ: 39 người (92.8%) | Đi trễ: 1 người (Kho BT) | Nghỉ phép có duyệt: 2 người",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:15:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "total_staff": 42,
+      "on_time": 39,
+      "late": 1,
+      "approved_leave": 2,
+      "unapproved_absence": 0,
+      "attendance_rate": "97.6%"
+    },
+    "report_template": "👥 BÁO CÁO QUÂN SỐ & CHẤM CÔNG MIỀN TÂY 01:\n- Tổng quân số ca sáng: 42 nhân sự trực tiếp.\n- Có mặt làm việc đúng giờ: 39 người.\n- Đi trễ: 1 nhân viên (Kho Bình Thủy trễ 12 phút do mưa to, đã vào ca làm việc).\n- Nghỉ phép có duyệt: 2 nhân viên (1 NVXL Cái Răng nghỉ ốm, 1 NVXL Ô Môn nghỉ phép năm, đã có người thay ca).\n- Nghỉ không phép: 0 trường hợp. Tỷ lệ chuyên cần toàn cụm: 97.6%."
+  },
+  {
+    "id": "TASK-FLEET-01",
+    "dept_id": "giamsattai",
+    "dept_name": "Phòng Giám Sát Tải & Tuyến Xe",
+    "task_title": "Theo dõi số lượng xe tải chạy mỗi ngày, chi phí tải & Cảnh báo tuyến off",
+    "assignee": "Trần Giám Sát Tải (Fleet Coordinator)",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_Fleet_Truck_Logistics/edit#gid=204",
+    "check_frequency": "Hàng ngày (Liên tục theo chuyến xe xuất bến)",
+    "description": "Nắm chi phí xe tải từng ngày, số lượng xe chạy của từng kho. Nắm rõ ngày hôm đó kho có chạy đủ xe cố định hay không, nếu có tuyến off thì báo rõ tuyến nào off và lý do.",
+    "key_metrics": "Tổng xe tải hoạt động: 14 xe cố định | Tuyến xe: 14/14 tuyến (0 TUYẾN OFF) | Tổng km chạy: 1.340 km | Chi phí tải tạm tính: 6.850.000 VNĐ",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:10:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "active_trucks": 14,
+      "total_routes": 14,
+      "off_routes": 0,
+      "total_km": 1340,
+      "fuel_cost_vnd": "6.850.000",
+      "fleet_status": "100% On-Schedule"
+    },
+    "report_template": "🚛 BÁO CÁO GIÁM SÁT TẢI & TUYẾN XE MIỀN TÂY 01:\n- Số lượng xe tải cố định chạy hôm nay: 14/14 xe (ĐẦY ĐỦ 100%).\n- Cảnh báo tuyến off: 0 TUYẾN OFF. Cả 14 tuyến đều xuất bến đúng lịch trình.\n- Các xe tải chính đang lưu thông: 65C-188.92 (Cái Răng), 65C-209.45 (Ô Môn), 95C-086.19 (Vị Thanh), 65H-365.01 (Bình Thủy).\n- Tổng cự ly lăn bánh: 1.340 km. Chi phí dầu thực tế: 6.850.000 VNĐ (Tiết kiệm 4.5% so với hạn mức)."
+  },
+  {
+    "id": "TASK-CAM-01",
+    "dept_id": "phongcam",
+    "dept_name": "Phòng Chuyên Camera 4 Kho",
+    "task_title": "Kiểm tra Camera 4 kho sáng & cuối ngày (Vệ sinh kho & Quy chuẩn chất xếp hàng)",
+    "assignee": "Hoàng Camera (CCTV Supervisor)",
+    "document_url": "https://cctv.ghn.vn/mt01-surveillance/live",
+    "check_frequency": "2 lần/ngày (Đầu ca 07h30 & Cuối ca 18h00)",
+    "description": "Trích xuất và soi camera tại 4 kho sáng và chiều. Kiểm tra vệ sinh mặt sàn, khu vực phân loại sạch sẽ, hàng hóa chất xếp đúng pallet, không xếp chồng quá cao gây đổ vỡ kiện nặng.",
+    "key_metrics": "Tình trạng Camera: 8/8 mắt Cam Online 100% | Điểm Vệ sinh: 9.6/10 | Vi phạm xếp hàng: 0 trường hợp",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:20:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "cameras_online": "8/8",
+      "sanitation_score": "9.6/10",
+      "stacking_compliance": "100%",
+      "violations_detected": 0
+    },
+    "report_template": "📹 BÁO CÁO CAMERA & AN TOÀN KHO BÃI MIỀN TÂY 01:\n- Hệ thống camera: 8/8 mắt cam (Cam 01, 02 Ô Môn; Cam 05, 06 Cái Răng; Cam 07, 08 Vị Thanh; Cam 03, 04 Bình Thủy) online 100%.\n- Kiểm tra vệ sinh đầu ngày: Cả 4 kho đã vệ sinh sạch rác bọc và băng keo, lối đi xe nâng rộng thoáng.\n- Quy chuẩn chất xếp kiện nặng: 100% kiện trên 20kg xếp trên pallet đế phẳng, chiều cao dưới 1.6m, không lấn vạch an toàn màu vàng.\n- Điểm đánh giá toàn cụm: 9.6/10."
+  },
+  {
+    "id": "TASK-KT-01",
+    "dept_id": "ketoan",
+    "dept_name": "Phòng Kế Toán (Lương & Chi Phí)",
+    "task_title": "Theo dõi & Kiểm soát bảng lương NVXL và Nhân viên giao hàng (Shipper)",
+    "assignee": "Ngô Kế Toán (Senior Accountant)",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_Payroll_and_Incentive/edit#gid=88",
+    "check_frequency": "Hàng ngày (Chốt số liệu sản lượng cuối ngày)",
+    "description": "Theo dõi sản lượng đơn xử lý, đơn giao thành công để tạm tính chi phí lương sản lượng cho anh em nhân viên xử lý kho và shipper giao hàng. Đối soát bảo đảm tính lương đúng, đủ, không sai lệch.",
+    "key_metrics": "Quỹ lương sản lượng tạm tính: 18.420.000 VNĐ | Số kiện tính đơn giá: 4.499 kiện nặng | Sai lệch đối soát: 0 VNĐ",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:05:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "estimated_daily_payroll_vnd": "18.420.000",
+      "pieces_processed": 4499,
+      "avg_earning_per_worker_vnd": "438.000",
+      "reconciliation_variance_vnd": "0"
+    },
+    "report_template": "💼 BÁO CÁO KẾ TOÁN LƯƠNG & ĐỐI SOÁT SẢN LƯỢNG MT01:\n- Tổng số kiện hoàn tất giao tính lương hôm nay: 4.499 kiện nặng.\n- Quỹ lương sản lượng tạm tính cho toàn thể NVXL và tài xế 4 kho: 18.420.000 VNĐ.\n- Mức thu nhập bình quân: 438.000 VNĐ/nhân sự/ngày.\n- Đối soát số liệu quét mã tự động với bảng kê thanh toán: Trùng khớp 100%, không có sai lệch."
+  },
+  {
+    "id": "TASK-TQ-01",
+    "dept_id": "thuquy",
+    "dept_name": "Phòng Thủ Quỹ (Thu Chi Phê Duyệt)",
+    "task_title": "Quản lý và đảm bảo việc thu chi từng khoản được sếp duyệt chính xác 100%",
+    "assignee": "Vũ Thủ Quỹ (Cashier & Treasury)",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_Cash_Flow_Approval_Book/edit#gid=33",
+    "check_frequency": "Theo từng phiếu chi & Chốt sổ quỹ 17h30",
+    "description": "Kiểm tra chứng từ thu chi, chỉ xuất tiền mặt hoặc chuyển khoản khi có đầy đủ chữ ký phê duyệt của sếp Lộc. Báo cáo tồn quỹ thực tế và các khoản chi phát sinh trong ngày.",
+    "key_metrics": "Tồn quỹ đầu ngày: 45.000.000 VNĐ | Tổng chi được duyệt: 3.250.000 VNĐ (4 phiếu chi) | Tồn quỹ hiện tại: 41.750.000 VNĐ",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:10:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "opening_balance_vnd": "45.000.000",
+      "total_expenses_vnd": "3.250.000",
+      "approved_vouchers_count": 4,
+      "closing_balance_vnd": "41.750.000",
+      "audit_compliance": "100% Signed by Sếp Lộc"
+    },
+    "report_template": "💰 BÁO CÁO SỔ QUỸ & THU CHI ĐÃ DUYỆT MIỀN TÂY 01:\n- Tồn quỹ tiền mặt đầu ngày: 45.000.000 VNĐ.\n- Tổng chi phát sinh đã được sếp Lộc duyệt: 3.250.000 VNĐ (gồm 4 phiếu chi: 1.800.000 dầu xe 65C-188.92; 850.000 phốt xe nâng Ô Môn; 600.000 nước uống & VPP 4 kho).\n- Số phiếu chi có chữ ký phê duyệt: 4/4 phiếu (100%).\n- Tồn quỹ két sắt thực tế: 41.750.000 VNĐ (Khớp 100% số liệu sổ sách)."
+  },
+  {
+    "id": "TASK-B2B-01",
+    "dept_id": "b2b",
+    "dept_name": "Phòng Dữ Liệu B2B (Đơn Tạo Topic 506)",
+    "task_title": "Lọc tự động Đơn Tạo (Data ➔ Ketqua), chuẩn hóa dữ liệu & Bắn báo cáo Topic 506",
+    "assignee": "Agent B2B (Data Bot)",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_B2B_Order_Stream_Raw/edit",
+    "check_frequency": "Realtime (Mỗi 5 giây hoặc khi có đơn mới)",
+    "description": "Lọc sạch các đơn B2C/C2C, chỉ giữ lại đơn B2B hàng nặng theo đúng danh mục khách hàng đối tác của Cụm Miền Tây 01. Nạp sang Ketqua và bắn thông báo qua Telegram Topic 506.",
+    "key_metrics": "Tổng đơn đã lọc: 24.878 đơn | Khối lượng: 143.967 kg | Thời gian xử lý: 0.12s/lô | Độ trễ API: 5ms",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:12:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "orders_filtered": 24878,
+      "total_weight_kg": 143967,
+      "processing_speed_s": "0.12s",
+      "api_latency_ms": 5,
+      "topic_id": 506
+    },
+    "report_template": "📊 BÁO CÁO DỮ LIỆU ĐƠN TẠO B2B (TOPIC 506):\n- Đã lọc trực tiếp 24.878 đơn từ Data sang Ketqua (tốc độ xử lý: 0.12s/lô).\n- Tổng khối lượng hàng nặng B2B: 143.967 kg.\n- Số đơn phân bổ 4 cụm kho: Cái Răng (11.450 đơn), Bình Thủy (6.120 đơn), Vị Thanh (4.808 đơn), Ô Môn (2.500 đơn).\n- Cổng gửi duy nhất khóa an toàn về Topic 506."
+  },
+  {
+    "id": "TASK-KHO-01",
+    "dept_id": "kho4cum",
+    "dept_name": "Cụm 4 Kho Hàng Nặng (CR, BT, VT, OM)",
+    "task_title": "Tiếp nhận xe tải, Xếp dỡ phân loại kiện nặng & Bàn giao tuyến giao",
+    "assignee": "Công Bằng, Bảo Toàn, Đức Trung, Trọng Bằng",
+    "document_url": "https://docs.google.com/spreadsheets/d/1_MT01_Warehouse_In_Out_Cargo/edit",
+    "check_frequency": "Theo từng chuyến xe cập bến (Bốc dỡ trong 30 phút)",
+    "description": "Bốn trưởng kho giám sát xe tải lùi vào cửa cuốn bốc hàng. Kiểm đếm hàng hóa cồng kềnh, phân loại theo tuyến giao và bàn giao cho tài xế giao hàng.",
+    "key_metrics": "Số xe đã nhận bốc: 4 xe | Số kiện hàng nặng nhập: 422 kiện hôm nay (Tổng kỳ: 4.499 kiện) | Thời gian giải phóng xe: 26 phút (Đạt chuẩn < 30p)",
+    "status": "UP_TO_DATE",
+    "last_checked": "2026-11-06 07:10:00",
+    "created_at": "2026-11-01 08:00:00",
+    "report_metrics": {
+      "trucks_docked": 4,
+      "pieces_today": 422,
+      "weight_today_kg": 13039,
+      "avg_dock_turnaround_mins": 26,
+      "compliance_target_mins": 30
+    },
+    "report_template": "🏭 BÁO CÁO SẢN LƯỢNG 4 CỤM KHO HÀNG NẶNG MT01:\n- Cụm Kho Cái Răng: 161 đơn (4.650 kg) • NVXL: Công Bằng (Đã bàn giao tuyến 1).\n- Cụm Kho Bình Thủy: 122 đơn (3.852 kg) • NVXL: Bảo Toàn (Đang lên tải xe 2).\n- Cụm Kho Vị Thanh: 76 đơn (2.101 kg) • NVXL: Đức Trung (Hoàn tất 100%).\n- Cụm Kho Ô Môn: 62 đơn (1.987 kg) • NVXL: Trọng Bằng (Hoàn tất 100%).\n- Tổng cộng ngày hôm nay: 422 đơn (13.039 kg hàng nặng). Toàn bộ xe tải được giải phóng trong 26 phút."
+  }
+]

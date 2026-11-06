@@ -1493,7 +1493,297 @@
       border-color: #d97706;
     }
 
-  </style>
+  
+    /* ================= DEPARTMENT TASK DELEGATION MATRIX & MODALS ================= */
+    .dept-task-board-modal {
+      max-width: 1160px !important;
+      width: 95vw !important;
+      max-height: 92vh !important;
+      display: flex;
+      flex-direction: column;
+      background: #090d16 !important;
+      border: 1.5px solid #38bdf8 !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.25) !important;
+    }
+    .dept-board-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85));
+    }
+    .dept-board-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+    }
+    .dept-board-subtitle {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+    .dept-board-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .td-header-btn {
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .td-header-btn.emerald {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      border-color: #34d399;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+    }
+    .td-header-btn.emerald:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+      transform: translateY(-1px);
+    }
+    .td-header-btn.amber {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #0f172a;
+      border-color: #fbbf24;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    }
+    .td-header-btn.amber:hover {
+      background: linear-gradient(135deg, #b45309, #d97706);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .dept-tabs-bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 18px;
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .dept-tab-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      font-size: 0.73rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .dept-tab-btn:hover {
+      background: #334155;
+      color: #ffffff;
+      border-color: #64748b;
+    }
+    .dept-tab-btn.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .dept-board-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .dept-search-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .dept-search-input {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 8px 14px;
+      color: #f1f5f9;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .dept-search-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+    }
+    .dept-task-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .dept-task-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .dept-task-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1.2px solid #334155;
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .dept-task-card:hover {
+      border-color: #38bdf8;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(56, 189, 248, 0.2);
+      transform: translateY(-2px);
+    }
+    .dept-task-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .dept-badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid #0284c7;
+      color: #7dd3fc;
+    }
+    .status-badge-ok {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+    .dept-task-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.35;
+    }
+    .dept-task-assignee {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dept-task-assignee b { color: #f59e0b; }
+    .dept-task-desc {
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      background: #020617;
+      padding: 8px 10px;
+      border-radius: 5px;
+      border-left: 3px solid #38bdf8;
+    }
+    .dept-task-doc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .dept-task-doc-link:hover {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #7dd3fc;
+      transform: translateX(2px);
+    }
+    .dept-task-metrics-box {
+      background: rgba(2, 6, 23, 0.95);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.73rem;
+      color: #a7f3d0;
+      line-height: 1.4;
+    }
+    .dept-task-metrics-box b { color: #facc15; }
+    .dept-task-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      padding-top: 8px;
+      border-top: 1px solid #1e293b;
+    }
+    .btn-report-exact {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      border: 1px solid #34d399;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-report-exact:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);
+    }
+    .btn-task-action-mini {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      border-radius: 5px;
+      padding: 5px 9px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-task-action-mini:hover {
+      border-color: #64748b;
+      color: #ffffff;
+      background: #1e293b;
+    }
+    .btn-task-action-mini.danger:hover {
+      border-color: #ef4444;
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+</style>
 </head>
 <body>
 
@@ -1531,7 +1821,7 @@
     <!-- RIGHT ACTION MENU & DAY/NIGHT SWITCH -->
     <div class="light-switch-wrap">
       <div class="hud-menu-strip">
-        <button class="hud-menu-btn" onclick="openTaskDrawer()">CÔNG VIỆC</button>
+        <button class="hud-menu-btn" onclick="openDeptTasksModal()" style="border-color:#38bdf8;color:#7dd3fc;">📋 CÔNG VIỆC</button>
         <button class="hud-menu-btn highlight" onclick="openRoomModal('cairang')">CAMERA +</button>
         <button class="hud-menu-btn" onclick="dispatchAgentTask('b2b', 'b2b_filter', 'Kiểm tra & đồng bộ Đơn Tạo Ketqua')">BÁO CÁO +</button>
         <button class="hud-menu-btn" onclick="openTaskDrawer()">NHÂN SỰ</button>
@@ -3347,7 +3637,7 @@
 
   <!-- ================= BOTTOM-RIGHT ACTION BUTTON (+ TẠO VIỆC) ================= -->
   <div class="studio-fab-right">
-    <button class="btn-create-task" onclick="openTaskDrawer()">+ TẠO VIỆC</button>
+    <button class="btn-create-task" onclick="openDeptTasksModal()" style="background:#0284c7;border-color:#38bdf8;">📋 BẢNG GIAO VIỆC</button>
   </div>
 
   <!-- ================= RIGHT SLIDE-OVER TASK DISPATCHER DRAWER ("VIỆC ▲") ================= -->
@@ -3427,6 +3717,7 @@
         </div>
         <div id="mDesc" style="font-size:0.82rem; color:#cbd5e1; line-height:1.45;"></div>
         <div class="modal-actions" id="mDynamicActions">
+          <button class="m-btn primary" onclick="openDeptTasksModal(currentRoomKey)" style="background:#0284c7;border-color:#38bdf8;">📋 Việc Của Phòng Này</button>
           <button class="m-btn primary" id="mBtnSnap" onclick="triggerLiveCamSnap()">📸 Chụp Cam Thực Tế Mới Nhất</button>
           <a class="m-btn blue" id="mBtnNode" href="/?wf=kpi_gtc">🧩 Mở Sơ Đồ Luồng Node</a>
           <a class="m-btn amber" href="/war-room">🛡️ Xem Nhật Ký War Room</a>
@@ -4696,6 +4987,7 @@
         `;
       } else {
         box.innerHTML = `
+          <button class="m-btn primary" onclick="openDeptTasksModal(currentRoomKey)" style="background:#0284c7;border-color:#38bdf8;">📋 Việc Của Phòng Này</button>
           <button class="m-btn primary" id="mBtnSnap" onclick="triggerLiveCamSnap()">📸 Chụp Cam Thực Tế Mới Nhất</button>
           <button class="m-btn blue" onclick="dispatchAgentTask('${key}', 'kpi_scan', 'Quét số liệu KPI GTC & LTC thực tế từ GHN')">🎯 Quét Số Liệu KPI Thực Tế</button>
           <a class="m-btn amber" id="mBtnNode" href="/?wf=${cfg.wf}">🧩 Mở Luồng Node</a>
@@ -4791,6 +5083,471 @@
         else tr.style.display = (tr.dataset.agent || '').includes(agent) ? '' : 'none';
       });
     }
-  </script>
+  
+    // =========================================================================
+    // DEPARTMENT TASK DELEGATION MATRIX & REPORTING SYSTEM (SẾP LỘC GIAO VIỆC)
+    // =========================================================================
+    let allDeptTasks = [];
+    let currentDeptFilter = 'all';
+
+    async function loadDeptTasks(filterDept = null) {
+      if (filterDept) currentDeptFilter = filterDept;
+      try {
+        const url = currentDeptFilter && currentDeptFilter !== 'all' 
+          ? `/api/dept-tasks?dept=${encodeURIComponent(currentDeptFilter)}`
+          : '/api/dept-tasks';
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.success) {
+          allDeptTasks = data.tasks || [];
+          renderDeptTasks(allDeptTasks);
+        }
+      } catch (err) {
+        console.error('Lỗi tải danh sách nhiệm vụ phòng ban:', err);
+      }
+    }
+
+    function renderDeptTasks(tasks) {
+      const container = document.getElementById('deptTasksContainer');
+      const countDisplay = document.getElementById('deptTaskCountDisplay');
+      if (!container) return;
+
+      if (countDisplay) {
+        countDisplay.textContent = `Đang hiển thị: ${tasks.length} nhiệm vụ`;
+      }
+
+      if (tasks.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align:center; padding:40px 20px; background:#0f172a; border:1px dashed #334155; border-radius:8px; color:#94a3b8;">
+            <div style="font-size:2rem; margin-bottom:8px;">📂</div>
+            <div style="font-weight:700; color:#cbd5e1;">Chưa có nhiệm vụ nào cho bộ phận này</div>
+            <div style="font-size:0.75rem; margin-top:4px;">Bấm nút "+ GIAO VIỆC MỚI" ở trên để giao việc và đính kèm link file cho bộ phận này nhé Sếp Lộc!</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tasks.map(t => {
+        const docLinkHtml = t.document_url
+          ? `<a href="${t.document_url}" target="_blank" class="dept-task-doc-link" title="Mở file bảng tính để xem và kiểm tra">🔗 Mở File / Bảng Tính Hàng Ngày ↗</a>`
+          : `<span style="font-size:0.7rem; color:#64748b; font-style:italic;">(Chưa đính kèm file)</span>`;
+
+        return `
+          <div class="dept-task-card" id="task-card-${t.id}">
+            <div class="dept-task-card-header">
+              <span class="dept-badge">${t.dept_name || 'Phòng Ban'}</span>
+              <span class="status-badge-ok">🟢 ${t.status === 'REPORTED' ? 'ĐÃ BÁO CÁO SẾP' : 'ĐÃ CẬP NHẬT HÔM NAY'}</span>
+            </div>
+            
+            <div class="dept-task-title">${t.task_title}</div>
+            
+            <div class="dept-task-assignee">
+              <span>👤 Phụ trách: <b>${t.assignee || 'Nhân sự bộ phận'}</b></span>
+              <span>•</span>
+              <span>⏱️ ${t.check_frequency || 'Hàng ngày'}</span>
+            </div>
+
+            <div class="dept-task-desc">${t.description || 'Hàng ngày tự vào xem file, kiểm tra nếu có thay đổi và báo cáo khi cần.'}</div>
+
+            <div>
+              ${docLinkHtml}
+            </div>
+
+            <div class="dept-task-metrics-box">
+              <div>📊 <b>Chỉ số then chốt:</b> ${t.key_metrics || 'Đang theo dõi...'}</div>
+              <div style="font-size:0.67rem; color:#64748b; margin-top:3px;">🕒 Kiểm tra lần cuối: ${t.last_checked || 'Hôm nay'}</div>
+            </div>
+
+            <div class="dept-task-actions">
+              <button class="btn-report-exact" onclick="triggerDeptTaskReport('${t.id}')">
+                📊 BÁO CÁO SỐ LIỆU CHÍNH XÁC
+              </button>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-task-action-mini" onclick="openEditTaskModal('${t.id}')">✏️ Sửa File/Link</button>
+                <button class="btn-task-action-mini danger" onclick="deleteDeptTask('${t.id}')">🗑️ Xóa</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openDeptTasksModal(defaultDept = 'all') {
+      const modal = document.getElementById('deptTasksModal');
+      if (modal) {
+        modal.classList.add('open');
+        filterDeptTasks(defaultDept);
+      }
+    }
+
+    function closeDeptTasksModal() {
+      const modal = document.getElementById('deptTasksModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function filterDeptTasks(deptId) {
+      currentDeptFilter = deptId;
+      // Update active tab button
+      const buttons = document.querySelectorAll('.dept-tab-btn');
+      buttons.forEach(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        if (onclickAttr.includes(`'${deptId}'`)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      loadDeptTasks(deptId);
+    }
+
+    function handleDeptTaskSearch() {
+      const q = (document.getElementById('deptTaskSearchInput').value || '').toLowerCase().trim();
+      if (!q) {
+        renderDeptTasks(allDeptTasks);
+        return;
+      }
+      const filtered = allDeptTasks.filter(t => {
+        return (t.task_title && t.task_title.toLowerCase().includes(q)) ||
+               (t.dept_name && t.dept_name.toLowerCase().includes(q)) ||
+               (t.assignee && t.assignee.toLowerCase().includes(q)) ||
+               (t.key_metrics && t.key_metrics.toLowerCase().includes(q)) ||
+               (t.description && t.description.toLowerCase().includes(q));
+      });
+      renderDeptTasks(filtered);
+    }
+
+    function openCreateDeptTaskModal(preselectDept = null) {
+      const modal = document.getElementById('modalCreateDeptTask');
+      if (!modal) return;
+      if (preselectDept) {
+        const select = document.getElementById('newDeptSelect');
+        if (select) select.value = preselectDept;
+      }
+      updateAssigneeSuggestion();
+      modal.classList.add('open');
+    }
+
+    function closeCreateDeptTaskModal() {
+      const modal = document.getElementById('modalCreateDeptTask');
+      if (modal) modal.classList.remove('open');
+    }
+
+    const DEPT_ASSIGNEES = {
+      ccdc: 'Phan Văn CCDC (Trưởng bộ phận CCDC MT01)',
+      vanhanh: 'Nguyễn Vận Hành (Điều Phối Vận Hành Cụm)',
+      nhansu: 'Lê Thị Nhân Sự (HR Lead MT01)',
+      giamsattai: 'Trần Giám Sát Tải (Fleet Coordinator)',
+      phongcam: 'Hoàng Camera (CCTV Supervisor)',
+      ketoan: 'Ngô Kế Toán (Senior Accountant)',
+      thuquy: 'Vũ Thủ Quỹ (Cashier & Treasury)',
+      b2b: 'Agent B2B (Data Bot)',
+      kho4cum: 'Công Bằng, Bảo Toàn, Đức Trung, Trọng Bằng'
+    };
+
+    function updateAssigneeSuggestion() {
+      const dept = document.getElementById('newDeptSelect').value;
+      const assigneeInput = document.getElementById('newTaskAssignee');
+      if (assigneeInput && DEPT_ASSIGNEES[dept]) {
+        assigneeInput.value = DEPT_ASSIGNEES[dept];
+      }
+    }
+
+    async function submitCreateDeptTask() {
+      const deptId = document.getElementById('newDeptSelect').value;
+      const title = document.getElementById('newTaskTitle').value.trim();
+      const assignee = document.getElementById('newTaskAssignee').value.trim();
+      const docUrl = document.getElementById('newTaskDocUrl').value.trim();
+      const freq = document.getElementById('newTaskFreq').value;
+      const metrics = document.getElementById('newTaskKeyMetrics').value.trim();
+      const desc = document.getElementById('newTaskDesc').value.trim();
+
+      if (!title) {
+        alert('Vui lòng nhập tiêu đề nhiệm vụ cần giao cho bộ phận!');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/dept-tasks/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dept_id: deptId,
+            task_title: title,
+            assignee: assignee,
+            document_url: docUrl,
+            check_frequency: freq,
+            key_metrics: metrics,
+            description: desc
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeCreateDeptTaskModal();
+          // Reset form
+          document.getElementById('newTaskTitle').value = '';
+          document.getElementById('newTaskDocUrl').value = '';
+          document.getElementById('newTaskKeyMetrics').value = '';
+          document.getElementById('newTaskDesc').value = '';
+          // Reload
+          loadDeptTasks(currentDeptFilter);
+          appendChatLog('Tiger AI', 'Sếp Lộc', `✅ Đã giao việc thành công cho [${data.task.dept_name}]: "${data.task.task_title}". Link file theo dõi đã được lưu!`);
+        } else {
+          alert('Lỗi: ' + (data.error || 'Không thể tạo việc'));
+        }
+      } catch (err) {
+        alert('Lỗi kết nối máy chủ khi tạo việc: ' + err.message);
+      }
+    }
+
+    async function triggerDeptTaskReport(taskId) {
+      const btn = event ? event.target : null;
+      if (btn) {
+        btn.textContent = '⏳ Đang kiểm tra số liệu...';
+        btn.disabled = true;
+      }
+
+      try {
+        const res = await fetch('/api/dept-tasks/report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_id: taskId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          // Open detail report modal
+          document.getElementById('mReportTitle').textContent = `📊 BÁO CÁO SỐ LIỆU CHÍNH XÁC: ${data.dept_name}`;
+          document.getElementById('mReportDeptBadge').textContent = data.dept_name;
+          document.getElementById('mReportTime').textContent = `🕒 Kiểm tra lúc: ${data.last_checked}`;
+          document.getElementById('mReportTextContent').textContent = data.report_text;
+
+          const reportModal = document.getElementById('modalTaskReportDetail');
+          if (reportModal) reportModal.classList.add('open');
+
+          // Also append to Sa Ban chat
+          appendChatLog(data.assignee || data.dept_name, 'Sếp Lộc', data.report_text);
+
+          // Update card display
+          loadDeptTasks(currentDeptFilter);
+        } else {
+          alert('Lỗi: ' + (data.error || 'Không thể tạo báo cáo'));
+        }
+      } catch (err) {
+        alert('Lỗi kết nối máy chủ: ' + err.message);
+      } finally {
+        if (btn) {
+          btn.textContent = '📊 BÁO CÁO SỐ LIỆU CHÍNH XÁC';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    async function triggerReportAllDepts() {
+      try {
+        const res = await fetch('/api/dept-tasks/report-all', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('mReportTitle').textContent = `📊 BÁO CÁO TOÀN DIỆN TẤT CẢ PHÒNG BAN`;
+          document.getElementById('mReportDeptBadge').textContent = `Cụm Miền Tây 01 (${data.count} phòng ban)`;
+          document.getElementById('mReportTime').textContent = `🕒 Tổng hợp lúc: ${data.timestamp}`;
+          document.getElementById('mReportTextContent').textContent = data.summary;
+
+          const reportModal = document.getElementById('modalTaskReportDetail');
+          if (reportModal) reportModal.classList.add('open');
+
+          appendChatLog('Tiger AI • Tổng Chỉ Huy', 'Sếp Lộc', data.summary);
+        }
+      } catch (err) {
+        alert('Lỗi kết nối máy chủ: ' + err.message);
+      }
+    }
+
+    function closeTaskReportDetailModal() {
+      const modal = document.getElementById('modalTaskReportDetail');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function copyReportText() {
+      const txt = document.getElementById('mReportTextContent').textContent;
+      navigator.clipboard.writeText(txt).then(() => {
+        alert('Đã sao chép nội dung báo cáo số liệu vào bộ nhớ đệm!');
+      });
+    }
+
+    async function deleteDeptTask(taskId) {
+      if (!confirm('Anh Lộc có chắc chắn muốn xóa nhiệm vụ này không?')) return;
+      try {
+        const res = await fetch('/api/dept-tasks/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: taskId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDeptTasks(currentDeptFilter);
+        }
+      } catch (err) {
+        alert('Lỗi kết nối khi xóa: ' + err.message);
+      }
+    }
+
+    function openEditTaskModal(taskId) {
+      const task = allDeptTasks.find(t => t.id === taskId);
+      if (!task) return;
+      const newUrl = prompt('Nhập Link File / Bảng Tính mới cho nhiệm vụ này:', task.document_url || '');
+      if (newUrl !== null) {
+        fetch('/api/dept-tasks/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: taskId, document_url: newUrl })
+        }).then(res => res.json()).then(data => {
+          if (data.success) {
+            loadDeptTasks(currentDeptFilter);
+          }
+        });
+      }
+    }
+
+</script>
+
+  <!-- ================= MODAL: BẢNG GIAO VIỆC & QUẢN LÝ NHIỆM VỤ PHÒNG BAN ================= -->
+  <div class="modal-backdrop" id="deptTasksModal" onclick="if(event.target===this) closeDeptTasksModal()">
+    <div class="modal-card dept-task-board-modal">
+      <div class="dept-board-header">
+        <div>
+          <div class="dept-board-title">📋 BẢNG GIAO VIỆC & QUẢN LÝ NHIỆM VỤ TỪNG PHÒNG BAN</div>
+          <div class="dept-board-subtitle">GHN Heavy Logistics • Cụm Miền Tây 01 | Giao việc riêng, đính kèm file/link theo dõi mỗi ngày & xuất báo cáo số liệu chính xác cho Sếp Lộc</div>
+        </div>
+        <div class="dept-board-actions">
+          <button class="td-header-btn emerald" onclick="openCreateDeptTaskModal()">+ GIAO VIỆC MỚI</button>
+          <button class="td-header-btn amber" onclick="triggerReportAllDepts()">⚡ BÁO CÁO TOÀN DIỆN CÁC PHÒNG</button>
+          <button class="modal-close" onclick="closeDeptTasksModal()">✕</button>
+        </div>
+      </div>
+
+      <!-- DEPARTMENT NAVIGATION TABS -->
+      <div class="dept-tabs-bar" id="deptTabsBar">
+        <button class="dept-tab-btn active" onclick="filterDeptTasks('all')">🏢 TẤT CẢ PHÒNG BAN (9)</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('ccdc')">🧰 Phòng Quản Lý CCDC</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('vanhanh')">🎯 Phòng Vận Hành (KPI)</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('nhansu')">👥 Phòng Nhân Sự</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('giamsattai')">🚛 Phòng Giám Sát Tải</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('phongcam')">📹 Phòng Camera 4 Kho</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('ketoan')">💼 Phòng Kế Toán</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('thuquy')">💰 Phòng Thủ Quỹ</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('b2b')">📊 Phòng Dữ Liệu B2B</button>
+        <button class="dept-tab-btn" onclick="filterDeptTasks('kho4cum')">🏭 Cụm 4 Kho Hàng Nặng</button>
+      </div>
+
+      <div class="dept-board-body">
+        <div class="dept-search-row">
+          <input type="text" class="dept-search-input" id="deptTaskSearchInput" placeholder="🔍 Tìm kiếm nhiệm vụ, người phụ trách, link file hoặc số liệu..." oninput="handleDeptTaskSearch()">
+          <span style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;" id="deptTaskCountDisplay">Đang hiển thị: 9 nhiệm vụ</span>
+        </div>
+
+        <!-- TASK CARDS CONTAINER -->
+        <div class="dept-task-cards-grid" id="deptTasksContainer">
+          <div style="text-align:center; padding:30px; color:#94a3b8; grid-column: 1/-1;">Đang tải danh sách nhiệm vụ các phòng ban...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: GIAO VIỆC MỚI CHO BỘ PHẬN ================= -->
+  <div class="modal-backdrop" id="modalCreateDeptTask" onclick="if(event.target===this) closeCreateDeptTaskModal()">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title">✍️ GIAO VIỆC MỚI CHO PHÒNG BAN</div>
+        <button class="modal-close" onclick="closeCreateDeptTaskModal()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">1. Chọn Phòng ban nhận việc:</label>
+          <select class="td-select" id="newDeptSelect" style="margin-top:4px;" onchange="updateAssigneeSuggestion()">
+            <option value="ccdc">🧰 Phòng Quản Lý CCDC & Thiết Bị Vận Hành</option>
+            <option value="vanhanh">🎯 Phòng Vận Hành (KPI & Chi Phí)</option>
+            <option value="nhansu">👥 Phòng Nhân Sự & Chấm Công</option>
+            <option value="giamsattai">🚛 Phòng Giám Sát Tải & Tuyến Xe</option>
+            <option value="phongcam">📹 Phòng Chuyên Camera 4 Kho</option>
+            <option value="ketoan">💼 Phòng Kế Toán (Lương & Chi Phí)</option>
+            <option value="thuquy">💰 Phòng Thủ Quỹ (Thu Chi Phê Duyệt)</option>
+            <option value="b2b">📊 Phòng Dữ Liệu B2B (Topic 506)</option>
+            <option value="kho4cum">🏭 Cụm 4 Kho Hàng Nặng (CR, BT, VT, OM)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">2. Tiêu đề công việc cụ thể:</label>
+          <input type="text" class="td-input" id="newTaskTitle" placeholder="VD: Theo dõi & Kiểm kê Pallet gỗ/nhựa và xe nâng 4 kho hàng ngày..." style="margin-top:4px;">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div>
+            <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">3. Nhân sự phụ trách:</label>
+            <input type="text" class="td-input" id="newTaskAssignee" placeholder="VD: Phan Văn CCDC" style="margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">4. Tần suất tự vào kiểm tra:</label>
+            <select class="td-select" id="newTaskFreq" style="margin-top:4px;">
+              <option value="Hàng ngày (Đầu ca 07h30 & Cuối ca 17h30)">Hàng ngày (Đầu ca & Cuối ca)</option>
+              <option value="Mỗi ngày 3 lần (09h00, 14h00, 18h30)">Mỗi ngày 3 lần (Sáng, Trưa, Tối)</option>
+              <option value="Realtime liên tục 24/7">Realtime liên tục 24/7</option>
+              <option value="Hàng tuần vào thứ Hai">Hàng tuần vào thứ Hai</option>
+              <option value="Định kỳ khi có biến động / phát sinh">Định kỳ khi có biến động</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">5. Link File / Bảng Tính Theo Dõi Hàng Ngày (Google Sheets, Drive, Link báo cáo):</label>
+          <input type="text" class="td-input" id="newTaskDocUrl" placeholder="https://docs.google.com/spreadsheets/d/... hoặc link nội bộ" style="margin-top:4px;">
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">6. Chỉ số / Số liệu cụ thể cần theo dõi & báo cáo:</label>
+          <input type="text" class="td-input" id="newTaskKeyMetrics" placeholder="VD: Tổng Pallet: 1.450 cái (Dùng: 1.380, Cần sửa: 70) | Xe nâng: 16/18 hoạt động tốt..." style="margin-top:4px;">
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; color:#94a3b8; font-weight:700;">7. Hướng dẫn & Yêu cầu cụ thể của Sếp Lộc:</label>
+          <textarea class="td-input" id="newTaskDesc" rows="3" placeholder="Ghi chú yêu cầu: Hàng ngày tự vào xem file, kiểm tra nếu có thay đổi thì đối soát ngay, khi nào Sếp cần báo cáo thì gửi chính xác từng con số..." style="margin-top:4px; resize:vertical;"></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+          <button class="m-btn amber" onclick="closeCreateDeptTaskModal()">Hủy Bỏ</button>
+          <button class="m-btn emerald" onclick="submitCreateDeptTask()" style="background:#059669;color:#fff;">🚀 XÁC NHẬN GIAO VIỆC NGAY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: BÁO CÁO SỐ LIỆU CHÍNH XÁC ================= -->
+  <div class="modal-backdrop" id="modalTaskReportDetail" onclick="if(event.target===this) closeTaskReportDetailModal()">
+    <div class="modal-card" style="max-width: 720px;">
+      <div class="modal-header">
+        <div class="modal-title" id="mReportTitle">📊 BÁO CÁO SỐ LIỆU CHÍNH XÁC CHO SẾP LỘC</div>
+        <button class="modal-close" onclick="closeTaskReportDetailModal()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="dept-badge" id="mReportDeptBadge">Phòng Quản Lý CCDC</span>
+          <span style="font-size:0.73rem; color:#94a3b8;" id="mReportTime">🕒 Kiểm tra lúc: Vừa xong</span>
+        </div>
+
+        <!-- REPORT TERMINAL TEXT -->
+        <div style="background:#020617; border:1px solid #1e293b; border-left:4px solid #10b981; border-radius:6px; padding:14px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#a7f3d0; line-height:1.65; white-space:pre-wrap;" id="mReportTextContent">
+          Đang tải dữ liệu báo cáo...
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span style="font-size:0.72rem; color:#34d399;">✓ Báo cáo này đã được gửi tự động vào Phòng Hội Thoại Sa Bàn 3D</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-task-action-mini" onclick="copyReportText()">📋 Sao Chép Báo Cáo</button>
+            <button class="m-btn blue" onclick="closeTaskReportDetailModal()">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

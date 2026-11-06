@@ -24,5 +24,31 @@
     "handler_dept": "💰 Phòng Kế Toán & Tài Chính",
     "healing_action": "Đã lọc sạch xe máy & 55 biển số ảo trong danh sách đen, đồng bộ Google Sheets Team_Leader.",
     "can_resume": true
+  },
+  {
+    "id": "EVT_1793869477638",
+    "time": "16:04:37 05/11/2026",
+    "task_name": "Xuất Đơn B2B (18:00)",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu",
+    "current_step": "Bước 1/4: Khởi tạo kết nối phiên Google",
+    "total_steps": 4,
+    "status": "RUNNING",
+    "error_info": null,
+    "handler_dept": null,
+    "healing_action": null,
+    "can_resume": true
+  },
+  {
+    "id": "EVT_1793869520849",
+    "time": "16:05:20 05/11/2026",
+    "task_name": "Xuất Đơn B2B (18:00)",
+    "department": "📊 Phòng Kinh Doanh & Dữ Liệu B2B",
+    "current_step": "Bước 4/4: Đã lọc 24.877 đơn sang Ketqua & Gửi ảnh báo cáo ThongKe vào Topic 506 thành công",
+    "total_steps": 4,
+    "status": "SUCCESS",
+    "error_info": null,
+    "handler_dept": "🛠️ Phòng Kỹ Thuật",
+    "healing_action": "Đã đồng bộ trực tiếp qua Google Sheets API Service Account (5 giây) & gửi báo cáo vào Topic 506 (Đơn Tạo).",
+    "can_resume": true
   }
 ]
