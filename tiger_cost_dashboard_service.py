@@ -11,6 +11,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 DASHBOARD_CACHE_FILE = os.path.join(DATA_DIR, "mt01_cost_dashboard.json")
 GOOGLE_SHEET_ID = "1eHuDDhfZy17fIC_jWPTnDT69-1gf-31gm8K1Qgo6Ssc"
+ODO_SHEET_ID = "1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE"
 
 def get_google_creds():
     env_json = os.environ.get("GOOGLE_CREDENTIALS_JSON") or os.environ.get("GCP_SA_KEY")
@@ -430,13 +431,373 @@ def build_cost_dashboard_matrix(force=False):
         except Exception as nvxl_ex:
             print(f"[{now_str}] ⚠️ Lỗi đọc sheet Lương NVXL: {nvxl_ex}")
 
+        # 4. BẢNG ĐỐI SOÁT ODO XE TẢI (KẾT HỢP 2 SHEET: 'Team_Leader' & '365 & GHN Đối Soát')
+        odo_records = []
+        try:
+            sh_odo = client.open_by_key(ODO_SHEET_ID)
+            ws_tl = sh_odo.worksheet("Team_Leader")
+            ws_ds = sh_odo.worksheet("365 & GHN Đối Soát")
+            tl_rows = ws_tl.get_all_values()
+            ds_rows = ws_ds.get_all_values()
+
+            def _clean_odo_int(val_s):
+                if not val_s:
+                    return 0
+                s_c = str(val_s).strip().replace(".", "").replace(",", "").replace(" ", "")
+                if not s_c or s_c == "-" or s_c.startswith("#"):
+                    return 0
+                try:
+                    return int(float(s_c))
+                except Exception:
+                    return 0
+
+            def _norm_plate(p_s):
+                return str(p_s or "").strip().upper().replace(" ", "").replace(".", "").replace("-", "")
+
+            mt01_hubs_odo = {
+                "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ": "Kho Cái Răng",
+                "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ": "Kho Bình Thủy",
+                "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang": "Kho Vị Thanh",
+                "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ": "Kho Ô Môn"
+            }
+
+            route_to_hub_odo = {
+                "Cái Răng - Ninh Kiều 1": "Kho Bình Thủy",
+                "Cái Răng - Ô Môn": "Kho Bình Thủy",
+                "Cái Răng - Ninh Kiều": "Kho Bình Thủy",
+                "Cái Răng - Bình Thủy": "Kho Bình Thủy",
+                "Cái Răng - Bình Thuỷ": "Kho Bình Thủy",
+                "Cái Răng ( BT ) - Tăng Cường 1": "Kho Bình Thủy",
+                "Cái Răng ( BT ) - Tăng Cường 2": "Kho Bình Thủy",
+                "Cái Răng - Cái Răng": "Kho Cái Răng",
+                "Cái Răng - Ngã Bảy": "Kho Cái Răng",
+                "Cái Răng - Bình Minh": "Kho Cái Răng",
+                "Cái Răng - An Bình": "Kho Cái Răng",
+                "Cái Răng - An Khánh": "Kho Cái Răng",
+                "Cái Răng - Hưng Lợi": "Kho Cái Răng",
+                "Cái Răng - Phong Điền": "Kho Cái Răng",
+                "Cái Răng - Tăng Cường 1": "Kho Cái Răng",
+                "Ô Môn - Thốt Nốt": "Kho Ô Môn",
+                "Ô Môn - Ô Môn": "Kho Ô Môn",
+                "Ô Môn - Tăng Cường 1": "Kho Ô Môn",
+                "Vị Thanh - Giồng Riềng": "Kho Vị Thanh",
+                "Vị Thanh - Long Mỹ": "Kho Vị Thanh",
+            }
+
+            for r in tl_rows[1:]:
+                if len(r) >= 7 and r[4].strip() in mt01_hubs_odo:
+                    t_name = r[6].strip()
+                    if t_name and t_name != "Xe Máy":
+                        route_to_hub_odo[t_name] = mt01_hubs_odo[r[4].strip()]
+
+            # Lập chỉ mục sheet '365 & GHN Đối Soát'
+            ds_by_mcd = {}
+            ds_by_date_plate = {}
+            ds_by_date_route = {}
+            ds_mt01_indexed = []
+
+            for ds_idx, r in enumerate(ds_rows[1:], 1):
+                if len(r) < 11:
+                    continue
+                d_str = r[3].strip() if len(r) > 3 else ""
+                if not d_str or "/2026" not in d_str:
+                    continue
+                tuyen_365 = r[2].strip() if len(r) > 2 else ""
+                bks_365 = r[4].strip().upper() if len(r) > 4 else ""
+                mcd_col = r[15].strip() if len(r) > 15 else ""
+
+                hub_365 = route_to_hub_odo.get(tuyen_365)
+                if not hub_365:
+                    if "21088000" in mcd_col:
+                        hub_365 = "Kho Cái Răng"
+                    elif "21985000" in mcd_col:
+                        hub_365 = "Kho Bình Thủy"
+                    elif "22862000" in mcd_col:
+                        hub_365 = "Kho Vị Thanh"
+                    elif "22917000" in mcd_col:
+                        hub_365 = "Kho Ô Môn"
+                    elif tuyen_365.startswith("Cái Răng"):
+                        hub_365 = "Kho Cái Răng"
+                    elif tuyen_365.startswith("Bình Thủy") or tuyen_365.startswith("Bình Thuỷ"):
+                        hub_365 = "Kho Bình Thủy"
+                    elif tuyen_365.startswith("Vị Thanh"):
+                        hub_365 = "Kho Vị Thanh"
+                    elif tuyen_365.startswith("Ô Môn"):
+                        hub_365 = "Kho Ô Môn"
+
+                ds_item = {
+                    "ds_id": ds_idx,
+                    "hub_name": hub_365 or "",
+                    "route": tuyen_365,
+                    "date": d_str,
+                    "plate_365": bks_365,
+                    "driver_365": r[5].strip() if len(r) > 5 else "",
+                    "checkin_365": r[6].strip() if len(r) > 6 else "",
+                    "checkout_365": r[7].strip() if len(r) > 7 else "",
+                    "odo_di_365": _clean_odo_int(r[8]) if len(r) > 8 else 0,
+                    "odo_ve_365": _clean_odo_int(r[9]) if len(r) > 9 else 0,
+                    "km_365": _clean_odo_int(r[10]) if len(r) > 10 else 0,
+                    "check_col": r[13].strip() if len(r) > 13 else "",
+                    "bks_trung": r[14].strip() if len(r) > 14 else "",
+                    "mcd_raw": mcd_col if mcd_col != "#N/A" else "",
+                    "ghn_check": r[18].strip() if len(r) > 18 else "",
+                    "ph_365": r[19].strip() if len(r) > 19 else "",
+                    "thang_365": r[20].strip() if len(r) > 20 else "",
+                    "tuyen_trung": r[21].strip() if len(r) > 21 else ""
+                }
+
+                if hub_365:
+                    ds_mt01_indexed.append(ds_item)
+
+                if mcd_col and mcd_col != "#N/A":
+                    for m_part in mcd_col.split("\n"):
+                        m_clean = m_part.strip()
+                        if m_clean:
+                            ds_by_mcd[m_clean] = ds_item
+
+                if bks_365 and bks_365 != "OFF":
+                    ds_by_date_plate[(d_str, _norm_plate(bks_365))] = ds_item
+                if tuyen_365 and bks_365 != "OFF":
+                    ds_by_date_route[(d_str, tuyen_365.lower())] = ds_item
+
+            matched_ds_ids = set()
+
+            # Quét toàn bộ chuyến của 4 Kho MT01 trong sheet 'Team_Leader'
+            for r in tl_rows[1:]:
+                if len(r) < 6:
+                    continue
+                raw_hub = r[4].strip()
+                if raw_hub not in mt01_hubs_odo:
+                    continue
+                short_hub = mt01_hubs_odo[raw_hub]
+                d_str = r[5].strip() if len(r) > 5 and r[5].strip() else (r[3].strip()[:10] if len(r) > 3 else "")
+                if not d_str or "/2026" not in d_str:
+                    continue
+
+                mcd = r[0].strip()
+                plate_ghn = r[1].strip().upper()
+                raw_nvgh = r[2].strip() if len(r) > 2 else ""
+                if " - " in raw_nvgh:
+                    nvgh_id, nvgh_name = [x.strip() for x in raw_nvgh.split(" - ", 1)]
+                else:
+                    nvgh_id, nvgh_name = "", raw_nvgh
+
+                created_at = r[3].strip() if len(r) > 3 else ""
+                tuyen_tl = r[6].strip() if len(r) > 6 else ""
+                if tuyen_tl == "Xe Máy":
+                    continue
+
+                checkin_tl = r[7].strip() if len(r) > 7 else ""
+                checkout_tl = r[8].strip() if len(r) > 8 else ""
+                odo_di_tl = _clean_odo_int(r[9]) if len(r) > 9 else 0
+                odo_ve_tl = _clean_odo_int(r[10]) if len(r) > 10 else 0
+                km_tl = _clean_odo_int(r[11]) if len(r) > 11 else max(0, odo_ve_tl - odo_di_tl)
+                plate_nvxl = r[12].strip().upper() if len(r) > 12 else ""
+                tl_alert = r[13].strip() if len(r) > 13 else "Ok"
+
+                # Khớp chéo sang sheet '365 & GHN Đối Soát'
+                ds_match = (
+                    ds_by_mcd.get(mcd)
+                    or ds_by_date_plate.get((d_str, _norm_plate(plate_ghn)))
+                    or (ds_by_date_route.get((d_str, tuyen_tl.lower())) if tuyen_tl else None)
+                )
+
+                if ds_match:
+                    matched_ds_ids.add(ds_match["ds_id"])
+                    has_365 = True
+                    plate_365 = ds_match["plate_365"]
+                    driver_365 = ds_match["driver_365"]
+                    checkin_365 = ds_match["checkin_365"]
+                    checkout_365 = ds_match["checkout_365"]
+                    odo_di_365 = ds_match["odo_di_365"]
+                    odo_ve_365 = ds_match["odo_ve_365"]
+                    km_365 = ds_match["km_365"]
+                    bks_trung = ds_match["bks_trung"]
+                    tuyen_trung = ds_match["tuyen_trung"]
+                    thang_365 = ds_match["thang_365"]
+                    route_final = tuyen_tl or ds_match["route"]
+                else:
+                    has_365 = False
+                    plate_365 = ""
+                    driver_365 = ""
+                    checkin_365 = ""
+                    checkout_365 = ""
+                    odo_di_365 = 0
+                    odo_ve_365 = 0
+                    km_365 = 0
+                    bks_trung = ""
+                    tuyen_trung = ""
+                    thang_365 = ""
+                    route_final = tuyen_tl
+
+                km_diff = (km_tl - km_365) if has_365 else 0
+                odo_start_diff = (odo_di_tl - odo_di_365) if (has_365 and odo_di_tl > 0 and odo_di_365 > 0) else 0
+                odo_end_diff = (odo_ve_tl - odo_ve_365) if (has_365 and odo_ve_tl > 0 and odo_ve_365 > 0) else 0
+
+                is_bks_lech = (tl_alert.lower() == "lệch") or (plate_nvxl and plate_nvxl != plate_ghn) or (has_365 and plate_365 and _norm_plate(plate_365) != _norm_plate(plate_ghn))
+                is_odo_lech = has_365 and (km_diff != 0 or odo_start_diff != 0 or odo_end_diff != 0)
+                is_dup_warn = bool(bks_trung or tuyen_trung)
+
+                if is_dup_warn:
+                    status_code = "warn_dup"
+                    status_badge = f"🚨 Trùng ({bks_trung or tuyen_trung})"
+                    status_color = "#ef4444"
+                elif is_odo_lech and is_bks_lech:
+                    status_code = "warn_both"
+                    status_badge = f"🚨 Lệch ODO ({km_diff:+d}km) & BKS"
+                    status_color = "#ef4444"
+                elif is_odo_lech:
+                    status_code = "warn_odo"
+                    status_badge = f"⚠️ Lệch ODO ({km_diff:+d} km)" if km_diff != 0 else "⚠️ Lệch Số Đầu/Cuối ODO"
+                    status_color = "#ef4444"
+                elif is_bks_lech:
+                    status_code = "warn_bks"
+                    status_badge = f"⚠️ Lệch BKS NVXL ({plate_nvxl or 'Chưa điền'})" if has_365 else f"⚠️ Lệch BKS ({plate_nvxl or 'Trống'}) • Chờ 365"
+                    status_color = "#f59e0b"
+                elif odo_di_tl <= 0 or odo_ve_tl <= 0:
+                    status_code = "warn_missing_odo"
+                    status_badge = "🚨 NVXL Chưa Điền ODO"
+                    status_color = "#ef4444"
+                elif has_365:
+                    status_code = "matched"
+                    status_badge = "✅ Khớp Chuẩn TL & 365"
+                    status_color = "#10b981"
+                else:
+                    status_code = "pending_365"
+                    status_badge = "⏳ Đã Chốt TL • Chờ 365"
+                    status_color = "#3b82f6"
+
+                odo_records.append({
+                    "record_type": "TRIP",
+                    "date": d_str,
+                    "hub_name": short_hub,
+                    "mcd": mcd,
+                    "route": route_final or "Chưa phân tuyến",
+                    "plate_ghn": plate_ghn,
+                    "plate_nvxl": plate_nvxl,
+                    "plate_365": plate_365,
+                    "nvgh_id": nvgh_id,
+                    "nvgh_name": nvgh_name,
+                    "nvgh_full": f"{nvgh_name} ({nvgh_id})" if nvgh_id else nvgh_name,
+                    "driver_365": driver_365,
+                    "created_at": created_at,
+                    "checkin_tl": checkin_tl,
+                    "checkout_tl": checkout_tl,
+                    "checkin_365": checkin_365,
+                    "checkout_365": checkout_365,
+                    "odo_di_tl": odo_di_tl,
+                    "odo_ve_tl": odo_ve_tl,
+                    "km_tl": km_tl,
+                    "odo_di_365": odo_di_365,
+                    "odo_ve_365": odo_ve_365,
+                    "km_365": km_365,
+                    "km_diff": km_diff,
+                    "has_365": has_365,
+                    "is_off": False,
+                    "tl_alert": tl_alert,
+                    "bks_trung": bks_trung,
+                    "tuyen_trung": tuyen_trung,
+                    "thang_365": thang_365,
+                    "has_warning": bool(is_odo_lech or is_bks_lech or is_dup_warn or odo_di_tl <= 0 or odo_ve_tl <= 0),
+                    "status_code": status_code,
+                    "status_badge": status_badge,
+                    "status_color": status_color
+                })
+
+            # Bổ sung các dòng bên '365 & GHN Đối Soát' chưa khớp với 'Team_Leader' (VD: Xe OFF hoặc chuyến 365 phát sinh)
+            for ds_item in ds_mt01_indexed:
+                if ds_item["ds_id"] in matched_ds_ids:
+                    continue
+                is_off = (ds_item["plate_365"] == "OFF")
+                if is_off:
+                    status_code = "off"
+                    status_badge = "🛑 Xe OFF (Nghỉ Định Kỳ)"
+                    status_color = "#64748b"
+                    has_warn = False
+                else:
+                    status_code = "missing_tl"
+                    status_badge = "🚨 Có 365 • Thiếu Mã TL"
+                    status_color = "#ef4444"
+                    has_warn = True
+
+                odo_records.append({
+                    "record_type": "OFF" if is_off else "EXTRA_365",
+                    "date": ds_item["date"],
+                    "hub_name": ds_item["hub_name"],
+                    "mcd": ds_item["mcd_raw"] or ("OFF" if is_off else "Chưa có MCD"),
+                    "route": ds_item["route"] or "Tuyến cố định 365",
+                    "plate_ghn": "OFF" if is_off else ds_item["plate_365"],
+                    "plate_nvxl": "OFF" if is_off else "",
+                    "plate_365": ds_item["plate_365"],
+                    "nvgh_id": "",
+                    "nvgh_name": "Nghỉ (OFF)" if is_off else "Chưa gán trên TL",
+                    "nvgh_full": "Nghỉ (OFF)" if is_off else "Chưa gán trên TL",
+                    "driver_365": ds_item["driver_365"],
+                    "created_at": ds_item["date"],
+                    "checkin_tl": "",
+                    "checkout_tl": "",
+                    "checkin_365": ds_item["checkin_365"],
+                    "checkout_365": ds_item["checkout_365"],
+                    "odo_di_tl": 0,
+                    "odo_ve_tl": 0,
+                    "km_tl": 0,
+                    "odo_di_365": ds_item["odo_di_365"],
+                    "odo_ve_365": ds_item["odo_ve_365"],
+                    "km_365": ds_item["km_365"],
+                    "km_diff": -ds_item["km_365"] if not is_off else 0,
+                    "has_365": True,
+                    "is_off": is_off,
+                    "tl_alert": "OFF" if is_off else "Thiếu TL",
+                    "bks_trung": ds_item["bks_trung"],
+                    "tuyen_trung": ds_item["tuyen_trung"],
+                    "thang_365": ds_item["thang_365"],
+                    "has_warning": has_warn,
+                    "status_code": status_code,
+                    "status_badge": status_badge,
+                    "status_color": status_color
+                })
+        except Exception as odo_ex:
+            print(f"[{now_str}] ⚠️ Lỗi đồng bộ ODO (Team_Leader & 365 Đối Soát): {odo_ex}")
+
         official_month_key = r2[2].strip() if len(r2) > 2 else ""
         official_week_key = r2[3].strip() if len(r2) > 3 else ""
+
+        # Bảo toàn dữ liệu Lương Giao (NVGH) đã chốt của các ngày trước nếu Google Sheet Data Raw đang tạm tính lại = 0
+        if os.path.exists(DASHBOARD_CACHE_FILE):
+            try:
+                with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f_prev:
+                    prev_data = json.load(f_prev)
+                prev_drv_map = {d.get("driver_name"): d for d in prev_data.get("drivers", []) if d.get("driver_name")}
+                for drv in drivers_list:
+                    p_drv = prev_drv_map.get(drv.get("driver_name"))
+                    if not p_drv:
+                        continue
+                    p_daily = p_drv.get("daily", {})
+                    for d_k, d_obj in drv.get("daily", {}).items():
+                        if d_obj.get("total", 0) == 0 and d_k in p_daily and p_daily[d_k].get("total", 0) > 0:
+                            d_obj["gtc"] = p_daily[d_k].get("gtc", 0.0)
+                            d_obj["ltc"] = p_daily[d_k].get("ltc", 0.0)
+                            d_obj["total"] = p_daily[d_k].get("total", 0.0)
+                    drv["gtc_salary"] = sum(v.get("gtc", 0.0) for v in drv.get("daily", {}).values())
+                    drv["ltc_salary"] = sum(v.get("ltc", 0.0) for v in drv.get("daily", {}).values())
+                    drv["total_salary"] = sum(v.get("total", 0.0) for v in drv.get("daily", {}).values())
+
+                prev_entities = prev_data.get("entities", {})
+                for ent_k, ent_obj in hubs_matrix.items():
+                    p_ent_m = prev_entities.get(ent_k, {}).get("metrics", {}).get("Lương giao", {}).get("daily", {})
+                    cur_ent_m = ent_obj.get("metrics", {}).get("Lương giao", {}).get("daily", {})
+                    for d_k, val_s in list(cur_ent_m.items()):
+                        if _clean_num(val_s) == 0 and d_k in p_ent_m and _clean_num(p_ent_m[d_k]) > 0:
+                            cur_ent_m[d_k] = p_ent_m[d_k]
+            except Exception as preserve_ex:
+                print(f"[{now_str}] ⚠️ Lỗi bảo toàn cache lương NVGH: {preserve_ex}")
 
         dashboard_data = {
             "last_sync": now_str,
             "sync_epoch": datetime.datetime.now().timestamp(),
             "region": "Miền Tây 01",
+            "odo_sheet_id": ODO_SHEET_ID,
+            "odo_sheet_url": f"https://docs.google.com/spreadsheets/d/{ODO_SHEET_ID}/edit#gid=489219944",
             "official_month_key": official_month_key,
             "official_week_key": official_week_key,
             "months": list(months_dict.keys()),
@@ -446,6 +807,7 @@ def build_cost_dashboard_matrix(force=False):
             "entities": hubs_matrix,
             "drivers": drivers_list,
             "nvxl": nvxl_list,
+            "odo_records": odo_records,
             "months_cols": months_dict,
             "weeks_cols": weeks_dict
         }
@@ -453,7 +815,7 @@ def build_cost_dashboard_matrix(force=False):
         with open(DASHBOARD_CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(dashboard_data, f, ensure_ascii=False, indent=2)
 
-        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 ({len(drivers_list)} NVGH & {len(nvxl_list)} NVXL) thành công!")
+        print(f"[{now_str}] ✅ Đã lưu ma trận Miền Tây 01 ({len(drivers_list)} NVGH, {len(nvxl_list)} NVXL & {len(odo_records)} bản ghi ODO) thành công!")
         return dashboard_data
 
     except Exception as ex:
@@ -486,11 +848,12 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
     entities = matrix.get("entities", {})
     all_drivers = matrix.get("drivers", [])
     all_nvxl = matrix.get("nvxl", [])
+    all_odo = matrix.get("odo_records", [])
     official_month_key = matrix.get("official_month_key", "")
     official_week_key = matrix.get("official_week_key", "")
 
-    # Nếu file cache cũ chưa có trường nvxl hoặc chưa có don_gan trong drivers thì tự động rebuild
-    if not all_nvxl or (all_drivers and "don_gan" not in all_drivers[0]):
+    # Nếu file cache cũ chưa có trường nvxl, odo_records hoặc chưa có don_gan trong drivers thì tự động rebuild
+    if not all_nvxl or not all_odo or (all_drivers and "don_gan" not in all_drivers[0]):
         matrix = build_cost_dashboard_matrix(force=True)
         available_months = matrix.get("months", [])
         available_weeks = matrix.get("weeks", [])
@@ -499,6 +862,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         entities = matrix.get("entities", {})
         all_drivers = matrix.get("drivers", [])
         all_nvxl = matrix.get("nvxl", [])
+        all_odo = matrix.get("odo_records", [])
         official_month_key = matrix.get("official_month_key", "")
         official_week_key = matrix.get("official_week_key", "")
 
@@ -850,6 +1214,77 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         "formatted_avg": _format_vnd(tot_nvxl_sal / len(filtered_nvxl)) + " đ" if filtered_nvxl else "0 đ"
     }
 
+    # PHÂN RÃ & ĐỐI SOÁT CHI TIẾT ODO XE TẢI (TEAM_LEADER & 365 ĐỐI SOÁT) THEO KHO & KỲ BÁO CÁO
+    period_days_set = set(period_all_days)
+    filtered_odo = []
+    for rec in all_odo:
+        if rec.get("date") not in period_days_set:
+            continue
+        if selected_ent_label != "Toàn Vùng MT01" and rec.get("hub_name") != selected_ent_label:
+            continue
+        item_copy = dict(rec)
+        item_copy["formatted_odo_di_tl"] = _format_vnd(item_copy.get("odo_di_tl", 0)) if item_copy.get("odo_di_tl", 0) > 0 else "-"
+        item_copy["formatted_odo_ve_tl"] = _format_vnd(item_copy.get("odo_ve_tl", 0)) if item_copy.get("odo_ve_tl", 0) > 0 else "-"
+        item_copy["formatted_km_tl"] = f"{_format_vnd(item_copy.get('km_tl', 0))} km" if not item_copy.get("is_off") else "0 km (OFF)"
+        item_copy["formatted_odo_di_365"] = _format_vnd(item_copy.get("odo_di_365", 0)) if item_copy.get("odo_di_365", 0) > 0 else ("OFF" if item_copy.get("is_off") else "-")
+        item_copy["formatted_odo_ve_365"] = _format_vnd(item_copy.get("odo_ve_365", 0)) if item_copy.get("odo_ve_365", 0) > 0 else ("OFF" if item_copy.get("is_off") else "-")
+        item_copy["formatted_km_365"] = (
+            f"{_format_vnd(item_copy.get('km_365', 0))} km"
+            if (item_copy.get("has_365") and not item_copy.get("is_off"))
+            else ("0 km (OFF)" if item_copy.get("is_off") else "Chờ 365")
+        )
+        filtered_odo.append(item_copy)
+
+    def _odo_sort_key(x):
+        d_s = x.get("date", "")
+        try:
+            dt_obj = datetime.datetime.strptime(d_s, "%d/%m/%Y").date()
+        except Exception:
+            dt_obj = datetime.date(2000, 1, 1)
+        # Ưu tiên ngày mới nhất lên đầu, trong cùng ngày ưu tiên chuyến cảnh báo lệch lên trước để Sếp dễ kiểm tra
+        warn_prio = 1 if x.get("has_warning") else (0 if not x.get("is_off") else -1)
+        return (dt_obj, warn_prio, x.get("hub_name", ""), x.get("route", ""))
+
+    filtered_odo.sort(key=_odo_sort_key, reverse=True)
+    for idx_o, o_item in enumerate(filtered_odo, 1):
+        o_item["stt"] = idx_o
+
+    tl_trips_only = [x for x in filtered_odo if not x.get("is_off") and x.get("record_type") == "TRIP"]
+    off_trips_only = [x for x in filtered_odo if x.get("is_off")]
+    matched_365_trips = [x for x in tl_trips_only if x.get("has_365")]
+    pending_365_trips = [x for x in tl_trips_only if not x.get("has_365")]
+    warn_odo_trips = [x for x in filtered_odo if x.get("status_code") in ("warn_odo", "warn_both", "warn_missing_odo", "missing_tl")]
+    warn_bks_trips = [x for x in filtered_odo if x.get("status_code") in ("warn_bks", "warn_both")]
+    warn_all_trips = [x for x in filtered_odo if x.get("has_warning")]
+    clean_matched_trips = [x for x in matched_365_trips if not x.get("has_warning")]
+
+    tot_km_tl = sum(int(x.get("km_tl", 0) or 0) for x in tl_trips_only)
+    tot_km_365 = sum(int(x.get("km_365", 0) or 0) for x in filtered_odo if x.get("has_365") and not x.get("is_off"))
+    tot_km_tl_on_365_days = sum(int(x.get("km_tl", 0) or 0) for x in matched_365_trips)
+    net_km_diff_matched = tot_km_tl_on_365_days - tot_km_365
+    avg_km_per_trip = (tot_km_tl / len(tl_trips_only)) if tl_trips_only else 0.0
+
+    odo_summary = {
+        "total_records": len(filtered_odo),
+        "total_trips_tl": len(tl_trips_only),
+        "matched_365_count": len(matched_365_trips),
+        "pending_365_count": len(pending_365_trips),
+        "off_count": len(off_trips_only),
+        "clean_matched_count": len(clean_matched_trips),
+        "warning_count": len(warn_all_trips),
+        "warn_odo_count": len(warn_odo_trips),
+        "warn_bks_count": len(warn_bks_trips),
+        "total_km_tl": tot_km_tl,
+        "formatted_km_tl": f"{_format_vnd(tot_km_tl)} km",
+        "total_km_365": tot_km_365,
+        "formatted_km_365": f"{_format_vnd(tot_km_365)} km",
+        "net_km_diff": net_km_diff_matched,
+        "formatted_km_diff": f"{net_km_diff_matched:+d} km" if net_km_diff_matched != 0 else "0 km (Khớp)",
+        "avg_km_per_trip": round(avg_km_per_trip, 1),
+        "formatted_avg_km": f"{avg_km_per_trip:.1f} km/chuyến",
+        "odo_sheet_url": matrix.get("odo_sheet_url", f"https://docs.google.com/spreadsheets/d/{ODO_SHEET_ID}/edit#gid=489219944")
+    }
+
     recent_days = active_days[-14:] if len(active_days) >= 14 else active_days
     trend_labels = []
     trend_volume = []
@@ -897,6 +1332,10 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         "nvxl_breakdown": {
             "summary": nvxl_summary,
             "list": filtered_nvxl
+        },
+        "odo_breakdown": {
+            "summary": odo_summary,
+            "list": filtered_odo
         },
         "trend_chart": {
             "labels": trend_labels,
@@ -1620,6 +2059,136 @@ def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_
                         c.font = font_warn
 
         _auto_fit_and_polish_sheet(ws4, start_row=4, freeze_cell="B6", filter_range=f"A4:I{r_idx}")
+
+    # =========================================================================
+    # SHEET 5: ĐỐI SOÁT ODO XE TẢI (TEAM_LEADER & 365 & GHN ĐỐI SOÁT)
+    # =========================================================================
+    ws5 = wb.create_sheet(title="5_Doi_Soat_ODO_TL_&_365")
+    _add_sheet_banner(ws5, f"BẢNG ĐỐI SOÁT CHI TIẾT ODO XE TẢI (TEAM_LEADER & 365 ĐỐI SOÁT) — {period_title.upper()}", 15)
+
+    headers_s5 = [
+        "STT",
+        "Ngày Chạy",
+        "Kho Vận Hành",
+        "Tuyến Xe Chạy",
+        "Mã Chuyến (MCD)",
+        "BKS Hệ Thống (TL)",
+        "BKS NVXL Điền",
+        "BKS Báo Cáo (365)",
+        "NVGH Đi Theo Xe (Team_Leader)",
+        "Tài Xế Nhà Xe (365 Đối Soát)",
+        "ODO Đi ➔ Về (TL)",
+        "ODO Đi ➔ Về (365)",
+        "Tổng KM (TL)",
+        "Tổng KM (365)",
+        "Trạng Thái Đối Soát (TL & 365)"
+    ]
+    ws5.row_dimensions[4].height = 28
+    for c_idx, h_text in enumerate(headers_s5, 1):
+        c = ws5.cell(row=4, column=c_idx, value=h_text)
+        c.font = f_tbl_header
+        c.fill = fill_header_nvxl
+        c.border = b_header
+        c.alignment = al_center if c_idx not in (3, 4, 9, 10) else al_left
+
+    odo_bd = data.get("odo_breakdown", {})
+    odo_sum = odo_bd.get("summary", {})
+    odo_list = odo_bd.get("list", [])
+
+    ws5.row_dimensions[5].height = 25
+    sum_row_s5 = [
+        "∑",
+        f"{odo_sum.get('total_trips_tl', 0)} chuyến TL",
+        hub_label,
+        f"Đã đối soát 365: {odo_sum.get('matched_365_count', 0)} | OFF: {odo_sum.get('off_count', 0)}",
+        "ALL",
+        "-",
+        "-",
+        "-",
+        f"Bình quân: {odo_sum.get('formatted_avg_km', '0 km/chuyến')}",
+        f"Độ lệch ròng: {odo_sum.get('formatted_km_diff', '0 km')}",
+        "-",
+        "-",
+        int(odo_sum.get("total_km_tl", 0) or 0),
+        int(odo_sum.get("total_km_365", 0) or 0),
+        f"Cảnh báo: {odo_sum.get('warning_count', 0)} vụ" if odo_sum.get("warning_count", 0) > 0 else "Khớp Chuẩn"
+    ]
+    for c_idx, val in enumerate(sum_row_s5, 1):
+        c = ws5.cell(row=5, column=c_idx, value=val)
+        c.font = f_total_row
+        c.fill = fill_total
+        c.border = b_total
+        if c_idx in (13, 14):
+            c.alignment = al_right
+            c.number_format = FMT_INT
+        elif c_idx in (3, 4, 9, 10):
+            c.alignment = al_left
+        else:
+            c.alignment = al_center
+
+    r_idx = 5
+    for idx_o, o_rec in enumerate(odo_list, 1):
+        r_idx += 1
+        ws5.row_dimensions[r_idx].height = 22
+        z_fill = fill_zebra_odd if idx_o % 2 == 1 else fill_zebra_even
+
+        odo_tl_range = f"{o_rec.get('formatted_odo_di_tl', '-')} ➔ {o_rec.get('formatted_odo_ve_tl', '-')}" if not o_rec.get("is_off") else "OFF"
+        odo_365_range = (
+            f"{o_rec.get('formatted_odo_di_365', '-')} ➔ {o_rec.get('formatted_odo_ve_365', '-')}"
+            if (o_rec.get("has_365") and not o_rec.get("is_off"))
+            else ("OFF" if o_rec.get("is_off") else "Chờ 365")
+        )
+
+        row_vals = [
+            idx_o,
+            o_rec.get("date", ""),
+            o_rec.get("hub_name", ""),
+            o_rec.get("route", ""),
+            o_rec.get("mcd", ""),
+            o_rec.get("plate_ghn", ""),
+            o_rec.get("plate_nvxl", "") or "-",
+            o_rec.get("plate_365", "") or "Chờ 365",
+            o_rec.get("nvgh_full", ""),
+            o_rec.get("driver_365", "") or ("Nghỉ (OFF)" if o_rec.get("is_off") else "Chờ 365"),
+            odo_tl_range,
+            odo_365_range,
+            int(o_rec.get("km_tl", 0) or 0),
+            int(o_rec.get("km_365", 0) or 0) if o_rec.get("has_365") else 0,
+            o_rec.get("status_badge", "")
+        ]
+        for c_idx, val in enumerate(row_vals, 1):
+            c = ws5.cell(row=r_idx, column=c_idx, value=val)
+            c.fill = z_fill
+            c.border = b_data
+            c.font = f_data_bold if c_idx in (2, 6, 13, 14) else f_data_reg
+
+            if c_idx in (13, 14):
+                c.alignment = al_right
+                c.number_format = FMT_INT
+            elif c_idx in (3, 4, 9, 10):
+                c.alignment = al_left
+            else:
+                c.alignment = al_center
+
+            if c_idx == 7 and o_rec.get("tl_alert", "").lower() == "lệch":
+                c.fill = fill_warn
+                c.font = font_warn
+            elif c_idx == 15:
+                st_code = o_rec.get("status_code", "")
+                if st_code == "matched":
+                    c.fill = fill_good
+                    c.font = font_good
+                elif st_code == "pending_365":
+                    c.fill = fill_info
+                    c.font = font_info
+                elif st_code == "warn_bks":
+                    c.fill = fill_warn
+                    c.font = font_warn
+                elif st_code.startswith("warn_") or st_code == "missing_tl":
+                    c.fill = fill_bad
+                    c.font = font_bad
+
+    _auto_fit_and_polish_sheet(ws5, start_row=4, freeze_cell="D6", filter_range=f"A4:O{r_idx}")
 
     # Lưu ra file chuẩn và trả về tên file tải về theo kỳ báo cáo
     safe_key = re.sub(r"[^0-9A-Za-zÀ-ỹ_\-]+", "_", str(flt.get("key") or "Latest")).strip("_")

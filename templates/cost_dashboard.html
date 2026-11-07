@@ -1199,6 +1199,13 @@
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);
     }
 
+    .salary-tab-btn.active-odo {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+      border: 1.5px solid #0ea5e9;
+      color: var(--text-title);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.2);
+    }
+
     .salary-tab-badge {
       font-family: 'JetBrains Mono', monospace;
       padding: 2px 7px;
@@ -1217,6 +1224,11 @@
     .salary-tab-badge.emerald {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+
+    .salary-tab-badge.ocean {
+      background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+      box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3);
     }
 
     .salary-tab-money {
@@ -2020,36 +2032,52 @@
         </div>
       </div>
 
-      <!-- THANH CHUYỂN TAB CAO CẤP (1 HÀNG GỌN GÀNG): LƯƠNG NVGH vs LƯƠNG NVXL -->
-      <div class="salary-command-bar">
-        <div class="salary-tabs-group">
-          <button id="tabBtnNVGH" onclick="switchSalaryTab('nvgh')" class="salary-tab-btn active-nvgh" type="button">
+      <!-- THANH CHUYỂN TAB CAO CẤP (1 HÀNG GỌN GÀNG): LƯƠNG NVGH vs LƯƠNG NVXL vs ĐỐI SOÁT ODO (TL & 365) -->
+      <div class="salary-command-bar" style="padding: 7px 10px; gap: 8px;">
+        <div class="salary-tabs-group" style="gap: 6px;">
+          <button id="tabBtnNVGH" onclick="switchSalaryTab('nvgh')" class="salary-tab-btn active-nvgh" type="button" style="padding: 6px 10px; font-size: 12px; gap: 5px;">
             <span>🛵 LƯƠNG & ĐƠN NVGH</span>
             <span id="badgeDriverCount" class="salary-tab-badge amber">25/43</span>
             <span id="badgeDriverMoney" class="salary-tab-money">0 đ</span>
           </button>
 
-          <button id="tabBtnNVXL" onclick="switchSalaryTab('nvxl')" class="salary-tab-btn" type="button">
+          <button id="tabBtnNVXL" onclick="switchSalaryTab('nvxl')" class="salary-tab-btn" type="button" style="padding: 6px 10px; font-size: 12px; gap: 5px;">
             <span>🏢 LƯƠNG & ĐƠN NVXL</span>
             <span id="badgeNvxlCount" class="salary-tab-badge emerald">4 NV</span>
             <span id="badgeNvxlMoney" class="salary-tab-money">0 đ</span>
           </button>
+
+          <button id="tabBtnODO" onclick="switchSalaryTab('odo')" class="salary-tab-btn" type="button" style="padding: 6px 10px; font-size: 12px; gap: 5px;" title="Đối soát chéo ODO Xe Tải giữa 2 sheet Team_Leader & 365 & GHN Đối Soát">
+            <span>🚛 ODO (TL & 365)</span>
+            <span id="badgeOdoTripCount" class="salary-tab-badge ocean">0 Chuyến</span>
+            <span id="badgeOdoTotalKm" class="salary-tab-money">0 KM</span>
+          </button>
         </div>
 
-        <div class="salary-tools-group">
-          <label id="lblHideZeroWrap" class="salary-filter-pill" title="Chỉ hiển thị nhân sự có phát sinh đơn hoặc lương trong kỳ">
-            <input type="checkbox" id="chkOnlyActiveStaff" checked onchange="filterDriversTable()" style="accent-color: #10b981; cursor: pointer; width: 14px; height: 14px;">
+        <div class="salary-tools-group" style="gap: 6px;">
+          <label id="lblHideZeroWrap" class="salary-filter-pill" style="padding: 5px 9px; font-size: 11.5px;" title="Chỉ hiển thị nhân sự có phát sinh đơn hoặc lương trong kỳ">
+            <input type="checkbox" id="chkOnlyActiveStaff" checked onchange="filterDriversTable()" style="accent-color: #10b981; cursor: pointer; width: 13px; height: 13px;">
             <span>Có phát sinh</span>
           </label>
-          <input type="text" id="txtSearchDriver" class="salary-search-input" placeholder="🔍 Tìm NV / Kho..." oninput="filterDriversTable()">
-          <button type="button" class="btn-export-excel-pro" onclick="exportCostExcel()">
-            <span>📥 Xuất Excel</span>
+          <select id="selOdoStatusFilter" class="filter-select" onchange="filterOdoTable()" style="display: none; min-width: 118px; max-width: 155px; padding: 5px 7px; font-size: 11.5px; font-weight: 700;">
+            <option value="all">📋 Tất cả chuyến</option>
+            <option value="warn">🚨 Cảnh báo Lệch</option>
+            <option value="matched">✅ Khớp TL & 365</option>
+            <option value="pending_365">⏳ Chờ 365</option>
+            <option value="off">🛑 Xe OFF</option>
+          </select>
+          <input type="text" id="txtSearchDriver" class="salary-search-input" style="width: 128px; padding: 5px 9px; font-size: 11.5px;" placeholder="🔍 Tìm NV / Kho..." oninput="onUnifiedTableSearch()">
+          <a id="btnOpenOdoSheet" href="https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/edit#gid=489219944" target="_blank" rel="noopener" class="salary-filter-pill" style="display: none; padding: 5px 8px; font-size: 11.5px; text-decoration: none; color: var(--accent-blue); border-color: var(--border-accent);" title="Mở trực tiếp Google Sheet Team_Leader & 365 Đối Soát">
+            <span>🔗 Sheet</span>
+          </a>
+          <button type="button" class="btn-export-excel-pro" onclick="exportCostExcel()" style="padding: 6px 10px; font-size: 11.5px;">
+            <span>📥 Excel</span>
           </button>
         </div>
       </div>
 
-      <!-- DẢI TỔNG HỢP SẢN LƯỢNG ĐƠN (GÁN / GTC / LTC / TỶ LỆ GTC) + LƯƠNG CỦA TAB ĐANG CHỌN -->
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
+      <!-- DẢI TỔNG HỢP SẢN LƯỢNG ĐƠN (GÁN / GTC / LTC / TỶ LỆ GTC) + LƯƠNG CỦA TAB NVGH / NVXL -->
+      <div id="salarySummaryStrip" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
         <div style="background: var(--bg-table-th); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 12.5px;">
           <span style="color: var(--text-sub);">Tổng Đơn Gán:</span>
           <b id="txtSumDonGan" style="color: var(--text-main); margin-left: 5px; font-size: 14px;">0</b>
@@ -2084,14 +2112,51 @@
         </div>
       </div>
 
+      <!-- DẢI TỔNG HỢP ĐỐI SOÁT ODO XE TẢI (1 HÀNG GỌN GÀNG: TEAM_LEADER & 365 & GHN ĐỐI SOÁT) -->
+      <div id="odoSummaryStrip" style="display: none; align-items: center; gap: 7px; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 12px;">
+        <div style="background: var(--bg-table-th); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;">
+          <span style="color: var(--text-sub);">🚛 Team_Leader:</span>
+          <b id="txtOdoTotalTripsTl" style="color: var(--text-main); margin-left: 4px; font-size: 12.5px;">0 chuyến</b>
+        </div>
+        <div style="background: rgba(14, 165, 233, 0.12); border: 1px solid rgba(14, 165, 233, 0.35); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;">
+          <span style="color: var(--text-sub);">🔄 Đối Soát 365:</span>
+          <b id="txtOdoMatched365" style="color: var(--accent-blue); margin-left: 4px; font-size: 12.5px;">0 chuyến</b>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;">
+          <span style="color: var(--text-sub);">📏 KM (TL):</span>
+          <b id="txtOdoSumKmTl" style="color: var(--accent-green); margin-left: 4px; font-size: 12.5px;">0 km</b>
+        </div>
+        <div style="background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.35); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;">
+          <span style="color: var(--text-sub);">📊 KM (365):</span>
+          <b id="txtOdoSumKm365" style="color: var(--accent-blue); margin-left: 4px; font-size: 12.5px;">0 km</b>
+        </div>
+        <div style="background: var(--bg-table-th); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;">
+          <span style="color: var(--text-sub);">⚡ BQ:</span>
+          <b id="txtOdoAvgKm" style="color: var(--text-title); margin-left: 4px; font-size: 12.5px;">0 km</b>
+        </div>
+        <div style="background: rgba(100, 116, 139, 0.14); border: 1px solid rgba(100, 116, 139, 0.35); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;">
+          <span style="color: var(--text-sub);">🛑 Xe OFF:</span>
+          <b id="txtOdoOffCount" style="color: var(--text-main); margin-left: 4px; font-size: 12.5px;">0 lượt</b>
+        </div>
+        <div onclick="quickFilterOdoWarn()" style="cursor: pointer; background: rgba(239, 68, 68, 0.14); border: 1px solid rgba(239, 68, 68, 0.42); padding: 5px 10px; border-radius: 8px; font-size: 11.5px; white-space: nowrap;" title="Bấm để lọc nhanh các chuyến có cảnh báo Lệch ODO hoặc Lệch Biển Số">
+          <span style="color: var(--text-sub);">🚨 Cảnh Báo Lệch:</span>
+          <b id="txtOdoWarnCount" style="color: var(--accent-red); margin-left: 4px; font-size: 12.5px;">0 vụ</b>
+        </div>
+      </div>
+
       <style>
         #tblDrivers th, #tblDrivers td {
           padding: 8px 8px !important;
           font-size: 12.5px !important;
           white-space: nowrap;
         }
+        #tblOdoReconcile th, #tblOdoReconcile td {
+          padding: 5.5px 4.5px !important;
+          font-size: 11px !important;
+          white-space: nowrap;
+        }
       </style>
-      <div class="table-wrapper">
+      <div id="wrapTableSalary" class="table-wrapper">
         <table id="tblDrivers">
           <thead>
             <tr>
@@ -2111,6 +2176,30 @@
           </thead>
           <tbody id="tblBodyDrivers">
             <tr><td colspan="12" style="text-align: center; padding: 20px;">Đang tải danh sách nhân sự...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BẢNG ĐỐI SOÁT CHI TIẾT ODO XE TẢI (TEAM_LEADER & 365 & GHN ĐỐI SOÁT) -->
+      <div id="wrapTableOdo" class="table-wrapper" style="display: none;">
+        <table id="tblOdoReconcile">
+          <thead>
+            <tr>
+              <th style="width: 24px; text-align: center;">#</th>
+              <th style="text-align: center;">Ngày</th>
+              <th>Kho & Tuyến</th>
+              <th style="text-align: center;">Mã Chuyến (MCD)</th>
+              <th style="text-align: center;">Biển Số (TL / NVXL)</th>
+              <th>NVGH (TL) • Tài Xế (365)</th>
+              <th style="text-align: center;">Giờ Ca (TL | 365)</th>
+              <th style="text-align: right; color: var(--accent-green);">ODO Đi➔Về (TL)</th>
+              <th style="text-align: right; color: var(--accent-blue);">ODO Đi➔Về (365)</th>
+              <th style="text-align: right; color: var(--accent-green);">KM (TL | 365)</th>
+              <th style="text-align: center;">Lệch & Đối Soát</th>
+            </tr>
+          </thead>
+          <tbody id="tblBodyOdo">
+            <tr><td colspan="11" style="text-align: center; padding: 20px;">Đang tải dữ liệu đối soát ODO (Team_Leader & 365)...</td></tr>
           </tbody>
         </table>
       </div>
@@ -2506,6 +2595,8 @@
     let allLoadedDriversSummary = null;
     let allLoadedNvxl = [];
     let allLoadedNvxlSummary = null;
+    let allLoadedOdo = [];
+    let allLoadedOdoSummary = null;
 
     function renderData(data) {
       window.lastRenderedData = data;
@@ -2558,6 +2649,10 @@
       allLoadedNvxl = nb.list || [];
       allLoadedNvxlSummary = nb.summary || {};
 
+      const ob = data.odo_breakdown || {};
+      allLoadedOdo = ob.list || [];
+      allLoadedOdoSummary = ob.summary || {};
+
       if (document.getElementById("badgeDriverCount")) {
         const actCnt = allLoadedDriversSummary.active_count !== undefined ? allLoadedDriversSummary.active_count : (allLoadedDriversSummary.count || 0);
         document.getElementById("badgeDriverCount").innerText = `${actCnt}/${allLoadedDriversSummary.count || 0}`;
@@ -2570,6 +2665,17 @@
       }
       if (document.getElementById("badgeNvxlMoney")) {
         document.getElementById("badgeNvxlMoney").innerText = allLoadedNvxlSummary.formatted_total || "0 đ";
+      }
+      if (document.getElementById("badgeOdoTripCount")) {
+        const tlCnt = allLoadedOdoSummary.total_trips_tl || 0;
+        const warnCnt = allLoadedOdoSummary.warning_count || 0;
+        document.getElementById("badgeOdoTripCount").innerText = warnCnt > 0 ? `${tlCnt} Chuyến • ${warnCnt}⚠️` : `${tlCnt} Chuyến`;
+      }
+      if (document.getElementById("badgeOdoTotalKm")) {
+        document.getElementById("badgeOdoTotalKm").innerText = allLoadedOdoSummary.formatted_km_tl || "0 km";
+      }
+      if (document.getElementById("btnOpenOdoSheet") && allLoadedOdoSummary.odo_sheet_url) {
+        document.getElementById("btnOpenOdoSheet").href = allLoadedOdoSummary.odo_sheet_url;
       }
 
       renderActiveSalaryTab();
@@ -2591,20 +2697,59 @@
       currentSalaryTab = tab;
       const btnNvgh = document.getElementById("tabBtnNVGH");
       const btnNvxl = document.getElementById("tabBtnNVXL");
-      if (btnNvgh && btnNvxl) {
-        btnNvgh.classList.remove("active-nvgh", "active-nvxl");
-        btnNvxl.classList.remove("active-nvgh", "active-nvxl");
-        if (tab === "nvgh") {
-          btnNvgh.classList.add("active-nvgh");
-        } else {
-          btnNvxl.classList.add("active-nvxl");
-        }
+      const btnOdo = document.getElementById("tabBtnODO");
+      [btnNvgh, btnNvxl, btnOdo].forEach(b => {
+        if (b) b.classList.remove("active-nvgh", "active-nvxl", "active-odo");
+      });
+      if (tab === "nvgh" && btnNvgh) btnNvgh.classList.add("active-nvgh");
+      else if (tab === "nvxl" && btnNvxl) btnNvxl.classList.add("active-nvxl");
+      else if (tab === "odo" && btnOdo) btnOdo.classList.add("active-odo");
+
+      const isOdo = (tab === "odo");
+      const salaryStrip = document.getElementById("salarySummaryStrip");
+      const odoStrip = document.getElementById("odoSummaryStrip");
+      const wrapSal = document.getElementById("wrapTableSalary");
+      const wrapOdo = document.getElementById("wrapTableOdo");
+      const lblHideZero = document.getElementById("lblHideZeroWrap");
+      const selOdoStatus = document.getElementById("selOdoStatusFilter");
+      const btnSheet = document.getElementById("btnOpenOdoSheet");
+      const inpSearch = document.getElementById("txtSearchDriver");
+
+      if (salaryStrip) salaryStrip.style.display = isOdo ? "none" : "flex";
+      if (odoStrip) odoStrip.style.display = isOdo ? "flex" : "none";
+      if (wrapSal) wrapSal.style.display = isOdo ? "none" : "block";
+      if (wrapOdo) wrapOdo.style.display = isOdo ? "block" : "none";
+      if (lblHideZero) lblHideZero.style.display = isOdo ? "none" : "inline-flex";
+      if (selOdoStatus) selOdoStatus.style.display = isOdo ? "inline-block" : "none";
+      if (btnSheet) btnSheet.style.display = isOdo ? "inline-flex" : "none";
+      if (inpSearch) {
+        inpSearch.placeholder = isOdo ? "🔍 Tìm BKS / MCD / Tuyến / TX..." : "🔍 Tìm NV / Kho...";
       }
+
       renderActiveSalaryTab();
     }
 
+    function onUnifiedTableSearch() {
+      if (currentSalaryTab === "odo") {
+        filterOdoTable();
+      } else {
+        filterDriversTable();
+      }
+    }
+
+    function quickFilterOdoWarn() {
+      const sel = document.getElementById("selOdoStatusFilter");
+      if (!sel) return;
+      sel.value = (sel.value === "warn") ? "all" : "warn";
+      filterOdoTable();
+    }
+
     function renderActiveSalaryTab() {
-      filterDriversTable();
+      if (currentSalaryTab === "odo") {
+        filterOdoTable();
+      } else {
+        filterDriversTable();
+      }
     }
 
     function _getGtcRateColor(rate) {
@@ -2738,6 +2883,183 @@
         return nameStr.includes(q) || hubStr.includes(q);
       });
       renderDriversTable(filtered, summaryObj);
+    }
+
+    function filterOdoTable() {
+      const q = (document.getElementById("txtSearchDriver") ? document.getElementById("txtSearchDriver").value : "").toLowerCase().trim();
+      const statusMode = (document.getElementById("selOdoStatusFilter") ? document.getElementById("selOdoStatusFilter").value : "all");
+
+      const filtered = (allLoadedOdo || []).filter(item => {
+        if (statusMode === "warn" && !item.has_warning) return false;
+        if (statusMode === "matched" && item.status_code !== "matched") return false;
+        if (statusMode === "pending_365" && item.status_code !== "pending_365") return false;
+        if (statusMode === "off" && !item.is_off) return false;
+
+        if (!q) return true;
+        const hay = [
+          item.date,
+          item.hub_name,
+          item.route,
+          item.mcd,
+          item.plate_ghn,
+          item.plate_nvxl,
+          item.plate_365,
+          item.nvgh_full,
+          item.driver_365,
+          item.status_badge
+        ].join(" ").toLowerCase();
+        return hay.includes(q);
+      });
+
+      renderOdoTable(filtered, allLoadedOdoSummary || {});
+    }
+
+    function renderOdoTable(items, sumObj) {
+      const s = sumObj || {};
+      const matchedCnt = s.matched_365_count || 0;
+      const pendingCnt = s.pending_365_count || 0;
+      const warnCnt = s.warning_count || 0;
+      const warnOdoCnt = s.warn_odo_count || 0;
+      const warnBksCnt = s.warn_bks_count || 0;
+
+      if (document.getElementById("txtOdoTotalTripsTl")) {
+        document.getElementById("txtOdoTotalTripsTl").innerText = `${s.total_trips_tl || 0} chuyến`;
+      }
+      if (document.getElementById("txtOdoMatched365")) {
+        document.getElementById("txtOdoMatched365").innerText = pendingCnt > 0
+          ? `${matchedCnt} khớp (${pendingCnt} chờ 365)`
+          : `${matchedCnt} chuyến`;
+      }
+      if (document.getElementById("txtOdoSumKmTl")) {
+        document.getElementById("txtOdoSumKmTl").innerText = s.formatted_km_tl || "0 km";
+      }
+      if (document.getElementById("txtOdoSumKm365")) {
+        document.getElementById("txtOdoSumKm365").innerText = s.formatted_km_365 || "0 km";
+      }
+      if (document.getElementById("txtOdoAvgKm")) {
+        document.getElementById("txtOdoAvgKm").innerText = s.formatted_avg_km || "0 km/chuyến";
+      }
+      if (document.getElementById("txtOdoOffCount")) {
+        document.getElementById("txtOdoOffCount").innerText = `${s.off_count || 0} lượt`;
+      }
+      if (document.getElementById("txtOdoWarnCount")) {
+        const wEl = document.getElementById("txtOdoWarnCount");
+        if (warnCnt > 0) {
+          wEl.innerText = `${warnCnt} vụ (${warnOdoCnt} ODO • ${warnBksCnt} BKS)`;
+          wEl.style.color = "var(--accent-red)";
+        } else {
+          wEl.innerText = "0 vụ (Chuẩn 100%)";
+          wEl.style.color = "var(--accent-green)";
+        }
+      }
+
+      const tbody = document.getElementById("tblBodyOdo");
+      if (!tbody) return;
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">Không có chuyến xe tải nào khớp bộ lọc trong kỳ này</td></tr>';
+        return;
+      }
+
+      const hubLabel = (window.lastRenderedData && window.lastRenderedData.period_info && window.lastRenderedData.period_info.hub) || "Toàn Vùng MT01";
+      const netDiff = Number(s.net_km_diff || 0);
+
+      const summaryRowHtml = `
+        <tr style="background: rgba(14, 165, 233, 0.12); border-bottom: 2px solid var(--accent-blue);">
+          <td style="text-align: center; font-weight: 900; color: var(--accent-blue);">∑</td>
+          <td style="text-align: center; font-weight: 800; color: var(--accent-blue);">${s.total_trips_tl || 0} chuyến</td>
+          <td style="font-weight: 800; color: var(--accent-green);">📍 ${hubLabel}</td>
+          <td style="text-align: center; color: var(--text-sub); font-weight: 700;">Khớp: ${matchedCnt} | Chờ: ${pendingCnt}</td>
+          <td style="text-align: center; color: var(--text-sub); font-weight: 700;">OFF: ${s.off_count || 0} lượt</td>
+          <td style="color: var(--text-main); font-weight: 700;">TL & 365 Đối Soát</td>
+          <td style="text-align: center; color: var(--text-sub); font-weight: 700;">BQ: ${s.avg_km_per_trip || 0} km</td>
+          <td class="td-num" style="color: var(--accent-green); font-weight: 800;">∑ ODO TL</td>
+          <td class="td-num" style="color: var(--accent-blue); font-weight: 800;">∑ ODO 365</td>
+          <td class="td-num" style="font-weight: 900; font-size: 12px;">
+            <span style="color: var(--accent-green);">${s.formatted_km_tl || "0 km"}</span>
+            <span style="opacity:0.4; margin:0 2px;">|</span>
+            <span style="color: var(--accent-blue);">${s.formatted_km_365 || "0 km"}</span>
+          </td>
+          <td style="text-align: center;">
+            <span style="background: ${warnCnt > 0 ? 'rgba(239,68,68,0.16)' : 'rgba(16,185,129,0.16)'}; color: ${warnCnt > 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; border: 1px solid ${warnCnt > 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; padding: 2px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800;">
+              ${warnCnt > 0 ? `Lệch ${s.formatted_km_diff || '0 km'} • ${warnCnt} vụ ⚠️` : 'Khớp 100% ✓'}
+            </span>
+          </td>
+        </tr>
+      `;
+
+      const rowsHtml = items.map((r, idx) => {
+        const badgeColor = _getBadgeThemeColor(r.status_color || "#10b981");
+        const isOff = Boolean(r.is_off);
+        const has365 = Boolean(r.has_365);
+
+        let plateHtml = `<span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--text-title);">${r.plate_ghn || "-"}</span>`;
+        if (r.tl_alert && r.tl_alert.toLowerCase() === "lệch") {
+          plateHtml += ` <span style="background: rgba(245, 158, 11, 0.18); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.45); padding: 1px 5px; border-radius: 4px; font-size: 10px; font-weight: 800;" title="Biển số NVXL điền trên Data_Tong bị lệch định dạng so với hệ thống GHN">NVXL: ${r.plate_nvxl || "Trống"} ⚠️</span>`;
+        } else if (has365 && r.plate_365 && r.plate_365 !== "OFF" && r.plate_365.replace(/[.\-\s]/g, "") !== (r.plate_ghn || "").replace(/[.\-\s]/g, "")) {
+          plateHtml += ` <span style="background: rgba(239, 68, 68, 0.18); color: var(--accent-red); padding: 1px 5px; border-radius: 4px; font-size: 10px; font-weight: 800;">365: ${r.plate_365}</span>`;
+        }
+
+        const timeTl = (r.checkin_tl || r.checkout_tl) ? `${r.checkin_tl || "--"}→${r.checkout_tl || "--"}` : "--";
+        const time365 = (r.checkin_365 || r.checkout_365) ? `${r.checkin_365 || "--"}→${r.checkout_365 || "--"}` : (isOff ? "OFF" : "Chờ");
+
+        const odoTlStr = isOff ? `<span style="color: var(--text-sub);">OFF</span>` : `<span style="font-family: 'JetBrains Mono', monospace;">${r.formatted_odo_di_tl}➔<b>${r.formatted_odo_ve_tl}</b></span>`;
+        const odo365Str = isOff
+          ? `<span style="color: var(--text-sub);">OFF</span>`
+          : (has365
+            ? `<span style="font-family: 'JetBrains Mono', monospace;">${r.formatted_odo_di_365}➔<b>${r.formatted_odo_ve_365}</b></span>`
+            : `<span style="color: var(--text-sub); font-style: italic;">⏳ Chờ 365</span>`);
+
+        const rowBg = r.has_warning ? "background: rgba(239, 68, 68, 0.04);" : (isOff ? "opacity: 0.78;" : "");
+        const shortHub = (r.hub_name || "").replace("Kho ", "");
+        const drv365Label = r.driver_365 ? `<span style="color: var(--accent-blue);">${r.driver_365}</span>` : (isOff ? `<span style="color: var(--text-sub);">OFF</span>` : `<span style="color: var(--text-sub);">Chờ 365</span>`);
+
+        let shortStatus = r.status_badge || "";
+        if (r.status_code === "warn_bks") {
+          shortStatus = has365 ? "⚠️ Lệch BKS" : "⚠️ Lệch BKS • Chờ";
+        } else if (r.status_code === "matched") {
+          shortStatus = "✅ Khớp (0 km)";
+        } else if (r.status_code === "pending_365") {
+          shortStatus = "⏳ Chờ 365";
+        }
+
+        const kmPairHtml = isOff
+          ? `<span style="color: var(--text-sub);">OFF</span>`
+          : `<span style="color: var(--accent-green); font-weight: 800;">${r.km_tl || 0}</span> <span style="opacity:0.4;">|</span> <span style="color: var(--accent-blue); font-weight: 800;">${has365 ? (r.km_365 + " km") : "Chờ"}</span>`;
+
+        return `
+          <tr style="${rowBg}">
+            <td style="text-align: center; color: var(--text-sub); font-weight: 700;">${idx + 1}</td>
+            <td style="text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-title);">${r.date || ""}</td>
+            <td>
+              <span style="color: var(--accent-blue); font-weight: 800;">${shortHub}</span>
+              <span style="color: var(--text-sub); margin: 0 3px;">•</span>
+              <span style="font-weight: 700; color: var(--text-main);">${r.route || ""}</span>
+            </td>
+            <td style="text-align: center;">
+              <code style="background: var(--bg-table-th); border: 1px solid var(--border-color); padding: 1.5px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: var(--accent-blue);">${r.mcd || "-"}</code>
+            </td>
+            <td style="text-align: center;">${plateHtml}</td>
+            <td style="font-weight: 600; color: var(--text-main);">
+              <span>${r.nvgh_name || "-"}</span>
+              <span style="opacity:0.45; margin: 0 3px;">•</span>
+              ${drv365Label}
+            </td>
+            <td style="text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-sub);">
+              ${timeTl} <span style="opacity:0.4;">|</span> ${time365}
+            </td>
+            <td class="td-num" style="color: var(--text-main);">${odoTlStr}</td>
+            <td class="td-num" style="color: var(--accent-blue);">${odo365Str}</td>
+            <td class="td-num">${kmPairHtml}</td>
+            <td style="text-align: center;">
+              <span style="background: ${badgeColor}1f; color: ${badgeColor}; border: 1px solid ${badgeColor}66; padding: 2px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800;">
+                ${shortStatus}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      tbody.innerHTML = summaryRowHtml + rowsHtml;
     }
 
     function renderTable(hubs) {
