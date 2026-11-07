@@ -15,17 +15,43 @@
        MULTI-THEME PALETTE SYSTEM - DYNAMIC ROOT & THEMES
        ========================================================================== */
     :root,
+    body.theme-light {
+      --bg-primary: #f0fdfa;
+      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-input: #ffffff;
+      --bg-tabs: #e2e8f0;
+      --bg-table-th: #f1f5f9;
+      --bg-table-hover: rgba(13, 148, 136, 0.06);
+      --border-color: #cbd5e1;
+      --border-accent: rgba(13, 148, 136, 0.5);
+      --text-main: #0f172a;
+      --text-title: #0f172a;
+      --text-sub: #475569;
+      --text-table: #1e293b;
+      --accent-blue: #0284c7;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --accent-purple: #7c3aed;
+      --accent-red: #e11d48;
+      --primary-gradient: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+      --header-title-gradient: linear-gradient(135deg, #0f766e 0%, #0284c7 100%);
+      --chart-grid: rgba(15, 23, 42, 0.07);
+      --chart-tick: #334155;
+    }
+
     body.theme-ghn-teal {
-      --bg-primary: #051218;
-      --bg-header: rgba(8, 26, 36, 0.95);
-      --bg-card: #0b1c26;
-      --bg-card-hover: #102a38;
-      --bg-input: #081a24;
-      --bg-tabs: #040e13;
-      --bg-table-th: #081c26;
-      --bg-table-hover: rgba(0, 229, 190, 0.05);
-      --border-color: rgba(0, 229, 190, 0.16);
-      --border-accent: rgba(0, 229, 190, 0.45);
+      --bg-primary: #0a1c26;
+      --bg-header: rgba(12, 32, 44, 0.95);
+      --bg-card: #132b39;
+      --bg-card-hover: #19384a;
+      --bg-input: #0f2430;
+      --bg-tabs: #08161e;
+      --bg-table-th: #132b39;
+      --bg-table-hover: rgba(0, 229, 190, 0.08);
+      --border-color: rgba(0, 229, 190, 0.22);
+      --border-accent: rgba(0, 229, 190, 0.55);
       --text-main: #f8fafc;
       --text-title: #ffffff;
       --text-sub: #94a3b8;
@@ -37,7 +63,7 @@
       --accent-red: #ef4444;
       --primary-gradient: linear-gradient(135deg, #00e5be 0%, #00897b 100%);
       --header-title-gradient: linear-gradient(135deg, #00e5be 0%, #38bdf8 100%);
-      --chart-grid: rgba(255, 255, 255, 0.06);
+      --chart-grid: rgba(255, 255, 255, 0.08);
       --chart-tick: #94a3b8;
     }
 
@@ -1525,7 +1551,7 @@
   </style>
 </head>
 
-<body class="theme-ghn-teal">
+<body class="theme-light">
 
   <!-- HEADER -->
   <header class="dashboard-header">
@@ -1543,15 +1569,15 @@
       <!-- NÚT 1-CLICK SÁNG / TỐI TRỰC TIẾP -->
       <button id="btnQuickHeaderMode" class="btn-quick-theme-toggle" type="button"
         title="Bấm 1-Click để chuyển nhanh Chế độ Sáng / Tối">
-        <span id="txtQuickHeaderModeIcon">☀️</span>
-        <span id="txtQuickHeaderModeLabel">Sáng</span>
+        <span id="txtQuickHeaderModeIcon">🌙</span>
+        <span id="txtQuickHeaderModeLabel">Tối</span>
       </button>
 
       <!-- 🎨 NÚT CHỌN GIAO DIỆN & SÁNG / TỐI NỔI BẬT -->
       <div class="theme-palette-wrapper" id="themePaletteWrapper">
         <button id="btnThemeToggle" class="btn btn-theme-pill" title="Đổi màu sắc & Chỉnh Sáng / Tối" type="button">
-          <span id="themePillIcon">🟢</span>
-          <span id="themePillLabel">Xanh Đen GHN</span>
+          <span id="themePillIcon">☀️</span>
+          <span id="themePillLabel">Sáng Ngọc Lục Bảo</span>
           <span class="theme-caret">▾</span>
         </button>
 
@@ -1578,7 +1604,7 @@
           <div class="theme-dd-section-title">☀️ BỘ GIAO DIỆN SÁNG CAO CẤP (BAN NGÀY):</div>
 
           <div class="theme-dd-list">
-            <div class="theme-item" data-theme="theme-light">
+            <div class="theme-item active" data-theme="theme-light">
               <span class="theme-badge-color"
                 style="background: linear-gradient(135deg, #0d9488 0%, #0284c7 55%, #f59e0b 100%); border: 2px solid #0d9488;"></span>
               <div class="theme-item-info">
@@ -1621,7 +1647,7 @@
             <div class="theme-dd-divider"></div>
             <div class="theme-dd-section-title" style="padding-left:2px;">🌙 BỘ GIAO DIỆN TỐI CHUYÊN NGHIỆP (BAN ĐÊM):</div>
 
-            <div class="theme-item active" data-theme="theme-ghn-teal">
+            <div class="theme-item" data-theme="theme-ghn-teal">
               <span class="theme-badge-color"
                 style="background: linear-gradient(135deg, #00e5be 0%, #051218 100%); border: 2px solid #00e5be;"></span>
               <div class="theme-item-info">
@@ -3619,7 +3645,7 @@
               "theme-light-lavender": { icon: "💎", label: "Sáng Tím Pha Lê", isDark: false }
             };
 
-            let currentThemeKey = "theme-ghn-teal";
+            let currentThemeKey = "theme-light";
 
             function updateQuickButton(themeKey) {
               const isLight = themeMap[themeKey] && !themeMap[themeKey].isDark;
@@ -3632,7 +3658,7 @@
             }
 
             function applyTheme(themeKey) {
-              if (!themeMap[themeKey]) themeKey = "theme-ghn-teal";
+              if (!themeMap[themeKey]) themeKey = "theme-light";
               currentThemeKey = themeKey;
               document.body.className = themeKey;
               localStorage.setItem("tiger_ai_theme", themeKey);
@@ -3657,7 +3683,12 @@
               }
             }
 
-            const initialTheme = localStorage.getItem("tiger_ai_theme") || "theme-ghn-teal";
+            let initialTheme = localStorage.getItem("tiger_ai_theme");
+            // Tự động chuyển sang giao diện Sáng tươi tắn, tránh màn đen u tối cũ
+            if (!initialTheme || initialTheme === "theme-ghn-teal" || initialTheme === "theme-midnight") {
+              initialTheme = "theme-light";
+              localStorage.setItem("tiger_ai_theme", "theme-light");
+            }
             applyTheme(initialTheme);
 
             const btnThemeToggle = document.getElementById("btnThemeToggle");
