@@ -31,7 +31,7 @@ if not os.path.exists(CREDS_FILE):
 
 BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 CHAT_ID = "-1003940889949"
-TOPIC_IDS = [506, 2690]  # Gửi đồng thời Topic 506 (📅 Đơn Tạo) & Topic 2690 (🔥 Báo Cáo)
+TOPIC_IDS = [506]  # CHỈ GỬI DUY NHẤT Topic 506 (📅 Đơn Tạo) - Tuyệt đối không gửi vào room Báo Cáo (Topic 2690)
 
 ALL_BUU_CUC_LIST = [
     'Kho Giao Hàng Nặng - Cái Răng - Cần Thơ',
