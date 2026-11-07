@@ -3299,45 +3299,72 @@ def _smart_operational_ai_fallback(prompt, system_context):
     q_match = re.findall(r'"([^"]+)"', prompt or "")
     raw_q = q_match[-1].lower() if q_match else p_low
 
-    # Nếu câu hỏi về thời tiết, mưa bão, triều cường Cần Thơ / MT01
+    # 1. Thời tiết, mưa bão, triều cường
     if any(k in raw_q for k in ["thời tiết", "thoi tiet", "mưa", "mua", "nắng", "nhiệt độ", "triều cường", "trieu cuong", "tuần sau", "dự báo", "bão"]):
         return generate_can_tho_weather_report()
 
-    # Nếu câu hỏi yêu cầu kiểm tra / soi chi tiết các đơn thất bại (GTB / hẹn lại / không nghe máy / chặn số) của kho
-    if any(k in raw_q for k in ["check kỹ", "từng đơn", "check đơn", "kiểm tra đơn", "soi đơn", "hẹn lại", "không nghe máy", "chặn số", "16 đơn", "32 đơn"]):
+    # 2. Giá vàng trực tuyến
+    if any(k in raw_q for k in ["vàng", "vang", "sjc", "doji", "pnj", "mi hồng", "mi hong", "ngọc thẩm", "ngoc tham", "bảo tín", "bao tin", "9999", "giá vàng", "gia vang"]):
+        return generate_gold_report()
+
+    # 3. Tỷ giá ngoại tệ / USD
+    if any(k in raw_q for k in ["tỷ giá", "ty gia", "usd", "ngoại tệ", "ngoai te", "đô la", "do la", "eur"]):
+        return generate_currency_report()
+
+    # 4. Giá xăng dầu
+    if any(k in raw_q for k in ["xăng", "dầu", "xang", "dau", "petrolimex", "nhiên liệu", "nhien lieu"]):
+        return generate_petrol_report()
+
+    # 5. Xác nhận ngày số liệu
+    if any(k in raw_q for k in ["hôm nay hả", "hom nay ha", "ngày hôm nay", "ngay hom nay", "ngày nào", "ngay nao", "ngày mấy", "ngay may"]):
+        return generate_date_confirmation_report()
+
+    # 6. Đơn hẹn SMS & tồn sàn kho
+    if any(k in raw_q for k in ["sms", "hẹn", "hen", "lưu kho", "luu kho", "chưa gán", "chua gan", "bóc tách đơn hẹn"]):
+        return generate_sms_backlog_report()
+
+    # 7. Nợ COD & chốt ca
+    if any(k in raw_q for k in ["cod", "tiền", "tien", "nợ", "no", "chốt ca", "chot ca", "thu tiền", "thu tien"]):
+        return generate_cod_closing_report()
+
+    # 8. Báo cáo từng kho riêng biệt (không hiển thị tràn lan 4 kho)
+    is_asking_all = any(k in raw_q for k in ["toàn cụm", "toan cum", "4 kho", "tổng", "tong", "tất cả", "tat ca", "chung"])
+    if not is_asking_all:
+        if any(k in raw_q for k in ["ô môn", "o mon"]):
+            return generate_single_hub_kpi_report("Ô Môn")
+        if any(k in raw_q for k in ["cái răng", "cai rang"]):
+            return generate_single_hub_kpi_report("Cái Răng")
+        if any(k in raw_q for k in ["bình thủy", "binh thuy"]):
+            return generate_single_hub_kpi_report("Bình Thủy")
+        if any(k in raw_q for k in ["vị thanh", "vi thanh"]):
+            return generate_single_hub_kpi_report("Vị Thanh")
+
+    # 9. Soi chi tiết đơn thất bại
+    if any(k in raw_q for k in ["check kỹ", "từng đơn", "check đơn", "kiểm tra đơn", "soi đơn", "hẹn lại", "không nghe máy", "chặn số"]):
         try:
             from shipper_delay_auditor import audit_hub_failed_orders_detail
             return audit_hub_failed_orders_detail(prompt, "")
-        except Exception as e:
-            print(f"[Fallback GTB Audit Error] {e}")
+        except Exception:
+            pass
 
-    # Chỉ lấy đúng 4 dòng số liệu mới nhất của 4 kho
-    kpi_lines = [
-        line.strip() for line in (system_context or "").split("\n")
-        if line.strip().startswith("• Kho ")
-    ]
-
-    if any(k in raw_q for k in ["kpi", "gtc", "gtb", "ltc", "tỉ lệ", "tỷ lệ", "sản lượng", "tình hình", "báo cáo", "số liệu", "tồn", "4 kho", "ô môn", "cái răng", "bình thủy", "vị thanh"]):
+    # 10. Tổng quan 4 kho
+    if any(k in raw_q for k in ["kpi", "gtc", "gtb", "ltc", "tỉ lệ", "tỷ lệ", "sản lượng", "tình hình", "báo cáo", "số liệu", "toàn cụm", "4 kho"]):
+        kpi_lines = [
+            line.strip() for line in (system_context or "").split("\n")
+            if line.strip().startswith("• Kho ")
+        ]
         if kpi_lines:
             summary = "\n".join(kpi_lines[-4:])
             return f"{prefix}Dưới đây là số liệu vận hành thực tế mới nhất của 4 kho cụm <b>Miền Tây 01</b>:\n\n{summary}\n\n💡 <i>Anh có thể nhắn <code>check kỹ từng đơn hẹn lại kho Ô Môn</code> (hoặc tên kho bất kỳ) để Tiger AI bóc tách log cuộc gọi của từng đơn ngay lập tức!</i>"
 
-    if any(k in raw_q for k in ["chào", "hello", "hi", "alo", "ơi", "có đó không", "test"]):
+    # 11. Chào hỏi
+    if any(k in raw_q for k in ["chào", "hello", "hi", "alo", "ơi", "có đó không"]):
         if is_boss:
-            return "Dạ em nghe đây anh Lộc! Hệ thống <b>Tiger AI 24/7</b> đang trực chiến. Anh cần kiểm tra từng đơn thất bại (hẹn lại/không nghe máy/chặn số), xem KPI 4 kho hay tra cứu mã đơn GHN cứ ra lệnh cho em ạ!"
+            return "Dạ em nghe đây anh Lộc! Hệ thống <b>Tiger AI 24/7</b> đang trực chiến. Anh cần kiểm tra từng đơn thất bại (hẹn lại/không nghe máy/chặn số), xem KPI 4 kho, giá vàng, tỷ giá hay tra cứu mã đơn GHN cứ ra lệnh cho em ạ!"
         return "Chào anh/chị! <b>Tiger AI 🐯</b> đang trực chiến 24/7 tại nhóm Miền Tây 01. Anh/chị cần tra cứu nhanh lộ trình đơn hàng (gửi mã đơn) hoặc xem KPI kho (<code>/kpi</code>) cứ nhắn nhé!"
 
-    if is_boss:
-        return (
-            "Dạ báo cáo anh Lộc! Em đã ghi nhận chỉ đạo của anh.\n"
-            "• Để <b>bóc tách &amp; kiểm tra từng đơn GTB / hẹn lại / không nghe máy</b> của kho: anh nhắn <code>check kỹ từng đơn hẹn lại kho Ô Môn</code> (hoặc Cái Răng, Bình Thủy, Vị Thanh).\n"
-            "• Để <b>tra cứu sâu 1 mã đơn hoặc bắt hoãn ảo</b>: anh gửi trực tiếp mã đơn hoặc gõ <code>/hoanao [mã đơn]</code>.\n"
-            "• Để <b>xem nhanh KPI 4 kho hoặc Chi phí</b>: anh gõ <code>/kpi</code> hoặc <code>/chiphi</code> ạ!"
-        )
-    return (
-        "<b>Tiger AI 🐯</b> đã ghi nhận thông tin từ anh/chị. "
-        "Để tra cứu lộ trình đơn hàng nội bộ, anh/chị chỉ cần gửi trực tiếp <b>mã đơn GHN</b> vào nhóm; hoặc gõ <code>/kpi</code> để xem nhanh tiến độ 4 kho Miền Tây 01 nhé!"
-    )
+    # 12. Tra cứu Web / Báo chí thời sự cho mọi câu hỏi khác (Live Search)
+    return generate_live_web_search_report(prompt)
 
 def call_gemini_api(prompt, system_context, api_key=None, history=None):
     """Ưu tiên gọi Local AI (Ollama Qwen 2.5 3B • Auto-Unload 2m) -> Gemini API -> Smart Fallback"""
