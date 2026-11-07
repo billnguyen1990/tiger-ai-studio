@@ -3238,7 +3238,7 @@ def call_local_ollama_api(prompt, system_context, history=None):
         }
     }
     try:
-        r = requests.post(f"{OLLAMA_BASE_URL}/api/chat", json=payload, timeout=25)
+        r = requests.post(f"{OLLAMA_BASE_URL}/api/chat", json=payload, timeout=(1.5, 14))
         if r.status_code == 200:
             data = r.json()
             text = (data.get("message") or {}).get("content", "").strip()
@@ -3259,27 +3259,36 @@ def _smart_operational_ai_fallback(prompt, system_context):
     q_match = re.findall(r'"([^"]+)"', prompt or "")
     raw_q = q_match[-1].lower() if q_match else p_low
 
+    # Nếu câu hỏi yêu cầu kiểm tra / soi chi tiết các đơn thất bại (GTB / hẹn lại / không nghe máy / chặn số) của kho
+    if any(k in raw_q for k in ["check kỹ", "từng đơn", "check đơn", "kiểm tra đơn", "soi đơn", "hẹn lại", "không nghe máy", "chặn số", "16 đơn", "32 đơn"]):
+        try:
+            from shipper_delay_auditor import audit_hub_failed_orders_detail
+            return audit_hub_failed_orders_detail(prompt, "")
+        except Exception as e:
+            print(f"[Fallback GTB Audit Error] {e}")
+
     # Chỉ lấy đúng 4 dòng số liệu mới nhất của 4 kho
     kpi_lines = [
         line.strip() for line in (system_context or "").split("\n")
         if line.strip().startswith("• Kho ")
     ]
 
-    if any(k in raw_q for k in ["kpi", "gtc", "ltc", "tỉ lệ", "tỷ lệ", "sản lượng", "tình hình", "báo cáo", "số liệu", "tồn", "4 kho"]):
+    if any(k in raw_q for k in ["kpi", "gtc", "gtb", "ltc", "tỉ lệ", "tỷ lệ", "sản lượng", "tình hình", "báo cáo", "số liệu", "tồn", "4 kho", "ô môn", "cái răng", "bình thủy", "vị thanh"]):
         if kpi_lines:
             summary = "\n".join(kpi_lines[-4:])
-            return f"{prefix}Dưới đây là số liệu vận hành thực tế mới nhất của 4 kho cụm <b>Miền Tây 01</b>:\n\n{summary}\n\nAnh cần soi chi tiết từng kho hay tra cứu mã đơn nào cứ nhắn Tiger AI nhé!"
+            return f"{prefix}Dưới đây là số liệu vận hành thực tế mới nhất của 4 kho cụm <b>Miền Tây 01</b>:\n\n{summary}\n\n💡 <i>Anh có thể nhắn <code>check kỹ từng đơn hẹn lại kho Ô Môn</code> (hoặc tên kho bất kỳ) để Tiger AI bóc tách log cuộc gọi của từng đơn ngay lập tức!</i>"
 
     if any(k in raw_q for k in ["chào", "hello", "hi", "alo", "ơi", "có đó không", "test"]):
         if is_boss:
-            return "Dạ em nghe đây anh Lộc! Hệ thống <b>Tiger AI 24/7</b> đang trực chiến. Anh cần kiểm tra số liệu KPI 4 kho, tra cứu mã đơn GHN hay đôn đốc anh em NVXL cứ ra lệnh cho em ạ!"
+            return "Dạ em nghe đây anh Lộc! Hệ thống <b>Tiger AI 24/7</b> đang trực chiến. Anh cần kiểm tra từng đơn thất bại (hẹn lại/không nghe máy/chặn số), xem KPI 4 kho hay tra cứu mã đơn GHN cứ ra lệnh cho em ạ!"
         return "Chào anh/chị! <b>Tiger AI 🐯</b> đang trực chiến 24/7 tại nhóm Miền Tây 01. Anh/chị cần tra cứu nhanh lộ trình đơn hàng (gửi mã đơn) hoặc xem KPI kho (<code>/kpi</code>) cứ nhắn nhé!"
 
     if is_boss:
         return (
-            "Dạ báo cáo anh Lộc! Em đã ghi nhận chỉ đạo của anh. "
-            "Hiện tại các luồng tự động trên <b>Node Flow 24/7</b> (KPI 07h00, Điểm danh 07h35, Đơn gán 09h00, Tồn kho 10h00, B2B 18h00, Chốt COD 21h00 và ODO Xe tải 365) đang trực chiến sẵn sàng. "
-            "Anh cần em tra cứu mã đơn hay xuất báo cáo kho nào ngay lúc này không ạ?"
+            "Dạ báo cáo anh Lộc! Em đã ghi nhận chỉ đạo của anh.\n"
+            "• Để <b>bóc tách &amp; kiểm tra từng đơn GTB / hẹn lại / không nghe máy</b> của kho: anh nhắn <code>check kỹ từng đơn hẹn lại kho Ô Môn</code> (hoặc Cái Răng, Bình Thủy, Vị Thanh).\n"
+            "• Để <b>tra cứu sâu 1 mã đơn hoặc bắt hoãn ảo</b>: anh gửi trực tiếp mã đơn hoặc gõ <code>/hoanao [mã đơn]</code>.\n"
+            "• Để <b>xem nhanh KPI 4 kho hoặc Chi phí</b>: anh gõ <code>/kpi</code> hoặc <code>/chiphi</code> ạ!"
         )
     return (
         "<b>Tiger AI 🐯</b> đã ghi nhận thông tin từ anh/chị. "
@@ -3829,19 +3838,22 @@ def _append_telegram_bridge_message(entry):
         _save_telegram_bridge_messages(msgs)
         return True
 
-def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
+def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, parse_mode="HTML", target_chat_id=None):
     # 🛑 BẢO VỆ AN TOÀN: Tuyệt đối chặn gửi lộ token hoặc tin rác
     if not text or "8809500027" in text or "AAFC2Xz" in text:
         print("[SECURITY GUARD] Chặn gửi tin nhắn không hợp lệ hoặc chứa Bot Token!")
         return {"ok": False, "description": "Blocked by security guard"}
 
+    safe_text = str(text)[:4000]
+    chat_id = target_chat_id or TELEGRAM_BRIDGE_CHAT_ID
     url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendMessage"
     payload = {
-        "chat_id": TELEGRAM_BRIDGE_CHAT_ID,
-        "text": text,
-        "parse_mode": parse_mode
+        "chat_id": chat_id,
+        "text": safe_text,
+        "parse_mode": parse_mode,
+        "disable_web_page_preview": True
     }
-    if topic_id and int(topic_id) > 0:
+    if str(chat_id) == str(TELEGRAM_BRIDGE_CHAT_ID) and topic_id and int(topic_id) > 0:
         payload["message_thread_id"] = int(topic_id)
     if reply_to_message_id and int(reply_to_message_id) > 0:
         payload["reply_to_message_id"] = int(reply_to_message_id)
@@ -3862,7 +3874,7 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
                 import re
                 p3 = payload.copy()
                 p3.pop("parse_mode", None)
-                p3["text"] = re.sub(r'<[^>]+>', '', text)
+                p3["text"] = re.sub(r'<[^>]+>', '', safe_text)
                 r3 = requests.post(url, json=p3, timeout=10)
                 res3 = r3.json()
                 if res3.get("ok"):
@@ -4231,34 +4243,52 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     msg_id = entry.get("message_id")
     topic_id = entry.get("topic_id") or 0
     reply_to_text = (entry.get("reply_to_text") or "").strip()
+    sender_chat_id = (msg_obj.get("chat") or {}).get("id") or TELEGRAM_BRIDGE_CHAT_ID
+    chat_type = (msg_obj.get("chat") or {}).get("type", "")
+    is_private_chat = (chat_type == "private")
+    is_boss = ("lộc" in str(entry.get("sender_name", "")).lower()) or (entry.get("hub_badge") == "Quản Lý Cụm MT01")
+    is_reply_to_bot = bool(entry.get("is_reply_to_bot"))
+
+    import re
+    other_user_tags = [
+        u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
+        if "aiagentmt" not in u.lower()
+    ]
+
+    order_codes = extract_ghn_order_codes(text)
+
+    # Nhận diện khi người dùng Reply trực tiếp vào tin nhắn của Bot để ra lệnh / hỏi nghiệp vụ
+    is_reply_command = False
+    if is_reply_to_bot and not other_user_tags:
+        if is_boss:
+            is_reply_command = True
+        elif bool(order_codes) or any(k in lower_text for k in [
+            "check", "kiểm tra", "soi", "tra", "xem", "gửi", "từng đơn", "hẹn lại",
+            "không nghe máy", "chặn số", "thất bại", "gtb", "gtc", "kpi", "hoãn ảo",
+            "báo cáo", "tại sao", "vì sao", "chi tiết", "danh sách", "số liệu", "kho"
+        ]):
+            is_reply_command = True
 
     # =========================================================================
-    # 🛑 CỔNG CHẶN BẢO VỆ 1: QUY TẮC IM LẶNG TUYỆT ĐỐI
-    # Chỉ phản hồi khi:
+    # 🛑 CỔNG CHẶN BẢO VỆ 1: QUY TẮC IM LẶNG TUYỆT ĐỐI KHI NHÂN SỰ NÓI CHUYỆN NỘI BỘ
+    # Phản hồi khi:
     # - Tag đích danh bot: @aiagentmt_bot hoặc @aiagentmt
     # - Hoặc gõ lệnh bắt đầu bằng dấu gạch chéo (/)
-    # - Ngoại lệ duy nhất: Đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
+    # - Hoặc nhắn riêng 1-1 với bot / Sếp Lộc (hoặc nhân sự) Reply trực tiếp báo cáo của bot để yêu cầu kiểm tra
+    # - Hoặc đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
     # =========================================================================
-    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text)
+    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat or is_reply_command
     is_slash_cmd = lower_text.startswith("/")
     is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
         "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock"
     ]))
 
     if not (is_tagged or is_slash_cmd or is_cam_in_cam_topic):
-        # KHÔNG tag bot, KHÔNG có lệnh /, KHÔNG phải phòng cam -> IM LẶNG 100%!
         return
 
-    # Nếu người dùng tag nhân sự khác mà KHÔNG tag bot -> IM LẶNG
-    import re
-    other_user_tags = [
-        u.lower() for u in re.findall(r'@([A-Za-z0-9_]+)', text)
-        if "aiagentmt" not in u.lower()
-    ]
-    if other_user_tags and not is_tagged:
+    if other_user_tags and not (("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text)):
         return
 
-    order_codes = extract_ghn_order_codes(text)
     is_tag_or_cmd = is_tagged or is_slash_cmd
 
     # 0.00a NHẬN DIỆN LỆNH GIAO VIỆC / CANH ĐƠN HÀNG ĐẶC BIỆT (WATCHDOG ORDER DISPATCH)
@@ -4466,6 +4496,63 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 f"❌ <b>Lỗi Mắt Thần Canh Kho:</b> {ex}",
                 topic_id=topic_id,
                 reply_to_message_id=msg_id
+            )
+        return
+
+    # 0.18 KIỂM TRA / ĐỐI SOÁT CHI TIẾT TỪNG ĐƠN THẤT BẠI (GTB / HẸN LẠI / KHÔNG NGHE MÁY / CHẶN SỐ) CỦA KHO
+    combined_audit_q = (lower_text + " " + reply_to_text.lower()).strip()
+    is_hub_gtb_audit = (not bool(order_codes)) and (
+        lower_text.startswith(("/checkgtb", "/checkkho", "/soigtb")) or
+        any(k in lower_text for k in [
+            "check kỹ", "check từng đơn", "kiểm tra từng đơn", "soi từng đơn", "check các đơn",
+            "kiểm tra các đơn", "check đơn hẹn", "check đơn gtb", "check đơn thất bại",
+            "từng đơn cho", "chi tiết từng đơn", "danh sách đơn thất bại", "danh sách đơn hẹn",
+            "16 đơn", "32 đơn", "check hết", "soi kỹ"
+        ]) or (
+            any(k in lower_text for k in ["check", "kiểm tra", "soi", "xem", "liệt kê"]) and
+            any(r in combined_audit_q for r in ["hẹn lại", "không nghe máy", "chặn số", "không liên lạc", "thất bại", "gtb", "đơn rớt", "không đặt"])
+        )
+    )
+    if is_hub_gtb_audit:
+        try:
+            from shipper_delay_auditor import audit_hub_failed_orders_detail
+            sender_disp = "anh Lộc" if is_boss else (entry.get("sender_name") or "anh/chị")
+            _send_telegram_group_message(
+                f"⚡ <b>Dạ {sender_disp}, Tiger AI đang trích xuất &amp; kiểm tra log cuộc gọi từng đơn trên hệ thống GHN...</b> <i>(Chờ khoảng 3–4 giây)</i>",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id,
+                target_chat_id=sender_chat_id
+            )
+            detail_report = audit_hub_failed_orders_detail(text, reply_to_text)
+            sent = _send_telegram_group_message(
+                detail_report,
+                topic_id=topic_id,
+                reply_to_message_id=msg_id,
+                target_chat_id=sender_chat_id
+            )
+            if sent.get("ok"):
+                res_msg = sent.get("result", {})
+                _append_telegram_bridge_message({
+                    "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                    "message_id": res_msg.get("message_id", 0),
+                    "direction": "outgoing_auto",
+                    "sender_name": "Tiger AI 🐯 (Tự động)",
+                    "username": "@AiAgentMT_bot",
+                    "hub_badge": "Đối Soát Từng Đơn GTB",
+                    "topic_id": topic_id,
+                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                    "text": detail_report[:1800],
+                    "reply_to_text": text[:120],
+                    "replied_to_msg_id": msg_id,
+                    "is_explanation": False,
+                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                })
+        except Exception as ex:
+            _send_telegram_group_message(
+                f"❌ <b>Lỗi đối soát danh sách đơn GTB:</b> {ex}",
+                topic_id=topic_id,
+                reply_to_message_id=msg_id,
+                target_chat_id=sender_chat_id
             )
         return
 
