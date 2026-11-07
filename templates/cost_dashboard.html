@@ -172,29 +172,107 @@
     }
 
     body.theme-light {
-      --bg-primary: #f1f5f9;
+      --bg-primary: #f0fdfa;
       --bg-header: rgba(255, 255, 255, 0.96);
       --bg-card: #ffffff;
       --bg-card-hover: #f8fafc;
       --bg-input: #ffffff;
       --bg-tabs: #e2e8f0;
       --bg-table-th: #f1f5f9;
-      --bg-table-hover: rgba(13, 148, 136, 0.05);
+      --bg-table-hover: rgba(13, 148, 136, 0.06);
       --border-color: #cbd5e1;
-      --border-accent: rgba(13, 148, 136, 0.45);
+      --border-accent: rgba(13, 148, 136, 0.5);
       --text-main: #0f172a;
       --text-title: #0f172a;
-      --text-sub: #64748b;
+      --text-sub: #475569;
       --text-table: #1e293b;
       --accent-blue: #0284c7;
       --accent-green: #059669;
       --accent-amber: #d97706;
       --accent-purple: #7c3aed;
+      --accent-red: #e11d48;
+      --primary-gradient: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+      --header-title-gradient: linear-gradient(135deg, #0f766e 0%, #0284c7 100%);
+      --chart-grid: rgba(15, 23, 42, 0.07);
+      --chart-tick: #334155;
+    }
+
+    body.theme-light-sapphire {
+      --bg-primary: #eff6ff;
+      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-input: #ffffff;
+      --bg-tabs: #dbeafe;
+      --bg-table-th: #eff6ff;
+      --bg-table-hover: rgba(37, 99, 235, 0.06);
+      --border-color: #bfdbfe;
+      --border-accent: rgba(37, 99, 235, 0.5);
+      --text-main: #0f172a;
+      --text-title: #1e3a8a;
+      --text-sub: #475569;
+      --text-table: #1e293b;
+      --accent-blue: #2563eb;
+      --accent-green: #059669;
+      --accent-amber: #ea580c;
+      --accent-purple: #7c3aed;
+      --accent-red: #e11d48;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+      --header-title-gradient: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+      --chart-grid: rgba(30, 58, 138, 0.07);
+      --chart-tick: #334155;
+    }
+
+    body.theme-light-sunset {
+      --bg-primary: #fff7ed;
+      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-card: #ffffff;
+      --bg-card-hover: #fffbeb;
+      --bg-input: #ffffff;
+      --bg-tabs: #ffedd5;
+      --bg-table-th: #fff7ed;
+      --bg-table-hover: rgba(234, 88, 12, 0.06);
+      --border-color: #fed7aa;
+      --border-accent: rgba(234, 88, 12, 0.5);
+      --text-main: #0f172a;
+      --text-title: #9a3412;
+      --text-sub: #57534e;
+      --text-table: #1c1917;
+      --accent-blue: #0284c7;
+      --accent-green: #059669;
+      --accent-amber: #ea580c;
+      --accent-purple: #7c3aed;
       --accent-red: #dc2626;
-      --primary-gradient: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
-      --header-title-gradient: linear-gradient(135deg, #0f766e 0%, #0369a1 100%);
-      --chart-grid: rgba(0, 0, 0, 0.06);
-      --chart-tick: #475569;
+      --primary-gradient: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+      --header-title-gradient: linear-gradient(135deg, #ea580c 0%, #0284c7 100%);
+      --chart-grid: rgba(154, 52, 18, 0.07);
+      --chart-tick: #44403c;
+    }
+
+    body.theme-light-lavender {
+      --bg-primary: #f5f3ff;
+      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-card: #ffffff;
+      --bg-card-hover: #faf5ff;
+      --bg-input: #ffffff;
+      --bg-tabs: #ede9fe;
+      --bg-table-th: #f5f3ff;
+      --bg-table-hover: rgba(124, 58, 237, 0.06);
+      --border-color: #ddd6fe;
+      --border-accent: rgba(124, 58, 237, 0.5);
+      --text-main: #0f172a;
+      --text-title: #4c1d95;
+      --text-sub: #475569;
+      --text-table: #1e293b;
+      --accent-blue: #4f46e5;
+      --accent-green: #059669;
+      --accent-amber: #d97706;
+      --accent-purple: #7c3aed;
+      --accent-red: #e11d48;
+      --primary-gradient: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+      --header-title-gradient: linear-gradient(135deg, #6d28d9 0%, #db2777 100%);
+      --chart-grid: rgba(76, 29, 149, 0.07);
+      --chart-tick: #334155;
     }
 
     * {
@@ -823,7 +901,7 @@
     /* DASHBOARD ROW (2 BIỂU ĐỒ CHUNG HÀNG NGANG) */
     .dashboard-row {
       display: grid;
-      grid-template-columns: 1.62fr 1fr;
+      grid-template-columns: 1.48fr 1.12fr;
       gap: 20px;
       align-items: stretch;
       width: 100%;
@@ -833,18 +911,366 @@
       height: 100%;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
     }
 
     .dashboard-row .chart-container {
       flex: 1;
-      height: 290px;
-      min-height: 290px;
+      height: 300px;
+      min-height: 300px;
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1120px) {
       .dashboard-row {
         grid-template-columns: 1fr;
       }
+    }
+
+    /* TREND CHART MINI KPI STRIP */
+    .chart-kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: -4px;
+    }
+
+    @media (max-width: 768px) {
+      .chart-kpi-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .chart-kpi-pill {
+      background: var(--bg-table-th);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 7px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chart-kpi-pill .ck-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .chart-kpi-pill .ck-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text-title);
+    }
+
+    /* RICH DONUT CHART + BREAKDOWN CARDS */
+    .pie-detail-layout {
+      display: grid;
+      grid-template-columns: 205px 1fr;
+      gap: 16px;
+      align-items: center;
+      flex: 1;
+      min-height: 295px;
+    }
+
+    @media (max-width: 640px) {
+      .pie-detail-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pie-canvas-wrap {
+      position: relative;
+      width: 205px;
+      height: 205px;
+      margin: 0 auto;
+    }
+
+    .pie-center-hud {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .pie-center-hud .hud-lbl {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+    }
+
+    .pie-center-hud .hud-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--text-title);
+      margin-top: 2px;
+      line-height: 1.15;
+    }
+
+    .pie-center-hud .hud-sub {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.14);
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-top: 4px;
+    }
+
+    .pie-breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .pie-breakdown-item {
+      background: var(--bg-table-th);
+      border: 1px solid var(--border-color);
+      border-radius: 11px;
+      padding: 9px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .pie-breakdown-item:hover {
+      transform: translateX(3px);
+      border-color: var(--border-accent);
+    }
+
+    .pie-bd-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .pie-bd-name {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text-title);
+    }
+
+    .pie-bd-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .pie-bd-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 1.5px 7px;
+      border-radius: 999px;
+    }
+
+    .pie-bd-mid {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .pie-bd-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .pie-bd-unit {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .pie-bar-track {
+      width: 100%;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+    }
+
+    .pie-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* LUXURY SALARY TABS & COMMAND BAR */
+    .salary-command-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: var(--bg-table-th);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+    }
+
+    .salary-tabs-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .salary-tab-btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 15px;
+      border-radius: 11px;
+      font-weight: 800;
+      font-size: 13px;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-sub);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .salary-tab-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-accent);
+      color: var(--text-title);
+    }
+
+    .salary-tab-btn.active-nvgh {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(234, 88, 12, 0.08) 100%);
+      border: 1.5px solid #f59e0b;
+      color: var(--text-title);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.2);
+    }
+
+    .salary-tab-btn.active-nvxl {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(2, 132, 199, 0.08) 100%);
+      border: 1.5px solid #10b981;
+      color: var(--text-title);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.2);
+    }
+
+    .salary-tab-badge {
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .salary-tab-badge.amber {
+      background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+      box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+    }
+
+    .salary-tab-badge.emerald {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+    }
+
+    .salary-tab-money {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 2.5px 8px;
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--text-title);
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .salary-tab-money {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .salary-tools-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .salary-filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-title);
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--bg-card);
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+
+    .salary-filter-pill:hover {
+      border-color: var(--accent-green);
+    }
+
+    .salary-search-input {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 10px;
+      padding: 7px 13px;
+      font-size: 12.5px;
+      font-weight: 600;
+      outline: none;
+      width: 215px;
+      transition: all 0.18s ease;
+    }
+
+    .salary-search-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    .btn-export-excel-pro {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7.5px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      border: none;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all 0.18s ease;
+    }
+
+    .btn-export-excel-pro:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.45);
+      filter: brightness(1.05);
     }
 
     /* TABLE */
@@ -1108,9 +1534,52 @@
           </div>
 
           <div class="theme-dd-divider"></div>
-          <div class="theme-dd-section-title">CHỌN PHONG CÁCH BẢNG MÀU:</div>
+          <div class="theme-dd-section-title">☀️ BỘ GIAO DIỆN SÁNG CAO CẤP (BAN NGÀY):</div>
 
           <div class="theme-dd-list">
+            <div class="theme-item" data-theme="theme-light">
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #0d9488 0%, #0284c7 55%, #f59e0b 100%); border: 2px solid #0d9488;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">☀️ Sáng Ngọc Lục Bảo GHN (Emerald Pro)</div>
+                <div class="theme-item-desc">Trắng ngọc trai phối Xanh Ngọc & Cam GHN sắc nét</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-light-sapphire">
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 55%, #7c3aed 100%); border: 2px solid #2563eb;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">👑 Sáng Hoàng Gia Sapphire (Royal Ocean)</div>
+                <div class="theme-item-desc">Xanh Sapphire ngân hàng số, sang trọng & rõ nét</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-light-sunset">
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #ea580c 0%, #f59e0b 55%, #0284c7 100%); border: 2px solid #ea580c;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">🌅 Sáng Cam Nhiệt Huyết GHN (Warm Sunset)</div>
+                <div class="theme-item-desc">Nền kem sáng ấm phối Cam GHN & Xanh Hải Quân</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-item" data-theme="theme-light-lavender">
+              <span class="theme-badge-color"
+                style="background: linear-gradient(135deg, #7c3aed 0%, #ec4899 55%, #4f46e5 100%); border: 2px solid #7c3aed;"></span>
+              <div class="theme-item-info">
+                <div class="theme-item-name">💎 Sáng Tím Tinh Thể (Crystal Lavender)</div>
+                <div class="theme-item-desc">Trắng pha lê phối Tím Indigo & Hồng Ruby hiện đại</div>
+              </div>
+              <span class="theme-item-check">✓</span>
+            </div>
+
+            <div class="theme-dd-divider"></div>
+            <div class="theme-dd-section-title" style="padding-left:2px;">🌙 BỘ GIAO DIỆN TỐI CHUYÊN NGHIỆP (BAN ĐÊM):</div>
+
             <div class="theme-item active" data-theme="theme-ghn-teal">
               <span class="theme-badge-color"
                 style="background: linear-gradient(135deg, #00e5be 0%, #051218 100%); border: 2px solid #00e5be;"></span>
@@ -1167,16 +1636,6 @@
               <div class="theme-item-info">
                 <div class="theme-item-name">🌑 Đen OLED Siêu Tối (Midnight Black)</div>
                 <div class="theme-item-desc">Tối giản 100%, bảo vệ mắt & tiết kiệm pin</div>
-              </div>
-              <span class="theme-item-check">✓</span>
-            </div>
-
-            <div class="theme-item" data-theme="theme-light">
-              <span class="theme-badge-color"
-                style="background: linear-gradient(135deg, #0d9488 0%, #f1f5f9 100%); border: 2px solid #0d9488;"></span>
-              <div class="theme-item-info">
-                <div class="theme-item-name">☀️ Sáng Thanh Lịch (Light Professional)</div>
-                <div class="theme-item-desc">Giao diện ban ngày dịu mắt văn phòng</div>
               </div>
               <span class="theme-item-check">✓</span>
             </div>
@@ -1399,23 +1858,62 @@
 
     <!-- SECTION 2: CHARTS & COMPARISONS -->
     <div class="dashboard-row">
-      <!-- Cột 1: Biểu đồ xu hướng -->
+      <!-- Cột 1: Biểu đồ xu hướng chi tiết -->
       <div class="content-box">
-        <div class="box-header">
+        <div class="box-header" style="flex-wrap: wrap; gap: 8px;">
           <div class="box-title">📈 XU HƯỚNG SẢN LƯỢNG GTC & CHI PHÍ / ĐƠN (14 NGÀY GẦN NHẤT)</div>
+          <span style="font-size: 11.5px; font-weight: 700; color: var(--accent-blue); background: rgba(2, 132, 199, 0.12); border: 1px solid var(--border-accent); padding: 3px 10px; border-radius: 999px;">
+            ⚡ Cột Gradient: Sản lượng GTC • Đường Ruby: Cost/Đơn
+          </span>
         </div>
-        <div class="chart-container">
+
+        <!-- Dải 4 chỉ số tóm tắt 14 ngày -->
+        <div class="chart-kpi-strip">
+          <div class="chart-kpi-pill">
+            <span class="ck-label">📦 TB Sản Lượng / Ngày</span>
+            <span class="ck-val" id="txtTrendAvgVol" style="color: var(--accent-blue);">0 đơn</span>
+          </div>
+          <div class="chart-kpi-pill">
+            <span class="ck-label">💰 TB Chi Phí / Đơn</span>
+            <span class="ck-val" id="txtTrendAvgCost" style="color: #e11d48;">0 đ</span>
+          </div>
+          <div class="chart-kpi-pill">
+            <span class="ck-label">🔥 Ngày Đỉnh Sản Lượng</span>
+            <span class="ck-val" id="txtTrendPeakVol" style="color: var(--accent-green);">-</span>
+          </div>
+          <div class="chart-kpi-pill">
+            <span class="ck-label">🏆 Ngày Cost Tối Ưu Nhất</span>
+            <span class="ck-val" id="txtTrendBestCost" style="color: var(--accent-amber);">-</span>
+          </div>
+        </div>
+
+        <div class="chart-container" style="height: 255px; min-height: 255px;">
           <canvas id="trendChart"></canvas>
         </div>
       </div>
 
-      <!-- Cột 2: Cơ cấu chi phí -->
+      <!-- Cột 2: Cơ cấu chi phí chi tiết (Donut + 3 Thẻ Phân Rã Tỷ Trọng) -->
       <div class="content-box">
-        <div class="box-header">
+        <div class="box-header" style="flex-wrap: wrap; gap: 8px;">
           <div class="box-title">🥧 CƠ CẤU CHI PHÍ VẬN HÀNH MT01</div>
+          <span id="badgePieTotalOrders" style="font-size: 11.5px; font-weight: 700; color: var(--accent-green); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); padding: 3px 10px; border-radius: 999px;">
+            Đang tính tỷ trọng...
+          </span>
         </div>
-        <div class="chart-container">
-          <canvas id="costPieChart"></canvas>
+
+        <div class="pie-detail-layout">
+          <div class="pie-canvas-wrap">
+            <canvas id="costPieChart"></canvas>
+            <div class="pie-center-hud">
+              <div class="hud-lbl">TỔNG CHI PHÍ KỲ</div>
+              <div class="hud-val" id="txtPieCenterTotal">0 đ</div>
+              <div class="hud-sub" id="txtPieCenterPerOrder">0 đ/đơn</div>
+            </div>
+          </div>
+
+          <div class="pie-breakdown-list" id="pieBreakdownList">
+            <!-- JS sẽ render 3 thẻ chi tiết: Lương Giao, Lương NVXL, Xe Tải 365 -->
+          </div>
         </div>
       </div>
     </div>
@@ -1493,27 +1991,29 @@
         </div>
       </div>
 
-      <!-- THANH CHUYỂN TAB: LƯƠNG NVGH vs LƯƠNG NVXL -->
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <button id="tabBtnNVGH" onclick="switchSalaryTab('nvgh')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 13.5px; border: 1.5px solid var(--accent-amber); background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); transition: 0.2s;">
+      <!-- THANH CHUYỂN TAB CAO CẤP: LƯƠNG NVGH vs LƯƠNG NVXL -->
+      <div class="salary-command-bar">
+        <div class="salary-tabs-group">
+          <button id="tabBtnNVGH" onclick="switchSalaryTab('nvgh')" class="salary-tab-btn active-nvgh" type="button">
             <span>🛵 BẢNG LƯƠNG & ĐƠN NVGH (GIAO NHẬN)</span>
-            <span id="badgeDriverCount" style="background: var(--accent-amber); color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 11.5px;">25 NVGH</span>
+            <span id="badgeDriverCount" class="salary-tab-badge amber">25 NVGH</span>
+            <span id="badgeDriverMoney" class="salary-tab-money">0 đ</span>
           </button>
 
-          <button id="tabBtnNVXL" onclick="switchSalaryTab('nvxl')" style="cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-weight: 800; font-size: 13.5px; border: 1.5px solid var(--border-color); background: var(--bg-table-th); color: var(--text-sub); transition: 0.2s;">
+          <button id="tabBtnNVXL" onclick="switchSalaryTab('nvxl')" class="salary-tab-btn" type="button">
             <span>🏢 BẢNG LƯƠNG & ĐƠN NVXL (XỬ LÝ KHO)</span>
-            <span id="badgeNvxlCount" style="background: var(--accent-green); color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 11.5px;">4 NVXL</span>
+            <span id="badgeNvxlCount" class="salary-tab-badge emerald">4 NVXL</span>
+            <span id="badgeNvxlMoney" class="salary-tab-money">0 đ</span>
           </button>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <label id="lblHideZeroWrap" style="display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-main); font-weight: 600; cursor: pointer; background: var(--bg-table-th); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border-color);">
-            <input type="checkbox" id="chkOnlyActiveStaff" checked onchange="filterDriversTable()" style="accent-color: #10b981; cursor: pointer;">
+        <div class="salary-tools-group">
+          <label id="lblHideZeroWrap" class="salary-filter-pill">
+            <input type="checkbox" id="chkOnlyActiveStaff" checked onchange="filterDriversTable()" style="accent-color: #10b981; cursor: pointer; width: 15px; height: 15px;">
             <span>Chỉ hiện NV có phát sinh trong kỳ</span>
           </label>
-          <input type="text" id="txtSearchDriver" placeholder="🔍 Tìm tên NV hoặc Kho..." oninput="filterDriversTable()" style="background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 13px; outline: none; width: 195px;">
-          <button type="button" onclick="exportCostExcel()" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--accent-green); background: rgba(16, 185, 129, 0.14); color: var(--accent-green);">
+          <input type="text" id="txtSearchDriver" class="salary-search-input" placeholder="🔍 Tìm tên NV hoặc Kho..." oninput="filterDriversTable()">
+          <button type="button" class="btn-export-excel-pro" onclick="exportCostExcel()">
             <span>📥 Xuất Excel Kỳ Này</span>
           </button>
         </div>
@@ -2025,8 +2525,14 @@
         const actCnt = allLoadedDriversSummary.active_count !== undefined ? allLoadedDriversSummary.active_count : (allLoadedDriversSummary.count || 0);
         document.getElementById("badgeDriverCount").innerText = `${actCnt}/${allLoadedDriversSummary.count || 0} NVGH`;
       }
+      if (document.getElementById("badgeDriverMoney")) {
+        document.getElementById("badgeDriverMoney").innerText = allLoadedDriversSummary.formatted_total || "0 đ";
+      }
       if (document.getElementById("badgeNvxlCount")) {
         document.getElementById("badgeNvxlCount").innerText = `${allLoadedNvxlSummary.count || 0} NVXL`;
+      }
+      if (document.getElementById("badgeNvxlMoney")) {
+        document.getElementById("badgeNvxlMoney").innerText = allLoadedNvxlSummary.formatted_total || "0 đ";
       }
 
       renderActiveSalaryTab();
@@ -2035,24 +2541,27 @@
       renderCharts(data);
     }
 
+    function _isLightTheme() {
+      return (
+        document.body.classList.contains("theme-light") ||
+        document.body.classList.contains("theme-light-sapphire") ||
+        document.body.classList.contains("theme-light-sunset") ||
+        document.body.classList.contains("theme-light-lavender")
+      );
+    }
+
     function switchSalaryTab(tab) {
       currentSalaryTab = tab;
       const btnNvgh = document.getElementById("tabBtnNVGH");
       const btnNvxl = document.getElementById("tabBtnNVXL");
-      if (tab === "nvgh") {
-        btnNvgh.style.border = "1.5px solid var(--accent-amber)";
-        btnNvgh.style.background = "rgba(245, 158, 11, 0.15)";
-        btnNvgh.style.color = "var(--accent-amber)";
-        btnNvxl.style.border = "1.5px solid var(--border-color)";
-        btnNvxl.style.background = "var(--bg-table-th)";
-        btnNvxl.style.color = "var(--text-sub)";
-      } else {
-        btnNvxl.style.border = "1.5px solid var(--accent-green)";
-        btnNvxl.style.background = "rgba(16, 185, 129, 0.15)";
-        btnNvxl.style.color = "var(--accent-green)";
-        btnNvgh.style.border = "1.5px solid var(--border-color)";
-        btnNvgh.style.background = "var(--bg-table-th)";
-        btnNvgh.style.color = "var(--text-sub)";
+      if (btnNvgh && btnNvxl) {
+        btnNvgh.classList.remove("active-nvgh", "active-nvxl");
+        btnNvxl.classList.remove("active-nvgh", "active-nvxl");
+        if (tab === "nvgh") {
+          btnNvgh.classList.add("active-nvgh");
+        } else {
+          btnNvxl.classList.add("active-nvxl");
+        }
       }
       renderActiveSalaryTab();
     }
@@ -2062,7 +2571,7 @@
     }
 
     function _getGtcRateColor(rate) {
-      const isLight = document.body.classList.contains("theme-light");
+      const isLight = _isLightTheme();
       if (rate >= 85) return isLight ? "#047857" : "#10b981";
       if (rate >= 80) return isLight ? "#b45309" : "#f59e0b";
       if (rate > 0) return isLight ? "#b91c1c" : "#ef4444";
@@ -2070,7 +2579,7 @@
     }
 
     function _getBadgeThemeColor(hexColor) {
-      const isLight = document.body.classList.contains("theme-light");
+      const isLight = _isLightTheme();
       if (!isLight) return hexColor;
       if (hexColor === "#10b981") return "#047857";
       if (hexColor === "#3b82f6") return "#1d4ed8";
@@ -2219,82 +2728,319 @@
       `).join("");
               }
 
+    function _formatVndNum(num) {
+      return Math.round(Number(num) || 0).toLocaleString('vi-VN');
+    }
+
+    function _formatCompactVnd(num) {
+      const n = Number(num) || 0;
+      if (n >= 1000000000) return (n / 1000000000).toFixed(2).replace('.', ',') + ' Tỷ';
+      if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.', ',') + ' Tr';
+      if (n >= 1000) return Math.round(n / 1000) + 'k';
+      return _formatVndNum(n) + ' đ';
+    }
+
     function renderCharts(data) {
-                const tc = data.trend_chart || {};
-                const ctxTrend = document.getElementById("trendChart").getContext("2d");
+      const isLight = _isLightTheme();
+      const tc = data.trend_chart || {};
+      const labels = tc.labels || [];
+      const volArr = (tc.volume_gtc || []).map(v => Number(v) || 0);
+      const costArr = (tc.cost_per_order || []).map(v => Number(v) || 0);
 
-                if (trendChartInstance) trendChartInstance.destroy();
+      // 1. Tính 4 chỉ số tóm tắt 14 ngày cho dải KPI trên biểu đồ Xu hướng
+      const activeVols = volArr.filter(v => v > 0);
+      const activeCosts = costArr.filter(v => v > 0);
+      const avgVol = activeVols.length ? Math.round(activeVols.reduce((a, b) => a + b, 0) / activeVols.length) : 0;
+      const avgCost = activeCosts.length ? Math.round(activeCosts.reduce((a, b) => a + b, 0) / activeCosts.length) : 0;
 
-                trendChartInstance = new Chart(ctxTrend, {
-                  type: 'bar',
-                  data: {
-                    labels: tc.labels || [],
-                    datasets: [
-                      {
-                        label: 'Volume GTC (Đơn)',
-                        data: tc.volume_gtc || [],
-                        backgroundColor: 'rgba(56, 189, 248, 0.4)',
-                        borderColor: '#38bdf8',
-                        borderWidth: 1.5,
-                        borderRadius: 6,
-                        yAxisID: 'y'
-                      },
-                      {
-                        label: 'Chi Phí / Đơn (VNĐ)',
-                        data: tc.cost_per_order || [],
-                        type: 'line',
-                        borderColor: '#f43f5e',
-                        backgroundColor: '#f43f5e',
-                        borderWidth: 2.5,
-                        tension: 0.35,
-                        yAxisID: 'y1',
-                        pointRadius: 3
-                      }
-                    ]
-                  },
-                  options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: {
-                      x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: (currentThemeKey === 'theme-light' ? '#475569' : '#94a3b8') } },
-                      y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#38bdf8' }, title: { display: true, text: 'Volume (Đơn)', color: '#38bdf8' } },
-                      y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#f43f5e' }, title: { display: true, text: 'Chi phí/Đơn (VNĐ)', color: '#f43f5e' } }
-                    },
-                    plugins: {
-                      legend: { labels: { color: '#cbd5e1' } }
-                    }
-                  }
-                });
+      let peakVol = 0, peakVolDay = "-";
+      let bestCost = Infinity, bestCostDay = "-";
+      for (let i = 0; i < labels.length; i++) {
+        if (volArr[i] > peakVol) {
+          peakVol = volArr[i];
+          peakVolDay = labels[i];
+        }
+        if (costArr[i] > 0 && costArr[i] < bestCost) {
+          bestCost = costArr[i];
+          bestCostDay = labels[i];
+        }
+      }
 
-                // Pie chart
-                const ctxPie = document.getElementById("costPieChart").getContext("2d");
-                if (pieChartInstance) pieChartInstance.destroy();
+      if (document.getElementById("txtTrendAvgVol")) {
+        document.getElementById("txtTrendAvgVol").innerText = `${_formatVndNum(avgVol)} đơn`;
+      }
+      if (document.getElementById("txtTrendAvgCost")) {
+        document.getElementById("txtTrendAvgCost").innerText = `${_formatVndNum(avgCost)} đ`;
+      }
+      if (document.getElementById("txtTrendPeakVol")) {
+        document.getElementById("txtTrendPeakVol").innerText = peakVol > 0 ? `${_formatVndNum(peakVol)} đơn (${peakVolDay})` : "-";
+      }
+      if (document.getElementById("txtTrendBestCost")) {
+        document.getElementById("txtTrendBestCost").innerText = bestCost < Infinity ? `${_formatVndNum(bestCost)} đ (${bestCostDay})` : "-";
+      }
 
-                const m = data.metrics || {};
-                const luongGiao = m["Lương giao"] ? m["Lương giao"].numeric : 0;
-                const luongXl = m["Lương NVXL"] ? m["Lương NVXL"].numeric : 0;
-                const chiPhiXe = m["Chi phí xe tải"] ? m["Chi phí xe tải"].numeric : 0;
+      const ctxTrend = document.getElementById("trendChart").getContext("2d");
+      if (trendChartInstance) trendChartInstance.destroy();
 
-                pieChartInstance = new Chart(ctxPie, {
-                  type: 'doughnut',
-                  data: {
-                    labels: ['Lương Giao', 'Lương NVXL', 'Xe Tải 365'],
-                    datasets: [{
-                      data: [luongGiao, luongXl, chiPhiXe],
-                      backgroundColor: ['#fbbf24', '#34d399', '#38bdf8'],
-                      borderWidth: 0
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { position: 'bottom', labels: { color: '#cbd5e1', padding: 14 } }
-                    }
-                  }
-                });
+      // Gradient cột sản lượng GTC sắc nét
+      const barGrad = ctxTrend.createLinearGradient(0, 0, 0, 260);
+      if (isLight) {
+        barGrad.addColorStop(0, "rgba(2, 132, 199, 0.92)");
+        barGrad.addColorStop(0.6, "rgba(14, 165, 233, 0.72)");
+        barGrad.addColorStop(1, "rgba(56, 189, 248, 0.28)");
+      } else {
+        barGrad.addColorStop(0, "rgba(0, 229, 190, 0.88)");
+        barGrad.addColorStop(0.6, "rgba(14, 165, 233, 0.62)");
+        barGrad.addColorStop(1, "rgba(14, 165, 233, 0.18)");
+      }
+
+      const peakBarGrad = ctxTrend.createLinearGradient(0, 0, 0, 260);
+      peakBarGrad.addColorStop(0, "rgba(16, 185, 129, 0.95)");
+      peakBarGrad.addColorStop(1, "rgba(5, 150, 105, 0.35)");
+
+      const barColors = volArr.map(v => (v === peakVol && peakVol > 0) ? peakBarGrad : barGrad);
+      const barBorders = volArr.map(v => (v === peakVol && peakVol > 0) ? "#059669" : (isLight ? "#0284c7" : "#00e5be"));
+
+      const lineFillGrad = ctxTrend.createLinearGradient(0, 0, 0, 260);
+      lineFillGrad.addColorStop(0, "rgba(244, 63, 94, 0.22)");
+      lineFillGrad.addColorStop(1, "rgba(244, 63, 94, 0.0)");
+
+      const gridColor = isLight ? "rgba(15, 23, 42, 0.07)" : "rgba(255, 255, 255, 0.06)";
+      const tickColor = isLight ? "#334155" : "#cbd5e1";
+      const legendColor = isLight ? "#0f172a" : "#f8fafc";
+      const volAxisColor = isLight ? "#0284c7" : "#38bdf8";
+      const costAxisColor = isLight ? "#e11d48" : "#fb7185";
+
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Volume GTC (Đơn)',
+              data: volArr,
+              backgroundColor: barColors,
+              borderColor: barBorders,
+              borderWidth: 1.8,
+              borderRadius: 8,
+              borderSkipped: false,
+              barPercentage: 0.68,
+              categoryPercentage: 0.78,
+              yAxisID: 'y',
+              order: 2
+            },
+            {
+              label: 'Chi Phí / Đơn (VNĐ)',
+              data: costArr,
+              type: 'line',
+              borderColor: costAxisColor,
+              backgroundColor: lineFillGrad,
+              fill: true,
+              borderWidth: 3,
+              tension: 0.38,
+              yAxisID: 'y1',
+              pointRadius: 4.5,
+              pointHoverRadius: 7,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: costAxisColor,
+              pointBorderWidth: 2.5,
+              order: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: tickColor, font: { family: "'Plus Jakarta Sans', sans-serif", weight: '700', size: 11.5 } }
+            },
+            y: {
+              grid: { color: gridColor, borderDash: [4, 4] },
+              ticks: {
+                color: volAxisColor,
+                font: { family: "'JetBrains Mono', monospace", weight: '700', size: 11 },
+                callback: v => _formatVndNum(v)
+              },
+              title: { display: true, text: 'Sản lượng GTC (Đơn)', color: volAxisColor, font: { weight: '800', size: 11.5 } }
+            },
+            y1: {
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: {
+                color: costAxisColor,
+                font: { family: "'JetBrains Mono', monospace", weight: '700', size: 11 },
+                callback: v => _formatVndNum(v) + ' đ'
+              },
+              title: { display: true, text: 'Chi phí / Đơn (VNĐ)', color: costAxisColor, font: { weight: '800', size: 11.5 } }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: legendColor,
+                usePointStyle: true,
+                pointStyle: 'rectRounded',
+                padding: 16,
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12.5, weight: '800' }
               }
+            },
+            tooltip: {
+              backgroundColor: isLight ? 'rgba(15, 23, 42, 0.94)' : 'rgba(5, 18, 24, 0.95)',
+              titleColor: '#38bdf8',
+              bodyColor: '#ffffff',
+              borderColor: 'rgba(56, 189, 248, 0.45)',
+              borderWidth: 1,
+              padding: 12,
+              cornerRadius: 10,
+              callbacks: {
+                label: function(ctx) {
+                  const val = ctx.parsed.y || 0;
+                  if (ctx.datasetIndex === 0) {
+                    const diff = avgVol > 0 ? Math.round(((val - avgVol) / avgVol) * 100) : 0;
+                    const sign = diff >= 0 ? `+${diff}%` : `${diff}%`;
+                    return ` 📦 Sản lượng GTC: ${_formatVndNum(val)} đơn (${sign} so với TB)`;
+                  } else {
+                    return ` 💰 Chi phí / Đơn: ${_formatVndNum(val)} VNĐ/đơn`;
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // 2. Biểu đồ Donut Cơ cấu chi phí + HUD Tâm Donut + 3 Thẻ Phân Rã Tỷ Trọng
+      const ctxPie = document.getElementById("costPieChart").getContext("2d");
+      if (pieChartInstance) pieChartInstance.destroy();
+
+      const m = data.metrics || {};
+      const luongGiao = m["Lương giao"] ? (Number(m["Lương giao"].numeric) || 0) : 0;
+      const luongXl = m["Lương NVXL"] ? (Number(m["Lương NVXL"].numeric) || 0) : 0;
+      const chiPhiXe = m["Chi phí xe tải"] ? (Number(m["Chi phí xe tải"].numeric) || 0) : 0;
+      const volGtc = m["Volume GTC"] ? (Number(m["Volume GTC"].numeric) || 0) : 0;
+      const totalCost = luongGiao + luongXl + chiPhiXe;
+      const overallPerOrder = volGtc > 0 ? Math.round(totalCost / volGtc) : 0;
+
+      if (document.getElementById("txtPieCenterTotal")) {
+        document.getElementById("txtPieCenterTotal").innerText = _formatCompactVnd(totalCost);
+      }
+      if (document.getElementById("txtPieCenterPerOrder")) {
+        document.getElementById("txtPieCenterPerOrder").innerText = `${_formatVndNum(overallPerOrder)} đ/đơn`;
+      }
+      if (document.getElementById("badgePieTotalOrders")) {
+        document.getElementById("badgePieTotalOrders").innerText = `Tổng chi: ${_formatVndNum(totalCost)} đ • ${_formatVndNum(volGtc)} đơn GTC`;
+      }
+
+      // Tạo Gradient 3 mảnh Donut sang trọng
+      const gAmber = ctxPie.createLinearGradient(0, 0, 200, 200);
+      gAmber.addColorStop(0, "#f59e0b");
+      gAmber.addColorStop(1, "#ea580c");
+
+      const gEmerald = ctxPie.createLinearGradient(0, 0, 200, 200);
+      gEmerald.addColorStop(0, "#10b981");
+      gEmerald.addColorStop(1, "#059669");
+
+      const gOcean = ctxPie.createLinearGradient(0, 0, 200, 200);
+      gOcean.addColorStop(0, "#0ea5e9");
+      gOcean.addColorStop(1, "#2563eb");
+
+      pieChartInstance = new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: ['Lương Giao NVGH', 'Lương NVXL Kho', 'Xe Tải 365'],
+          datasets: [{
+            data: [luongGiao, luongXl, chiPhiXe],
+            backgroundColor: [gAmber, gEmerald, gOcean],
+            hoverBackgroundColor: ['#f59e0b', '#10b981', '#0284c7'],
+            borderColor: isLight ? '#ffffff' : '#0b1c26',
+            borderWidth: 3,
+            borderRadius: 7,
+            spacing: 3,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '66%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: isLight ? 'rgba(15, 23, 42, 0.95)' : 'rgba(5, 18, 24, 0.96)',
+              titleColor: '#fbbf24',
+              bodyColor: '#ffffff',
+              padding: 11,
+              cornerRadius: 10,
+              callbacks: {
+                label: function(ctx) {
+                  const v = ctx.parsed || 0;
+                  const pct = totalCost > 0 ? ((v / totalCost) * 100).toFixed(1) : "0.0";
+                  return ` ${_formatVndNum(v)} đ (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Render 3 thẻ chi tiết bên phải Donut
+      const bdContainer = document.getElementById("pieBreakdownList");
+      if (bdContainer) {
+        const items = [
+          {
+            title: "🛵 Lương Giao NVGH",
+            amount: luongGiao,
+            color: "#ea580c",
+            bgSoft: "rgba(245, 158, 11, 0.15)",
+            grad: "linear-gradient(90deg, #f59e0b 0%, #ea580c 100%)"
+          },
+          {
+            title: "🚛 Chi Phí Xe Tải 365",
+            amount: chiPhiXe,
+            color: "#0284c7",
+            bgSoft: "rgba(14, 165, 233, 0.15)",
+            grad: "linear-gradient(90deg, #0ea5e9 0%, #2563eb 100%)"
+          },
+          {
+            title: "🏢 Lương NVXL Kho",
+            amount: luongXl,
+            color: "#059669",
+            bgSoft: "rgba(16, 185, 129, 0.15)",
+            grad: "linear-gradient(90deg, #10b981 0%, #059669 100%)"
+          }
+        ];
+
+        bdContainer.innerHTML = items.map(it => {
+          const pctNum = totalCost > 0 ? (it.amount / totalCost) * 100 : 0;
+          const pctStr = pctNum.toFixed(1) + "%";
+          const perOrd = volGtc > 0 ? Math.round(it.amount / volGtc) : 0;
+          return `
+            <div class="pie-breakdown-item">
+              <div class="pie-bd-top">
+                <div class="pie-bd-name">
+                  <span class="pie-bd-dot" style="background: ${it.grad};"></span>
+                  <span>${it.title}</span>
+                </div>
+                <span class="pie-bd-pct" style="background: ${it.bgSoft}; color: ${it.color}; border: 1px solid ${it.color}44;">
+                  ${pctStr}
+                </span>
+              </div>
+              <div class="pie-bd-mid">
+                <span class="pie-bd-amount">${_formatVndNum(it.amount)} đ</span>
+                <span class="pie-bd-unit">~${_formatVndNum(perOrd)} đ/đơn</span>
+              </div>
+              <div class="pie-bar-track">
+                <div class="pie-bar-fill" style="width: ${Math.max(pctNum, 3)}%; background: ${it.grad};"></div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
 
     function exportCostExcel() {
                 const hub = (currentAuthUser && currentAuthUser.role === "nvxl")
@@ -2334,13 +3080,16 @@
               "theme-amber": { icon: "🐯", label: "Cam Hổ Cyber", isDark: true },
               "theme-purple": { icon: "🟣", label: "Tím Neon", isDark: true },
               "theme-midnight": { icon: "🌑", label: "Đen OLED", isDark: true },
-              "theme-light": { icon: "☀️", label: "Sáng Thanh Lịch", isDark: false }
+              "theme-light": { icon: "☀️", label: "Sáng Ngọc Lục Bảo", isDark: false },
+              "theme-light-sapphire": { icon: "👑", label: "Sáng Sapphire", isDark: false },
+              "theme-light-sunset": { icon: "🌅", label: "Sáng Cam GHN", isDark: false },
+              "theme-light-lavender": { icon: "💎", label: "Sáng Tím Pha Lê", isDark: false }
             };
 
             let currentThemeKey = "theme-ghn-teal";
 
             function updateQuickButton(themeKey) {
-              const isLight = (themeKey === "theme-light");
+              const isLight = themeMap[themeKey] && !themeMap[themeKey].isDark;
               const qIcon = document.getElementById("txtQuickHeaderModeIcon");
               const qLabel = document.getElementById("txtQuickHeaderModeLabel");
               const qBtn = document.getElementById("btnQuickHeaderMode");
@@ -2385,7 +3134,7 @@
 
             if (btnQuickHeaderMode) {
               btnQuickHeaderMode.addEventListener("click", () => {
-                if (currentThemeKey === "theme-light") {
+                if (_isLightTheme()) {
                   applyTheme("theme-ghn-teal");
                 } else {
                   applyTheme("theme-light");
