@@ -3871,44 +3871,65 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
         print("[SECURITY GUARD] Chặn gửi tin nhắn không hợp lệ hoặc chứa Bot Token!")
         return {"ok": False, "description": "Blocked by security guard"}
 
-    safe_text = str(text)[:4000]
+    full_str = str(text)
+    if len(full_str) > 3900:
+        chunks = []
+        current_lines = []
+        current_len = 0
+        for line in full_str.split("\n"):
+            if current_len + len(line) + 1 > 3850 and current_lines:
+                chunks.append("\n".join(current_lines))
+                current_lines = [line]
+                current_len = len(line) + 1
+            else:
+                current_lines.append(line)
+                current_len += len(line) + 1
+        if current_lines:
+            chunks.append("\n".join(current_lines))
+    else:
+        chunks = [full_str]
+
     chat_id = target_chat_id or TELEGRAM_BRIDGE_CHAT_ID
     url = f"https://api.telegram.org/bot{TELEGRAM_BRIDGE_BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": safe_text,
-        "parse_mode": parse_mode,
-        "disable_web_page_preview": True
-    }
-    if str(chat_id) == str(TELEGRAM_BRIDGE_CHAT_ID) and topic_id and int(topic_id) > 0:
-        payload["message_thread_id"] = int(topic_id)
-    if reply_to_message_id and int(reply_to_message_id) > 0:
-        payload["reply_to_message_id"] = int(reply_to_message_id)
-    try:
-        r = requests.post(url, json=payload, timeout=10)
-        res = r.json()
-        if not res.get("ok"):
-            # Nếu lỗi do tin nhắn reply_to không tìm thấy, gửi lại trực tiếp vào nhóm/topic
-            if reply_to_message_id:
-                p2 = payload.copy()
-                p2.pop("reply_to_message_id", None)
-                r2 = requests.post(url, json=p2, timeout=10)
-                res2 = r2.json()
-                if res2.get("ok"):
-                    return res2
-            # Nếu lỗi parse HTML, bỏ parse_mode và gửi dạng văn bản thuần
-            if parse_mode == "HTML":
-                import re
-                p3 = payload.copy()
-                p3.pop("parse_mode", None)
-                p3["text"] = re.sub(r'<[^>]+>', '', safe_text)
-                r3 = requests.post(url, json=p3, timeout=10)
-                res3 = r3.json()
-                if res3.get("ok"):
-                    return res3
-        return res
-    except Exception as e:
-        return {"ok": False, "description": str(e)}
+    last_res = {"ok": False}
+
+    for idx, safe_text in enumerate(chunks):
+        payload = {
+            "chat_id": chat_id,
+            "text": safe_text[:4000],
+            "parse_mode": parse_mode,
+            "disable_web_page_preview": True
+        }
+        if str(chat_id) == str(TELEGRAM_BRIDGE_CHAT_ID) and topic_id and int(topic_id) > 0:
+            payload["message_thread_id"] = int(topic_id)
+        if idx == 0 and reply_to_message_id and int(reply_to_message_id) > 0:
+            payload["reply_to_message_id"] = int(reply_to_message_id)
+        try:
+            r = requests.post(url, json=payload, timeout=10)
+            res = r.json()
+            if not res.get("ok"):
+                if reply_to_message_id and idx == 0:
+                    p2 = payload.copy()
+                    p2.pop("reply_to_message_id", None)
+                    r2 = requests.post(url, json=p2, timeout=10)
+                    res2 = r2.json()
+                    if res2.get("ok"):
+                        last_res = res2
+                        continue
+                if parse_mode == "HTML":
+                    import re
+                    p3 = payload.copy()
+                    p3.pop("parse_mode", None)
+                    p3["text"] = re.sub(r'<[^>]+>', '', safe_text[:4000])
+                    r3 = requests.post(url, json=p3, timeout=10)
+                    res3 = r3.json()
+                    if res3.get("ok"):
+                        last_res = res3
+                        continue
+            last_res = res
+        except Exception as e:
+            last_res = {"ok": False, "description": str(e)}
+    return last_res
 
 
 def _send_telegram_photo(photo_path, caption="", topic_id=2690, reply_to_message_id=None, parse_mode="HTML"):
@@ -4541,10 +4562,14 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             "check ky", "check tung don", "kiem tra tung don", "soi tung don", "check cac don",
             "kiem tra cac don", "check don hen", "check don gtb", "check don that bai",
             "tung don cho", "chi tiet tung don", "danh sach don that bai", "danh sach don hen",
-            "16 don", "32 don", "check het", "soi ky"
+            "16 don", "32 don", "check het", "soi ky", "duoi 10s", "10s", "nghe ngan", "goi ngan",
+            "bam hoan tre", "gom bam hoan"
         ]) or (
             any(k in lower_na for k in ["check", "kiem tra", "soi", "xem", "liet ke"]) and
-            any(r in combined_audit_q for r in ["hen lai", "khong nghe may", "chan so", "khong lien lac", "that bai", "gtb", "don rot", "khong dat"])
+            any(r in combined_audit_q for r in [
+                "hen lai", "khong nghe may", "chan so", "khong lien lac", "that bai", "gtb",
+                "don rot", "khong dat", "10s", "0s", "nghi van", "hoan ao"
+            ])
         )
     )
     if is_hub_gtb_audit:
@@ -4557,7 +4582,11 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
                 reply_to_message_id=msg_id,
                 target_chat_id=sender_chat_id
             )
-            detail_report = audit_hub_failed_orders_detail(text, reply_to_text)
+            detail_report = audit_hub_failed_orders_detail(
+                text,
+                reply_to_text,
+                sender_hub=entry.get("hub_badge", "")
+            )
             sent = _send_telegram_group_message(
                 detail_report,
                 topic_id=topic_id,
@@ -5048,7 +5077,7 @@ def _process_single_telegram_update(upd):
     )
     reply_text = ""
     if reply_msg and not reply_msg.get("forum_topic_created"):
-        reply_text = (reply_msg.get("text") or reply_msg.get("caption") or "")[:160]
+        reply_text = (reply_msg.get("text") or reply_msg.get("caption") or "")[:800]
 
     is_explanation = bool(
         ("giải trình" in reply_text.lower()) or

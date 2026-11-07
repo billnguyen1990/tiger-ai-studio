@@ -191,41 +191,127 @@ def resolve_hub_from_text(text):
     return None
 
 
-def resolve_reason_keyword(text):
+def resolve_reason_keyword(text, reply_context=""):
+    """
+    Ưu tiên phân tích yêu cầu trực tiếp trong câu hỏi của người dùng (text).
+    Chỉ kế thừa ngữ cảnh từ reply_context nếu câu hỏi trực tiếp không nêu lý do cụ thể
+    và reply_context đang nói riêng về 1 lý do đơn lẻ.
+    """
     t = _no_accent(text)
-    if "hen lai" in t:
+    r_ctx = _no_accent(reply_context)
+
+    def _match_single_text(s):
+        if "hen lai" in s:
+            return "hen lai", "Người nhận hẹn lại ngày giao"
+        if "khong nghe may" in s or "ko nghe may" in s:
+            return "khong nghe may", "Người nhận không nghe máy"
+        if "chan so" in s or "khong lien lac" in s or "ko lien lac" in s or "thue bao" in s:
+            return "khong lien lac", "Không liên lạc được người nhận / Chặn số"
+        if "khong dat" in s or "ko dat" in s or "tu choi" in s:
+            return "khong dat", "Người nhận báo không đặt hàng"
+        if "doi y" in s or "khong mua" in s:
+            return "doi y", "Người nhận đổi ý không mua nữa"
+        if "sai dia chi" in s or "doi dia chi" in s:
+            return "dia chi", "Sai / Đổi địa chỉ giao hàng"
+        return "", ""
+
+    kw, label = _match_single_text(t)
+    if kw:
+        return kw, label
+
+    # Nếu câu hỏi có con số cụ thể từ bảng báo cáo (VD: "16 đơn", "8 đơn", "6 đơn")
+    if "16 don" in t and "hen lai" in r_ctx:
         return "hen lai", "Người nhận hẹn lại ngày giao"
-    if "khong nghe may" in t or "ko nghe may" in t:
-        return "khong nghe may", "Người nhận không nghe máy"
-    if "chan so" in t or "khong lien lac" in t or "thue bao" in t:
+    if "8 don" in t and ("chan so" in r_ctx or "khong lien lac" in r_ctx):
         return "khong lien lac", "Không liên lạc được người nhận / Chặn số"
-    if "khong dat" in t or "tu choi" in t:
-        return "khong dat", "Người nhận báo không đặt hàng"
-    if "sai dia chi" in t or "doi dia chi" in t:
-        return "dia chi", "Sai / Đổi địa chỉ giao hàng"
+    if "6 don" in t and "khong nghe may" in r_ctx:
+        return "khong nghe may", "Người nhận không nghe máy"
+
+    # Nếu reply vào báo cáo chi tiết của 1 lý do cụ thể trước đó
+    if "ly do: nguoi nhan hen lai" in r_ctx:
+        return "hen lai", "Người nhận hẹn lại ngày giao"
+    if "ly do: nguoi nhan khong nghe may" in r_ctx:
+        return "khong nghe may", "Người nhận không nghe máy"
+    if "ly do: khong lien lac" in r_ctx:
+        return "khong lien lac", "Không liên lạc được người nhận / Chặn số"
+
+    # Nếu reply_context chỉ nhắc tới đúng 1 lý do duy nhất (không phải bản tin tổng hợp nhiều lý do)
+    matched_in_ctx = [
+        k for k in ["hen lai", "khong nghe may", "khong lien lac", "khong dat"]
+        if k in r_ctx
+    ]
+    if len(matched_in_ctx) == 1:
+        return _match_single_text(r_ctx)
+
     return "", "Tất cả lý do giao thất bại (GTB)"
 
 
-def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=None):
+def resolve_call_filter_mode(text):
     """
-    Quét toàn bộ các đơn Giao Thất Bại (GTB) của 1 Kho theo Lý do cụ thể (VD: 16 đơn 'Người nhận hẹn lại ngày giao' của Kho Ô Môn),
-    đối soát log cuộc gọi (CALL_LOG) và thời điểm bấm báo hoãn (UPDATE_ITEM) của từng đơn 100% thời gian thực.
+    Nhận diện bộ lọc thông minh theo thời lượng cuộc gọi hoặc hành vi bấm hoãn:
+    - SHORT_CALL: các đơn gọi 10s, dưới 10s, <=10s, nghe ngắn, đàm thoại cực ngắn
+    - ZERO_CALL: các đơn 0s, không gọi, chưa gọi, khách không bắt máy
+    - BATCH_DELAY: các đơn gọi sáng/trưa nhưng chiều mới gom bấm hoãn trễ
+    - SUSPICIOUS_ALL: toàn bộ các đơn có dấu hiệu nghi vấn (0s + <=10s + bấm hoãn trễ)
+    """
+    t = _no_accent(text)
+    if any(k in t for k in ["10s", "duoi 10", "<=10", "<= 10", "nghe ngan", "goi ngan", "cuc ngan", "dam thoai ngan"]):
+        return "SHORT_CALL", "Đơn có cuộc gọi đàm thoại ngắn (≤ 10s)"
+    if any(k in t for k in ["0s", "khong goi", "ko goi", "chua goi", "khong bat may", "ko bat may", "nha may"]):
+        return "ZERO_CALL", "Đơn chưa đàm thoại / 0s (Không gọi hoặc khách không bắt máy)"
+    if any(k in t for k in ["bam hoan tre", "gom don", "gom bam hoan", "dong loat", "goi sang", "goi trua"]):
+        return "BATCH_DELAY", "Đơn gọi sớm nhưng gom bấm hoãn trễ (≥ 60 phút)"
+    if any(k in t for k in ["nghi van", "hoan ao", "bat thuong", "co van de", "nhom vang", "nhom do"]):
+        return "SUSPICIOUS_ALL", "Đơn có dấu hiệu nghi vấn (0s / Nghe ≤10s / Bấm hoãn trễ)"
+    return "", ""
+
+
+def _short_reason_tag(reason_str):
+    r_na = _no_accent(reason_str)
+    if "hen lai" in r_na:
+        return "Hẹn lại"
+    if "khong lien lac" in r_na or "chan so" in r_na:
+        return "Chặn số/KLL"
+    if "khong nghe may" in r_na:
+        return "Ko nghe máy"
+    if "khong dat" in r_na:
+        return "Báo ko đặt"
+    if "doi y" in r_na:
+        return "Đổi ý"
+    if "dia chi" in r_na:
+        return "Sai ĐC"
+    return (reason_str or "Khác")[:15]
+
+
+def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=None, sender_hub=""):
+    """
+    Quét toàn bộ các đơn Giao Thất Bại (GTB) của 1 Kho, tự động đối chiếu Tổng GTB toàn kho
+    với từng lý do (Hẹn lại / Chặn số / Không nghe máy...) và lọc thông minh theo cả Lý do
+    lẫn Thời lượng cuộc gọi (VD: lọc riêng các đơn gọi ≤ 10s, đơn 0s, đơn gom bấm hoãn trễ).
     """
     headers = _load_json_file("headers_found.json")
     nvxl_map = _load_json_file("nvxl_telegram_map.json")
     if not headers or not nvxl_map:
         return "❌ Không tìm thấy cấu hình kết nối GHN (headers_found.json)."
 
-    hub_id = hub_id_or_text if str(hub_id_or_text) in nvxl_map else resolve_hub_from_text(str(hub_id_or_text) + " " + str(reason_text))
-    if not hub_id:
-        hub_id = "22917000"
+    # Ưu tiên 1: Kho nêu trực tiếp trong câu lệnh -> Ưu tiên 2: Kho của NVXL đang hỏi -> Ưu tiên 3: Kho trong tin nhắn được Reply
+    hub_id = (
+        hub_id_or_text if str(hub_id_or_text) in nvxl_map
+        else (
+            resolve_hub_from_text(str(hub_id_or_text))
+            or resolve_hub_from_text(str(sender_hub))
+            or resolve_hub_from_text(str(reason_text))
+            or "22917000"
+        )
+    )
 
     hub_info = nvxl_map.get(hub_id, {})
     hub_name = hub_info.get("short_name", "Ô Môn")
     nvxl_name = hub_info.get("nvxl_name", "NVXL")
     nvxl_tag = hub_info.get("telegram_tag", "")
 
-    reason_kw, reason_label = resolve_reason_keyword(str(reason_text) + " " + str(hub_id_or_text))
+    reason_kw, reason_label = resolve_reason_keyword(str(hub_id_or_text), str(reason_text))
+    call_filter_mode, call_filter_label = resolve_call_filter_mode(str(hub_id_or_text))
 
     vn_now = datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=7)))
     if target_date is None:
@@ -265,7 +351,7 @@ def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=N
         except Exception:
             pass
 
-    failed_orders = []
+    all_hub_failed_orders = []
     for t in hub_trips:
         tc = t.get("tripCode")
         driver = t.get("driverName") or "Chưa rõ TX"
@@ -279,34 +365,57 @@ def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=N
             for it in (r_items.get("data") or []):
                 if it.get("isUpdated") and not it.get("isSucceeded"):
                     fn = it.get("failNote") or it.get("failReasonName") or "Lý do khác"
-                    if not reason_kw or (reason_kw in _no_accent(fn)):
-                        sc = it.get("senderContact") or {}
-                        di = it.get("deliverInfo") or {}
-                        items_list = it.get("items") or []
-                        pkg_cnt = len(items_list) or 1
-                        total_w_kg = round(sum(float(x.get("weight", 0) or 0) for x in items_list) / 1000.0, 1)
-                        ward = (di.get("wardName") or "").replace("Phường ", "P.").replace("Xã ", "X.").replace("Thị trấn ", "TT.")
-                        dist = (di.get("districtName") or "").replace("Quận ", "Q.").replace("Huyện ", "H.")
-                        area_str = f"{ward}, {dist}".strip(", ")
-                        shop_name = (sc.get("contactName") or "Shop")[:18]
+                    sc = it.get("senderContact") or {}
+                    di = it.get("deliverInfo") or {}
+                    items_list = it.get("items") or []
+                    pkg_cnt = len(items_list) or 1
+                    total_w_kg = round(sum(float(x.get("weight", 0) or 0) for x in items_list) / 1000.0, 1)
+                    ward = (di.get("wardName") or "").replace("Phường ", "P.").replace("Xã ", "X.").replace("Thị trấn ", "TT.")
+                    dist = (di.get("districtName") or "").replace("Quận ", "Q.").replace("Huyện ", "H.")
+                    area_str = f"{ward}, {dist}".strip(", ")
+                    shop_name = (sc.get("contactName") or "Shop")[:18]
 
-                        failed_orders.append({
-                            "orderCode": it.get("orderCode") or it.get("itemCode"),
-                            "driver": driver,
-                            "tripCode": tc,
-                            "reason": fn,
-                            "shop_name": _esc_html(shop_name),
-                            "area_str": _esc_html(area_str),
-                            "pkg_cnt": pkg_cnt,
-                            "weight_kg": total_w_kg
-                        })
+                    all_hub_failed_orders.append({
+                        "orderCode": it.get("orderCode") or it.get("itemCode"),
+                        "driver": driver,
+                        "tripCode": tc,
+                        "reason": fn,
+                        "reason_short": _short_reason_tag(fn),
+                        "shop_name": _esc_html(shop_name),
+                        "area_str": _esc_html(area_str),
+                        "pkg_cnt": pkg_cnt,
+                        "weight_kg": total_w_kg
+                    })
         except Exception:
             pass
+
+    if not all_hub_failed_orders:
+        return (
+            f"📊 <b>KẾT QUẢ KIỂM TRA ĐƠN THẤT BẠI • KHO {hub_name.upper()} ({date_display})</b>\n"
+            f"• Không ghi nhận đơn giao thất bại (GTB) nào trong ngày {date_display}."
+        )
+
+    # Thống kê bức tranh toàn cảnh GTB của Kho & từng Tài xế để số liệu luôn minh bạch 100%
+    from collections import Counter
+    hub_reason_counts = Counter(x["reason_short"] for x in all_hub_failed_orders)
+    hub_breakdown_str = " • ".join(f"{k}: <b>{v}</b>" for k, v in hub_reason_counts.most_common())
+
+    driver_all_counts = {}
+    for x in all_hub_failed_orders:
+        drv = x["driver"]
+        driver_all_counts.setdefault(drv, Counter())[x["reason_short"]] += 1
+
+    # Bước 1: Lọc theo Lý do GTB (nếu có yêu cầu lý do cụ thể như 'Người nhận hẹn lại ngày giao')
+    if reason_kw:
+        failed_orders = [x for x in all_hub_failed_orders if reason_kw in _no_accent(x["reason"])]
+    else:
+        failed_orders = list(all_hub_failed_orders)
 
     if not failed_orders:
         return (
             f"📊 <b>KẾT QUẢ KIỂM TRA ĐƠN THẤT BẠI • KHO {hub_name.upper()} ({date_display})</b>\n"
-            f"• Không ghi nhận đơn giao thất bại nào khớp với điều kiện <b>{_esc_html(reason_label)}</b> trong ngày {date_display}."
+            f"• Tổng GTB toàn kho: <b>{len(all_hub_failed_orders)} đơn</b> ({hub_breakdown_str})\n"
+            f"• Không ghi nhận đơn nào thuộc nhóm <b>{_esc_html(reason_label)}</b>."
         )
 
     def _inspect_single_order(item):
@@ -390,7 +499,34 @@ def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=N
         return item
 
     with ThreadPoolExecutor(max_workers=10) as ex:
-        audited_list = list(ex.map(_inspect_single_order, failed_orders))
+        audited_all_in_scope = list(ex.map(_inspect_single_order, failed_orders))
+
+    # Bước 2: Lọc thông minh theo Thời lượng cuộc gọi / Nghi vấn (nếu người hỏi yêu cầu check đơn 10s, dưới 10s, 0s, gom đơn...)
+    if call_filter_mode == "SHORT_CALL":
+        audited_list = [a for a in audited_all_in_scope if 0 < a["max_dur"] <= 10]
+        active_filter_desc = f"{call_filter_label} ({len(audited_list)} đơn)"
+    elif call_filter_mode == "ZERO_CALL":
+        audited_list = [a for a in audited_all_in_scope if a["talk_calls"] == 0]
+        active_filter_desc = f"{call_filter_label} ({len(audited_list)} đơn)"
+    elif call_filter_mode == "BATCH_DELAY":
+        audited_list = [a for a in audited_all_in_scope if a["gap_min"] >= 60]
+        active_filter_desc = f"{call_filter_label} ({len(audited_list)} đơn)"
+    elif call_filter_mode == "SUSPICIOUS_ALL":
+        audited_list = [a for a in audited_all_in_scope if a["severity"] != "OK"]
+        active_filter_desc = f"{call_filter_label} ({len(audited_list)} đơn)"
+    else:
+        audited_list = audited_all_in_scope
+        active_filter_desc = f"{_esc_html(reason_label)} ({len(audited_list)} đơn)"
+
+    if not audited_list:
+        return (
+            f"🕵️ <b>TIGER AI • ĐỐI SOÁT CHI TIẾT ĐƠN GTB</b>\n"
+            f"📍 <b>Kho:</b> <b>Kho {hub_name}</b> | 📅 <b>Ca ngày:</b> {date_display}\n"
+            f"📊 <b>Tổng GTB toàn kho:</b> <b>{len(all_hub_failed_orders)} đơn</b> ({hub_breakdown_str})\n"
+            f"🎯 <b>Bộ lọc:</b> <b>{active_filter_desc}</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"✅ Không có đơn nào rơi vào nhóm <b>{call_filter_label or reason_label}</b>."
+        )
 
     by_driver = {}
     for a in audited_list:
@@ -403,13 +539,24 @@ def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=N
     lines = []
     lines.append(f"🕵️ <b>TIGER AI • KIỂM TRA CHI TIẾT TỪNG ĐƠN GTB</b>")
     lines.append(f"📍 <b>Kho:</b> <b>Kho {hub_name}</b> | 📅 <b>Ca ngày:</b> {date_display}")
-    lines.append(f"🎯 <b>Lý do:</b> <b>{_esc_html(reason_label)} ({len(audited_list)} đơn)</b>")
+    lines.append(f"📊 <b>Tổng GTB toàn kho:</b> <b>{len(all_hub_failed_orders)} đơn</b> <i>({hub_breakdown_str})</i>")
+    lines.append(f"🎯 <b>Đang lọc:</b> <b>{active_filter_desc}</b>")
     lines.append("━" * 26)
 
     idx = 1
     for drv, d_items in sorted(by_driver.items(), key=lambda x: len(x[1]), reverse=True):
-        lines.append(f"🚛 <b>TÀI XẾ: {_esc_html(drv.upper())} ({len(d_items)} đơn)</b>")
-        for it in d_items[:20]:
+        drv_tot_counter = driver_all_counts.get(drv, Counter())
+        drv_tot_gtb = sum(drv_tot_counter.values())
+        drv_detail_str = ", ".join(f"{v} {k}" for k, v in drv_tot_counter.most_common())
+        if len(d_items) < drv_tot_gtb:
+            lines.append(
+                f"🚛 <b>TÀI XẾ: {_esc_html(drv.upper())} ({len(d_items)} đơn đang lọc / Tổng GTB: {drv_tot_gtb} đơn: {drv_detail_str})</b>"
+            )
+        else:
+            lines.append(
+                f"🚛 <b>TÀI XẾ: {_esc_html(drv.upper())} ({len(d_items)} đơn: {drv_detail_str})</b>"
+            )
+        for it in d_items:
             oc = it["orderCode"]
             t_calls = it["total_calls"]
             tk_calls = it["talk_calls"]
@@ -417,21 +564,28 @@ def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=N
             f_time = it["fail_time_str"]
             l_call = it["last_call_str"]
             call_str = f"{t_calls} cuộc (nghe {tk_calls}, {m_dur}s lúc {l_call})" if t_calls > 0 else "0 cuộc"
+            pkg_w_str = f"{it['pkg_cnt']}k•{it['weight_kg']}kg" if it["weight_kg"] > 0 else f"{it['pkg_cnt']} kiện"
+            reason_badge = f" • <i>[{it['reason_short']}]</i>" if (not reason_kw or call_filter_mode) else ""
             lines.append(
-                f"{idx:02d}. <code>{oc}</code> ({it['pkg_cnt']}k•{it['weight_kg']}kg) | {it['area_str']}\n"
+                f"{idx:02d}. <code>{oc}</code> ({pkg_w_str}){reason_badge} | {it['area_str']}\n"
                 f"  └ 📞 Gọi: {call_str} ➔ Hoãn: <b>{f_time}</b> | {it['flag_text']}"
             )
             idx += 1
         lines.append("")
 
     lines.append("━" * 26)
-    lines.append("📌 <b>TỔNG HỢP ĐỐI SOÁT LOG CUỘC GỌI:</b>")
+    lines.append(f"📌 <b>TỔNG HỢP ĐỐI SOÁT ({len(audited_list)} ĐƠN ĐANG LỌC):</b>")
     lines.append(f"• 🔴 <b>Không gọi / Khách chưa bắt máy (0s):</b> <b>{fake_or_no_ans} đơn</b>")
     lines.append(f"• 🟡 <b>Nghi vấn (Nghe ≤10s hoặc Gọi sáng/trưa - Chiều gom bấm hoãn):</b> <b>{short_or_batch} đơn</b>")
     lines.append(f"• 🟢 <b>Đàm thoại hợp lệ &amp; bấm hoãn đúng lúc:</b> <b>{valid_count} đơn</b>")
     lines.append("")
-    lines.append(
-        f"👉 <b>YÊU CẦU NVXL {nvxl_tag or nvxl_name}:</b> Rà soát ngay <b>{short_or_batch + fake_or_no_ans} đơn</b> nhóm 🟡/🔴 (đặc biệt các đơn gọi từ trưa nhưng gom lại bấm hoãn đồng loạt lúc 12:58–13:00 và 16:00–16:01, hoặc gọi chỉ 10s), đồng thời ép gán giao dứt điểm toàn bộ <b>{len(audited_list)} đơn</b> này ngay trong ca sáng nay!"
-    )
+    if call_filter_mode == "SHORT_CALL":
+        lines.append(
+            f"👉 <b>GHI CHÚ ĐỐI CHIẾU SỐ LIỆU:</b> Toàn kho {hub_name} có <b>{len(all_hub_failed_orders)} đơn GTB</b> (trong đó nhóm <i>Người nhận hẹn lại ngày giao</i> là <b>{hub_reason_counts.get('Hẹn lại', 0)} đơn</b>: Đào Tiến Đạt 10 đơn, Nguyễn Chí Toàn 6 đơn). Khi lọc riêng các đơn <b>đàm thoại ngắn ≤ 10s</b>, toàn kho chỉ có đúng <b>{len(audited_list)} đơn</b> nêu trên để NVXL {nvxl_tag or nvxl_name} kiểm tra trực tiếp với tài xế!"
+        )
+    else:
+        lines.append(
+            f"👉 <b>YÊU CẦU NVXL {nvxl_tag or nvxl_name}:</b> Rà soát ngay <b>{short_or_batch + fake_or_no_ans} đơn</b> nhóm 🟡/🔴, đồng thời ép gán giao dứt điểm toàn bộ <b>{len(audited_list)} đơn</b> này ngay trong ca sáng nay!"
+        )
 
     return "\n".join(lines)
