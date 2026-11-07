@@ -297,10 +297,12 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-color);
-      padding: 14px 28px;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      flex-wrap: nowrap;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -310,14 +312,16 @@
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 11px;
+      min-width: 0;
+      flex-shrink: 1;
     }
 
     .brand-logo {
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 10px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -327,43 +331,51 @@
     }
 
     .brand-title {
-      font-size: 18px;
+      font-size: 16.5px;
       font-weight: 800;
       letter-spacing: -0.02em;
+      white-space: nowrap;
       background: var(--header-title-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .brand-subtitle {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-sub);
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .header-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 7px;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
     }
 
     /* THEME PALETTE & QUICK LIGHT/DARK BUTTONS */
     .theme-palette-wrapper {
       position: relative;
       display: inline-flex;
+      flex-shrink: 0;
     }
 
     .btn-quick-theme-toggle {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-color);
       color: var(--text-main);
       border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 600;
+      padding: 6.5px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
       cursor: pointer;
       transition: all 0.2s ease;
       user-select: none;
@@ -378,14 +390,15 @@
     .btn-theme-pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 5px;
       background: rgba(0, 229, 190, 0.08);
       border: 1px solid var(--border-color);
       color: var(--accent-blue);
       border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 13px;
+      padding: 6.5px 11px;
+      font-size: 12px;
       font-weight: 700;
+      white-space: nowrap;
       cursor: pointer;
       transition: all 0.2s ease;
       user-select: none;
@@ -571,17 +584,19 @@
 
     /* ACTION BUTTONS */
     .btn {
-      padding: 8px 16px;
+      padding: 6.5px 12px;
       border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.2s ease;
       text-decoration: none;
       border: 1px solid transparent;
+      flex-shrink: 0;
     }
 
     .btn-primary {
@@ -607,13 +622,18 @@
     }
 
     .sync-badge {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-sub);
       font-family: 'JetBrains Mono', monospace;
-      padding: 6px 12px;
+      padding: 6px 10px;
       background: var(--bg-input);
       border-radius: 8px;
       border: 1px solid var(--border-color);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
     }
 
     /* MAIN CONTAINER */
@@ -1501,12 +1521,11 @@
   <header class="dashboard-header">
     <div class="brand-group">
       <div class="brand-logo"><img src="/static/img/tiger_avatar.jpg" alt="Tiger AI"
-          style="width: 44px; height: 44px; object-fit: cover; border-radius: 12px; border: 1.5px solid rgba(0, 229, 190, 0.6);">
+          style="width: 40px; height: 40px; object-fit: cover; border-radius: 10px; border: 1.5px solid rgba(0, 229, 190, 0.6);">
       </div>
-      <div>
-        <div class="brand-title">TIGER AI • CHI PHÍ & VẬN HÀNH MIỀN TÂY 01</div>
-        <div class="brand-subtitle">Theo dõi chính xác 11 chỉ số chi phí, lương & xe tải cố định theo Vùng, Kho, Tháng,
-          Tuần, Ngày</div>
+      <div style="min-width: 0;">
+        <div class="brand-title">TIGER AI • CHI PHÍ & VẬN HÀNH MT01</div>
+        <div class="brand-subtitle">Quản trị 11 chỉ số Chi phí, Lương & Xe tải 365 theo Vùng, Kho, Kỳ</div>
       </div>
     </div>
     <div class="header-right">
@@ -1655,17 +1674,17 @@
         </div>
       </div>
       <span class="sync-badge" id="badgeCurrentUserRole" style="display: none; background: rgba(16, 185, 129, 0.14); border: 1px solid var(--accent-green); color: var(--accent-green); font-weight: 800;">
-        👤 Đang kiểm tra quyền...
+        👤 Đang kiểm tra...
       </span>
-      <span class="sync-badge" id="syncStatus">Đồng bộ: Đang tải...</span>
-      <button class="btn btn-primary" id="btnSyncLive" onclick="triggerSync()">
-        <span>🔄 Đồng Bộ Sheets</span>
+      <span class="sync-badge" id="syncStatus">⏱️ Đang tải...</span>
+      <button class="btn btn-primary" id="btnSyncLive" onclick="triggerSync()" title="Đồng bộ dữ liệu mới nhất từ Google Sheets">
+        <span>🔄 Đồng Bộ</span>
       </button>
-      <button type="button" class="btn btn-outline" id="btnExportExcelTop" onclick="exportCostExcel()">
+      <button type="button" class="btn btn-outline" id="btnExportExcelTop" onclick="exportCostExcel()" title="Tải báo cáo Excel kỳ này">
         <span>📥 Xuất Excel</span>
       </button>
-      <a href="/" class="btn btn-outline" id="btnBackToStudio">
-        <span>🔙 Về Studio</span>
+      <a href="/" class="btn btn-outline" id="btnBackToStudio" title="Quay về Tiger AI Studio">
+        <span>🔙 Studio</span>
       </a>
       <button type="button" class="btn btn-outline" id="btnLogoutAccount" onclick="logoutCostDashboard()" title="Đăng xuất hoặc đổi sang tài khoản Email Kho khác" style="border-color: rgba(239, 68, 68, 0.45); color: var(--accent-red);">
         <span>🚪 Đổi TK</span>
@@ -2146,9 +2165,11 @@
       if (badgeRole) {
         badgeRole.style.display = "inline-flex";
         if (user.role === "nvxl") {
-          badgeRole.innerHTML = `🔒 NVXL: ${user.name} • ${user.allowed_hub} (${user.email})`;
+          badgeRole.innerHTML = `🔒 ${user.name} • ${user.allowed_hub}`;
+          badgeRole.title = `Tài khoản NVXL: ${user.email} (${user.allowed_hub})`;
         } else {
-          badgeRole.innerHTML = `👑 ${user.name} • Toàn Quyền 4 Kho & Studio`;
+          badgeRole.innerHTML = `👑 ${user.name}`;
+          badgeRole.title = "Quản Trị Vùng MT01 • Toàn Quyền 4 Kho & Studio";
         }
       }
 
@@ -2398,7 +2419,13 @@
             applyUserAuthUI(json.current_user);
           }
           filterOptions = json.available_filters;
-          document.getElementById("syncStatus").innerText = "Đồng bộ: " + (json.last_sync || "Mới nhất");
+          const rawSync = json.last_sync || "Mới nhất";
+          const shortSync = rawSync.replace(/^(\d{2}:\d{2}):\d{2}\s+(\d{2}\/\d{2})\/\d{4}$/, "$1 • $2");
+          const syncEl = document.getElementById("syncStatus");
+          if (syncEl) {
+            syncEl.innerText = "⏱️ " + shortSync;
+            syncEl.title = "Đồng bộ lúc: " + rawSync;
+          }
           updatePeriodDropdown(json.filter && json.filter.key);
           if (json.filter && json.filter.key) {
             const hubLabel = (json.filter && json.filter.hub) ? json.filter.hub : "Toàn Vùng MT01";
@@ -3068,7 +3095,7 @@
 
     async function triggerSync() {
                 const btn = document.getElementById("btnSyncLive");
-                btn.innerHTML = "<span>⏳ Đang Kéo Sheets...</span>";
+                btn.innerHTML = "<span>⏳ Đang kéo...</span>";
                 try {
                   const res = await fetch("/api/cost-dashboard/sync", { method: "POST" });
                   const json = await res.json();
@@ -3077,7 +3104,7 @@
                 } catch (e) {
                   alert("Lỗi đồng bộ: " + e);
                 } finally {
-                  btn.innerHTML = "<span>🔄 Đồng Bộ Sheets</span>";
+                  btn.innerHTML = "<span>🔄 Đồng Bộ</span>";
                 }
               }
 
