@@ -4477,67 +4477,88 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     if is_vision_guard_cmd:
         try:
             from warehouse_vision_guard import run_vision_guard_audit
+            from camera_service import VR_MAP
             CAM_TOPIC_ID = 3365
-            target_hub = "cairang"
-            if any(k in lower_text for k in ["bình thủy", "binhthuy", "bt"]):
-                target_hub = "binhthuy"
-            elif any(k in lower_text for k in ["ô môn", "omon", "om"]):
-                target_hub = "omon"
-            elif any(k in lower_text for k in ["vị thanh", "vithanh", "vt"]):
-                target_hub = "vithanh"
-
             hub_names = {
                 "cairang": "Kho Cái Răng",
                 "binhthuy": "Kho Bình Thủy",
                 "omon": "Kho Ô Môn",
                 "vithanh": "Kho Vị Thanh"
             }
-            h_disp = hub_names.get(target_hub, target_hub.title())
+            target_hubs = []
+            if any(k in lower_text for k in ["cái răng", "cairang", "cr"]):
+                target_hubs.append("cairang")
+            if any(k in lower_text for k in ["bình thủy", "binhthuy", "bt"]):
+                target_hubs.append("binhthuy")
+            if any(k in lower_text for k in ["ô môn", "omon", "om"]):
+                target_hubs.append("omon")
+            if any(k in lower_text for k in ["vị thanh", "vithanh", "vt"]):
+                target_hubs.append("vithanh")
+            if not target_hubs or any(k in lower_text for k in ["4 kho", "bốn kho", "tất cả", "toàn bộ"]):
+                target_hubs = ["cairang", "binhthuy", "omon", "vithanh"]
+
+            is_outdoor = any(k in lower_text for k in ["bãi xe", "sân", "ngoài trời", "xe tải", "cổng", "thời tiết"])
+            cam_type_key = "outdoor_cam" if is_outdoor else "indoor_cam"
+
+            scope_disp = "4 Kho MT01 (Cái Răng • Bình Thủy • Ô Môn • Vị Thanh)" if len(target_hubs) > 1 else hub_names.get(target_hubs[0], target_hubs[0])
 
             if topic_id == CAM_TOPIC_ID:
                 _send_telegram_group_message(
-                    f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối camera {h_disp} và phân tích hiện trường bãi xe, dock, 5S...",
+                    f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối &amp; phân tích hiện trường Camera <b>{scope_disp}</b>...",
                     topic_id=CAM_TOPIC_ID,
                     reply_to_message_id=msg_id
                 )
             else:
                 _send_telegram_group_message(
-                    f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối camera {h_disp}. Hình ảnh & phân tích sẽ được gửi vào đúng phòng 📸 Camera Giám Sát Kho!",
+                    f"🐯 <b>[MẮT THẦN CANH KHO]</b> Tiger AI đang kết nối Camera <b>{scope_disp}</b>. Hình ảnh &amp; báo cáo phân tích sẽ gửi vào phòng 📸 Camera Giám Sát Kho!",
                     topic_id=topic_id,
                     reply_to_message_id=msg_id
                 )
 
-            ok, cam_name, snap_file, analysis = run_vision_guard_audit(target_hub)
-            if ok and snap_file and os.path.exists(snap_file):
-                caption_text = (
-                    f"🚨 <b>TIGER AI • MẮT THẦN CANH KHO ({h_disp})</b>\n"
-                    f"⏰ <b>Thời gian:</b> {get_vietnam_now().strftime('%H:%M:%S %d/%m/%Y')}\n\n"
-                )
-                if analysis and len(caption_text + analysis) <= 1020:
-                    caption_text += analysis
-                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=CAM_TOPIC_ID)
-                else:
-                    caption_text += f"📍 Camera: {cam_name}\n<i>(Chi tiết phân tích thông minh gửi kèm bên dưới)</i>"
-                    _send_telegram_photo(snap_file, caption=caption_text, topic_id=CAM_TOPIC_ID)
-                    if analysis:
-                        _send_telegram_group_message(
-                            f"📋 <b>BÁO CÁO PHÂN TÍCH HIỆN TRƯỜNG KHO ({h_disp}):</b>\n\n{analysis}",
-                            topic_id=CAM_TOPIC_ID
-                        )
-                if topic_id != CAM_TOPIC_ID and topic_id > 0:
-                    _send_telegram_group_message(
-                        f"👉 <b>Tiger AI đã chuyển ảnh và phân tích hiện trường Camera ({h_disp}) vào phòng:</b> 📸 Camera Giám Sát Kho\n<i>(Theo đúng quy chuẩn điều hành: mọi hình ảnh camera tập trung tại phòng riêng!)</i>",
-                        topic_id=topic_id,
-                        reply_to_message_id=msg_id
+            def _audit_one_hub(hk):
+                cid = VR_MAP.get(hk, {}).get(cam_type_key)
+                ok_c, c_name, s_file, ana = run_vision_guard_audit(hk, cid)
+                return hk, ok_c, c_name, s_file, ana
+
+            with ThreadPoolExecutor(max_workers=min(len(target_hubs), 4)) as ex_pool:
+                audit_results = list(ex_pool.map(_audit_one_hub, target_hubs))
+
+            now_str = get_vietnam_now().strftime('%H:%M:%S %d/%m/%Y')
+            for hk, ok, cam_name, snap_file, analysis in audit_results:
+                h_disp = hub_names.get(hk, hk.title())
+                if ok and snap_file and os.path.exists(snap_file):
+                    caption_text = (
+                        f"🚨 <b>TIGER AI • MẮT THẦN CANH KHO ({h_disp})</b>\n"
+                        f"📍 <b>Góc máy:</b> {cam_name}\n"
+                        f"⏰ <b>Thời gian:</b> {now_str}\n\n"
                     )
-                try:
-                    os.remove(snap_file)
-                except Exception:
-                    pass
-            else:
+                    if analysis and len(caption_text + analysis) <= 1020:
+                        caption_text += analysis
+                        _send_telegram_photo(snap_file, caption=caption_text, topic_id=CAM_TOPIC_ID)
+                    else:
+                        caption_text += "<i>(Chi tiết phân tích thông minh gửi kèm bên dưới)</i>"
+                        _send_telegram_photo(snap_file, caption=caption_text, topic_id=CAM_TOPIC_ID)
+                        if analysis:
+                            _send_telegram_group_message(
+                                f"📋 <b>BÁO CÁO PHÂN TÍCH HIỆN TRƯỜNG KHO ({h_disp}):</b>\n\n{analysis}",
+                                topic_id=CAM_TOPIC_ID
+                            )
+                    try:
+                        os.remove(snap_file)
+                    except Exception:
+                        pass
+                    time.sleep(0.4)
+                else:
+                    _send_telegram_group_message(
+                        f"⚠️ <b>[MẮT THẦN CANH KHO]</b> Chưa thể trích xuất luồng camera {h_disp}: {cam_name}",
+                        topic_id=CAM_TOPIC_ID
+                    )
+
+            if topic_id != CAM_TOPIC_ID and topic_id > 0:
                 _send_telegram_group_message(
-                    f"⚠️ <b>[MẮT THẦN CANH KHO]</b> Chưa thể trích xuất luồng camera {h_disp}: {cam_name}",
-                    topic_id=CAM_TOPIC_ID
+                    f"👉 <b>Tiger AI đã gửi ảnh &amp; báo cáo phân tích hiện trường Camera ({scope_disp}) vào phòng:</b> 📸 Camera Giám Sát Kho",
+                    topic_id=topic_id,
+                    reply_to_message_id=msg_id
                 )
         except Exception as ex:
             _send_telegram_group_message(
