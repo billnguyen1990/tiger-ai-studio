@@ -169,31 +169,40 @@ def audit_shipper_delay_for_order(order_code):
     return report
 
 
+def _no_accent(text):
+    if not text:
+        return ""
+    import unicodedata
+    s = unicodedata.normalize("NFD", str(text).lower())
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    return s.replace("đ", "d")
+
+
 def resolve_hub_from_text(text):
-    t = (text or "").lower()
-    if any(k in t for k in ["ô môn", "o mon", "omon", "22917000"]):
+    t = _no_accent(text)
+    if any(k in t for k in ["o mon", "omon", "22917000"]):
         return "22917000"
-    if any(k in t for k in ["cái răng", "cai rang", "cairang", "21088000"]):
+    if any(k in t for k in ["cai rang", "cairang", "21088000"]):
         return "21088000"
-    if any(k in t for k in ["bình thủy", "binh thuy", "binhthuy", "21985000"]):
+    if any(k in t for k in ["binh thuy", "binhthuy", "21985000"]):
         return "21985000"
-    if any(k in t for k in ["vị thanh", "vi thanh", "vithanh", "22862000"]):
+    if any(k in t for k in ["vi thanh", "vithanh", "22862000"]):
         return "22862000"
     return None
 
 
 def resolve_reason_keyword(text):
-    t = (text or "").lower()
-    if "hẹn lại" in t or "hen lai" in t:
-        return "hẹn lại", "Người nhận hẹn lại ngày giao"
-    if "không nghe máy" in t or "khong nghe may" in t or "ko nghe máy" in t:
-        return "không nghe máy", "Người nhận không nghe máy"
-    if "chặn số" in t or "không liên lạc" in t or "khong lien lac" in t or "thuê bao" in t:
-        return "không liên lạc", "Không liên lạc được người nhận / Chặn số"
-    if "không đặt" in t or "khong dat" in t or "từ chối" in t:
-        return "không đặt", "Người nhận báo không đặt hàng"
-    if "sai địa chỉ" in t or "đổi địa chỉ" in t:
-        return "địa chỉ", "Sai / Đổi địa chỉ giao hàng"
+    t = _no_accent(text)
+    if "hen lai" in t:
+        return "hen lai", "Người nhận hẹn lại ngày giao"
+    if "khong nghe may" in t or "ko nghe may" in t:
+        return "khong nghe may", "Người nhận không nghe máy"
+    if "chan so" in t or "khong lien lac" in t or "thue bao" in t:
+        return "khong lien lac", "Không liên lạc được người nhận / Chặn số"
+    if "khong dat" in t or "tu choi" in t:
+        return "khong dat", "Người nhận báo không đặt hàng"
+    if "sai dia chi" in t or "doi dia chi" in t:
+        return "dia chi", "Sai / Đổi địa chỉ giao hàng"
     return "", "Tất cả lý do giao thất bại (GTB)"
 
 
@@ -270,7 +279,7 @@ def audit_hub_failed_orders_detail(hub_id_or_text, reason_text="", target_date=N
             for it in (r_items.get("data") or []):
                 if it.get("isUpdated") and not it.get("isSucceeded"):
                     fn = it.get("failNote") or it.get("failReasonName") or "Lý do khác"
-                    if not reason_kw or (reason_kw in fn.lower()):
+                    if not reason_kw or (reason_kw in _no_accent(fn)):
                         sc = it.get("senderContact") or {}
                         di = it.get("deliverInfo") or {}
                         items_list = it.get("items") or []

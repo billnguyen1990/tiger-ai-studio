@@ -3522,14 +3522,19 @@ def copilot_ask():
             })
 
     # BƯỚC 1.8: KIỂM TRA / ĐỐI SOÁT CHI TIẾT TỪNG ĐƠN THẤT BẠI (GTB / HẸN LẠI / KHÔNG NGHE MÁY / CHẶN SỐ) CỦA KHO
-    is_copilot_gtb_audit = any(k in prompt for k in [
-        "check kỹ", "check từng đơn", "kiểm tra từng đơn", "soi từng đơn", "check các đơn",
-        "kiểm tra các đơn", "check đơn hẹn", "check đơn gtb", "check đơn thất bại",
-        "từng đơn cho", "chi tiết từng đơn", "danh sách đơn thất bại", "danh sách đơn hẹn",
-        "16 đơn", "32 đơn"
+    try:
+        from shipper_delay_auditor import _no_accent as _aud_no_acc
+        prompt_na = _aud_no_acc(raw_prompt)
+    except Exception:
+        prompt_na = prompt
+    is_copilot_gtb_audit = any(k in prompt_na for k in [
+        "check ky", "check tung don", "kiem tra tung don", "soi tung don", "check cac don",
+        "kiem tra cac don", "check don hen", "check don gtb", "check don that bai",
+        "tung don cho", "chi tiet tung don", "danh sach don that bai", "danh sach don hen",
+        "16 don", "32 don"
     ]) or (
-        any(k in prompt for k in ["check", "kiểm tra", "soi", "xem", "liệt kê"]) and
-        any(r in prompt for r in ["hẹn lại", "không nghe máy", "chặn số", "không liên lạc", "thất bại", "gtb", "đơn rớt", "không đặt"])
+        any(k in prompt_na for k in ["check", "kiem tra", "soi", "xem", "liet ke"]) and
+        any(r in prompt_na for r in ["hen lai", "khong nghe may", "chan so", "khong lien lac", "that bai", "gtb", "don rot", "khong dat"])
     )
     if is_copilot_gtb_audit:
         try:
@@ -4522,17 +4527,24 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         return
 
     # 0.18 KIỂM TRA / ĐỐI SOÁT CHI TIẾT TỪNG ĐƠN THẤT BẠI (GTB / HẸN LẠI / KHÔNG NGHE MÁY / CHẶN SỐ) CỦA KHO
-    combined_audit_q = (lower_text + " " + reply_to_text.lower()).strip()
+    try:
+        from shipper_delay_auditor import _no_accent as _aud_no_acc
+        lower_na = _aud_no_acc(lower_text)
+        combined_audit_q = _aud_no_acc(lower_text + " " + reply_to_text.lower()).strip()
+    except Exception:
+        lower_na = lower_text
+        combined_audit_q = (lower_text + " " + reply_to_text.lower()).strip()
+
     is_hub_gtb_audit = (not bool(order_codes)) and (
         lower_text.startswith(("/checkgtb", "/checkkho", "/soigtb")) or
-        any(k in lower_text for k in [
-            "check kỹ", "check từng đơn", "kiểm tra từng đơn", "soi từng đơn", "check các đơn",
-            "kiểm tra các đơn", "check đơn hẹn", "check đơn gtb", "check đơn thất bại",
-            "từng đơn cho", "chi tiết từng đơn", "danh sách đơn thất bại", "danh sách đơn hẹn",
-            "16 đơn", "32 đơn", "check hết", "soi kỹ"
+        any(k in lower_na for k in [
+            "check ky", "check tung don", "kiem tra tung don", "soi tung don", "check cac don",
+            "kiem tra cac don", "check don hen", "check don gtb", "check don that bai",
+            "tung don cho", "chi tiet tung don", "danh sach don that bai", "danh sach don hen",
+            "16 don", "32 don", "check het", "soi ky"
         ]) or (
-            any(k in lower_text for k in ["check", "kiểm tra", "soi", "xem", "liệt kê"]) and
-            any(r in combined_audit_q for r in ["hẹn lại", "không nghe máy", "chặn số", "không liên lạc", "thất bại", "gtb", "đơn rớt", "không đặt"])
+            any(k in lower_na for k in ["check", "kiem tra", "soi", "xem", "liet ke"]) and
+            any(r in combined_audit_q for r in ["hen lai", "khong nghe may", "chan so", "khong lien lac", "that bai", "gtb", "don rot", "khong dat"])
         )
     )
     if is_hub_gtb_audit:
