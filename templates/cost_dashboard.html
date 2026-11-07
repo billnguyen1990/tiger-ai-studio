@@ -3417,13 +3417,29 @@
                 const btn = document.getElementById("btnSyncLive");
                 btn.innerHTML = "<span>⏳ Đang kéo...</span>";
                 try {
-                  const res = await fetch("/api/cost-dashboard/sync", { method: "POST" });
+                  btn.disabled = true;
+                  const res = await fetch(`/api/cost-dashboard/sync?_t=${Date.now()}`, { method: "POST", cache: "no-store" });
                   const json = await res.json();
-                  alert(json.message || "Đồng bộ thành công!");
-                  loadInitial();
+                  if (!res.ok || json.success === false) {
+                    throw new Error(json.error || `HTTP ${res.status}`);
+                  }
+                  // Giữ nguyên Kho / Kỳ / Tab đang xem, chỉ nạp lại dữ liệu tươi
+                  if (filterOptions && document.getElementById("selPeriodKey") && document.getElementById("selPeriodKey").value) {
+                    await fetchData();
+                  } else {
+                    await loadInitial();
+                  }
+                  const syncEl = document.getElementById("syncStatus");
+                  if (syncEl && json.last_sync) {
+                    syncEl.innerText = "⏱️ " + json.last_sync.replace(/^(\d{2}:\d{2}):\d{2}\s+(\d{2}\/\d{2})\/\d{4}$/, "$1 • $2");
+                    syncEl.title = "Đồng bộ lúc: " + json.last_sync;
+                  }
+                  const odoS = allLoadedOdoSummary || {};
+                  alert(`✅ Đã đồng bộ lúc ${json.last_sync || ""}\n🚛 ODO: ${odoS.total_trips_tl || 0} chuyến • Cảnh báo lệch còn: ${odoS.warning_count || 0} vụ (${odoS.warn_odo_count || 0} ODO • ${odoS.warn_bks_count || 0} BKS)`);
                 } catch (e) {
                   alert("Lỗi đồng bộ: " + e);
                 } finally {
+                  btn.disabled = false;
                   btn.innerHTML = "<span>🔄 Đồng Bộ</span>";
                 }
               }

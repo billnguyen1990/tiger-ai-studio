@@ -763,34 +763,54 @@ def build_cost_dashboard_matrix(force=False):
         official_week_key = r2[3].strip() if len(r2) > 3 else ""
 
         # Bảo toàn dữ liệu Lương Giao (NVGH) đã chốt của các ngày trước nếu Google Sheet Data Raw đang tạm tính lại = 0
-        if os.path.exists(DASHBOARD_CACHE_FILE):
-            try:
+        # Dùng file lưu trữ riêng (archive) để không lần đồng bộ nào có thể ghi đè lương đã chốt thành 0
+        salary_archive_file = os.path.join(DATA_DIR, "mt01_nvgh_salary_archive.json")
+        try:
+            archive = {"drivers": {}, "entities": {}}
+            if os.path.exists(salary_archive_file):
+                with open(salary_archive_file, "r", encoding="utf-8") as f_arc:
+                    archive = json.load(f_arc)
+            elif os.path.exists(DASHBOARD_CACHE_FILE):
                 with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f_prev:
                     prev_data = json.load(f_prev)
-                prev_drv_map = {d.get("driver_name"): d for d in prev_data.get("drivers", []) if d.get("driver_name")}
-                for drv in drivers_list:
-                    p_drv = prev_drv_map.get(drv.get("driver_name"))
-                    if not p_drv:
-                        continue
-                    p_daily = p_drv.get("daily", {})
-                    for d_k, d_obj in drv.get("daily", {}).items():
-                        if d_obj.get("total", 0) == 0 and d_k in p_daily and p_daily[d_k].get("total", 0) > 0:
-                            d_obj["gtc"] = p_daily[d_k].get("gtc", 0.0)
-                            d_obj["ltc"] = p_daily[d_k].get("ltc", 0.0)
-                            d_obj["total"] = p_daily[d_k].get("total", 0.0)
-                    drv["gtc_salary"] = sum(v.get("gtc", 0.0) for v in drv.get("daily", {}).values())
-                    drv["ltc_salary"] = sum(v.get("ltc", 0.0) for v in drv.get("daily", {}).values())
-                    drv["total_salary"] = sum(v.get("total", 0.0) for v in drv.get("daily", {}).values())
+                for d in prev_data.get("drivers", []):
+                    for d_k, v in d.get("daily", {}).items():
+                        if v.get("total", 0) > 0:
+                            archive["drivers"].setdefault(d.get("driver_name"), {})[d_k] = {"gtc": v.get("gtc", 0.0), "ltc": v.get("ltc", 0.0), "total": v.get("total", 0.0)}
+                for ent_k, ent_obj in prev_data.get("entities", {}).items():
+                    for d_k, val_s in ent_obj.get("metrics", {}).get("Lương giao", {}).get("daily", {}).items():
+                        if _clean_num(val_s) > 0:
+                            archive["entities"].setdefault(ent_k, {})[d_k] = val_s
+            arc_drv = archive.setdefault("drivers", {})
+            arc_ent = archive.setdefault("entities", {})
 
-                prev_entities = prev_data.get("entities", {})
-                for ent_k, ent_obj in hubs_matrix.items():
-                    p_ent_m = prev_entities.get(ent_k, {}).get("metrics", {}).get("Lương giao", {}).get("daily", {})
-                    cur_ent_m = ent_obj.get("metrics", {}).get("Lương giao", {}).get("daily", {})
-                    for d_k, val_s in list(cur_ent_m.items()):
-                        if _clean_num(val_s) == 0 and d_k in p_ent_m and _clean_num(p_ent_m[d_k]) > 0:
-                            cur_ent_m[d_k] = p_ent_m[d_k]
-            except Exception as preserve_ex:
-                print(f"[{now_str}] ⚠️ Lỗi bảo toàn cache lương NVGH: {preserve_ex}")
+            for drv in drivers_list:
+                name = drv.get("driver_name")
+                a_daily = arc_drv.setdefault(name, {})
+                for d_k, d_obj in drv.get("daily", {}).items():
+                    if d_obj.get("total", 0) > 0:
+                        a_daily[d_k] = {"gtc": d_obj.get("gtc", 0.0), "ltc": d_obj.get("ltc", 0.0), "total": d_obj.get("total", 0.0)}
+                    elif d_k in a_daily and a_daily[d_k].get("total", 0) > 0:
+                        d_obj["gtc"] = a_daily[d_k].get("gtc", 0.0)
+                        d_obj["ltc"] = a_daily[d_k].get("ltc", 0.0)
+                        d_obj["total"] = a_daily[d_k].get("total", 0.0)
+                drv["gtc_salary"] = sum(v.get("gtc", 0.0) for v in drv.get("daily", {}).values())
+                drv["ltc_salary"] = sum(v.get("ltc", 0.0) for v in drv.get("daily", {}).values())
+                drv["total_salary"] = sum(v.get("total", 0.0) for v in drv.get("daily", {}).values())
+
+            for ent_k, ent_obj in hubs_matrix.items():
+                a_ent = arc_ent.setdefault(ent_k, {})
+                cur_ent_m = ent_obj.get("metrics", {}).get("Lương giao", {}).get("daily", {})
+                for d_k, val_s in list(cur_ent_m.items()):
+                    if _clean_num(val_s) > 0:
+                        a_ent[d_k] = val_s
+                    elif d_k in a_ent and _clean_num(a_ent[d_k]) > 0:
+                        cur_ent_m[d_k] = a_ent[d_k]
+
+            with open(salary_archive_file, "w", encoding="utf-8") as f_arc:
+                json.dump(archive, f_arc, ensure_ascii=False)
+        except Exception as preserve_ex:
+            print(f"[{now_str}] ⚠️ Lỗi bảo toàn lương NVGH: {preserve_ex}")
 
         dashboard_data = {
             "last_sync": now_str,
