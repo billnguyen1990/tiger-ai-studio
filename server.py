@@ -3046,19 +3046,31 @@ def search_live_news(query, max_items=4):
         print(f"[NEWS SCRAPER ERROR]: {e}")
     return ""
 
+_WEATHER_CACHE = {"data": {}, "time": 0}
+
 def fetch_weather_info(city="Can+Tho"):
-    """Lấy thông tin thời tiết thời gian thực khu vực Cần Thơ / Hậu Giang"""
+    """Lấy thông tin thời tiết thời gian thực khu vực Cần Thơ / Hậu Giang (có cache 15 phút chống lag)"""
+    global _WEATHER_CACHE
+    now = time.time()
+    if _WEATHER_CACHE.get("data") and city in _WEATHER_CACHE["data"] and (now - _WEATHER_CACHE.get("time", 0) < 900):
+        return _WEATHER_CACHE["data"][city]
+
     try:
-        r = requests.get(f"https://wttr.in/{city}?format=j1", timeout=5)
+        r = requests.get(f"https://wttr.in/{city}?format=j1", timeout=1.5)
         if r.status_code == 200:
             dj = r.json()
             curr = dj.get("current_condition", [{}])[0]
             temp = curr.get("temp_C", "—")
             humidity = curr.get("humidity", "—")
             desc = curr.get("weatherDesc", [{}])[0].get("value", "")
-            return f"Thời tiết {city.replace('+', ' ')}: {temp}°C, {desc}, độ ẩm {humidity}%"
+            res = f"Thời tiết {city.replace('+', ' ')}: {temp}°C, {desc}, độ ẩm {humidity}%"
+            if "data" not in _WEATHER_CACHE:
+                _WEATHER_CACHE["data"] = {}
+            _WEATHER_CACHE["data"][city] = res
+            _WEATHER_CACHE["time"] = now
+            return res
     except Exception as e:
-        print(f"[WEATHER SCRAPER ERROR]: {e}")
+        pass
     return ""
 
 def generate_can_tho_weather_report():
