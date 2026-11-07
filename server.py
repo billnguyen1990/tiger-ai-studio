@@ -3521,6 +3521,28 @@ def copilot_ask():
                 "type": "order_tracking"
             })
 
+    # BƯỚC 1.8: KIỂM TRA / ĐỐI SOÁT CHI TIẾT TỪNG ĐƠN THẤT BẠI (GTB / HẸN LẠI / KHÔNG NGHE MÁY / CHẶN SỐ) CỦA KHO
+    is_copilot_gtb_audit = any(k in prompt for k in [
+        "check kỹ", "check từng đơn", "kiểm tra từng đơn", "soi từng đơn", "check các đơn",
+        "kiểm tra các đơn", "check đơn hẹn", "check đơn gtb", "check đơn thất bại",
+        "từng đơn cho", "chi tiết từng đơn", "danh sách đơn thất bại", "danh sách đơn hẹn",
+        "16 đơn", "32 đơn"
+    ]) or (
+        any(k in prompt for k in ["check", "kiểm tra", "soi", "xem", "liệt kê"]) and
+        any(r in prompt for r in ["hẹn lại", "không nghe máy", "chặn số", "không liên lạc", "thất bại", "gtb", "đơn rớt", "không đặt"])
+    )
+    if is_copilot_gtb_audit:
+        try:
+            from shipper_delay_auditor import audit_hub_failed_orders_detail
+            detail_rep = audit_hub_failed_orders_detail(raw_prompt, "")
+            return jsonify({
+                "answer": detail_rep,
+                "time": datetime.datetime.now().strftime("%H:%M:%S"),
+                "type": "hub_gtb_audit"
+            })
+        except Exception as e:
+            print(f"[Copilot GTB Audit Error] {e}")
+
     # BƯỚC 2: TỰ ĐỘNG CÀO DỮ LIỆU THỜI GIAN THỰC (REAL-TIME DATA SCRAPING) NẾU CẦN
     realtime_ctx = fetch_realtime_context(raw_prompt)
 
