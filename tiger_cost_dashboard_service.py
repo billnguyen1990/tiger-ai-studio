@@ -890,20 +890,29 @@ CYCLES_365_CONFIG = [
     }
 ]
 
+def _parse_date_str_any(s):
+    if not s:
+        return None
+    s = str(s).strip()
+    for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%Y/%m/%d"):
+        try:
+            return datetime.datetime.strptime(s, fmt).date()
+        except Exception:
+            pass
+    return None
+
 def _parse_date_range_str(s):
     import re
     if not s:
         return None, None
-    parts = re.split(r"\s*(?:-|➔|to|->)\s*", str(s).strip())
+    parts = re.split(r"\s+(?:-|➔|to|->)\s+|\s*➔\s*", str(s).strip())
     if len(parts) == 2:
-        try:
-            d1 = datetime.datetime.strptime(parts[0].strip(), "%d/%m/%Y").date()
-            d2 = datetime.datetime.strptime(parts[1].strip(), "%d/%m/%Y").date()
+        d1 = _parse_date_str_any(parts[0])
+        d2 = _parse_date_str_any(parts[1])
+        if d1 and d2:
             if d1 > d2:
                 d1, d2 = d2, d1
             return d1, d2
-        except Exception:
-            pass
     return None, None
 
 def get_cost_dashboard_matrix():
@@ -918,7 +927,7 @@ def get_cost_dashboard_matrix():
             pass
     return build_cost_dashboard_matrix(force=True)
 
-def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None):
+def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None, start_date=None, end_date=None):
     if restrict_to_hub:
         hub = restrict_to_hub
     matrix = get_cost_dashboard_matrix()
@@ -953,10 +962,19 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
     if not active_days:
         active_days = available_days
 
-    if mode == "cycle_365":
-        cycle_keys = [c["key"] for c in CYCLES_365_CONFIG]
-        if not key or (key not in cycle_keys and not _parse_date_range_str(key)[0]):
-            key = "26/09/2026 - 25/10/2026"
+    d1, d2 = None, None
+    if start_date and end_date:
+        d1 = _parse_date_str_any(start_date)
+        d2 = _parse_date_str_any(end_date)
+    if not d1 or not d2:
+        if key and (" - " in str(key) or " ➔ " in str(key) or mode in ("custom", "range", "cycle_365")):
+            d1, d2 = _parse_date_range_str(key)
+
+    if mode in ("custom", "range", "cycle_365"):
+        if not d1 or not d2:
+            d1 = datetime.date(2026, 9, 26)
+            d2 = datetime.date(2026, 10, 25)
+        key = f"{d1.strftime('%d/%m/%Y')} - {d2.strftime('%d/%m/%Y')}"
     elif mode == "month":
         if not key or key not in available_months:
             key = available_months[-1] if available_months else ""
@@ -975,19 +993,15 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
                 break
 
     # Xác định danh sách ngày thuộc kỳ đang chọn & các ngày đã có phát sinh số liệu
-    if mode == "cycle_365" or (key and (" - " in str(key) or " ➔ " in str(key))):
-        d1, d2 = _parse_date_range_str(key)
-        if d1 and d2:
-            period_all_days = []
-            for d_str in available_days:
-                try:
-                    dt = datetime.datetime.strptime(d_str, "%d/%m/%Y").date()
-                    if d1 <= dt <= d2:
-                        period_all_days.append(d_str)
-                except Exception:
-                    pass
-        else:
-            period_all_days = list(available_days)
+    if d1 and d2:
+        period_all_days = []
+        for d_str in available_days:
+            try:
+                dt = datetime.datetime.strptime(d_str, "%d/%m/%Y").date()
+                if d1 <= dt <= d2:
+                    period_all_days.append(d_str)
+            except Exception:
+                pass
     elif mode == "day" and key:
         period_all_days = [key]
     elif mode == "week" and key:
@@ -1003,8 +1017,8 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
     if not period_active_days and period_all_days:
         period_active_days = period_all_days
 
-    start_date_str = period_all_days[0] if period_all_days else (period_active_days[0] if period_active_days else (key or ""))
-    end_date_str = period_all_days[-1] if period_all_days else (period_active_days[-1] if period_active_days else (key or ""))
+    start_date_str = d1.strftime("%d/%m/%Y") if d1 else (period_all_days[0] if period_all_days else (period_active_days[0] if period_active_days else (key or "")))
+    end_date_str = d2.strftime("%d/%m/%Y") if d2 else (period_all_days[-1] if period_all_days else (period_active_days[-1] if period_active_days else (key or "")))
     active_days_cnt = len([d for d in period_all_days if d in active_days])
 
     if mode == "day":
@@ -1016,6 +1030,10 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         year_suffix = end_date_str[-4:] if len(end_date_str) == 10 else "2026"
         date_range_text = f"Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt}/{len(period_all_days)} ngày có số liệu)"
         full_period_label = f"📅 TUẦN {key} (Năm {year_suffix}) • Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt} ngày chốt số)"
+    elif mode in ("custom", "range"):
+        mode_vn = "Tùy Chọn Ngày"
+        date_range_text = f"Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt}/{len(period_all_days)} ngày chốt số)"
+        full_period_label = f"📅 TÙY CHỌN: Từ {start_date_str} ➔ {end_date_str} • {selected_ent_label}"
     elif mode == "cycle_365":
         mode_vn = "Chu Kỳ 365"
         date_range_text = f"Từ {start_date_str} ➔ {end_date_str} ({active_days_cnt}/{len(period_all_days)} ngày chốt số)"
@@ -1029,10 +1047,12 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         "mode": mode,
         "mode_vn": mode_vn,
         "key": key,
-        "period_title": f"Chu Kỳ 365 ({key})" if mode == "cycle_365" else (key if mode in ("month", "week") else f"Ngày {key}"),
+        "period_title": f"Từ {start_date_str} đến {end_date_str}" if (d1 and d2) else (key if mode in ("month", "week") else f"Ngày {key}"),
         "hub": selected_ent_label,
         "start_date": start_date_str,
         "end_date": end_date_str,
+        "start_date_iso": d1.strftime("%Y-%m-%d") if d1 else "",
+        "end_date_iso": d2.strftime("%Y-%m-%d") if d2 else "",
         "active_days_count": active_days_cnt,
         "total_days_in_period": len(period_all_days),
         "date_range_text": date_range_text,
@@ -1081,7 +1101,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
                     "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
                 }
         else:
-            if mode in ("cycle_365", "custom") or (key and (" - " in str(key) or " ➔ " in str(key))):
+            if (d1 and d2) or mode in ("custom", "range", "cycle_365") or (key and (" - " in str(key) or " ➔ " in str(key))):
                 days_in_period = list(period_all_days)
             elif mode == "month":
                 col_indices = matrix.get("months_cols", {}).get(key, [])
@@ -1458,7 +1478,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
     }
 
 
-def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_to_hub=None):
+def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_to_hub=None, start_date=None, end_date=None):
     """
     Xuất báo cáo Excel đối soát Chi Phí, Sản Lượng Đơn & Bảng Lương (NVGH + NVXL + Xe Tải 365)
     được thiết kế chuẩn Executive: tự động căn chỉnh độ rộng cột, định dạng số nguyên VNĐ (#,##0 "đ"),
@@ -1472,7 +1492,7 @@ def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_
 
     if restrict_to_hub:
         hub = restrict_to_hub
-    data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub)
+    data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub, start_date=start_date, end_date=end_date)
     p_info = data.get("period_info", {})
     flt = data.get("filter", {})
     hub_label = flt.get("hub", "Toàn Vùng MT01")
@@ -2304,8 +2324,8 @@ def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_
 
     # Lưu ra file chuẩn và trả về tên file tải về theo kỳ báo cáo
     key_str = str(flt.get("key") or "Latest")
-    if mode == "cycle_365" or (" - " in key_str):
-        safe_key = "Ky_365_" + re.sub(r"[^0-9A-Za-z]+", "_", key_str).strip("_")
+    if mode in ("custom", "range", "cycle_365") or (" - " in key_str):
+        safe_key = "Tu_" + re.sub(r"[^0-9A-Za-z]+", "_", key_str).strip("_")
     else:
         safe_key = re.sub(r"[^0-9A-Za-zÀ-ỹ_\-]+", "_", key_str).strip("_")
     if restrict_to_hub:

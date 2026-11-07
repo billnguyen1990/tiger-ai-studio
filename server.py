@@ -5658,6 +5658,8 @@ def api_get_cost_dashboard_data():
     hub = request.args.get("hub", "all")
     mode = request.args.get("mode", "month")
     key = request.args.get("key")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
 
     restrict_to_hub = u.get("allowed_hub") if u.get("role") == "nvxl" else None
     if restrict_to_hub:
@@ -5665,7 +5667,7 @@ def api_get_cost_dashboard_data():
 
     try:
         from tiger_cost_dashboard_service import query_mt01_cost_data
-        data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub)
+        data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub, start_date=start_date, end_date=end_date)
         data["current_user"] = u
         return jsonify(data)
     except Exception as e:
@@ -5715,8 +5717,10 @@ def api_download_cost_excel():
         hub = restrict_to_hub or request.args.get("hub", "all")
         mode = request.args.get("mode", "month")
         key = request.args.get("key") or None
+        start_date = request.args.get("start_date") or None
+        end_date = request.args.get("end_date") or None
         excel_path, download_filename = generate_mt01_cost_excel_report(
-            hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub
+            hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub, start_date=start_date, end_date=end_date
         )
         if os.path.exists(excel_path):
             return send_file(excel_path, as_attachment=True, download_name=download_filename)

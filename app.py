@@ -109,7 +109,8 @@ SCRIPTS_MAP = {
     "evening_21h": os.path.join(PARENT_DIR, "tiger_evening_reporter.py"),
     "truck_odo_02h00": os.path.join(PARENT_DIR, "tiger_truck_odo_reporter.py"),
     "lastmile_05h00": os.path.join(PARENT_DIR, "tiger_lastmile_trips_scraper.py"),
-    "b2b_looker_18h00": os.path.join(PARENT_DIR, "looker_export_temp.py")
+    "b2b_looker_18h00": os.path.join(PARENT_DIR, "looker_export_temp.py"),
+    "cam_indoor_06h20h": os.path.join(PARENT_DIR, "tiger_indoor_cam_scheduler.py")
 }
 
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
@@ -5554,6 +5555,7 @@ try:
 
     scheduler.add_job(_job_runner, "cron", hour=2, minute=0, args=["tiger_truck_odo_reporter.py"], id="truck_odo_02h00")
     scheduler.add_job(_job_runner, "cron", hour=5, minute=0, args=["tiger_lastmile_trips_scraper.py"], id="lastmile_05h00")
+    scheduler.add_job(_job_runner, "cron", hour=6, minute=0, args=["tiger_indoor_cam_scheduler.py"], id="cam_indoor_06h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=0, args=["tiger_gtc_kpi_reporter.py"], id="gtc_07h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=35, args=["tiger_checkin_reporter.py"], id="checkin_07h35")
     scheduler.add_job(_job_runner, "cron", hour=9, minute=0, args=["tiger_morning_assigned_reporter.py"], id="assigned_09h00")
@@ -5563,6 +5565,7 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=18, minute=0, args=["looker_export_temp.py"], id="b2b_18h00")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=5, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h05")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=20, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h20")
+    scheduler.add_job(_job_runner, "cron", hour=20, minute=0, args=["tiger_indoor_cam_scheduler.py"], id="cam_indoor_20h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
     scheduler.add_job(_job_runner, "cron", hour=6, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_06h30")
@@ -5595,7 +5598,9 @@ def run_cron_webhook(task_key):
         "b2b_looker": "looker_export_temp.py",
         "evening": "tiger_evening_reporter.py",
         "cost": "tiger_cost_sync_service.py",
-        "cost_sync": "tiger_cost_sync_service.py"
+        "cost_sync": "tiger_cost_sync_service.py",
+        "cam_indoor": "tiger_indoor_cam_scheduler.py",
+        "soikho_auto": "tiger_indoor_cam_scheduler.py"
     }
     script_name = script_map.get(task_key)
     if not script_name:
@@ -5653,6 +5658,8 @@ def api_get_cost_dashboard_data():
     hub = request.args.get("hub", "all")
     mode = request.args.get("mode", "month")
     key = request.args.get("key")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
 
     restrict_to_hub = u.get("allowed_hub") if u.get("role") == "nvxl" else None
     if restrict_to_hub:
@@ -5660,7 +5667,7 @@ def api_get_cost_dashboard_data():
 
     try:
         from tiger_cost_dashboard_service import query_mt01_cost_data
-        data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub)
+        data = query_mt01_cost_data(hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub, start_date=start_date, end_date=end_date)
         data["current_user"] = u
         return jsonify(data)
     except Exception as e:
@@ -5710,8 +5717,10 @@ def api_download_cost_excel():
         hub = restrict_to_hub or request.args.get("hub", "all")
         mode = request.args.get("mode", "month")
         key = request.args.get("key") or None
+        start_date = request.args.get("start_date") or None
+        end_date = request.args.get("end_date") or None
         excel_path, download_filename = generate_mt01_cost_excel_report(
-            hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub
+            hub=hub, mode=mode, key=key, restrict_to_hub=restrict_to_hub, start_date=start_date, end_date=end_date
         )
         if os.path.exists(excel_path):
             return send_file(excel_path, as_attachment=True, download_name=download_filename)

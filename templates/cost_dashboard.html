@@ -1769,18 +1769,31 @@
           <label class="filter-label">3. Chế Độ Xem</label>
           <div class="pill-tabs">
             <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Theo Tháng</button>
-            <button class="pill-btn" id="pillCycle365" onclick="setMode('cycle_365')">🚚 Kỳ 365 (26 ➔ 25)</button>
+            <button class="pill-btn" id="pillCustom" onclick="setMode('custom')">📅 Tùy Chọn (Từ ngày ➔ Đến ngày)</button>
             <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📅 Theo Tuần</button>
             <button class="pill-btn" id="pillDay" onclick="setMode('day')">📆 Theo Ngày</button>
           </div>
         </div>
 
-        <!-- Chọn mốc cụ thể -->
-        <div class="filter-item">
+        <!-- Chọn mốc cụ thể: Theo Tháng / Tuần / Ngày -->
+        <div class="filter-item" id="boxPeriodSelect">
           <label class="filter-label" id="lblPeriod">4. Chọn Tháng</label>
           <select id="selPeriodKey" class="filter-select" onchange="fetchData()">
             <option value="">Đang tải...</option>
           </select>
+        </div>
+
+        <!-- Chọn khoảng ngày tùy ý: Từ ngày ➔ Đến ngày -->
+        <div class="filter-item" id="boxCustomDateRange" style="display: none;">
+          <label class="filter-label">4. Chọn Khoảng Ngày Tùy Ý (Từ ➔ Đến)</label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <input type="date" id="customStartDate" class="filter-select" style="padding: 6px 10px; font-weight: 700; min-width: 135px;" onchange="onCustomDateChange()">
+            <span style="font-weight: 800; color: var(--accent-amber);">➔</span>
+            <input type="date" id="customEndDate" class="filter-select" style="padding: 6px 10px; font-weight: 700; min-width: 135px;" onchange="onCustomDateChange()">
+            <button type="button" class="btn btn-primary" onclick="applyCustomDateRange()" style="padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
+              <span>🔍 Xem</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -2014,16 +2027,29 @@
           </div>
         </div>
 
-        <!-- Bộ đổi nhanh Ngày / Tuần / Tháng ngay tại bảng lương không cần cuộn lên trên -->
+        <!-- Bộ đổi nhanh Ngày / Tuần / Tháng / Tùy chọn ngày ngay tại bảng lương không cần cuộn lên trên -->
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--bg-table-th); padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border-color);">
-          <span style="font-size: 11.5px; color: var(--text-sub); font-weight: 700;">⚡ Đổi kỳ xem nhanh:</span>
+          <span style="font-size: 11.5px; color: var(--text-sub); font-weight: 700;">⚡ Đổi kỳ xem:</span>
           <div class="mode-pills" style="gap: 4px;">
             <button class="pill-btn active" id="inlinePillMonth" onclick="setMode('month')" style="padding: 5px 10px; font-size: 12px;">📅 Tháng</button>
-            <button class="pill-btn" id="inlinePillCycle365" onclick="setMode('cycle_365')" style="padding: 5px 10px; font-size: 12px;">🚚 Kỳ 365</button>
+            <button class="pill-btn" id="inlinePillCustom" onclick="setMode('custom')" style="padding: 5px 10px; font-size: 12px;">🗓️ Tùy Chọn Ngày</button>
             <button class="pill-btn" id="inlinePillWeek" onclick="setMode('week')" style="padding: 5px 10px; font-size: 12px;">📆 Tuần</button>
             <button class="pill-btn" id="inlinePillDay" onclick="setMode('day')" style="padding: 5px 10px; font-size: 12px;">🕒 Ngày</button>
           </div>
+
+          <!-- Dropdown khi xem Tháng / Tuần / Ngày -->
           <select id="selInlinePeriodKey" class="filter-select" onchange="onInlinePeriodChange(this.value)" style="min-width: 155px; padding: 5px 10px; font-size: 12.5px; font-weight: 700;"></select>
+
+          <!-- 2 ô chọn ngày Từ -> Đến khi xem Tùy Chọn Ngày -->
+          <div id="boxInlineCustomDateRange" style="display: none; align-items: center; gap: 5px;">
+            <input type="date" id="inlineStartDate" class="filter-select" style="padding: 4px 8px; font-size: 12px; font-weight: 700;" onchange="syncInlineDatesToTop()">
+            <span style="font-weight: 800; color: var(--accent-amber); font-size: 12px;">➔</span>
+            <input type="date" id="inlineEndDate" class="filter-select" style="padding: 4px 8px; font-size: 12px; font-weight: 700;" onchange="syncInlineDatesToTop()">
+            <button type="button" class="btn btn-primary" onclick="applyCustomDateRange()" style="padding: 5px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px;">
+              <span>🔍 Xem</span>
+            </button>
+          </div>
+
           <select id="selInlineHub" class="filter-select" onchange="onInlineHubChange(this.value)" style="min-width: 145px; padding: 5px 10px; font-size: 12.5px;">
             <option value="all">Toàn Vùng MT01</option>
             <option value="Kho Cái Răng">📍 Kho Cái Răng</option>
@@ -2445,6 +2471,9 @@
       showLoginModal();
     }
 
+    let customStartDateVal = "2026-09-26";
+    let customEndDateVal = "2026-10-25";
+
     function setMode(mode) {
       currentMode = mode;
       document.querySelectorAll(".pill-btn").forEach(btn => btn.classList.remove("active"));
@@ -2452,9 +2481,9 @@
         if (document.getElementById("pillMonth")) document.getElementById("pillMonth").classList.add("active");
         if (document.getElementById("inlinePillMonth")) document.getElementById("inlinePillMonth").classList.add("active");
       }
-      if (mode === "cycle_365") {
-        if (document.getElementById("pillCycle365")) document.getElementById("pillCycle365").classList.add("active");
-        if (document.getElementById("inlinePillCycle365")) document.getElementById("inlinePillCycle365").classList.add("active");
+      if (mode === "custom") {
+        if (document.getElementById("pillCustom")) document.getElementById("pillCustom").classList.add("active");
+        if (document.getElementById("inlinePillCustom")) document.getElementById("inlinePillCustom").classList.add("active");
       }
       if (mode === "week") {
         if (document.getElementById("pillWeek")) document.getElementById("pillWeek").classList.add("active");
@@ -2465,8 +2494,71 @@
         if (document.getElementById("inlinePillDay")) document.getElementById("inlinePillDay").classList.add("active");
       }
 
-      updatePeriodDropdown();
-      fetchData();
+      // Ẩn/hiện box chọn dropdown vs box chọn 2 ô date
+      const boxSelect = document.getElementById("boxPeriodSelect");
+      const boxCustom = document.getElementById("boxCustomDateRange");
+      const selInline = document.getElementById("selInlinePeriodKey");
+      const boxInlineCustom = document.getElementById("boxInlineCustomDateRange");
+
+      if (mode === "custom") {
+        if (boxSelect) boxSelect.style.display = "none";
+        if (boxCustom) boxCustom.style.display = "block";
+        if (selInline) selInline.style.display = "none";
+        if (boxInlineCustom) boxInlineCustom.style.display = "flex";
+
+        syncDateInputs();
+        applyCustomDateRange();
+      } else {
+        if (boxSelect) boxSelect.style.display = "block";
+        if (boxCustom) boxCustom.style.display = "none";
+        if (selInline) selInline.style.display = "inline-block";
+        if (boxInlineCustom) boxInlineCustom.style.display = "none";
+
+        updatePeriodDropdown();
+        fetchData();
+      }
+    }
+
+    function syncDateInputs() {
+      const topStart = document.getElementById("customStartDate");
+      const topEnd = document.getElementById("customEndDate");
+      const inStart = document.getElementById("inlineStartDate");
+      const inEnd = document.getElementById("inlineEndDate");
+
+      if (topStart) topStart.value = customStartDateVal;
+      if (topEnd) topEnd.value = customEndDateVal;
+      if (inStart) inStart.value = customStartDateVal;
+      if (inEnd) inEnd.value = customEndDateVal;
+    }
+
+    function onCustomDateChange() {
+      const topStart = document.getElementById("customStartDate");
+      const topEnd = document.getElementById("customEndDate");
+      if (topStart && topStart.value) customStartDateVal = topStart.value;
+      if (topEnd && topEnd.value) customEndDateVal = topEnd.value;
+      syncDateInputs();
+      applyCustomDateRange();
+    }
+
+    function syncInlineDatesToTop() {
+      const inStart = document.getElementById("inlineStartDate");
+      const inEnd = document.getElementById("inlineEndDate");
+      if (inStart && inStart.value) customStartDateVal = inStart.value;
+      if (inEnd && inEnd.value) customEndDateVal = inEnd.value;
+      syncDateInputs();
+      applyCustomDateRange();
+    }
+
+    function applyCustomDateRange() {
+      if (!customStartDateVal || !customEndDateVal) return;
+      const d1Parts = customStartDateVal.split("-");
+      const d2Parts = customEndDateVal.split("-");
+      if (d1Parts.length !== 3 || d2Parts.length !== 3) return;
+      const d1Str = `${d1Parts[2]}/${d1Parts[1]}/${d1Parts[0]}`;
+      const d2Str = `${d2Parts[2]}/${d2Parts[1]}/${d2Parts[0]}`;
+      const customKey = `${d1Str} - ${d2Str}`;
+
+      fetchData(customKey);
     }
 
     function onInlinePeriodChange(val) {
@@ -2512,6 +2604,11 @@
             applyUserAuthUI(json.current_user);
           }
           filterOptions = json.available_filters;
+          if (filterOptions && filterOptions.default_custom_start) {
+            customStartDateVal = filterOptions.default_custom_start;
+            customEndDateVal = filterOptions.default_custom_end;
+          }
+          syncDateInputs();
           const rawSync = json.last_sync || "Mới nhất";
           const shortSync = rawSync.replace(/^(\d{2}:\d{2}):\d{2}\s+(\d{2}\/\d{2})\/\d{4}$/, "$1 • $2");
           const syncEl = document.getElementById("syncStatus");
@@ -2595,18 +2692,34 @@
       });
     }
 
-    async function fetchData() {
+    async function fetchData(overrideKey) {
       const hub = (currentAuthUser && currentAuthUser.role === "nvxl")
         ? currentAuthUser.allowed_hub
         : document.getElementById("selHub").value;
-      const key = document.getElementById("selPeriodKey").value;
+      
+      let key = overrideKey;
+      if (!key) {
+        if (currentMode === "custom") {
+          const d1Parts = (customStartDateVal || "2026-09-26").split("-");
+          const d2Parts = (customEndDateVal || "2026-10-25").split("-");
+          key = `${d1Parts[2]}/${d1Parts[1]}/${d1Parts[0]} - ${d2Parts[2]}/${d2Parts[1]}/${d2Parts[0]}`;
+        } else {
+          key = (document.getElementById("selPeriodKey") && document.getElementById("selPeriodKey").value) || "";
+        }
+      }
+
       if (document.getElementById("selInlineHub")) document.getElementById("selInlineHub").value = hub;
-      if (document.getElementById("selInlinePeriodKey")) document.getElementById("selInlinePeriodKey").value = key;
+      if (document.getElementById("selInlinePeriodKey") && currentMode !== "custom") {
+        document.getElementById("selInlinePeriodKey").value = key;
+      }
 
       document.getElementById("filterSummaryText").innerText = `${hub === 'all' ? 'Toàn Vùng MT01' : hub} • ${key || 'Mới nhất'}`;
 
       try {
-        const url = `/api/cost-dashboard/data?hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
+        let url = `/api/cost-dashboard/data?hub=${encodeURIComponent(hub)}&mode=${currentMode}&key=${encodeURIComponent(key)}`;
+        if (currentMode === "custom" && customStartDateVal && customEndDateVal) {
+          url += `&start_date=${encodeURIComponent(customStartDateVal)}&end_date=${encodeURIComponent(customEndDateVal)}`;
+        }
         const res = await fetch(url, { headers: _getAuthHeaders() });
         const json = await res.json();
         if (res.status === 401 || json.auth_required) {
@@ -3435,16 +3548,28 @@
     }
 
     function exportCostExcel() {
-                const hub = (currentAuthUser && currentAuthUser.role === "nvxl")
-                  ? currentAuthUser.allowed_hub
-                  : ((document.getElementById("selHub") && document.getElementById("selHub").value) || "all");
-                const key = (document.getElementById("selPeriodKey") && document.getElementById("selPeriodKey").value) || "";
-                const extraAuth = (currentAuthUser && currentAuthUser.role === "admin")
-                  ? "&pin=150917"
-                  : ((currentAuthUser && currentAuthUser.email) ? `&auth_email=${encodeURIComponent(currentAuthUser.email)}` : "");
-                const url = `/api/cost-analytics/excel?hub=${encodeURIComponent(hub)}&mode=${encodeURIComponent(currentMode)}&key=${encodeURIComponent(key)}${extraAuth}`;
-                window.location.href = url;
-              }
+      const hub = (currentAuthUser && currentAuthUser.role === "nvxl")
+        ? currentAuthUser.allowed_hub
+        : ((document.getElementById("selHub") && document.getElementById("selHub").value) || "all");
+      
+      let key = "";
+      let customDateParams = "";
+      if (currentMode === "custom") {
+        const d1Parts = (customStartDateVal || "2026-09-26").split("-");
+        const d2Parts = (customEndDateVal || "2026-10-25").split("-");
+        key = `${d1Parts[2]}/${d1Parts[1]}/${d1Parts[0]} - ${d2Parts[2]}/${d2Parts[1]}/${d2Parts[0]}`;
+        customDateParams = `&start_date=${encodeURIComponent(customStartDateVal)}&end_date=${encodeURIComponent(customEndDateVal)}`;
+      } else {
+        key = (document.getElementById("selPeriodKey") && document.getElementById("selPeriodKey").value) || "";
+      }
+
+      const extraAuth = (currentAuthUser && currentAuthUser.role === "admin")
+        ? "&pin=150917"
+        : ((currentAuthUser && currentAuthUser.email) ? `&auth_email=${encodeURIComponent(currentAuthUser.email)}` : "");
+      
+      const url = `/api/cost-analytics/excel?hub=${encodeURIComponent(hub)}&mode=${encodeURIComponent(currentMode)}&key=${encodeURIComponent(key)}${customDateParams}${extraAuth}`;
+      window.location.href = url;
+    }
 
     async function triggerSync() {
                 const btn = document.getElementById("btnSyncLive");
