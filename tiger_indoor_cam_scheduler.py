@@ -97,36 +97,74 @@ def send_telegram_photo(photo_path, caption, topic_id=CAM_TOPIC_ID):
 def run_indoor_cam_inspection(send_telegram=True, force=False):
     now_vn = get_vietnam_now()
     now_ts = time.time()
-    if send_telegram and not force and os.path.exists(LOCK_FILE):
-        try:
-            with open(LOCK_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            last_ts = float(data.get("last_ts", 0))
-            if now_ts - last_ts < 1200:  # Trong vòng 20 phút đã gửi rồi thì bỏ qua để chống gửi trùng
-                print(f"[Indoor Cam Scheduler] Đã chạy cách đây {int(now_ts - last_ts)}s. Bỏ qua để tránh trùng lặp.")
-                return {"ok": True, "skipped": True}
-        except Exception:
-            pass
-    if send_telegram:
-        try:
-            with open(LOCK_FILE, "w", encoding="utf-8") as f:
-                json.dump({"last_ts": now_ts, "last_str": now_vn.strftime("%Y-%m-%d %H:%M:%S")}, f)
-        except Exception:
-            pass
-
     now_str = now_vn.strftime("%H:%M:%S %d/%m/%Y")
     date_str = now_vn.strftime("%d/%m/%Y")
     hr = now_vn.hour
 
     if hr < 12:
+        shift_key = now_vn.strftime("%Y-%m-%d_06h")
         shift_title = "CA SÁNG ĐẦU NGÀY (06:00)"
         shift_note = "Kiểm tra hiện trường sàn kho đầu ca, lượng hàng lưu sàn qua đêm, tiêu chuẩn 5S & sẵn sàng đón tải phân hàng."
     elif hr >= 18:
+        shift_key = now_vn.strftime("%Y-%m-%d_20h")
         shift_title = "CA TỐI CUỐI NGÀY (20:00)"
         shift_note = "Kiểm tra giải phóng sàn kho cuối ngày, rà soát hàng tồn đọng trên sàn & chuẩn 5S an toàn trước khi đóng kho."
     else:
+        shift_key = now_vn.strftime("%Y-%m-%d_%Hh")
         shift_title = f"KIỂM TRA ĐỘT XUẤT ({now_vn.strftime('%H:%M')})"
         shift_note = "Soi trực tiếp 4 mắt Camera bên trong sàn kho theo vị trí chuẩn chỉ định."
+
+    caller_id = "Render_Cloud" if (os.environ.get("RENDER") == "true" or sys.platform != "win32") else "Windows_PC"
+
+    # 1. KHÓA TẬP TRUNG CLOUD TRÁNH CHẠY SONG SONG GIỮA CLOUD VÀ PC
+    if send_telegram and not force:
+        lock_endpoints = [
+            "https://tiger-ai-studio.onrender.com/api/indoor-cam-lock",
+            "http://127.0.0.1:5050/api/indoor-cam-lock"
+        ]
+        for ep in lock_endpoints:
+            try:
+                r = requests.post(
+                    ep,
+                    json={"action": "acquire", "shift": shift_key, "caller": caller_id},
+                    timeout=2.5
+                )
+                if r.status_code == 200:
+                    data = r.json()
+                    if not data.get("acquired", True):
+                        print(f"[Indoor Cam Scheduler] ⛔ {data.get('reason')}. BỎ QUA ĐỂ TRÁNH GỬI TRÙNG!")
+                        return {"ok": True, "skipped": True, "reason": data.get("reason")}
+                    else:
+                        print(f"[Indoor Cam Scheduler] 🔒 Đã nhận khóa tập trung từ {ep} cho ca {shift_key}")
+                        break
+            except Exception:
+                continue
+
+    # 2. KHÓA DỰ PHÒNG FILE CỤC BỘ (LOCAL FILE LOCK)
+    if send_telegram and not force and os.path.exists(LOCK_FILE):
+        try:
+            with open(LOCK_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            last_ts = float(data.get("last_ts", 0))
+            last_shift = data.get("shift", "")
+            if (now_ts - last_ts < 1200) or (last_shift and last_shift == shift_key):
+                print(f"[Indoor Cam Scheduler] Đã chạy cách đây {int(now_ts - last_ts)}s (Ca {last_shift}). Bỏ qua để tránh trùng lặp.")
+                return {"ok": True, "skipped": True}
+        except Exception:
+            pass
+
+    # Ghi nhận khóa cục bộ
+    if send_telegram:
+        try:
+            with open(LOCK_FILE, "w", encoding="utf-8") as f:
+                json.dump({
+                    "last_ts": now_ts,
+                    "last_str": now_vn.strftime("%Y-%m-%d %H:%M:%S"),
+                    "shift": shift_key,
+                    "caller": caller_id
+                }, f)
+        except Exception:
+            pass
 
     print(f"🐯 [Tiger AI] Đang trích xuất & phân tích 4 mắt Camera bên trong kho ({shift_title})...")
 

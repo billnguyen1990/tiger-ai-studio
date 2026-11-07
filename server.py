@@ -5637,6 +5637,59 @@ try:
 except Exception as e:
     print(f"[SCHEDULER ERROR] {e}", flush=True)
 
+_INDOOR_CAM_LOCK = {
+    "last_ts": 0.0,
+    "last_shift": "",
+    "locked_by": ""
+}
+
+@app.route("/api/indoor-cam-lock", methods=["GET", "POST"])
+def indoor_cam_lock():
+    """Khóa trung tâm chống gửi trùng hình ảnh Camera 4 kho (giữa Cloud và PC hoặc các tiến trình song song)"""
+    global _INDOOR_CAM_LOCK
+    now = time.time()
+    data = request.get_json(silent=True) or {}
+    action = request.args.get("action") or data.get("action", "check")
+    shift = request.args.get("shift") or data.get("shift", "")
+    caller = request.args.get("caller") or data.get("caller", "unknown")
+
+    if action == "acquire":
+        elapsed = now - _INDOOR_CAM_LOCK.get("last_ts", 0.0)
+        # Khóa tối thiểu 900 giây (15 phút) hoặc cùng ca báo cáo (vd: 2026-11-07_20h)
+        if (elapsed < 900) or (shift and _INDOOR_CAM_LOCK.get("last_shift") == shift):
+            return jsonify({
+                "ok": False,
+                "acquired": False,
+                "reason": f"Báo cáo camera ca {shift or _INDOOR_CAM_LOCK.get('last_shift')} đã được gửi bởi {_INDOOR_CAM_LOCK.get('locked_by')} cách đây {int(elapsed)}s. Bỏ qua chống trùng!",
+                "last_ts": _INDOOR_CAM_LOCK.get("last_ts", 0.0),
+                "last_shift": _INDOOR_CAM_LOCK.get("last_shift", ""),
+                "locked_by": _INDOOR_CAM_LOCK.get("locked_by", "")
+            }), 200
+
+        _INDOOR_CAM_LOCK["last_ts"] = now
+        _INDOOR_CAM_LOCK["last_shift"] = shift
+        _INDOOR_CAM_LOCK["locked_by"] = caller
+        return jsonify({
+            "ok": True,
+            "acquired": True,
+            "message": f"Đã nhận khóa kiểm tra camera ca {shift} thành công cho {caller}",
+            "last_ts": now,
+            "last_shift": shift,
+            "locked_by": caller
+        }), 200
+
+    # Action: check
+    elapsed = now - _INDOOR_CAM_LOCK.get("last_ts", 0.0)
+    is_locked = (elapsed < 900) or (shift and _INDOOR_CAM_LOCK.get("last_shift") == shift)
+    return jsonify({
+        "ok": True,
+        "is_locked": is_locked,
+        "last_ts": _INDOOR_CAM_LOCK.get("last_ts", 0.0),
+        "last_shift": _INDOOR_CAM_LOCK.get("last_shift", ""),
+        "locked_by": _INDOOR_CAM_LOCK.get("locked_by", ""),
+        "elapsed_sec": int(elapsed)
+    }), 200
+
 @app.route("/api/cron/<task_key>", methods=["GET", "POST"])
 def run_cron_webhook(task_key):
     """Trigger a reporter via external webhook (e.g. cron-job.org)"""
