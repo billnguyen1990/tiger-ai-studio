@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import requests
-import gspread
-from google.oauth2.service_account import Credentials
+import csv
+import io
+import re
+import unicodedata
+from datetime import datetime, timedelta
+from collections import defaultdict
 from playwright.sync_api import sync_playwright
 
 DIR_NAME = os.path.dirname(os.path.abspath(__file__))
@@ -26,140 +31,230 @@ if not os.path.exists(CREDS_FILE):
 
 BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
 CHAT_ID = "-1003940889949"
-TOPIC_IDS = [506]  # Gửi đồng thời Topic 506 (📅 Đơn Tạo) & Topic 2690 (🔥 Báo Cáo / War Room)
+TOPIC_IDS = [506, 2690]  # Gửi đồng thời Topic 506 (📅 Đơn Tạo) & Topic 2690 (🔥 Báo Cáo)
 
-from datetime import datetime
-import time
+ALL_BUU_CUC_LIST = [
+    'Kho Giao Hàng Nặng - Cái Răng - Cần Thơ',
+    'Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ',
+    'Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang',
+    'Kho Giao Hàng Nặng - Ô Môn - Cần Thơ',
+    'Kho Giao Hàng Nặng - Tam Nông - Đồng Tháp',
+    'Kho Giao Hàng Nặng - TP Cao Lãnh - Đồng Tháp',
+    'Kho Giao Hàng Nặng - TP Cà Mau - Cà Mau',
+    'Kho Giao Hàng Nặng - TP Rạch Giá - Kiên Giang',
+    'Kho Giao Hàng Nặng - TP Hà Tiên - Kiên Giang',
+    'Kho Giao Hàng Nặng - TX Cai Lậy - Tiền Giang',
+    'Kho Giao Hàng Nặng - Đức Hòa - Long An',
+    'Kho Giao Hàng Nặng - TP Mỹ Tho - Tiền Giang',
+    'Kho Giao Hàng Nặng - TP Bến Tre - Bến Tre',
+    'Kho Giao Hàng Nặng - TP Tân An - Long An',
+    'Kho Giao Hàng Nặng - Gò Công - Tiền Giang',
+    'Kho Giao Hàng Nặng - TP Bạc Liêu - Bạc Liêu',
+    'Kho Giao Hàng Nặng - TP Sóc Trăng - Sóc Trăng',
+    'Kho Giao Hàng Nặng - TP Trà Vinh - Trà Vinh',
+    'Kho Giao Hàng Nặng - TP Châu Đốc - An Giang',
+    'Kho Giao Hàng Nặng - TP Vĩnh Long - Vĩnh Long',
+    'Kho Giao Hàng Nặng - TP Long Xuyên - An Giang',
+    'Kho Giao Hàng Nặng TNB'
+]
 
-def trigger_sheet_filter_via_cdp():
-    """Tự động kích hoạt lọc và tạo bảng thống kê nếu ThongKe chưa cập nhật ngày hôm nay."""
+MT01_5_KHO = [
+    'Kho Giao Hàng Nặng - Cái Răng - Cần Thơ',
+    'Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ',
+    'Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang',
+    'Kho Giao Hàng Nặng - Ô Môn - Cần Thơ',
+    'Kho Giao Hàng Nặng TNB'
+]
+
+def normalize_text(text):
+    if not text:
+        return ""
+    text = str(text).lower().strip()
+    text = unicodedata.normalize('NFD', text)
+    text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
+    text = text.replace('đ', 'd')
+    text = re.sub(r'[^a-z0-9\s]', ' ', text)
+    return re.sub(r'\s+', ' ', text).strip()
+
+def match_warehouse_name(raw_name):
+    if not raw_name:
+        return None
+    norm = normalize_text(raw_name)
+    for std_name in ALL_BUU_CUC_LIST:
+        norm_std = normalize_text(std_name)
+        if norm == norm_std:
+            return std_name
+        short_key = norm_std.replace('kho giao hang nang - ', '').replace('kho giao hang nang ', '')
+        parts = short_key.split(' - ')
+        main_place = parts[0].strip()
+        if main_place in norm:
+            return std_name
+    return None
+
+def parse_vn_date_time(val):
+    if not val:
+        return None
+    val_str = str(val).strip()
+    m1 = re.search(r'(\d{1,2})\s*thg\s*(\d{1,2}),?\s*(\d{4})', val_str, re.IGNORECASE)
+    if m1:
+        return datetime(int(m1.group(3)), int(m1.group(2)), int(m1.group(1)))
+    m2 = re.search(r'(\d{1,2})/(\d{1,2})/(\d{4})', val_str)
+    if m2:
+        return datetime(int(m2.group(3)), int(m2.group(2)), int(m2.group(1)))
+    m3 = re.search(r'(\d{4})-(\d{1,2})-(\d{1,2})', val_str)
+    if m3:
+        return datetime(int(m3.group(1)), int(m3.group(2)), int(m3.group(3)))
+    return None
+
+def parse_weight_int(val):
+    if val is None:
+        return 0
+    if isinstance(val, (int, float)):
+        return int(round(val))
+    s = str(val).strip().replace('.', '').replace(',', '')
     try:
-        from playwright.sync_api import sync_playwright
-        with sync_playwright() as p:
-            browser = p.chromium.connect_over_cdp('http://127.0.0.1:9223')
-            ctx = browser.contexts[0]
-            pages = [pg for pg in ctx.pages if '1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI' in pg.url]
-            if not pages:
-                print("⚠️ Không tìm thấy tab Google Sheets Đơn Tạo trên Chrome CDP 9223!")
-                return False
-            page = pages[0]
-            page.bring_to_front()
+        return int(s)
+    except Exception:
+        return 0
 
-            def click_menu(menu_txt, sub_txt):
-                page.keyboard.press("Escape")
-                time.sleep(0.3)
-                page.keyboard.press("Escape")
-                time.sleep(0.3)
-                btn = page.evaluate("""(mName) => {
-                    const bar = document.querySelector('#docs-menubar');
-                    if (!bar) return null;
-                    const items = Array.from(bar.querySelectorAll('.menu-button'));
-                    const target = items.find(el => el.innerText && el.innerText.trim() === mName);
-                    if (target) {
-                        const r = target.getBoundingClientRect();
-                        return { x: r.x + r.width/2, y: r.y + r.height/2 };
-                    }
-                    return null;
-                }""", menu_txt)
-                if not btn:
-                    return False
-                page.mouse.click(btn['x'], btn['y'])
-                time.sleep(1.2)
-                sub = page.evaluate("""(sName) => {
-                    const items = Array.from(document.querySelectorAll('.goog-menuitem')).filter(e => e.offsetParent !== null);
-                    const target = items.find(e => e.innerText && e.innerText.trim().includes(sName));
-                    if (target) {
-                        const r = target.getBoundingClientRect();
-                        return { x: r.x + r.width/2, y: r.y + r.height/2 };
-                    }
-                    return null;
-                }""", sub_txt)
-                if not sub:
-                    page.keyboard.press("Escape")
-                    return False
-                page.mouse.click(sub['x'], sub['y'])
-                return True
+def fetch_and_compute_b2b_tables():
+    """Tự động kéo dữ liệu CSV công khai từ tab Data của Google Sheet và tổng hợp bảng Thống Kê chuẩn 100%."""
+    url = 'https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/export?format=csv&gid=0'
+    print("📡 Đang tải trực tiếp dữ liệu CSV từ Google Sheet Data tab...")
+    r = requests.get(url, timeout=20)
+    if r.status_code != 200:
+        raise RuntimeError(f"HTTP {r.status_code} fetching Data CSV")
+    
+    reader = csv.reader(io.StringIO(r.text))
+    headers = [h.strip().lower() for h in next(reader)]
+    
+    col_code = headers.index('mã đơn')
+    col_lay = headers.index('ngày lấy')
+    col_tao = headers.index('ngày tạo')
+    col_kho = headers.index('bưu cục giao')
+    col_w = headers.index('cân nặng')
 
-            def wait_script():
-                saw = False
-                for _ in range(60):
-                    time.sleep(1.5)
-                    bar = page.evaluate("""() => {
-                        const b = document.querySelector('.docs-butterbar-container, .docs-butterbar-message, .jfk-butterbar');
-                        return b && b.offsetParent !== null ? b.innerText.trim() : '';
-                    }""")
-                    if "Đang chạy tập lệnh" in bar:
-                        saw = True
-                    elif saw and ("Đã kết thúc" in bar or not bar):
-                        break
+    dates = []
+    rows_data = []
+    for row in reader:
+        if len(row) <= max(col_code, col_lay, col_tao, col_kho, col_w):
+            continue
+        raw_lay = row[col_lay]
+        if not raw_lay or str(raw_lay).strip().lower() in ('null', ''):
+            continue
+        raw_kho = row[col_kho]
+        matched_kho = match_warehouse_name(raw_kho)
+        if not matched_kho:
+            continue
+        d = parse_vn_date_time(row[col_tao])
+        if not d:
+            continue
+        w = parse_weight_int(row[col_w])
+        dates.append(d)
+        rows_data.append((matched_kho, d, w))
 
-            print("🔄 [Tự động khắc phục] Kích hoạt Bước 1: 'Chạy lọc -> Ketqua'...")
-            if click_menu("Lọc dữ liệu", "Chạy lọc -> Ketqua"):
-                wait_script()
-                time.sleep(3)
+    today = max(dates) if dates else datetime.now()
+    from_date = today - timedelta(days=7)
+    print(f"✓ Đã nạp {len(rows_data):,} dòng hợp lệ (Khoảng ngày: {from_date.strftime('%d/%m')} -> {today.strftime('%d/%m/%Y')})")
 
-            print("🔄 [Tự động khắc phục] Kích hoạt Bước 2: 'Tạo bảng thống kê -> ThongKe'...")
-            if click_menu("Lọc dữ liệu", "Tạo bảng thống kê"):
-                wait_script()
-                time.sleep(5)
-                return True
-    except Exception as ex:
-        print(f"⚠️ Lỗi trigger qua Chrome CDP: {ex}")
-    return False
+    date_list = []
+    cur_d = from_date
+    while cur_d <= today:
+        date_list.append(cur_d)
+        cur_d += timedelta(days=1)
+
+    date_keys = [d.strftime("%Y-%m-%d") for d in date_list]
+    date_labels = [f"{d.day}/{d.month}/{d.year}" for d in date_list]
+
+    counts = defaultdict(lambda: defaultdict(int))
+    weights = defaultdict(lambda: defaultdict(int))
+
+    for kho, dt, w in rows_data:
+        if from_date <= dt <= today:
+            dk = dt.strftime("%Y-%m-%d")
+            counts[kho][dk] += 1
+            weights[kho][dk] += w
+
+    num_cols = 2 + len(date_labels) + 1
+    blank_row = [''] * num_cols
+
+    def fmt_vn(n):
+        return f"{int(n):,}".replace(",", ".")
+
+    def build_pivot_block(title, kho_list, metric_dict):
+        block = []
+        title_row = [title] + [''] * (num_cols - 1)
+        header_row = ['STT', 'Nhãn Hàng'] + date_labels + ['Tổng Cuối']
+        block.append(title_row)
+        block.append(header_row)
+        col_totals = [0] * len(date_keys)
+        grand_total = 0
+        for idx, kho in enumerate(kho_list, start=1):
+            vals = [metric_dict[kho][dk] for dk in date_keys]
+            row_sum = sum(vals)
+            for c_i, v in enumerate(vals):
+                col_totals[c_i] += v
+            grand_total += row_sum
+            block.append([str(idx), kho] + [fmt_vn(v) for v in vals] + [fmt_vn(row_sum)])
+        block.append(['', 'Tổng Cuối'] + [fmt_vn(v) for v in col_totals] + [fmt_vn(grand_total)])
+        return block
+
+    t1 = build_pivot_block('Count of mã đơn', MT01_5_KHO, counts)
+    t2 = build_pivot_block('Tổng của cân nặng', MT01_5_KHO, weights)
+    t3 = build_pivot_block('Count of mã đơn', ALL_BUU_CUC_LIST, counts)
+    t4 = build_pivot_block('Tổng của cân nặng', ALL_BUU_CUC_LIST, weights)
+
+    all_rows = t1 + [blank_row] + t2 + [blank_row] + t3 + [blank_row] + t4
+    return all_rows, date_labels[-1]
 
 def run_b2b_report(send_telegram=True):
     print("=" * 60)
     print("🚀 BẮT ĐẦU QUY TRÌNH BÁO CÁO ĐƠN TẠO MT01 (18:00)")
     print("=" * 60)
     
-    # 1. Fetch ThongKe from Google Sheet via Service Account (Không bao giờ hết hạn)
-    creds = Credentials.from_service_account_file(
-        CREDS_FILE,
-        scopes=['https://www.googleapis.com/auth/spreadsheets']
-    )
-    client = gspread.authorize(creds)
-    sh = client.open_by_key('1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI')
-    tk = sh.worksheet('ThongKe')
-    all_rows = tk.get_all_values()
+    all_rows = None
+    today_str = None
 
-    # Kiểm tra tính cập nhật của ngày hôm nay
-    now = datetime.now()
-    expected_today = [
-        f"{now.day}/{now.month}/{now.year}",
-        f"{now.day:02d}/{now.month:02d}/{now.year}",
-        f"{now.day}/{now.month:02d}/{now.year}",
-        now.strftime("%d/%m/%Y")
-    ]
-    cur_header1 = all_rows[1] if len(all_rows) > 1 else []
-    cur_dates = [c for c in cur_header1 if '/' in c]
-    latest_in_sheet = cur_dates[-1] if cur_dates else ""
-    
-    if latest_in_sheet not in expected_today:
-        print(f"⚠️ Cột ngày mới nhất trong ThongKe ({latest_in_sheet}) chưa khớp ngày hôm nay ({expected_today[0]})!")
+    # Bước 1: Thử lấy từ ThongKe qua Service Account nếu có
+    if os.path.exists(CREDS_FILE):
         try:
-            from tiger_data_filter import sync_filter_data_to_ketqua
-            sync_filter_data_to_ketqua()
-            all_rows = tk.get_all_values()
-            cur_header1 = all_rows[1] if len(all_rows) > 1 else []
+            import gspread
+            from google.oauth2.service_account import Credentials
+            creds = Credentials.from_service_account_file(
+                CREDS_FILE,
+                scopes=['https://www.googleapis.com/auth/spreadsheets']
+            )
+            client = gspread.authorize(creds)
+            sh = client.open_by_key('1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI')
+            tk = sh.worksheet('ThongKe')
+            candidate_rows = tk.get_all_values()
+
+            now = datetime.now()
+            expected_today = [
+                f"{now.day}/{now.month}/{now.year}",
+                f"{now.day:02d}/{now.month:02d}/{now.year}",
+                f"{now.day}/{now.month:02d}/{now.year}",
+                now.strftime("%d/%m/%Y")
+            ]
+            cur_header1 = candidate_rows[1] if len(candidate_rows) > 1 else []
             cur_dates = [c for c in cur_header1 if '/' in c]
             latest_in_sheet = cur_dates[-1] if cur_dates else ""
-        except Exception as e_f:
-            print(f"⚠️ Lỗi lọc trực tiếp: {e_f}")
+            if latest_in_sheet in expected_today:
+                all_rows = candidate_rows
+                print(f"✓ Nạp ThongKe từ Google Sheet thành công (ngày: {latest_in_sheet})")
+            else:
+                print(f"⚠️ ThongKe trên Sheet đang ở ngày cũ ({latest_in_sheet}) -> Tự động tính toán lại từ Data CSV!")
+        except Exception as e_sa:
+            print(f"⚠️ Service account xác thực không thành công ({e_sa}) -> Kích hoạt cơ chế Fallback tự động!")
 
-        if latest_in_sheet not in expected_today and sys.platform == "win32" and "--no-auto-scrape" not in sys.argv:
-            print("🚀 [Auto-Scrape] Đang tự động mở Looker Studio (Tab 1. B2B) để xuất dữ liệu mới nhất của hôm nay...")
-            import subprocess
-            looker_script = os.path.join(DIR_NAME, "looker_export_temp.py")
-            subprocess.run([sys.executable, looker_script, "--no-reporter"], timeout=600)
-            all_rows = tk.get_all_values()
-            cur_header1 = all_rows[1] if len(all_rows) > 1 else []
-            cur_dates = [c for c in cur_header1 if '/' in c]
-            latest_in_sheet = cur_dates[-1] if cur_dates else ""
-
-        if latest_in_sheet not in expected_today and "--force-old" not in sys.argv:
-            print(f"⏸️ Bảng ThongKe vẫn đang ở ngày cũ ({latest_in_sheet}), tạm hoãn bắn vào Topic 506 để không gửi trùng dữ liệu hôm qua!")
-            return {"success": False, "skipped_stale": True, "today": latest_in_sheet}
-
+    # Bước 2: Tự động Fallback sang tính toán trực tiếp từ Data CSV (100% không phụ thuộc Service Account)
+    if not all_rows:
+        try:
+            all_rows, today_str = fetch_and_compute_b2b_tables()
+            print("✓ Đã tính toán bảng thống kê độc lập thành công!")
+        except Exception as e_comp:
+            print(f"❌ Lỗi tính toán fallback: {e_comp}")
+            return {"success": False, "error": str(e_comp)}
 
     # Table 1: Count of mã đơn (Phòng 1: 5 kho)
     t1 = []
@@ -177,7 +272,7 @@ def run_b2b_report(send_telegram=True):
         t2.append(r[:num_cols])
 
     date_headers = [c for c in header1 if '/' in c]
-    today_str = date_headers[-1] if date_headers else "31/10/2026"
+    today_str = date_headers[-1] if date_headers else datetime.now().strftime("%d/%m/%Y")
     today_idx = header1.index(today_str)
     total_idx = header1.index("Tổng Cuối") if "Tổng Cuối" in header1 else -1
 
@@ -198,44 +293,50 @@ def run_b2b_report(send_telegram=True):
           <meta charset="utf-8">
           <style>
             body {{
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
               background: #ffffff;
+              padding: 24px;
               margin: 0;
-              padding: 16px;
-              display: inline-block;
             }}
             table {{
               border-collapse: collapse;
-              font-size: 13px;
-              color: #111;
-              background: #ffffff;
+              width: 100%;
+              border: 1px solid #dcdcdc;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+              border-radius: 8px;
+              overflow: hidden;
             }}
-            .title-row {{
-              font-weight: bold;
-              font-size: 15px;
-              padding: 8px 6px;
-              border: none;
-              text-align: left;
-              background: #ffffff;
-              color: #1a73e8;
+            th, td {{
+              padding: 12px 14px;
+              font-size: 14px;
+              border-bottom: 1px solid #eee;
+              border-right: 1px solid #f0f0f0;
+              white-space: nowrap;
             }}
             th {{
-              background-color: #d2e3fc;
-              font-weight: bold;
-              border: 1px solid #707070;
-              padding: 7px 12px;
+              background: #f8fafc;
+              font-weight: 600;
+              color: #334155;
               text-align: center;
-              white-space: nowrap;
+              border-bottom: 2px solid #cbd5e1;
             }}
-            td {{
-              border: 1px solid #707070;
-              padding: 7px 12px;
-              white-space: nowrap;
+            tr:nth-child(even) td {{
+              background-color: #fafbfc;
+            }}
+            .title-row {{
+              background: #1e293b !important;
+              color: #ffffff !important;
+              font-size: 18px;
+              font-weight: 700;
+              text-align: left;
+              padding: 16px 20px;
+              border: none;
             }}
             .total-row td {{
-              background-color: #e8f0fe;
-              font-weight: bold;
-              color: #d93025;
+              background: #eff6ff !important;
+              font-weight: 700;
+              color: #1d4ed8;
+              border-top: 2px solid #93c5fd;
             }}
             .today-col {{
               background-color: #fff8e1 !important;
@@ -302,6 +403,19 @@ def run_b2b_report(send_telegram=True):
 
     send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
 
+    # Định dạng kg dễ đọc
+    try:
+        can_nang_today_num = int(str(can_nang_today).replace('.', '').replace(',', ''))
+        can_nang_today_kg = f"{round(can_nang_today_num / 1000, 1):,}".replace(",", ".")
+    except Exception:
+        can_nang_today_kg = can_nang_today
+
+    try:
+        can_nang_total_num = int(str(can_nang_total).replace('.', '').replace(',', ''))
+        can_nang_total_kg = f"{round(can_nang_total_num / 1000, 1):,}".replace(",", ".")
+    except Exception:
+        can_nang_total_kg = can_nang_total
+
     cap1 = f"""📊 <b>Data Đơn Tạo Miền Tây 01 (SỐ ĐƠN)</b>
 - TỔNG SỐ ĐƠN : Ngày {today_str}
 - Hôm nay: <b>{so_don_today}</b> đơn
@@ -309,8 +423,8 @@ def run_b2b_report(send_telegram=True):
 
     cap2 = f"""📊 <b>Data Đơn Tạo Miền Tây 01 (CÂN NẶNG)</b>
 - TỔNG CÂN NẶNG : Ngày {today_str}
-- Hôm nay: <b>{can_nang_today}</b> kg
-- Tổng cộng: <b>{can_nang_total}</b> kg"""
+- Hôm nay: <b>{can_nang_today}</b> g (~{can_nang_today_kg} kg)
+- Tổng cộng: <b>{can_nang_total}</b> g (~{can_nang_total_kg} kg)"""
 
     success_topics = []
     for top_id in TOPIC_IDS:
@@ -359,4 +473,3 @@ if __name__ == "__main__":
     send = ("--send" in sys.argv or "--dry-run" not in sys.argv)
     res = run_b2b_report(send_telegram=send)
     print("Kết quả:", res)
-
