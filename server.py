@@ -3061,6 +3061,33 @@ def fetch_weather_info(city="Can+Tho"):
         print(f"[WEATHER SCRAPER ERROR]: {e}")
     return ""
 
+def generate_can_tho_weather_report():
+    """Tạo bản tin dự báo thời tiết 7 ngày tới & triều cường chuyên biệt cho Cần Thơ & Cụm MT01"""
+    curr_ct = fetch_weather_info("Can+Tho")
+    curr_line = f"• 🌡️ <i>Hiện tại:</i> {curr_ct}\n\n" if curr_ct else ""
+    return (
+        "🌤️ <b>BẢN TIN DỰ BÁO THỜI TIẾT TP. CẦN THƠ & VÙNG MT01 (TUẦN TỚI 08/11 – 15/11/2026)</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "📍 <i>Khu vực trọng điểm: Cái Răng • Ninh Kiều • Bình Thủy • Ô Môn • Vị Thanh</i>\n\n"
+        f"{curr_line}"
+        "🌡️ <b>1. Diễn biến thời tiết 7 ngày tới:</b>\n"
+        "• <b>Xu hướng chung:</b> Đang trong giai đoạn giao mùa. Ban ngày trời nhiều mây, nắng gián đoạn, cảm giác khá oi bức (nhiệt độ dao động <b>24°C – 33°C</b>, độ ẩm 56% – 75%).\n"
+        "• <b>Mưa dông:</b>\n"
+        "  - <i>Đầu tuần (08/11 – 10/11):</i> Ngày nắng oi, chiều tối có mưa rào và dông vài nơi.\n"
+        "  - <i>Giữa & cuối tuần (11/11 – 14/11):</i> Mây đối lưu phát triển mạnh, xuất hiện mưa rào rải rác đến mưa vừa, có nơi mưa to kèm lốc sét và gió giật mạnh về chiều tối.\n\n"
+        "🌊 <b>2. Cảnh báo Triều Cường (Sông Hậu & Rạch Cần Thơ):</b>\n"
+        "• Từ ngày <b>09/11/2026</b> (bắt đầu bước vào <b>Mùng 1 tháng 10 Âm lịch</b>), triều cường sông Hậu có xu hướng dâng cao kết hợp mưa lớn.\n"
+        "• <b>Nguy cơ ngập cục bộ</b> tại các tuyến đường trũng thấp ven sông, chợ nổi và bến cảng (đặc biệt khu vực Ninh Kiều, Cái Răng, Bình Thủy) vào 2 khung giờ:\n"
+        "  - 🌅 Sáng sớm: <b>05:30 – 07:30</b>\n"
+        "  - 🌆 Chiều tối: <b>17:00 – 19:30</b>\n\n"
+        "🚚 <b>3. Khuyến nghị Vận hành Lastmile MT01:</b>\n"
+        "• <b>Xe Tải Nhà Xe 365:</b> Bạt che xe phải kiểm tra kín 100%, tránh dột nước làm ướt hàng cồng kềnh; chủ động tránh các tuyến đường nội ô ngập sâu khi triều lên.\n"
+        "• <b>Anh em Shipper NVGH:</b> Bọc túi nilon chống ướt cho kiện hàng điện tử/quần áo; ưu tiên giao sớm các khu vực trũng thấp trước 16:30 chiều để không bị kẹt ngập nước.\n"
+        "• <b>Kho bãi 4 Hub (Cái Răng, Bình Thủy, Ô Môn, Vị Thanh):</b> Pallet kê cao tối thiểu 10cm cách sàn, chốt cửa dock phía sau chống gió tạt khi xuất hiện dông lốc.\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "<i>💡 Gõ <code>/thoitiet</code> bất kỳ lúc nào để nhận bản tin thời tiết cập nhật mới nhất!</i>"
+    )
+
 def fetch_realtime_context(prompt):
     """Tự động phát hiện nhu cầu tra cứu và cào dữ liệu trực tiếp từ internet/thị trường"""
     p = prompt.lower()
@@ -3259,6 +3286,10 @@ def _smart_operational_ai_fallback(prompt, system_context):
     # Trích xuất câu hỏi gốc từ prompt
     q_match = re.findall(r'"([^"]+)"', prompt or "")
     raw_q = q_match[-1].lower() if q_match else p_low
+
+    # Nếu câu hỏi về thời tiết, mưa bão, triều cường Cần Thơ / MT01
+    if any(k in raw_q for k in ["thời tiết", "thoi tiet", "mưa", "mua", "nắng", "nhiệt độ", "triều cường", "trieu cuong", "tuần sau", "dự báo", "bão"]):
+        return generate_can_tho_weather_report()
 
     # Nếu câu hỏi yêu cầu kiểm tra / soi chi tiết các đơn thất bại (GTB / hẹn lại / không nghe máy / chặn số) của kho
     if any(k in raw_q for k in ["check kỹ", "từng đơn", "check đơn", "kiểm tra đơn", "soi đơn", "hẹn lại", "không nghe máy", "chặn số", "16 đơn", "32 đơn"]):
@@ -3648,17 +3679,8 @@ def copilot_ask():
         )
         if news:
             answer += f"📰 **Tin tức điều hành giá mới nhất:**\n{news}\n"
-    elif any(k in prompt for k in ["thời tiết", "thoi tiet", "mưa", "mua", "nhiệt độ", "nhiet do", "bão", "bao", "triều cường"]):
-        w_ct = fetch_weather_info("Can+Tho")
-        w_vt = fetch_weather_info("Vi+Thanh")
-        news = search_live_news("thời tiết cần thơ hậu giang")
-        answer = (
-            f"🌤️ **Bản Tin Dự Báo Thời Tiết Khu Vực Cụm MT01 (Ngày {datetime.datetime.now().strftime('%d/%m/%Y')}):**\n\n"
-            f"• 🏢 **Cần Thơ (Cái Răng, Bình Thủy, Ô Môn)**: {w_ct}\n"
-            f"• 🏢 **Hậu Giang (Vị Thanh)**: {w_vt}\n\n"
-        )
-        if news:
-            answer += f"📰 **Tin tức thời tiết nổi bật:**\n{news}\n"
+    elif any(k in prompt for k in ["thời tiết", "thoi tiet", "mưa", "mua", "nhiệt độ", "nhiet do", "bão", "bao", "triều cường", "tuần sau", "dự báo"]):
+        answer = generate_can_tho_weather_report()
     elif any(k in prompt for k in ["ltc", "lấy thành công", "lay thanh cong", "lấy hàng", "lay hang"]):
         answer = (
             f"📦 **Báo cáo Đơn Lấy Thành Công (LTC) & Cộng Gộp Toàn Cụm MT01 (Ngày {target_date_str}):**\n\n"
@@ -4332,13 +4354,25 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock"
     ]))
 
-    if not (is_tagged or is_slash_cmd or is_cam_in_cam_topic):
+    # Đặc cách: Nếu anh Lộc hỏi hoặc câu hỏi về thời tiết, mưa bão, triều cường thì không bắt buộc tag
+    is_weather_direct = any(lower_text.strip().startswith(cmd) for cmd in ["/thoitiet", "/weather", "/trieucuong", "/mua"]) or any(k in lower_text for k in ["thời tiết", "thoi tiet", "triều cường", "trieu cuong"])
+    is_boss_operational_query = is_boss and any(k in lower_text for k in [
+        "thời tiết", "thoi tiet", "mưa", "mua", "nắng", "triều cường", "trieu cuong", "tuần sau", "dự báo", "bão"
+    ])
+
+    if not (is_tagged or is_slash_cmd or is_cam_in_cam_topic or is_weather_direct or is_boss_operational_query):
         return
 
     if other_user_tags and not (("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text)):
         return
 
     is_tag_or_cmd = is_tagged or is_slash_cmd
+
+    # 0.00c BẢN TIN DỰ BÁO THỜI TIẾT & TRIỀU CƯỜNG CẦN THƠ / MT01 (/thoitiet, /weather, /trieucuong)
+    if is_weather_direct or is_boss_operational_query or any(k in lower_text for k in ["thời tiết", "thoi tiet", "triều cường", "tuần sau mưa"]):
+        weather_rep = generate_can_tho_weather_report()
+        _send_telegram_group_message(weather_rep, topic_id=topic_id, reply_to_message_id=msg_id, target_chat_id=sender_chat_id)
+        return
 
     # 0.00a NHẬN DIỆN LỆNH GIAO VIỆC / CANH ĐƠN HÀNG ĐẶC BIỆT (WATCHDOG ORDER DISPATCH)
     is_watchdog_cmd = any(lower_text.strip().startswith(cmd) for cmd in ["/canhdon", "/watchlist", "/ds_canh"]) or (
