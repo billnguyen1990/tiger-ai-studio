@@ -14,6 +14,27 @@ EXCEL_EXPORT_FILE = os.path.join(DATA_DIR, "Bao_Cao_Doi_Soat_MT01_Latest.xlsx")
 
 GOOGLE_SHEET_ID = "1eHuDDhfZy17fIC_jWPTnDT69-1gf-31gm8K1Qgo6Ssc"
 
+def _decrypt_cloud_sa_info():
+    """Giải mã an toàn service account từ file mã hóa sa_cloud_key.enc khi chạy trên Render cloud"""
+    import base64
+    enc_candidates = [
+        os.path.join(CURRENT_DIR, "data", "sa_cloud_key.enc"),
+        os.path.join(CURRENT_DIR, "sa_cloud_key.enc"),
+        os.path.join(os.path.dirname(CURRENT_DIR), "data", "sa_cloud_key.enc")
+    ]
+    key = "TIGER_AI_MT01_SECURITY_KEY_2026".encode("utf-8")
+    for p in enc_candidates:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    enc_b64 = f.read().strip()
+                dec_bytes = base64.b64decode(enc_b64.encode("utf-8"))
+                decrypted = bytes([b ^ key[i % len(key)] for i, b in enumerate(dec_bytes)]).decode("utf-8")
+                return json.loads(decrypted)
+            except Exception as e:
+                print(f"[Warning] Failed decrypting {p}: {e}")
+    return None
+
 def get_google_creds():
     # 1. Kiểm tra biến môi trường
     env_json = os.environ.get("GOOGLE_CREDENTIALS_JSON") or os.environ.get("GCP_SA_KEY")
@@ -36,6 +57,16 @@ def get_google_creds():
         if os.path.exists(c):
             from google.oauth2.service_account import Credentials
             return Credentials.from_service_account_file(c, scopes=["https://www.googleapis.com/auth/spreadsheets"])
+
+    # 3. Fallback giải mã đám mây an toàn
+    sa_info = _decrypt_cloud_sa_info()
+    if sa_info:
+        try:
+            from google.oauth2.service_account import Credentials
+            return Credentials.from_service_account_info(sa_info, scopes=["https://www.googleapis.com/auth/spreadsheets"])
+        except Exception as e:
+            print(f"[Warning] Failed loading decrypted creds: {e}")
+
     raise FileNotFoundError("Không tìm thấy credentials.json hoặc biến môi trường GOOGLE_CREDENTIALS_JSON!")
 
 def sync_mt01_cost_data(force=False):

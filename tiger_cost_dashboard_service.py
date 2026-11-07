@@ -1,7 +1,12 @@
 import os
 import sys
 import json
+import base64
 import datetime
+import requests
+import urllib.parse
+import csv
+import io
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -12,6 +17,36 @@ os.makedirs(DATA_DIR, exist_ok=True)
 DASHBOARD_CACHE_FILE = os.path.join(DATA_DIR, "mt01_cost_dashboard.json")
 GOOGLE_SHEET_ID = "1eHuDDhfZy17fIC_jWPTnDT69-1gf-31gm8K1Qgo6Ssc"
 ODO_SHEET_ID = "1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE"
+
+def get_vn_now():
+    """Lấy thời gian chuẩn Việt Nam (Asia/Ho_Chi_Minh GMT+7) trên cả môi trường local lẫn cloud Render"""
+    try:
+        import pytz
+        vn_tz = pytz.timezone("Asia/Ho_Chi_Minh")
+        return datetime.datetime.now(vn_tz)
+    except Exception:
+        return datetime.datetime.utcnow() + datetime.timedelta(hours=7)
+
+def _decrypt_cloud_sa_info():
+    """Giải mã an toàn service account từ file mã hóa sa_cloud_key.enc khi chạy trên Render cloud"""
+    enc_candidates = [
+        os.path.join(DATA_DIR, "sa_cloud_key.enc"),
+        os.path.join(CURRENT_DIR, "data", "sa_cloud_key.enc"),
+        os.path.join(CURRENT_DIR, "sa_cloud_key.enc"),
+        os.path.join(os.path.dirname(CURRENT_DIR), "data", "sa_cloud_key.enc")
+    ]
+    key = "TIGER_AI_MT01_SECURITY_KEY_2026".encode("utf-8")
+    for p in enc_candidates:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    enc_b64 = f.read().strip()
+                dec_bytes = base64.b64decode(enc_b64.encode("utf-8"))
+                decrypted = bytes([b ^ key[i % len(key)] for i, b in enumerate(dec_bytes)]).decode("utf-8")
+                return json.loads(decrypted)
+            except Exception as e:
+                print(f"[Warning] Failed decrypting {p}: {e}")
+    return None
 
 def get_google_creds():
     env_json = os.environ.get("GOOGLE_CREDENTIALS_JSON") or os.environ.get("GCP_SA_KEY")
@@ -31,7 +66,69 @@ def get_google_creds():
     for c in candidates:
         if os.path.exists(c):
             return Credentials.from_service_account_file(c, scopes=["https://www.googleapis.com/auth/spreadsheets"])
+
+    sa_info = _decrypt_cloud_sa_info()
+    if sa_info:
+        try:
+            return Credentials.from_service_account_info(sa_info, scopes=["https://www.googleapis.com/auth/spreadsheets"])
+        except Exception as e:
+            print(f"[Warning] Failed loading decrypted creds: {e}")
+
     raise FileNotFoundError("Không tìm thấy credentials.json kết nối Google Sheets!")
+
+def get_google_session():
+    """Tạo requests.Session() với cookie Google từ file mã hóa google_auth.enc hoặc google_auth_storage.json"""
+    key = "TIGER_AI_MT01_SECURITY_KEY_2026".encode("utf-8")
+    candidates = [
+        os.path.join(DATA_DIR, "google_auth.enc"),
+        os.path.join(CURRENT_DIR, "data", "google_auth.enc"),
+        os.path.join(os.path.dirname(CURRENT_DIR), "google_auth_storage.json"),
+        os.path.join(CURRENT_DIR, "google_auth_storage.json"),
+    ]
+    cookies = []
+    for c in candidates:
+        if os.path.exists(c):
+            try:
+                if c.endswith(".enc"):
+                    with open(c, "r", encoding="utf-8") as f:
+                        enc_b64 = f.read().strip()
+                    dec_bytes = base64.b64decode(enc_b64.encode("utf-8"))
+                    decrypted = bytes([b ^ key[i % len(key)] for i, b in enumerate(dec_bytes)]).decode("utf-8")
+                    data = json.loads(decrypted)
+                else:
+                    with open(c, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                cookies = data.get("cookies", [])
+                if cookies:
+                    break
+            except Exception as e:
+                print(f"[Warning] Error loading cookies from {c}: {e}")
+
+    session = requests.Session()
+    for ck in cookies:
+        if "google" in ck.get("domain", ""):
+            session.cookies.set(ck["name"], ck["value"], domain=ck.get("domain", ""))
+    return session
+
+def fetch_sheet_rows_gviz(sheet_id, sheet_name, session=None):
+    if session is None:
+        session = get_google_session()
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={urllib.parse.quote(sheet_name)}"
+    resp = session.get(url, timeout=30)
+    if resp.status_code != 200:
+        raise Exception(f"Không thể tải sheet '{sheet_name}' qua GVIZ (HTTP {resp.status_code})")
+    resp.encoding = "utf-8"
+    reader = csv.reader(io.StringIO(resp.text))
+    return list(reader)
+
+def fetch_sheet_rows_universal(sh, sheet_id, sheet_name, session=None):
+    if sh is not None:
+        try:
+            ws = sh.worksheet(sheet_name)
+            return ws.get_all_values()
+        except Exception as e:
+            print(f"[Notice] Worksheet '{sheet_name}' via gspread failed: {e}. Falling back to GVIZ CSV...")
+    return fetch_sheet_rows_gviz(sheet_id, sheet_name, session=session)
 
 def _clean_num(val_str):
     if not val_str:
@@ -91,31 +188,54 @@ def build_cost_dashboard_matrix(force=False):
     1. Khóa chặt dữ liệu từ Row 3 đến Row 57 của sheet 'Chi Phí MT01'
     2. Nạp chi tiết lương từng tài xế (NVGH) từ sheet 'Lương Nhân Viên '
     """
-    now_str = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    now_str = get_vn_now().strftime("%H:%M:%S %d/%m/%Y")
     print(f"[{now_str}] 🚀 Đang nạp bảng dữ liệu chuẩn Vùng Miền Tây 01...")
 
     try:
-        creds = get_google_creds()
-        client = gspread.authorize(creds)
-        sh = client.open_by_key(GOOGLE_SHEET_ID)
+        sh = None
+        client = None
+        try:
+            creds = get_google_creds()
+            if creds:
+                client = gspread.authorize(creds)
+                sh = client.open_by_key(GOOGLE_SHEET_ID)
+        except Exception as e_sa:
+            print(f"[{now_str}] [Notice] Service Account not available ({e_sa}). Using GVIZ session cookies.")
+
+        google_session = get_google_session()
 
         # 1. BẢNG CHI PHÍ VẬN HÀNH MT01
-        ws = sh.worksheet("Chi Phí MT01")
-        rows = ws.get_all_values()
+        rows = fetch_sheet_rows_universal(sh, GOOGLE_SHEET_ID, "Chi Phí MT01", session=google_session)
 
-        r0 = rows[0] # Tháng
-        r1 = rows[1] # Tuần
-        r2 = rows[2] # Ngày / Tiêu đề
+        # Tự động nhận diện dòng chứa ngày (dd/mm/yyyy) để tương thích tuyệt đối cả GVIZ CSV lẫn Gspread
+        date_row_idx = 1
+        for r_i in range(min(5, len(rows))):
+            matches = [c for c, v in enumerate(rows[r_i]) if c >= 3 and '/' in str(v).strip() and len(str(v).strip()) == 10]
+            if len(matches) > 10:
+                date_row_idx = r_i
+                break
+
+        r_dates = rows[date_row_idx]
 
         months_dict = {}
         weeks_dict = {}
         days_list = []
         col_to_date = {}
 
-        for c in range(4, len(r2)):
-            d_str = r2[c].strip()
-            m_str = r0[c].strip()
-            w_str = r1[c].strip()
+        for c in range(4, len(r_dates)):
+            d_str = r_dates[c].strip()
+            if date_row_idx == 1:
+                hw = rows[0][c].strip() if c < len(rows[0]) else ''
+                if 'Tuần ' in hw:
+                    parts = hw.split('Tuần ')
+                    m_str = parts[0].strip()
+                    w_str = 'Tuần ' + parts[1].strip()
+                else:
+                    m_str = hw
+                    w_str = ''
+            else:
+                m_str = rows[0][c].strip() if c < len(rows[0]) else ''
+                w_str = rows[1][c].strip() if c < len(rows[1]) else ''
 
             if d_str and "/" in d_str and len(d_str) == 10:
                 days_list.append(d_str)
@@ -125,12 +245,13 @@ def build_cost_dashboard_matrix(force=False):
                 if w_str:
                     weeks_dict.setdefault(w_str, []).append(c)
 
+        base_r = date_row_idx + 1
         entities_config = [
-            ("Toàn Vùng MT01", 3, 14, "Miền Tây 01"),
-            ("Kho Cái Răng", 14, 25, "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ"),
-            ("Kho Bình Thủy", 25, 36, "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ"),
-            ("Kho Vị Thanh", 36, 47, "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang"),
-            ("Kho Ô Môn", 47, 58, "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ")
+            ("Toàn Vùng MT01", base_r, base_r + 11, "Miền Tây 01"),
+            ("Kho Cái Răng", base_r + 11, base_r + 22, "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ"),
+            ("Kho Bình Thủy", base_r + 22, base_r + 33, "Kho Giao Hàng Nặng - Bình Thủy - Cần Thơ"),
+            ("Kho Vị Thanh", base_r + 33, base_r + 44, "Kho Giao Hàng Nặng - TP Vị Thanh - Hậu Giang"),
+            ("Kho Ô Môn", base_r + 44, base_r + 55, "Kho Giao Hàng Nặng - Ô Môn - Cần Thơ")
         ]
 
         hubs_matrix = {}
@@ -169,8 +290,7 @@ def build_cost_dashboard_matrix(force=False):
             "Kho Ô Môn": {}
         }
         try:
-            ws_raw = sh.worksheet("Data Raw")
-            all_raw = ws_raw.get_all_values()
+            all_raw = fetch_sheet_rows_universal(sh, GOOGLE_SHEET_ID, "Data Raw", session=google_session)
             if all_raw:
                 raw_headers = all_raw[0]
                 def _get_col(name):
@@ -318,8 +438,7 @@ def build_cost_dashboard_matrix(force=False):
         # 3. BẢNG CHI TIẾT LƯƠNG NHÂN VIÊN XỬ LÝ KHO (NVXL) TỪ SHEET 'Lương NVXL'
         nvxl_list = []
         try:
-            ws_nvxl = sh.worksheet("Lương NVXL")
-            all_nvxl = ws_nvxl.get_all_values()
+            all_nvxl = fetch_sheet_rows_universal(sh, GOOGLE_SHEET_ID, "Lương NVXL", session=google_session)
             if all_nvxl:
                 hub_name_map_nvxl = {
                     "Kho Giao Hàng Nặng - Cái Răng - Cần Thơ": "Kho Cái Răng",
@@ -434,11 +553,14 @@ def build_cost_dashboard_matrix(force=False):
         # 4. BẢNG ĐỐI SOÁT ODO XE TẢI (KẾT HỢP 2 SHEET: 'Team_Leader' & '365 & GHN Đối Soát')
         odo_records = []
         try:
-            sh_odo = client.open_by_key(ODO_SHEET_ID)
-            ws_tl = sh_odo.worksheet("Team_Leader")
-            ws_ds = sh_odo.worksheet("365 & GHN Đối Soát")
-            tl_rows = ws_tl.get_all_values()
-            ds_rows = ws_ds.get_all_values()
+            sh_odo = None
+            if client is not None:
+                try:
+                    sh_odo = client.open_by_key(ODO_SHEET_ID)
+                except Exception:
+                    sh_odo = None
+            tl_rows = fetch_sheet_rows_universal(sh_odo, ODO_SHEET_ID, "Team_Leader", session=google_session)
+            ds_rows = fetch_sheet_rows_universal(sh_odo, ODO_SHEET_ID, "365 & GHN Đối Soát", session=google_session)
 
             def _clean_odo_int(val_s):
                 if not val_s:
@@ -759,8 +881,12 @@ def build_cost_dashboard_matrix(force=False):
         except Exception as odo_ex:
             print(f"[{now_str}] ⚠️ Lỗi đồng bộ ODO (Team_Leader & 365 Đối Soát): {odo_ex}")
 
-        official_month_key = r2[2].strip() if len(r2) > 2 else ""
-        official_week_key = r2[3].strip() if len(r2) > 3 else ""
+        official_month_key = r_dates[2].strip() if len(r_dates) > 2 else ""
+        official_week_key = r_dates[3].strip() if len(r_dates) > 3 else ""
+        if not official_month_key or official_month_key not in months_dict:
+            official_month_key = list(months_dict.keys())[-1] if months_dict else "Tháng 11-Năm 2026"
+        if not official_week_key or official_week_key not in weeks_dict:
+            official_week_key = list(weeks_dict.keys())[-1] if weeks_dict else "Tuần 45-Năm 2026"
 
         # Bảo toàn dữ liệu Lương Giao (NVGH) đã chốt của các ngày trước nếu Google Sheet Data Raw đang tạm tính lại = 0
         # Dùng file lưu trữ riêng (archive) để không lần đồng bộ nào có thể ghi đè lương đã chốt thành 0
@@ -814,7 +940,7 @@ def build_cost_dashboard_matrix(force=False):
 
         dashboard_data = {
             "last_sync": now_str,
-            "sync_epoch": datetime.datetime.now().timestamp(),
+            "sync_epoch": get_vn_now().timestamp(),
             "region": "Miền Tây 01",
             "odo_sheet_id": ODO_SHEET_ID,
             "odo_sheet_url": f"https://docs.google.com/spreadsheets/d/{ODO_SHEET_ID}/edit#gid=489219944",
@@ -840,7 +966,7 @@ def build_cost_dashboard_matrix(force=False):
 
     except Exception as ex:
         print(f"[{now_str}] ⚠️ Lỗi build cost dashboard MT01: {ex}")
-        if os.path.exists(DASHBOARD_CACHE_FILE):
+        if not force and os.path.exists(DASHBOARD_CACHE_FILE):
             with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         raise ex
@@ -920,7 +1046,7 @@ def get_cost_dashboard_matrix():
         try:
             # Tự động đồng bộ mới từ Google Sheets nếu file cache đã cũ quá 15 phút (900s)
             mtime = os.path.getmtime(DASHBOARD_CACHE_FILE)
-            if (datetime.datetime.now().timestamp() - mtime) < 900:
+            if (get_vn_now().timestamp() - mtime) < 900:
                 with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
                     return json.load(f)
         except Exception:
@@ -1500,7 +1626,7 @@ def generate_mt01_cost_excel_report(hub="all", mode="month", key=None, restrict_
     date_range_str = p_info.get("date_range_str") or "Đang cập nhật"
     active_days_cnt = p_info.get("active_days_count", 0)
     total_days_cnt = p_info.get("total_days_in_period", 0)
-    last_sync_str = data.get("last_sync") or datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    last_sync_str = data.get("last_sync") or get_vn_now().strftime("%H:%M:%S %d/%m/%Y")
 
     wb = Workbook()
 
