@@ -3441,6 +3441,15 @@ def copilot_ask():
     if not raw_prompt:
         return jsonify({"answer": "Xin chào! Em là **Tiger AI Copilot**. Anh có thể hỏi em bất kỳ thông tin nào về 4 kho MT01 (KPI GTC, LTC, nợ COD, đơn hẹn), dán mã đơn hàng GHN để tra cứu nội bộ, hoặc kết nối Google Gemini AI để hỏi mọi chủ đề!"})
 
+    # BƯỚC 0.5: TRA CỨU THỜI TIẾT, MƯA BÃO & TRIỀU CƯỜNG CẦN THƠ / MT01
+    if any(k in prompt for k in ["thời tiết", "thoi tiet", "mưa", "mua", "triều cường", "trieu cuong", "tuần sau", "dự báo", "nhiệt độ"]):
+        weather_rep = generate_can_tho_weather_report()
+        return jsonify({
+            "answer": weather_rep,
+            "time": datetime.datetime.now().strftime("%H:%M:%S"),
+            "type": "weather"
+        })
+
     # BƯỚC 0: LỆNH GỬI TRỰC TIẾP VÀO NHÓM TELEGRAM MIỀN TÂY 01 (/tele hoặc @...)
     if prompt.startswith("/tele ") or prompt.startswith("gửi telegram:") or prompt.startswith("nhắn telegram:"):
         msg_body = raw_prompt.split(" ", 1)[1] if prompt.startswith("/tele ") else raw_prompt.split(":", 1)[1].strip()
