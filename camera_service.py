@@ -1,7 +1,3 @@
-try:
-    from pipeline_tracer import record_pipeline_event
-except Exception:
-    def record_pipeline_event(*args, **kwargs): pass
 import requests
 import cv2
 import os
@@ -28,14 +24,14 @@ DEFAULT_HEADERS = {
 }
 
 VR_MAP = {
-    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 2, "outdoor_cam": 8, "indoor_cam": 2, "weather_cam": 8},
-    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 2, "outdoor_cam": 8, "indoor_cam": 2, "weather_cam": 8},
-    "binhthuy": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "outdoor_cam": 7, "indoor_cam": 6, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
-    "bt": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 6, "outdoor_cam": 7, "indoor_cam": 6, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
-    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 4, "outdoor_cam": 3, "indoor_cam": 4, "weather_cam": 3},
-    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 4, "outdoor_cam": 3, "indoor_cam": 4, "weather_cam": 3},
-    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 6, "outdoor_cam": 8, "indoor_cam": 6, "weather_cam": 8},
-    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 6, "outdoor_cam": 8, "indoor_cam": 6, "weather_cam": 8},
+    "cairang": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 10, "outdoor_cam": 8, "indoor_cam": 10, "weather_cam": 8},
+    "cr": {"name": "Kho Giao Hàng Nặng Cái Răng", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 10, "outdoor_cam": 8, "indoor_cam": 10, "weather_cam": 8},
+    "binhthuy": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 16, "outdoor_cam": 7, "indoor_cam": 16, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
+    "bt": {"name": "Kho Giao Hàng Nặng Bình Thủy", "vr_id": "6577e3250ad53fcbaab02947", "default_cam": 16, "outdoor_cam": 7, "indoor_cam": 16, "weather_cam": 7, "allowed_cams": [1, 6, 7, 14, 16]},
+    "omon": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 7, "outdoor_cam": 3, "indoor_cam": 7, "weather_cam": 3},
+    "om": {"name": "Kho Giao Hàng Nặng Ô Môn", "vr_id": "69dcba16a22d4e6ace3eadf6", "default_cam": 7, "outdoor_cam": 3, "indoor_cam": 7, "weather_cam": 3},
+    "vithanh": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 3, "outdoor_cam": 8, "indoor_cam": 3, "weather_cam": 8},
+    "vt": {"name": "Kho Giao Hàng Nặng Vị Thanh", "vr_id": "69c4fb54a9cd53f0d672a24d", "default_cam": 3, "outdoor_cam": 8, "indoor_cam": 3, "weather_cam": 8},
 }
 
 CAM_DESC_MAP = {
@@ -44,14 +40,16 @@ CAM_DESC_MAP = {
     ("6577e3250ad53fcbaab02947", 6): "Khu vực tập kết Pallet & Kiện hàng sàn kho (Bình Thủy)",
     ("6577e3250ad53fcbaab02947", 7): "Bãi đỗ xe tải & Sân ngoài trời (Bình Thủy)",
     ("6577e3250ad53fcbaab02947", 8): "Bãi đỗ xe tải & Quang cảnh ngoài trời (Cái Răng)",
+    ("6577e3250ad53fcbaab02947", 10): "Cam 10 - Sàn kho bên trong & Khu vực Pallet hàng hóa (Cái Răng)",
     ("6577e3250ad53fcbaab02947", 14): "Toàn cảnh luồng hàng & kho bãi",
-    ("6577e3250ad53fcbaab02947", 16): "Hành lang vận hành bốc dỡ xe nâng",
+    ("6577e3250ad53fcbaab02947", 16): "Cam 16 - Sàn kho bên trong & Hành lang bốc dỡ xe nâng (Bình Thủy)",
     ("69dcba16a22d4e6ace3eadf6", 3): "Sân bãi bê tông ngoài trời (Ô Môn)",
     ("69dcba16a22d4e6ace3eadf6", 4): "Sàn kho trung tâm & Pallet chứa hàng (Ô Môn)",
     ("69dcba16a22d4e6ace3eadf6", 2): "Sàn kho bốc dỡ & Pallet nhựa (Ô Môn)",
+    ("69dcba16a22d4e6ace3eadf6", 7): "Cam 07 - Sàn kho bên trong & Khu vực Pallet hàng hóa (Ô Môn)",
     ("69c4fb54a9cd53f0d672a24d", 8): "Cổng ngoài trời & đường lộ (Vị Thanh)",
     ("69c4fb54a9cd53f0d672a24d", 6): "Khu vực lưu trữ hàng hóa & Pallet kiện hàng (Vị Thanh)",
-    ("69c4fb54a9cd53f0d672a24d", 3): "Sàn kho hàng hóa & Pallet nhựa (Vị Thanh)",
+    ("69c4fb54a9cd53f0d672a24d", 3): "Cam 03 - Sàn kho bên trong & Khu vực Pallet hàng hóa (Vị Thanh)",
 }
 
 def load_camera_headers():
@@ -214,17 +212,6 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
         if not playlist_text:
             if attempt < max_retries:
                 logger.info(f"🛡️ [Phòng Kỹ Thuật - Thử Lại] Thử lại lần {attempt+1} cho {hub_name} Cam {cam_id}...")
-                record_pipeline_event(
-                    f"Chụp Camera {hub_name} (Cam {cam_id})",
-                    "🚚 Phòng Vận Hành & Kho Vận",
-                    f"Bước 2/4: Thử lại luồng video lần {attempt+1}",
-                    4,
-                    status="HEALING",
-                    error_info={"code": "STREAM_RETRY", "reason": "Playlist HLS cần làm mới hoặc đường truyền trễ", "at_step": "stream/liveview"},
-                    handler_dept="🛠️ Phòng Kỹ Thuật",
-                    healing_action=f"Tự động đồng bộ và thử lại lần {attempt+1}",
-                    can_resume=True
-                )
                 time.sleep(2)
                 continue
             return False, "Mất tín hiệu kết nối stream từ đầu ghi kho (Vui lòng kiểm tra mạng kho)", None
@@ -287,16 +274,6 @@ def capture_camera_snapshot(hub_key="cairang", cam_id=None, output_file=None, ma
 
         desc = CAM_DESC_MAP.get((vr_id, cam_id), f"Mắt Cam số {cam_id:02d}")
         logger.info(f"✅ [Phòng Kỹ Thuật - Đã Duyệt 100%] {hub_name} Cam {cam_id} đã chụp chuẩn 100%!")
-        record_pipeline_event(
-            f"Chụp Camera {hub_name} (Cam {cam_id})",
-            "🚚 Phòng Vận Hành & Kho Vận",
-            "Bước 4/4: Kiểm định OpenCV Hoàn Tất",
-            4,
-            status="SUCCESS",
-            handler_dept="🛠️ Phòng Kỹ Thuật",
-            healing_action="Đạt chuẩn 100% - Đã đóng dấu xuất xưởng",
-            can_resume=True
-        )
         return True, f"{hub_name} - {desc}", output_file
 
     return False, "Không thể lấy hình ảnh sau khi đã tự động thử lại nhiều lần", None
