@@ -1769,6 +1769,7 @@
           <label class="filter-label">3. Chế Độ Xem</label>
           <div class="pill-tabs">
             <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Theo Tháng</button>
+            <button class="pill-btn" id="pillCycle365" onclick="setMode('cycle_365')">🚚 Kỳ 365 (26 ➔ 25)</button>
             <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📅 Theo Tuần</button>
             <button class="pill-btn" id="pillDay" onclick="setMode('day')">📆 Theo Ngày</button>
           </div>
@@ -2018,6 +2019,7 @@
           <span style="font-size: 11.5px; color: var(--text-sub); font-weight: 700;">⚡ Đổi kỳ xem nhanh:</span>
           <div class="mode-pills" style="gap: 4px;">
             <button class="pill-btn active" id="inlinePillMonth" onclick="setMode('month')" style="padding: 5px 10px; font-size: 12px;">📅 Tháng</button>
+            <button class="pill-btn" id="inlinePillCycle365" onclick="setMode('cycle_365')" style="padding: 5px 10px; font-size: 12px;">🚚 Kỳ 365</button>
             <button class="pill-btn" id="inlinePillWeek" onclick="setMode('week')" style="padding: 5px 10px; font-size: 12px;">📆 Tuần</button>
             <button class="pill-btn" id="inlinePillDay" onclick="setMode('day')" style="padding: 5px 10px; font-size: 12px;">🕒 Ngày</button>
           </div>
@@ -2447,15 +2449,19 @@
       currentMode = mode;
       document.querySelectorAll(".pill-btn").forEach(btn => btn.classList.remove("active"));
       if (mode === "month") {
-        document.getElementById("pillMonth").classList.add("active");
+        if (document.getElementById("pillMonth")) document.getElementById("pillMonth").classList.add("active");
         if (document.getElementById("inlinePillMonth")) document.getElementById("inlinePillMonth").classList.add("active");
       }
+      if (mode === "cycle_365") {
+        if (document.getElementById("pillCycle365")) document.getElementById("pillCycle365").classList.add("active");
+        if (document.getElementById("inlinePillCycle365")) document.getElementById("inlinePillCycle365").classList.add("active");
+      }
       if (mode === "week") {
-        document.getElementById("pillWeek").classList.add("active");
+        if (document.getElementById("pillWeek")) document.getElementById("pillWeek").classList.add("active");
         if (document.getElementById("inlinePillWeek")) document.getElementById("inlinePillWeek").classList.add("active");
       }
       if (mode === "day") {
-        document.getElementById("pillDay").classList.add("active");
+        if (document.getElementById("pillDay")) document.getElementById("pillDay").classList.add("active");
         if (document.getElementById("inlinePillDay")) document.getElementById("inlinePillDay").classList.add("active");
       }
 
@@ -2532,6 +2538,30 @@
       selKey.innerHTML = "";
       if (selInlineKey) selInlineKey.innerHTML = "";
 
+      if (currentMode === "cycle_365") {
+        lblPeriod.innerText = "4. Chọn Kỳ 365 (26 ➔ 25)";
+        const cycleItems = (filterOptions && filterOptions.cycles_365_items) ? filterOptions.cycles_365_items : [];
+        const defaultTarget = preferredKey || "26/09/2026 - 25/10/2026";
+        if (cycleItems.length > 0) {
+          cycleItems.forEach(ci => {
+            const opt = document.createElement("option");
+            opt.value = ci.key;
+            opt.innerText = ci.label || ci.name || ci.key;
+            if (ci.key === defaultTarget) opt.selected = true;
+            selKey.appendChild(opt);
+
+            if (selInlineKey) {
+              const opt2 = document.createElement("option");
+              opt2.value = ci.key;
+              opt2.innerText = ci.label || ci.name || ci.key;
+              if (ci.key === defaultTarget) opt2.selected = true;
+              selInlineKey.appendChild(opt2);
+            }
+          });
+          return;
+        }
+      }
+
       let items = [];
       if (currentMode === "month") {
         lblPeriod.innerText = "4. Chọn Tháng";
@@ -2539,9 +2569,12 @@
       } else if (currentMode === "week") {
         lblPeriod.innerText = "4. Chọn Tuần";
         items = (filterOptions && filterOptions.weeks) ? filterOptions.weeks : [];
-      } else {
+      } else if (currentMode === "day") {
         lblPeriod.innerText = "4. Chọn Ngày";
         items = (filterOptions && filterOptions.days) ? [...filterOptions.days].reverse() : [];
+      } else {
+        lblPeriod.innerText = "4. Chọn Mốc Thời Gian";
+        items = (filterOptions && filterOptions.months) ? filterOptions.months : [];
       }
 
       const defaultTarget = preferredKey || ((currentMode === "day") ? ((filterOptions && filterOptions.latest_active_day) || items[0]) : items[items.length - 1]);
