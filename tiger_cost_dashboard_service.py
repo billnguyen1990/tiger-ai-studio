@@ -8,6 +8,7 @@ import urllib.parse
 import csv
 import io
 import gspread
+from collections import defaultdict
 from google.oauth2.service_account import Credentials
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -938,6 +939,110 @@ def build_cost_dashboard_matrix(force=False):
         except Exception as preserve_ex:
             print(f"[{now_str}] ⚠️ Lỗi bảo toàn lương NVGH: {preserve_ex}")
 
+        # =========================================================================
+        # 5. DYNAMIC DATE DISCOVERY & METRIC SYNTHESIS
+        # Tự động đồng bộ và bổ sung các ngày mới phát sinh từ ODO (Team_Leader & 365), NVGH, NVXL
+        # Đảm bảo hệ thống KHÔNG BAO GIỜ bị phụ thuộc cứng vào việc Google Sheet Chi Phí MT01 đã kéo thêm cột hay chưa!
+        # =========================================================================
+        all_unique_days = set(days_list)
+        for rec in odo_records:
+            d_r = rec.get("date", "").strip()
+            if d_r and "/" in d_r and len(d_r) == 10:
+                all_unique_days.add(d_r)
+        for drv in drivers_list:
+            for d_r in drv.get("daily", {}).keys():
+                if d_r and "/" in d_r and len(d_r) == 10:
+                    all_unique_days.add(d_r)
+        for emp in nvxl_list:
+            for d_r in emp.get("daily", {}).keys():
+                if d_r and "/" in d_r and len(d_r) == 10:
+                    all_unique_days.add(d_r)
+
+        def _parse_d_sort(d_str):
+            try:
+                return datetime.datetime.strptime(d_str, "%d/%m/%Y")
+            except Exception:
+                return datetime.datetime.min
+
+        days_list = sorted(list(all_unique_days), key=_parse_d_sort)
+
+        # Với các ngày mới chưa có cột trong Google Sheet 'Chi Phí MT01', tự động tổng hợp số liệu thực tế
+        for d_extra in days_list:
+            dt_obj = _parse_d_sort(d_extra)
+            m_key = f"Tháng {dt_obj.month}-Năm {dt_obj.year}"
+            w_key = f"Tuần {dt_obj.isocalendar()[1]}-Năm {dt_obj.year}"
+            if m_key not in months_dict:
+                months_dict[m_key] = []
+            if w_key not in weeks_dict:
+                weeks_dict[w_key] = []
+
+            # Đếm số chuyến xe chạy thực tế theo từng kho trên ngày d_extra
+            trips_by_hub = defaultdict(int)
+            total_trips_day = 0
+            for r_odo in odo_records:
+                if r_odo.get("date") == d_extra and not r_odo.get("is_off"):
+                    h_n = r_odo.get("hub_name", "")
+                    if h_n:
+                        trips_by_hub[h_n] += 1
+                        total_trips_day += 1
+
+            for ent_k, ent_obj in hubs_matrix.items():
+                m_daily = ent_obj["metrics"]
+                for m_name in m_daily:
+                    if d_extra not in m_daily[m_name]["daily"]:
+                        m_daily[m_name]["daily"][d_extra] = ""
+
+                # 1. Chi phí xe tải: nếu chưa có số liệu, tính dựa theo chuyến chạy thực tế (Chuẩn 13 xe MT01 = 10.288.762 đ)
+                cur_truck_cost_str = m_daily["Chi phí xe tải"]["daily"].get(d_extra, "")
+                if not cur_truck_cost_str or cur_truck_cost_str == "-":
+                    TRUCK_UNIT_COST = 791443.23
+                    if ent_k == "Toàn Vùng MT01":
+                        n_trucks = total_trips_day if total_trips_day > 0 else 13
+                        c_truck = int(round(n_trucks * TRUCK_UNIT_COST))
+                    else:
+                        n_trucks = trips_by_hub.get(ent_k, 0)
+                        c_truck = int(round(n_trucks * TRUCK_UNIT_COST))
+                    
+                    if c_truck > 0:
+                        m_daily["Chi phí xe tải"]["daily"][d_extra] = _format_vnd(c_truck)
+
+                # 2. Tổng hợp Lương giao từ danh sách tài xế
+                cur_sal_str = m_daily["Lương giao"]["daily"].get(d_extra, "")
+                if not cur_sal_str or cur_sal_str == "-":
+                    tot_sal_hub = 0.0
+                    for drv in drivers_list:
+                        if ent_k == "Toàn Vùng MT01" or drv.get("hub_name") == ent_k:
+                            tot_sal_hub += drv.get("daily", {}).get(d_extra, {}).get("total", 0.0)
+                    if tot_sal_hub > 0:
+                        m_daily["Lương giao"]["daily"][d_extra] = _format_vnd(tot_sal_hub)
+
+                # 3. Tổng hợp Lương NVXL từ danh sách NVXL
+                cur_xl_str = m_daily["Lương NVXL"]["daily"].get(d_extra, "")
+                if not cur_xl_str or cur_xl_str == "-":
+                    tot_xl_hub = 0.0
+                    for emp in nvxl_list:
+                        if ent_k == "Toàn Vùng MT01" or emp.get("hub_name") == ent_k:
+                            tot_xl_hub += emp.get("daily", {}).get(d_extra, {}).get("total", 0.0)
+                    if tot_xl_hub > 0:
+                        m_daily["Lương NVXL"]["daily"][d_extra] = _format_vnd(tot_xl_hub)
+
+                # 4. Tổng hợp Volume gán & GTC từ drivers nếu chưa có
+                cur_vol_str = m_daily["Volume gán"]["daily"].get(d_extra, "")
+                if not cur_vol_str or cur_vol_str == "-":
+                    tot_gan_hub = 0.0
+                    tot_gtc_hub = 0.0
+                    for drv in drivers_list:
+                        if ent_k == "Toàn Vùng MT01" or drv.get("hub_name") == ent_k:
+                            d_info = drv.get("daily", {}).get(d_extra, {})
+                            tot_gan_hub += d_info.get("don_gan", 0.0)
+                            tot_gtc_hub += d_info.get("don_gtc", 0.0)
+                    if tot_gan_hub > 0:
+                        m_daily["Volume gán"]["daily"][d_extra] = _format_vnd(tot_gan_hub)
+                    if tot_gtc_hub > 0:
+                        m_daily["Volume GTC"]["daily"][d_extra] = _format_vnd(tot_gtc_hub)
+                        rate_gtc = (tot_gtc_hub / tot_gan_hub * 100) if tot_gan_hub > 0 else 0
+                        m_daily["Tỷ lệ GTC"]["daily"][d_extra] = f"{int(round(rate_gtc))}%"
+
         dashboard_data = {
             "last_sync": now_str,
             "sync_epoch": get_vn_now().timestamp(),
@@ -1082,9 +1187,13 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         official_month_key = matrix.get("official_month_key", "")
         official_week_key = matrix.get("official_week_key", "")
 
-    # Lọc các ngày đã có phát sinh dữ liệu thật (Volume gán > 0) để làm mặc định ngày mới nhất & vẽ biểu đồ
+    # Lọc các ngày đã có phát sinh dữ liệu thật:
+    # 1. Có Volume gán > 0, HOẶC
+    # 2. Có chuyến xe ODO thực tế chạy, HOẶC
+    # 3. Có phát sinh lương NVGH / NVXL
     mt01_vol_daily = entities.get("Toàn Vùng MT01", {}).get("metrics", {}).get("Volume gán", {}).get("daily", {})
-    active_days = [d for d in available_days if _clean_num(mt01_vol_daily.get(d, 0)) > 0]
+    odo_active_dates = set(r.get("date") for r in all_odo if r.get("date") and not r.get("is_off"))
+    active_days = [d for d in available_days if _clean_num(mt01_vol_daily.get(d, 0)) > 0 or d in odo_active_dates]
     if not active_days:
         active_days = available_days
 
