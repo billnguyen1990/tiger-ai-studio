@@ -705,6 +705,26 @@
     let currentMeetingId = 'meet_20261106_hisense';
     let livePollInterval = null;
     let cachedMeetings = [];
+    async function safeFetchJson(url, options = {}) {
+      try {
+        const res = await fetch(url, options);
+        const contentType = res.headers.get('content-type') || '';
+        if (!res.ok) {
+          if (contentType.includes('application/json')) {
+            const ej = await res.json();
+            return { success: false, message: ej.message || ej.error || ('Lỗi máy chủ (' + res.status + ')') };
+          }
+          return { success: false, message: 'Máy chủ phản hồi ' + res.status + ' (Có thể đang trong quá trình cập nhật Render, vui lòng thử lại sau 30s).' };
+        }
+        if (contentType.includes('application/json')) {
+          return await res.json();
+        }
+        return { success: false, message: 'Phản hồi không phải định dạng JSON hợp lệ.' };
+      } catch (err) {
+        return { success: false, message: 'Không thể kết nối máy chủ: ' + err.message };
+      }
+    }
+
 
     async function refreshMeetingSelectors() {
       try {
@@ -891,17 +911,25 @@
     }
 
     async function openBotLogin() {
+      if (window.location.hostname.includes('render.com')) {
+        alert('⚠️ Sếp đang truy cập trên Cloud Render (máy chủ đám mây không có giao diện màn hình máy tính Windows).\n\n👉 Để ghi chép trực tiếp từ cuộc họp Google Meet, Sếp dùng nút màu xanh "📋 Sao Chép Mã Kết Nối Nhanh" bên dưới, dán vào tab Google Meet (Console F12) là phụ đề sẽ tự động truyền về đây 100% ạ!');
+        return;
+      }
       try {
-        const res = await fetch('/api/meetings/open-login', { method: 'POST' });
-        const data = await res.json();
-        alert(data.message || 'Đã mở cửa sổ đăng nhập Google cho Bot trên màn hình!');
+        const data = await safeFetchJson('/api/meetings/open-login', { method: 'POST' });
+        if (data && data.success) {
+          alert(data.message || 'Đã mở cửa sổ đăng nhập Google cho Bot trên màn hình máy tính!');
+        } else {
+          alert(data ? data.message : 'Không thể kết nối máy chủ.');
+        }
       } catch (err) {
-        alert('Lỗi: ' + err);
+        alert('Lỗi: ' + err.message);
       }
     }
 
     function copyMeetBridgeCode() {
-      const code = `javascript:(function(){if(window.__tiger_active){alert('🐯 Tiger AI Note đã đang chạy trên tab này!');return;}window.__tiger_active=true;window.__tiger_seen=new Set();const cc=document.querySelector('button[aria-label*="phụ đề"], button[aria-label*="captions"], button[aria-label*="Turn on captions"]');if(cc&&cc.getAttribute('aria-pressed')!=='true'){cc.click();}const b=document.createElement('div');b.id='__tiger_banner';b.style='position:fixed;top:12px;right:12px;z-index:999999;background:rgba(15,23,42,0.92);border:1px solid #10b981;padding:8px 14px;border-radius:10px;color:#fff;font-family:sans-serif;font-size:12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);';b.innerHTML='🐯 <strong>Tiger AI:</strong> Đang đồng bộ phụ đề về Studio... <span id="__tiger_count" style="color:#10b981;font-weight:bold;">0 câu</span>';document.body.appendChild(b);let count=0;async function send(speaker,text){try{await fetch('http://127.0.0.1:5050/api/meetings/push-caption',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({speaker:speaker,text:text})});count++;const cEl=document.getElementById('__tiger_count');if(cEl)cEl.innerText=count+' câu';}catch(e){console.warn('Tiger push error:',e);}}const obs=new MutationObserver(()=>{const nodes=document.querySelectorAll('.TBMuR, .iTTPOb, div[jsname="YSxPC"], div[jscontroller="D1tHje"]');nodes.forEach(node=>{const text=node.innerText?node.innerText.trim():'';if(!text||text.length<2)return;let speaker='Người tham gia';let speech=text;const sEl=node.querySelector('.jxFHg, .zs75Ib, .NWpY1d, .Fa6yvc, [class*="speaker"]');if(sEl&&sEl.innerText){speaker=sEl.innerText.trim();speech=text.replace(speaker,'').trim();}else if(text.includes(':')){const p=text.split(':');speaker=p[0].trim();speech=p.slice(1).join(':').trim();}const hash=speaker+'|'+speech;if(!window.__tiger_seen.has(hash)){window.__tiger_seen.add(hash);send(speaker,speech);}});});obs.observe(document.body,{childList:true,subtree:true,characterData:true});console.log('🐯 Tiger AI Note Bridge activated!');})();`;
+      const serverOrigin = window.location.origin;
+      const code = `javascript:(function(){if(window.__tiger_active){alert('🐯 Tiger AI Note đã đang chạy trên tab này!');return;}window.__tiger_active=true;window.__tiger_seen=new Set();const cc=document.querySelector('button[aria-label*="phụ đề"], button[aria-label*="captions"], button[aria-label*="Turn on captions"]');if(cc&&cc.getAttribute('aria-pressed')!=='true'){cc.click();}const b=document.createElement('div');b.id='__tiger_banner';b.style='position:fixed;top:12px;right:12px;z-index:999999;background:rgba(15,23,42,0.92);border:1px solid #10b981;padding:8px 14px;border-radius:10px;color:#fff;font-family:sans-serif;font-size:12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);';b.innerHTML='🐯 <strong>Tiger AI:</strong> Đang đồng bộ phụ đề về Studio... <span id="__tiger_count" style="color:#10b981;font-weight:bold;">0 câu</span>';document.body.appendChild(b);let count=0;async function send(speaker,text){try{await fetch('${serverOrigin}/api/meetings/push-caption',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({speaker:speaker,text:text})});count++;const cEl=document.getElementById('__tiger_count');if(cEl)cEl.innerText=count+' câu';}catch(e){console.warn('Tiger push error:',e);}}const obs=new MutationObserver(()=>{const nodes=document.querySelectorAll('.TBMuR, .iTTPOb, div[jsname="YSxPC"], div[jscontroller="D1tHje"]');nodes.forEach(node=>{const text=node.innerText?node.innerText.trim():'';if(!text||text.length<2)return;let speaker='Người tham gia';let speech=text;const sEl=node.querySelector('.jxFHg, .zs75Ib, .NWpY1d, .Fa6yvc, [class*="speaker"]');if(sEl&&sEl.innerText){speaker=sEl.innerText.trim();speech=text.replace(speaker,'').trim();}else if(text.includes(':')){const p=text.split(':');speaker=p[0].trim();speech=p.slice(1).join(':').trim();}const hash=speaker+'|'+speech;if(!window.__tiger_seen.has(hash)){window.__tiger_seen.add(hash);send(speaker,speech);}});});obs.observe(document.body,{childList:true,subtree:true,characterData:true});console.log('🐯 Tiger AI Note Bridge activated!');})();`;
       navigator.clipboard.writeText(code).then(() => {
         alert('📋 Đã sao chép mã kết nối nhanh!\n\n👉 Cách dùng:\n1. Sang tab Google Meet Sếp đang họp\n2. Bấm F12 -> chọn Console -> Dán mã (Ctrl+V) -> Bấm Enter\n\nToàn bộ phát biểu của mọi người sẽ tự động bắn thẳng về màn hình Studio này!');
       }).catch(err => {
