@@ -672,98 +672,245 @@
       gap: 24px;
     }
 
-    /* SECTION 1: FILTER CONTROLS */
+    /* SECTION 1: FILTER CONTROLS (CHUẨN UI/UX PRO MAX) */
     .filter-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 18px 24px;
+      border-radius: 16px;
+      padding: 14px 18px;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       transition: all 0.25s ease;
     }
 
     .filter-group {
       display: flex;
-      align-items: center;
-      gap: 16px;
+      align-items: flex-end;
+      gap: 12px;
       flex-wrap: wrap;
+      flex: 1;
     }
 
     .filter-item {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
+    }
+
+    .filter-item[style*="display: none"] {
+      display: none !important;
     }
 
     .filter-label {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-weight: 800;
       color: var(--text-sub);
+      display: block;
+      white-space: nowrap;
+      margin: 0;
+      line-height: 1.2;
     }
 
     .region-fixed-pill {
-      background: rgba(0, 229, 190, 0.12);
-      border: 1px solid var(--border-color);
-      color: var(--accent-blue);
-      padding: 8px 14px;
-      border-radius: 8px;
+      height: 38px;
+      box-sizing: border-box;
+      background: rgba(13, 148, 136, 0.1);
+      border: 1.5px solid rgba(13, 148, 136, 0.35);
+      color: #0f766e;
+      padding: 0 11px;
+      border-radius: 10px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .region-fixed-pill {
+      background: rgba(0, 229, 190, 0.12);
+      border-color: rgba(0, 229, 190, 0.4);
+      color: #00e5be;
     }
 
     .filter-select {
+      height: 38px;
+      box-sizing: border-box;
       background: var(--bg-input);
       color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 8px 14px;
-      border-radius: 8px;
+      border: 1.5px solid var(--border-color);
+      padding: 0 11px;
+      border-radius: 10px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       outline: none;
       cursor: pointer;
-      min-width: 180px;
-      transition: border-color 0.2s ease;
+      min-width: 165px;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .filter-select:hover {
+      border-color: var(--accent-blue);
     }
 
     .filter-select:focus {
       border-color: var(--accent-blue);
-      box-shadow: 0 0 0 2px var(--border-accent);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
     }
 
     .pill-tabs {
-      display: flex;
+      height: 38px;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
       background: var(--bg-tabs);
-      padding: 4px;
+      padding: 3px;
       border-radius: 10px;
       border: 1px solid var(--border-color);
+      gap: 3px;
     }
 
     .pill-btn {
-      padding: 6px 14px;
+      height: 30px;
+      padding: 0 10px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-sub);
       background: transparent;
       border: none;
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover:not(.active) {
+      color: var(--text-main);
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    body.theme-light .pill-btn:hover:not(.active),
+    body.theme-light-sapphire .pill-btn:hover:not(.active),
+    body.theme-light-sunset .pill-btn:hover:not(.active),
+    body.theme-light-lavender .pill-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.7);
+      color: #0f172a;
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .pill-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
     }
 
     .pill-btn.active {
       background: var(--primary-gradient);
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(0, 229, 190, 0.35);
+      color: #ffffff !important;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+    }
+
+    /* RIGHT PERSPECTIVE BADGE CARD */
+    .filter-perspective-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    .perspective-badge-card {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(13, 148, 136, 0.12) 100%);
+      border: 1.5px solid rgba(13, 148, 136, 0.3);
+      border-radius: 12px;
+      padding: 6px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 210px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease;
+    }
+
+    .perspective-badge-card:hover {
+      border-color: rgba(13, 148, 136, 0.5);
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.12);
+    }
+
+    .perspective-badge-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .perspective-pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #0d9488;
+      box-shadow: 0 0 8px #0d9488;
+      animation: perspectivePulse 2s infinite ease-in-out;
+    }
+
+    @keyframes perspectivePulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+
+    .perspective-badge-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-sub);
+    }
+
+    .perspective-badge-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-title);
+      white-space: nowrap;
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .perspective-badge-card {
+      background: linear-gradient(135deg, rgba(0, 229, 190, 0.08) 0%, rgba(59, 130, 246, 0.12) 100%);
+      border-color: rgba(0, 229, 190, 0.3);
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .perspective-pulse-dot {
+      background: #00e5be;
+      box-shadow: 0 0 10px #00e5be;
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .perspective-badge-val {
+      color: #f1f5f9;
+    }
+
+    @media (max-width: 1024px) {
+      .filter-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+      .filter-perspective-wrapper {
+        justify-content: stretch;
+        width: 100%;
+      }
+      .perspective-badge-card {
+        width: 100%;
+        min-width: 0;
+      }
     }
 
     .filter-summary {
@@ -1794,10 +1941,10 @@
         <div class="filter-item">
           <label class="filter-label">3. Chế Độ Xem</label>
           <div class="pill-tabs">
-            <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Theo Tháng</button>
-            <button class="pill-btn" id="pillCustom" onclick="setMode('custom')">📅 Tùy Chọn (Từ ngày ➔ Đến ngày)</button>
-            <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📅 Theo Tuần</button>
-            <button class="pill-btn" id="pillDay" onclick="setMode('day')">📆 Theo Ngày</button>
+            <button class="pill-btn active" id="pillMonth" onclick="setMode('month')">🗓️ Tháng</button>
+            <button class="pill-btn" id="pillWeek" onclick="setMode('week')">📆 Tuần</button>
+            <button class="pill-btn" id="pillDay" onclick="setMode('day')">🕒 Ngày</button>
+            <button class="pill-btn" id="pillCustom" onclick="setMode('custom')">⏱️ Tùy Chọn</button>
           </div>
         </div>
 
@@ -1811,21 +1958,29 @@
 
         <!-- Chọn khoảng ngày tùy ý: Từ ngày ➔ Đến ngày -->
         <div class="filter-item" id="boxCustomDateRange" style="display: none;">
-          <label class="filter-label">4. Chọn Khoảng Ngày Tùy Ý (Từ ➔ Đến)</label>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <input type="date" id="customStartDate" class="filter-select" style="padding: 6px 10px; font-weight: 700; min-width: 135px;" onchange="onCustomDateChange()">
+          <label class="filter-label">4. Chọn Khoảng Ngày Tùy Ý</label>
+          <div style="display: flex; align-items: center; gap: 6px; height: 38px;">
+            <input type="date" id="customStartDate" class="filter-select" style="padding: 0 10px; font-weight: 700; min-width: 135px; height: 38px;" onchange="onCustomDateChange()">
             <span style="font-weight: 800; color: var(--accent-amber);">➔</span>
-            <input type="date" id="customEndDate" class="filter-select" style="padding: 6px 10px; font-weight: 700; min-width: 135px;" onchange="onCustomDateChange()">
-            <button type="button" class="btn btn-primary" onclick="applyCustomDateRange()" style="padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
+            <input type="date" id="customEndDate" class="filter-select" style="padding: 0 10px; font-weight: 700; min-width: 135px; height: 38px;" onchange="onCustomDateChange()">
+            <button type="button" class="btn btn-primary" onclick="applyCustomDateRange()" style="padding: 0 12px; height: 38px; font-size: 12px; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; gap: 4px;">
               <span>🔍 Xem</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div style="font-size: 13px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
-        <span>🎯 Góc nhìn:</span>
-        <strong id="filterSummaryText" style="color: var(--accent-blue);">Toàn Vùng MT01 • Tháng 11-Năm 2026</strong>
+      <!-- GÓC NHÌN BÁO CÁO (RIGHT BADGE CARD) -->
+      <div class="filter-perspective-wrapper">
+        <div class="perspective-badge-card">
+          <div class="perspective-badge-header">
+            <span class="perspective-pulse-dot"></span>
+            <span class="perspective-badge-kicker">GÓC NHÌN BÁO CÁO</span>
+          </div>
+          <div class="perspective-badge-val" id="filterSummaryText">
+            Toàn Vùng MT01 • Tháng 11–Năm 2026
+          </div>
+        </div>
       </div>
     </section>
 
@@ -2528,14 +2683,14 @@
 
       if (mode === "custom") {
         if (boxSelect) boxSelect.style.display = "none";
-        if (boxCustom) boxCustom.style.display = "block";
+        if (boxCustom) boxCustom.style.display = "flex";
         if (selInline) selInline.style.display = "none";
         if (boxInlineCustom) boxInlineCustom.style.display = "flex";
 
         syncDateInputs();
         applyCustomDateRange();
       } else {
-        if (boxSelect) boxSelect.style.display = "block";
+        if (boxSelect) boxSelect.style.display = "flex";
         if (boxCustom) boxCustom.style.display = "none";
         if (selInline) selInline.style.display = "inline-block";
         if (boxInlineCustom) boxInlineCustom.style.display = "none";
