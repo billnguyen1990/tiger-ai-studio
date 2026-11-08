@@ -211,6 +211,45 @@ def get_live_status():
         "recent_speeches": recent_speeches[-10:]
     }
 
+def push_caption(speaker, text, meeting_id=None):
+    global _ACTIVE_MEETING_ID
+    if not text or not text.strip():
+        return False, "Nội dung trống"
+        
+    speaker = speaker or "Người tham gia"
+    now_str = datetime.now().strftime("%H:%M:%S")
+    entry = f"[{now_str}] {speaker}: {text.strip()}\n"
+    
+    # 1. Ghi vào transcript
+    t_file = _find_existing_file("MEET_TRANSCRIPT.txt") or os.path.join(PARENT_SCRATCH_DIR, "MEET_TRANSCRIPT.txt")
+    try:
+        with open(t_file, "a", encoding="utf-8") as f:
+            f.write(entry)
+    except Exception as e:
+        print(f"Error appending transcript: {e}")
+        
+    # 2. Ghi vào notes
+    n_file = _find_existing_file("MEET_NOTES.md") or os.path.join(PARENT_SCRATCH_DIR, "MEET_NOTES.md")
+    try:
+        with open(n_file, "a", encoding="utf-8") as f:
+            f.write(f"- **[{now_str}] {speaker}:** {text.strip()}\n")
+    except Exception:
+        pass
+        
+    # 3. Cập nhật status
+    s_file = _find_existing_file("MEET_STATUS.json") or os.path.join(PARENT_SCRATCH_DIR, "MEET_STATUS.json")
+    try:
+        with open(s_file, "w", encoding="utf-8") as f:
+            json.dump({
+                "state": "IN_MEETING",
+                "details": f"Đang nhận phụ đề trực tiếp thời gian thực ({speaker})...",
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+        
+    return True, "OK"
+
 def ai_summarize_meeting_transcript(meeting_id):
     """Dùng Local AI (Ollama Qwen 2.5 3B • Auto-Unload 2m) tự động bóc tách phụ đề Google Meet thành Biên bản chuẩn (Kèm Fallback thông minh trên Cloud)"""
     meeting = get_meeting(meeting_id)

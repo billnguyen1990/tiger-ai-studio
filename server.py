@@ -151,6 +151,10 @@ def add_no_cache_headers(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
     return response
 
 @app.route("/")
@@ -8057,6 +8061,26 @@ def route_phong_hop():
 @app.route("/api/meetings/live-feed")
 def api_meetings_live_feed():
     return jsonify(meeting_service.get_live_status())
+
+@app.route("/api/meetings/push-caption", methods=["POST", "OPTIONS"])
+def api_meetings_push_caption():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+    data = request.get_json(force=True, silent=True) or {}
+    speaker = data.get("speaker", "Người tham gia")
+    text = data.get("text", "")
+    mid = data.get("meeting_id")
+    ok, msg = meeting_service.push_caption(speaker, text, mid)
+    return jsonify({"success": ok, "message": msg})
+
+@app.route("/api/meetings/open-login", methods=["POST"])
+def api_meetings_open_login():
+    import subprocess
+    script = os.path.join(meeting_service.BASE_DIR, "login_bot_google.py")
+    if not os.path.exists(script):
+        script = os.path.join(meeting_service.PARENT_SCRATCH_DIR, "tiger_studio", "login_bot_google.py")
+    subprocess.Popen([sys.executable, script], shell=False)
+    return jsonify({"success": True, "message": "Đã mở cửa sổ đăng nhập Google cho Bot trên màn hình!"})
 
 @app.route("/api/meetings/start", methods=["POST"])
 def api_meetings_start():

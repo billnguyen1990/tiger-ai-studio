@@ -467,17 +467,17 @@
 
           <div class="form-group">
             <label class="form-label">Link phòng họp Google Meet:</label>
-            <input type="text" id="meetUrlInput" class="form-control" placeholder="https://meet.google.com/ias-xknx-jrn" value="https://meet.google.com/ias-xknx-jrn">
+            <input type="text" id="meetUrlInput" class="form-control" placeholder="https://meet.google.com/apk-ohfv-qwr hoặc mã phòng" value="">
           </div>
 
           <div class="form-group">
             <label class="form-label">Tiêu đề cuộc họp:</label>
-            <input type="text" id="meetTitleInput" class="form-control" placeholder="Ví dụ: Họp Triển Khai Dự Án Hisense B2B LTL" value="Họp Triển Khai Vận Hành Dự Án Hisense (HiSen) - B2B LTL">
+            <input type="text" id="meetTitleInput" class="form-control" placeholder="Ví dụ: Họp Triển Khai Vận Hành Dự Án MDLZ - Hòa Phát" value="">
           </div>
 
           <div class="form-group">
             <label class="form-label">Bộ phận / Khối liên quan:</label>
-            <input type="text" id="meetDeptInput" class="form-control" placeholder="Ví dụ: Khối Vận Hành B2B • Xe Tải Cần Thơ" value="Khối Vận Hành B2B • Xe Tải Cần Thơ">
+            <input type="text" id="meetDeptInput" class="form-control" placeholder="Ví dụ: Khối Vận Hành B2B • GXT Miền Tây" value="Khối Vận Hành B2B • GXT Miền Tây">
           </div>
 
           <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -489,7 +489,26 @@
             </button>
           </div>
 
-          <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-color); font-size: 11px; color: var(--text-muted);">
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary" onclick="openBotLogin()" style="flex: 1; font-size: 11px; padding: 7px 10px; border-color: rgba(245,158,11,0.4); color: #fbbf24;">
+              🔑 Đăng Nhập Google Cho Bot (Nếu Bị Chặn)
+            </button>
+          </div>
+
+          <div style="margin-top: 16px; padding: 12px; background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.35); border-radius: 8px;">
+            <div style="font-weight: 600; font-size: 12px; color: #34d399; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+              <span>⚡ Hoặc: Ghi Chép Trực Tiếp Từ Cuộc Họp Đang Mở</span>
+              <span style="font-size: 10px; background: rgba(16,185,129,0.2); color: #a7f3d0; padding: 2px 6px; border-radius: 4px;">100% Không Bị Chặn</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px;">
+              Nếu Sếp đã đang ở trong phòng họp trên Chrome của mình, chỉ cần sao chép mã và dán vào tab cuộc họp là phụ đề sẽ tự động truyền về đây:
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="copyMeetBridgeCode()" style="width: 100%; font-size: 11px; padding: 7px 12px; background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #6ee7b7; font-weight: 600;">
+              📋 Sao Chép Mã Kết Nối Nhanh (Dán vào F12 Console)
+            </button>
+          </div>
+
+          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 11px; color: var(--text-muted);">
             💡 <strong>Cơ chế tự động:</strong> Bot sẽ tự động tắt Micro & Camera, bấm "Yêu cầu tham gia", kích hoạt Live Captions tiếng Việt và ghi nhận từng phát biểu với mốc thời gian thực.
           </div>
         </div>
@@ -869,6 +888,25 @@
         document.getElementById('btnStartBot').disabled = false;
         document.getElementById('btnStartBot').innerText = '🚀 Cho Tiger AI Vào Phòng Họp';
       }
+    }
+
+    async function openBotLogin() {
+      try {
+        const res = await fetch('/api/meetings/open-login', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || 'Đã mở cửa sổ đăng nhập Google cho Bot trên màn hình!');
+      } catch (err) {
+        alert('Lỗi: ' + err);
+      }
+    }
+
+    function copyMeetBridgeCode() {
+      const code = `javascript:(function(){if(window.__tiger_active){alert('🐯 Tiger AI Note đã đang chạy trên tab này!');return;}window.__tiger_active=true;window.__tiger_seen=new Set();const cc=document.querySelector('button[aria-label*="phụ đề"], button[aria-label*="captions"], button[aria-label*="Turn on captions"]');if(cc&&cc.getAttribute('aria-pressed')!=='true'){cc.click();}const b=document.createElement('div');b.id='__tiger_banner';b.style='position:fixed;top:12px;right:12px;z-index:999999;background:rgba(15,23,42,0.92);border:1px solid #10b981;padding:8px 14px;border-radius:10px;color:#fff;font-family:sans-serif;font-size:12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);';b.innerHTML='🐯 <strong>Tiger AI:</strong> Đang đồng bộ phụ đề về Studio... <span id="__tiger_count" style="color:#10b981;font-weight:bold;">0 câu</span>';document.body.appendChild(b);let count=0;async function send(speaker,text){try{await fetch('http://127.0.0.1:5050/api/meetings/push-caption',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({speaker:speaker,text:text})});count++;const cEl=document.getElementById('__tiger_count');if(cEl)cEl.innerText=count+' câu';}catch(e){console.warn('Tiger push error:',e);}}const obs=new MutationObserver(()=>{const nodes=document.querySelectorAll('.TBMuR, .iTTPOb, div[jsname="YSxPC"], div[jscontroller="D1tHje"]');nodes.forEach(node=>{const text=node.innerText?node.innerText.trim():'';if(!text||text.length<2)return;let speaker='Người tham gia';let speech=text;const sEl=node.querySelector('.jxFHg, .zs75Ib, .NWpY1d, .Fa6yvc, [class*="speaker"]');if(sEl&&sEl.innerText){speaker=sEl.innerText.trim();speech=text.replace(speaker,'').trim();}else if(text.includes(':')){const p=text.split(':');speaker=p[0].trim();speech=p.slice(1).join(':').trim();}const hash=speaker+'|'+speech;if(!window.__tiger_seen.has(hash)){window.__tiger_seen.add(hash);send(speaker,speech);}});});obs.observe(document.body,{childList:true,subtree:true,characterData:true});console.log('🐯 Tiger AI Note Bridge activated!');})();`;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('📋 Đã sao chép mã kết nối nhanh!\n\n👉 Cách dùng:\n1. Sang tab Google Meet Sếp đang họp\n2. Bấm F12 -> chọn Console -> Dán mã (Ctrl+V) -> Bấm Enter\n\nToàn bộ phát biểu của mọi người sẽ tự động bắn thẳng về màn hình Studio này!');
+      }).catch(err => {
+        prompt('Sao chép mã dưới đây:', code);
+      });
     }
 
     async function stopMeetingBot() {
