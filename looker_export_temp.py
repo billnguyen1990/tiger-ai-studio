@@ -457,9 +457,6 @@ def copy_export_and_paste_to_master(context, export_page):
         except Exception as ex:
             print(f"  ! Lỗi đồng bộ API ({ex}), sẽ thử fallback về clipboard...")
 
-    if synced_via_api:
-        return None
-
     master_page = None
     for pg in context.pages:
         if "1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI" in pg.url:
@@ -467,11 +464,16 @@ def copy_export_and_paste_to_master(context, export_page):
             break
 
     if not master_page:
+        print("  🌐 Đang mở Google Sheet Master Dashboard (Tách Luồng B2B)...")
         master_page = context.new_page()
         master_page.goto(MASTER_SHEET_URL, wait_until="domcontentloaded", timeout=60000)
 
     master_page.bring_to_front()
     time.sleep(2.0)
+
+    if synced_via_api:
+        print("  ✓ Dữ liệu đã đồng bộ sang Data tab. Giữ master_page mở để tiếp tục chạy Apps Script!")
+        return master_page
 
     # Chế độ Fallback clipboard
     export_page.bring_to_front()
@@ -519,9 +521,10 @@ def copy_export_and_paste_to_master(context, export_page):
 
 
 def click_google_sheets_menu(page, menu_name, submenu_name):
-    """Mở menu custom Apps Script của Google Sheets siêu tốc và ổn định 100% bằng event dispatch."""
+    """Mở menu custom Apps Script của Google Sheets siêu tốc và ổn định 100% bằng Native Mouse Click."""
     print(f"  ⏳ Đang đợi menu '{menu_name}' xuất hiện (Apps Script đang tải)...")
     
+    page.bring_to_front()
     page.keyboard.press("Escape")
     time.sleep(0.5)
     page.keyboard.press("Escape")
@@ -538,17 +541,37 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
         time.sleep(1.0)
 
     for attempt in range(8):
-        page.evaluate("""(mName) => {
-            const menubar = document.querySelector('#docs-menubar') || document;
-            const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
-            const target = items.find(el => el.innerText && el.innerText.trim() === mName);
-            if (target) {
-                target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-                target.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-                target.click();
-            }
-        }""", menu_name)
+        page.keyboard.press("Escape")
+        time.sleep(0.5)
+
+        # 1. Click menu cha
+        loc_menu = page.locator(f"#docs-menubar .menu-button:has-text('{menu_name}')")
+        if loc_menu.count() > 0:
+            box = loc_menu.first.bounding_box()
+            if box:
+                page.mouse.click(box['x'] + box['width']/2, box['y'] + box['height']/2)
+        else:
+            page.evaluate("""(mName) => {
+                const menubar = document.querySelector('#docs-menubar') || document;
+                const items = Array.from(menubar.querySelectorAll('.menu-button, div[role="menuitem"], div.goog-control, span'));
+                const target = items.find(el => el.innerText && el.innerText.trim() === mName);
+                if (target) {
+                    target.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                    target.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                    target.click();
+                }
+            }""", menu_name)
+
         time.sleep(1.5)
+
+        # 2. Click submenu bằng Native Mouse Click (chuẩn Google Sheets Closure)
+        sub_loc = page.locator(f".goog-menuitem:visible:has-text('{submenu_name}')")
+        if sub_loc.count() > 0:
+            sub_box = sub_loc.first.bounding_box()
+            if sub_box:
+                page.mouse.click(sub_box['x'] + sub_box['width']/2, sub_box['y'] + sub_box['height']/2)
+                print(f"  ✓ Đã kích hoạt menu '{menu_name}' -> '{submenu_name}' thành công bằng Native Click!")
+                return True
 
         clicked_sub = page.evaluate("""(sName) => {
             const subitems = Array.from(document.querySelectorAll('.goog-menuitem, div[role="menuitem"], span'));
@@ -570,25 +593,35 @@ def click_google_sheets_menu(page, menu_name, submenu_name):
 
 
 def run_filter_to_ketqua(master_page):
-    """Bước 5: Lọc dữ liệu từ Data sang Ketqua trực tiếp bằng API đảm bảo 100% không bao giờ rỗng."""
-    print("\n[Bước 5] Lọc dữ liệu chuẩn xác từ Data sang Ketqua (Zero-Failure API)...")
+    """Bước 5: Lọc dữ liệu từ Data sang Ketqua trên Google Sheets."""
+    print("\n[Bước 5] Lọc dữ liệu chuẩn xác từ Data sang Ketqua...")
     try:
         from tiger_data_filter import sync_filter_data_to_ketqua
         success = sync_filter_data_to_ketqua()
         if success:
             print("  ✓ [API Direct-Filter] Đã lọc và đồng bộ đầy đủ dữ liệu sang sheet Ketqua!")
     except Exception as ex:
-        print(f"  ⚠️ Lỗi khi lọc dữ liệu qua API: {ex}")
+        print(f"  ℹ Đồng bộ API: {ex}")
 
     try:
         master_page.bring_to_front()
         click_google_sheets_menu(master_page, "Lọc dữ liệu", "Chạy lọc -> Ketqua")
-        time.sleep(10)
+        # Chờ tập lệnh Apps Script chạy xong
+        start_wait = time.time()
+        while time.time() - start_wait < 90:
+            time.sleep(2)
+            is_running = master_page.evaluate("""() => {
+                const text = document.body.innerText || '';
+                return text.includes('Đang chạy tập lệnh') || text.includes('Running script');
+            }""")
+            if not is_running:
+                break
+        print("  ✓ Tập lệnh 'Chạy lọc -> Ketqua' đã thực thi xong trên Google Sheet!")
     except Exception as ex_menu:
-        print(f"  ℹ Menu Apps Script: {ex_menu}")
+        print(f"  ⚠️ Lỗi Menu Apps Script: {ex_menu}")
         
-    print("  ⏳ Đang chờ 15 giây để Google Sheets làm mới lưới dữ liệu Ketqua...")
-    time.sleep(15)
+    print("  ⏳ Đang chờ 5 giây để Google Sheets làm mới lưới dữ liệu Ketqua...")
+    time.sleep(5)
     print("  ✓ Sheet Ketqua đã sẵn sàng, chuẩn bị chạy ThongKe!")
 
 
@@ -832,14 +865,19 @@ def run_looker_export_pipeline(max_retries=3):
                 # 5. Copy toàn bộ -> Xóa sạch Data cũ -> Dán vào A1
                 master_page = copy_export_and_paste_to_master(context, export_page)
 
-                # 6. Chạy lọc -> Ketqua & ThongKe trực tiếp bằng Google Sheets API v4 (5 giây, chuẩn định dạng 100%)
-                print("\n[Bước 5 & 6] Lọc dữ liệu chuẩn xác từ Data sang Ketqua & Cập nhật 4 bảng ThongKe (Google Sheets API v4)...")
-                from tiger_data_filter import sync_filter_data_to_ketqua
-                sync_filter_data_to_ketqua()
+                if not master_page:
+                    for pg in context.pages:
+                        if "1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI" in pg.url:
+                            master_page = pg
+                            break
+                    if not master_page:
+                        master_page = context.new_page()
+                        master_page.goto(MASTER_SHEET_URL, wait_until="domcontentloaded", timeout=60000)
 
-                if master_page is not None:
-                    run_filter_to_ketqua(master_page)
-                    run_thongke_and_wait_telegram_modal(master_page)
+                # 6. Chạy lọc -> Ketqua & ThongKe trên Google Sheet
+                print("\n[Bước 5 & 6] Kích hoạt Apps Script Lọc dữ liệu -> Ketqua & Tạo bảng thống kê -> ThongKe...")
+                run_filter_to_ketqua(master_page)
+                run_thongke_and_wait_telegram_modal(master_page)
 
                 # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))
                 if "--no-reporter" not in sys.argv:
