@@ -95,6 +95,15 @@ def get_meeting(meeting_id):
 def create_and_start_meeting(title, meet_url, department="Vận Hành"):
     global _ACTIVE_MEETING_PROCESS, _ACTIVE_MEETING_ID
     
+    # 1. Dừng process cũ nếu có
+    if _ACTIVE_MEETING_PROCESS:
+        try:
+            _ACTIVE_MEETING_PROCESS.terminate()
+            time.sleep(1)
+        except Exception:
+            pass
+        _ACTIVE_MEETING_PROCESS = None
+
     meeting_id = f"meet_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     new_meeting = {
         "id": meeting_id,
@@ -119,8 +128,34 @@ def create_and_start_meeting(title, meet_url, department="Vận Hành"):
     meetings.insert(0, new_meeting)
     save_meetings(meetings)
     _ACTIVE_MEETING_ID = meeting_id
+
+    # 2. Reset / backup file transcript và notes cho cuộc họp mới
+    t_file = _find_existing_file("MEET_TRANSCRIPT.txt") or os.path.join(PARENT_SCRATCH_DIR, "MEET_TRANSCRIPT.txt")
+    if os.path.exists(t_file) and os.path.getsize(t_file) > 100:
+        backup_t = os.path.join(DATA_DIR, f"transcript_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+        try:
+            import shutil
+            shutil.copy2(t_file, backup_t)
+        except Exception:
+            pass
+    try:
+        with open(t_file, "w", encoding="utf-8") as f:
+            f.write(f"=== BIÊN BẢN GHI ÂM GOOGLE MEET: {meet_url} ===\nBắt đầu: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+    except Exception:
+        pass
+
+    s_file = _find_existing_file("MEET_STATUS.json") or os.path.join(PARENT_SCRATCH_DIR, "MEET_STATUS.json")
+    try:
+        with open(s_file, "w", encoding="utf-8") as f:
+            json.dump({
+                "state": "CONNECTING",
+                "details": "Đang kết nối vào Google Meet...",
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
     
-    # Launch Meet Bot background script (hỗ trợ cả thư mục gốc & thư mục cha)
+    # 3. Launch Meet Bot background script (hỗ trợ cả thư mục gốc & thư mục cha)
     bot_candidates = [
         os.path.join(BASE_DIR, "tiger_meet_bot.py"),
         os.path.join(PARENT_SCRATCH_DIR, "tiger_meet_bot.py")

@@ -774,8 +774,22 @@
         } else if (data.status === 'WAITING_ADMISSION') {
           badge.className = 'badge badge-pending';
           badge.innerText = '⏳ Đang chờ Host duyệt';
-          statusText.innerText = 'Trạng thái: Đã gõ cửa phòng họp...';
+          statusText.innerText = 'Trạng thái: Đã gõ cửa phòng họp, chờ Host bấm Cho phép...';
           voicePulse.style.display = 'none';
+        } else if (data.status === 'AUTH_REQUIRED' || data.status === 'ACCESS_BLOCKED') {
+          badge.className = 'badge badge-danger';
+          badge.innerText = '⚠️ Cần Đăng Nhập Google';
+          statusText.innerText = data.details || 'Google Meet yêu cầu đăng nhập tài khoản...';
+          voicePulse.style.display = 'none';
+          document.getElementById('btnStartBot').style.display = 'block';
+          document.getElementById('btnStopBot').style.display = 'none';
+        } else if (data.status === 'DENIED') {
+          badge.className = 'badge badge-danger';
+          badge.innerText = '❌ Bị Từ Chối Vào';
+          statusText.innerText = data.details || 'Host từ chối hoặc phòng họp đã đóng.';
+          voicePulse.style.display = 'none';
+          document.getElementById('btnStartBot').style.display = 'block';
+          document.getElementById('btnStopBot').style.display = 'none';
         } else {
           badge.className = 'badge badge-success';
           badge.innerText = '✅ Sẵn sàng';
