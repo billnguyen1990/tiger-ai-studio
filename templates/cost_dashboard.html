@@ -1306,6 +1306,152 @@
       transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    /* LUXURY FIXED 2-TIER PERIOD BANNER (CỐ ĐỊNH 100%, KHÔNG CO GIẬT) */
+    .salary-period-fixed-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(2, 132, 199, 0.05) 100%);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+      transition: all 0.25s ease;
+    }
+
+    .salary-period-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    body:not(.theme-light):not(.theme-light-sapphire):not(.theme-light-sunset):not(.theme-light-lavender) .salary-period-top-row {
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .salary-period-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .salary-period-tag {
+      background: var(--accent-green);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .salary-period-title {
+      color: var(--accent-green);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .salary-period-hub-pill {
+      background: rgba(2, 132, 199, 0.12);
+      color: var(--accent-blue);
+      border: 1px solid rgba(2, 132, 199, 0.3);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .salary-period-range-meta {
+      font-size: 12.5px;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .salary-period-bottom-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .salary-switch-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--bg-table-th);
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      width: 100%;
+    }
+
+    .salary-switch-label {
+      font-size: 11.5px;
+      color: var(--text-sub);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .salary-mode-tabs {
+      height: 34px !important;
+      padding: 2px !important;
+      gap: 3px !important;
+    }
+
+    .salary-mode-tabs .pill-btn {
+      height: 28px !important;
+      padding: 0 10px !important;
+      font-size: 12px !important;
+      border-radius: 6px !important;
+    }
+
+    .salary-period-select {
+      height: 34px !important;
+      min-width: 160px !important;
+      padding: 0 10px !important;
+      font-size: 12.5px !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+    }
+
+    .salary-hub-select {
+      height: 34px !important;
+      min-width: 145px !important;
+      padding: 0 10px !important;
+      font-size: 12.5px !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+    }
+
+    .salary-date-input {
+      height: 34px !important;
+      min-width: 125px !important;
+      padding: 0 8px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+    }
+
+    .salary-date-btn {
+      height: 34px !important;
+      padding: 0 12px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      border-radius: 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+
     /* LUXURY SALARY TABS & COMMAND BAR (1 HÀNG NGANG GỌN GÀNG) */
     .salary-command-bar {
       display: flex;
@@ -2196,48 +2342,52 @@
     <!-- SECTION 4: BẢNG LƯƠNG & SẢN LƯỢNG CHI TIẾT (TÍCH HỢP 2 TAB: NVGH & NVXL + BỘ CHỌN KỲ NGAY TẠI BẢNG) -->
     <section class="content-box" style="margin-top: 24px;">
       <!-- BANNER KỲ DỮ LIỆU RÕ RÀNG + BỘ CHỌN NHANH NGAY TẠI BẢNG LƯƠNG -->
-      <div style="background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(2, 132, 199, 0.08)); border: 1px solid var(--border-accent); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; flex-direction: column; gap: 4px;">
-          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <span style="background: var(--accent-green); color: #ffffff; font-weight: 800; font-size: 11px; padding: 3px 9px; border-radius: 6px; letter-spacing: 0.4px;">KỲ BÁO CÁO ĐANG XEM</span>
-            <strong id="txtSalaryPeriodBanner" style="color: var(--accent-green); font-size: 15px; font-weight: 800;">📅 THÁNG 11-NĂM 2026</strong>
-            <span id="txtSalaryHubBanner" style="background: rgba(2, 132, 199, 0.14); color: var(--accent-blue); border: 1px solid var(--border-accent); padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">📍 Toàn Vùng MT01</span>
+      <!-- BANNER KỲ DỮ LIỆU RÕ RÀNG + BỘ CHỌN NHANH NGAY TẠI BẢNG LƯƠNG (CỐ ĐỊNH 2 TẦNG CHUẨN ĐẸP) -->
+      <div class="salary-period-fixed-card">
+        <!-- TẦNG 1: THÔNG TIN KỲ ĐANG XEM (CỐ ĐỊNH 100%) -->
+        <div class="salary-period-top-row">
+          <div class="salary-period-title-wrap">
+            <span class="salary-period-tag">KỲ BÁO CÁO ĐANG XEM</span>
+            <strong id="txtSalaryPeriodBanner" class="salary-period-title">📅 THÁNG 11-NĂM 2026</strong>
+            <span id="txtSalaryHubBanner" class="salary-period-hub-pill">📍 Toàn Vùng MT01</span>
           </div>
-          <div id="txtSalaryDateRangeSub" style="font-size: 12.5px; color: var(--text-main);">
+          <div id="txtSalaryDateRangeSub" class="salary-period-range-meta">
             ⏱️ Phạm vi ngày cập nhật: <b>Từ ngày 01/11/2026 ➔ 05/11/2026 (5 ngày đã chốt số liệu trên Google Sheets)</b>
           </div>
         </div>
 
-        <!-- Bộ đổi nhanh Ngày / Tuần / Tháng / Tùy chọn ngày ngay tại bảng lương không cần cuộn lên trên -->
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--bg-table-th); padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border-color);">
-          <span style="font-size: 11.5px; color: var(--text-sub); font-weight: 700;">⚡ Đổi kỳ xem:</span>
-          <div class="mode-pills" style="gap: 4px;">
-            <button class="pill-btn active" id="inlinePillMonth" onclick="setMode('month')" style="padding: 5px 10px; font-size: 12px;">📅 Tháng</button>
-            <button class="pill-btn" id="inlinePillCustom" onclick="setMode('custom')" style="padding: 5px 10px; font-size: 12px;">🗓️ Tùy Chọn Ngày</button>
-            <button class="pill-btn" id="inlinePillWeek" onclick="setMode('week')" style="padding: 5px 10px; font-size: 12px;">📆 Tuần</button>
-            <button class="pill-btn" id="inlinePillDay" onclick="setMode('day')" style="padding: 5px 10px; font-size: 12px;">🕒 Ngày</button>
+        <!-- TẦNG 2: BỘ ĐỔI KỲ XEM NHANH (LUÔN CỐ ĐỊNH Ở HÀNG 2, KHÔNG BAO GIỜ CO GIẬT) -->
+        <div class="salary-period-bottom-row">
+          <div class="salary-switch-toolbar">
+            <span class="salary-switch-label">⚡ Đổi kỳ xem:</span>
+            <div class="pill-tabs salary-mode-tabs">
+              <button class="pill-btn active" id="inlinePillMonth" onclick="setMode('month')">🗓️ Tháng</button>
+              <button class="pill-btn" id="inlinePillWeek" onclick="setMode('week')">📆 Tuần</button>
+              <button class="pill-btn" id="inlinePillDay" onclick="setMode('day')">🕒 Ngày</button>
+              <button class="pill-btn" id="inlinePillCustom" onclick="setMode('custom')">⏱️ Tùy Chọn</button>
+            </div>
+
+            <!-- Dropdown khi xem Tháng / Tuần / Ngày -->
+            <select id="selInlinePeriodKey" class="filter-select salary-period-select" onchange="onInlinePeriodChange(this.value)"></select>
+
+            <!-- 2 ô chọn ngày Từ -> Đến khi xem Tùy Chọn Ngày -->
+            <div id="boxInlineCustomDateRange" style="display: none; align-items: center; gap: 6px;">
+              <input type="date" id="inlineStartDate" class="filter-select salary-date-input" onchange="syncInlineDatesToTop()">
+              <span style="font-weight: 800; color: var(--accent-amber); font-size: 13px;">➔</span>
+              <input type="date" id="inlineEndDate" class="filter-select salary-date-input" onchange="syncInlineDatesToTop()">
+              <button type="button" class="btn btn-primary salary-date-btn" onclick="applyCustomDateRange()">
+                <span>🔍 Xem</span>
+              </button>
+            </div>
+
+            <select id="selInlineHub" class="filter-select salary-hub-select" onchange="onInlineHubChange(this.value)">
+              <option value="all">Toàn Vùng MT01</option>
+              <option value="Kho Cái Răng">📍 Kho Cái Răng</option>
+              <option value="Kho Bình Thủy">📍 Kho Bình Thủy</option>
+              <option value="Kho Vị Thanh">📍 Kho Vị Thanh</option>
+              <option value="Kho Ô Môn">📍 Kho Ô Môn</option>
+            </select>
           </div>
-
-          <!-- Dropdown khi xem Tháng / Tuần / Ngày -->
-          <select id="selInlinePeriodKey" class="filter-select" onchange="onInlinePeriodChange(this.value)" style="min-width: 155px; padding: 5px 10px; font-size: 12.5px; font-weight: 700;"></select>
-
-          <!-- 2 ô chọn ngày Từ -> Đến khi xem Tùy Chọn Ngày -->
-          <div id="boxInlineCustomDateRange" style="display: none; align-items: center; gap: 5px;">
-            <input type="date" id="inlineStartDate" class="filter-select" style="padding: 4px 8px; font-size: 12px; font-weight: 700;" onchange="syncInlineDatesToTop()">
-            <span style="font-weight: 800; color: var(--accent-amber); font-size: 12px;">➔</span>
-            <input type="date" id="inlineEndDate" class="filter-select" style="padding: 4px 8px; font-size: 12px; font-weight: 700;" onchange="syncInlineDatesToTop()">
-            <button type="button" class="btn btn-primary" onclick="applyCustomDateRange()" style="padding: 5px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px;">
-              <span>🔍 Xem</span>
-            </button>
-          </div>
-
-          <select id="selInlineHub" class="filter-select" onchange="onInlineHubChange(this.value)" style="min-width: 145px; padding: 5px 10px; font-size: 12.5px;">
-            <option value="all">Toàn Vùng MT01</option>
-            <option value="Kho Cái Răng">📍 Kho Cái Răng</option>
-            <option value="Kho Bình Thủy">📍 Kho Bình Thủy</option>
-            <option value="Kho Vị Thanh">📍 Kho Vị Thanh</option>
-            <option value="Kho Ô Môn">📍 Kho Ô Môn</option>
-          </select>
         </div>
       </div>
 
