@@ -220,6 +220,8 @@ def build_cost_dashboard_matrix(force=False):
 
         months_dict = {}
         weeks_dict = {}
+        months_days = {}
+        weeks_days = {}
         days_list = []
         col_to_date = {}
 
@@ -243,8 +245,10 @@ def build_cost_dashboard_matrix(force=False):
                 col_to_date[c] = d_str
                 if m_str:
                     months_dict.setdefault(m_str, []).append(c)
+                    months_days.setdefault(m_str, []).append(d_str)
                 if w_str:
                     weeks_dict.setdefault(w_str, []).append(c)
+                    weeks_days.setdefault(w_str, []).append(d_str)
 
         base_r = date_row_idx + 1
         entities_config = [
@@ -885,9 +889,29 @@ def build_cost_dashboard_matrix(force=False):
         official_month_key = r_dates[2].strip() if len(r_dates) > 2 else ""
         official_week_key = r_dates[3].strip() if len(r_dates) > 3 else ""
         if not official_month_key or official_month_key not in months_dict:
-            official_month_key = list(months_dict.keys())[-1] if months_dict else "Tháng 11-Năm 2026"
+            active_m_keys = [
+                mk for mk, mdays in months_days.items()
+                if any(_clean_num(hubs_matrix.get("Toàn Vùng MT01", {}).get("metrics", {}).get("Volume gán", {}).get("daily", {}).get(d, 0)) > 0 for d in mdays)
+            ]
+            official_month_key = active_m_keys[-1] if active_m_keys else (list(months_dict.keys())[-1] if months_dict else "Tháng 11-Năm 2026")
         if not official_week_key or official_week_key not in weeks_dict:
-            official_week_key = list(weeks_dict.keys())[-1] if weeks_dict else "Tuần 45-Năm 2026"
+            # GVIZ CSV đôi khi ẩn chuỗi 'Tuần XX-Năm YYYY' ở ô D3 do cột D chứa toàn số phía dưới.
+            # Đối chiếu trực tiếp giá trị Volume gán & Volume GTC cột D (w44_official) với tổng từng tuần để nhận diện chính xác tuần đang chọn trên Sheet.
+            mt01_m = hubs_matrix.get("Toàn Vùng MT01", {}).get("metrics", {})
+            col_d_gan = _clean_num(mt01_m.get("Volume gán", {}).get("w44_official", 0))
+            col_d_gtc = _clean_num(mt01_m.get("Volume GTC", {}).get("w44_official", 0))
+            vol_gan_daily_map = mt01_m.get("Volume gán", {}).get("daily", {})
+            vol_gtc_daily_map = mt01_m.get("Volume GTC", {}).get("daily", {})
+            matched_wk = ""
+            active_w_keys = []
+            for wk, wdays in weeks_days.items():
+                w_gan = sum(_clean_num(vol_gan_daily_map.get(d, 0)) for d in wdays)
+                w_gtc = sum(_clean_num(vol_gtc_daily_map.get(d, 0)) for d in wdays)
+                if w_gan > 0 or w_gtc > 0:
+                    active_w_keys.append(wk)
+                if col_d_gan > 0 and abs(w_gan - col_d_gan) < 1 and abs(w_gtc - col_d_gtc) < 1:
+                    matched_wk = wk
+            official_week_key = matched_wk or (active_w_keys[-1] if active_w_keys else (list(weeks_dict.keys())[-1] if weeks_dict else "Tuần 45-Năm 2026"))
 
         # Bảo toàn dữ liệu Lương Giao (NVGH) đã chốt của các ngày trước nếu Google Sheet Data Raw đang tạm tính lại = 0
         # Dùng file lưu trữ riêng (archive) để không lần đồng bộ nào có thể ghi đè lương đã chốt thành 0
@@ -944,6 +968,7 @@ def build_cost_dashboard_matrix(force=False):
         # Tự động đồng bộ và bổ sung các ngày mới phát sinh từ ODO (Team_Leader & 365), NVGH, NVXL
         # Đảm bảo hệ thống KHÔNG BAO GIỜ bị phụ thuộc cứng vào việc Google Sheet Chi Phí MT01 đã kéo thêm cột hay chưa!
         # =========================================================================
+        sheet_days_set = set(days_list)
         all_unique_days = set(days_list)
         for rec in odo_records:
             d_r = rec.get("date", "").strip()
@@ -968,13 +993,22 @@ def build_cost_dashboard_matrix(force=False):
 
         # Với các ngày mới chưa có cột trong Google Sheet 'Chi Phí MT01', tự động tổng hợp số liệu thực tế
         for d_extra in days_list:
-            dt_obj = _parse_d_sort(d_extra)
-            m_key = f"Tháng {dt_obj.month}-Năm {dt_obj.year}"
-            w_key = f"Tuần {dt_obj.isocalendar()[1]}-Năm {dt_obj.year}"
-            if m_key not in months_dict:
-                months_dict[m_key] = []
-            if w_key not in weeks_dict:
-                weeks_dict[w_key] = []
+            if d_extra not in sheet_days_set:
+                dt_obj = _parse_d_sort(d_extra)
+                m_key = f"Tháng {dt_obj.month}-Năm {dt_obj.year}"
+                w_key = f"Tuần {dt_obj.isocalendar()[1]}-Năm {dt_obj.year}"
+                if m_key not in months_dict:
+                    months_dict[m_key] = []
+                if w_key not in weeks_dict:
+                    weeks_dict[w_key] = []
+                if m_key not in months_days:
+                    months_days[m_key] = []
+                if d_extra not in months_days[m_key]:
+                    months_days[m_key].append(d_extra)
+                if w_key not in weeks_days:
+                    weeks_days[w_key] = []
+                if d_extra not in weeks_days[w_key]:
+                    weeks_days[w_key].append(d_extra)
 
             # Đếm số chuyến xe chạy thực tế theo từng kho trên ngày d_extra
             trips_by_hub = defaultdict(int)
@@ -992,22 +1026,9 @@ def build_cost_dashboard_matrix(force=False):
                     if d_extra not in m_daily[m_name]["daily"]:
                         m_daily[m_name]["daily"][d_extra] = ""
 
-                # 1. Chi phí xe tải: nếu chưa có số liệu, tính dựa theo chuyến chạy thực tế (Chuẩn 13 xe MT01 = 10.288.762 đ)
-                cur_truck_cost_str = m_daily["Chi phí xe tải"]["daily"].get(d_extra, "")
-                if not cur_truck_cost_str or cur_truck_cost_str == "-":
-                    TRUCK_UNIT_COST = 791443.23
-                    if ent_k == "Toàn Vùng MT01":
-                        n_trucks = total_trips_day if total_trips_day > 0 else 13
-                        c_truck = int(round(n_trucks * TRUCK_UNIT_COST))
-                    else:
-                        n_trucks = trips_by_hub.get(ent_k, 0)
-                        c_truck = int(round(n_trucks * TRUCK_UNIT_COST))
-                    
-                    if c_truck > 0:
-                        m_daily["Chi phí xe tải"]["daily"][d_extra] = _format_vnd(c_truck)
-
-                # 2. Tổng hợp Lương giao từ danh sách tài xế
+                # 1. Tổng hợp Lương giao từ danh sách tài xế
                 cur_sal_str = m_daily["Lương giao"]["daily"].get(d_extra, "")
+                tot_sal_hub = _clean_num(cur_sal_str)
                 if not cur_sal_str or cur_sal_str == "-":
                     tot_sal_hub = 0.0
                     for drv in drivers_list:
@@ -1016,8 +1037,9 @@ def build_cost_dashboard_matrix(force=False):
                     if tot_sal_hub > 0:
                         m_daily["Lương giao"]["daily"][d_extra] = _format_vnd(tot_sal_hub)
 
-                # 3. Tổng hợp Lương NVXL từ danh sách NVXL
+                # 2. Tổng hợp Lương NVXL từ danh sách NVXL
                 cur_xl_str = m_daily["Lương NVXL"]["daily"].get(d_extra, "")
+                tot_xl_hub = _clean_num(cur_xl_str)
                 if not cur_xl_str or cur_xl_str == "-":
                     tot_xl_hub = 0.0
                     for emp in nvxl_list:
@@ -1026,8 +1048,10 @@ def build_cost_dashboard_matrix(force=False):
                     if tot_xl_hub > 0:
                         m_daily["Lương NVXL"]["daily"][d_extra] = _format_vnd(tot_xl_hub)
 
-                # 4. Tổng hợp Volume gán & GTC từ drivers nếu chưa có
+                # 3. Tổng hợp Volume gán & GTC từ drivers nếu chưa có
                 cur_vol_str = m_daily["Volume gán"]["daily"].get(d_extra, "")
+                tot_gan_hub = _clean_num(cur_vol_str)
+                tot_gtc_hub = _clean_num(m_daily["Volume GTC"]["daily"].get(d_extra, ""))
                 if not cur_vol_str or cur_vol_str == "-":
                     tot_gan_hub = 0.0
                     tot_gtc_hub = 0.0
@@ -1042,6 +1066,19 @@ def build_cost_dashboard_matrix(force=False):
                         m_daily["Volume GTC"]["daily"][d_extra] = _format_vnd(tot_gtc_hub)
                         rate_gtc = (tot_gtc_hub / tot_gan_hub * 100) if tot_gan_hub > 0 else 0
                         m_daily["Tỷ lệ GTC"]["daily"][d_extra] = f"{int(round(rate_gtc))}%"
+
+                # 4. Chi phí xe tải: chỉ tự động tổng hợp khi ngày đó thực sự có phát sinh đơn/lương và chưa có chi phí xe trên Sheet
+                cur_truck_cost_str = m_daily["Chi phí xe tải"]["daily"].get(d_extra, "")
+                has_day_ops = (tot_gan_hub > 0 or tot_gtc_hub > 0 or tot_sal_hub > 0 or tot_xl_hub > 0)
+                if (not cur_truck_cost_str or cur_truck_cost_str == "-") and has_day_ops:
+                    TRUCK_UNIT_COST = 791443.23
+                    if ent_k == "Toàn Vùng MT01":
+                        n_trucks = total_trips_day
+                    else:
+                        n_trucks = trips_by_hub.get(ent_k, 0)
+                    c_truck = int(round(n_trucks * TRUCK_UNIT_COST))
+                    if c_truck > 0:
+                        m_daily["Chi phí xe tải"]["daily"][d_extra] = _format_vnd(c_truck)
 
         dashboard_data = {
             "last_sync": now_str,
@@ -1060,7 +1097,9 @@ def build_cost_dashboard_matrix(force=False):
             "nvxl": nvxl_list,
             "odo_records": odo_records,
             "months_cols": months_dict,
-            "weeks_cols": weeks_dict
+            "weeks_cols": weeks_dict,
+            "months_days": months_days,
+            "weeks_days": weeks_days
         }
 
         with open(DASHBOARD_CACHE_FILE, "w", encoding="utf-8") as f:
@@ -1173,8 +1212,8 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
     official_month_key = matrix.get("official_month_key", "")
     official_week_key = matrix.get("official_week_key", "")
 
-    # Nếu file cache cũ chưa có trường nvxl, odo_records hoặc chưa có don_gan trong drivers thì tự động rebuild
-    if not all_nvxl or not all_odo or (all_drivers and "don_gan" not in all_drivers[0]):
+    # Nếu file cache cũ chưa có trường nvxl, odo_records, weeks_days hoặc chưa có don_gan trong drivers thì tự động rebuild
+    if not all_nvxl or not all_odo or "weeks_days" not in matrix or (all_drivers and "don_gan" not in all_drivers[0]):
         matrix = build_cost_dashboard_matrix(force=True)
         available_months = matrix.get("months", [])
         available_weeks = matrix.get("weeks", [])
@@ -1187,15 +1226,45 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
         official_month_key = matrix.get("official_month_key", "")
         official_week_key = matrix.get("official_week_key", "")
 
-    # Lọc các ngày đã có phát sinh dữ liệu thật:
-    # 1. Có Volume gán > 0, HOẶC
-    # 2. Có chuyến xe ODO thực tế chạy, HOẶC
-    # 3. Có phát sinh lương NVGH / NVXL
-    mt01_vol_daily = entities.get("Toàn Vùng MT01", {}).get("metrics", {}).get("Volume gán", {}).get("daily", {})
-    odo_active_dates = set(r.get("date") for r in all_odo if r.get("date") and not r.get("is_off"))
-    active_days = [d for d in available_days if _clean_num(mt01_vol_daily.get(d, 0)) > 0 or d in odo_active_dates]
+    # Lọc các ngày đã có phát sinh dữ liệu đơn hàng / lương thực tế (Volume gán, Volume GTC, Lương giao, Lương NVXL)
+    mt01_metrics = entities.get("Toàn Vùng MT01", {}).get("metrics", {})
+    mt01_vol_daily = mt01_metrics.get("Volume gán", {}).get("daily", {})
+    mt01_gtc_daily = mt01_metrics.get("Volume GTC", {}).get("daily", {})
+    mt01_sal_daily = mt01_metrics.get("Lương giao", {}).get("daily", {})
+    mt01_xl_daily = mt01_metrics.get("Lương NVXL", {}).get("daily", {})
+    active_days = [
+        d for d in available_days
+        if _clean_num(mt01_vol_daily.get(d, 0)) > 0
+        or _clean_num(mt01_gtc_daily.get(d, 0)) > 0
+        or _clean_num(mt01_sal_daily.get(d, 0)) > 0
+        or _clean_num(mt01_xl_daily.get(d, 0)) > 0
+    ]
     if not active_days:
         active_days = available_days
+    active_days_set = set(active_days)
+
+    months_days_map = matrix.get("months_days", {})
+    weeks_days_map = matrix.get("weeks_days", {})
+
+    def _get_week_days(w_k):
+        if w_k in weeks_days_map and weeks_days_map[w_k]:
+            return list(weeks_days_map[w_k])
+        w_cols = matrix.get("weeks_cols", {}).get(w_k, [])
+        return [available_days[c - 4] for c in w_cols if 0 <= c - 4 < len(available_days)]
+
+    def _get_month_days(m_k):
+        if m_k in months_days_map and months_days_map[m_k]:
+            return list(months_days_map[m_k])
+        m_cols = matrix.get("months_cols", {}).get(m_k, [])
+        return [available_days[c - 4] for c in m_cols if 0 <= c - 4 < len(available_days)]
+
+    # Loại bỏ các tuần/tháng mẫu kéo sẵn ở tương lai chưa có bất kỳ ngày nào phát sinh đơn/lương (VD: Tuần 46, Tuần 47)
+    active_weeks = [w for w in available_weeks if any(d in active_days_set for d in _get_week_days(w))]
+    if active_weeks:
+        available_weeks = active_weeks
+    active_months = [m for m in available_months if any(d in active_days_set for d in _get_month_days(m))]
+    if active_months:
+        available_months = active_months
 
     d1, d2 = None, None
     if start_date and end_date:
@@ -1240,21 +1309,19 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
     elif mode == "day" and key:
         period_all_days = [key]
     elif mode == "week" and key:
-        w_cols = matrix.get("weeks_cols", {}).get(key, [])
-        period_all_days = [available_days[c - 4] for c in w_cols if 0 <= c - 4 < len(available_days)]
+        period_all_days = _get_week_days(key)
     elif mode == "month" and key:
-        m_cols = matrix.get("months_cols", {}).get(key, [])
-        period_all_days = [available_days[c - 4] for c in m_cols if 0 <= c - 4 < len(available_days)]
+        period_all_days = _get_month_days(key)
     else:
         period_all_days = list(available_days)
 
-    period_active_days = [d for d in period_all_days if d in active_days]
+    period_active_days = [d for d in period_all_days if d in active_days_set]
     if not period_active_days and period_all_days:
         period_active_days = period_all_days
 
     start_date_str = d1.strftime("%d/%m/%Y") if d1 else (period_all_days[0] if period_all_days else (period_active_days[0] if period_active_days else (key or "")))
     end_date_str = d2.strftime("%d/%m/%Y") if d2 else (period_all_days[-1] if period_all_days else (period_active_days[-1] if period_active_days else (key or "")))
-    active_days_cnt = len([d for d in period_all_days if d in active_days])
+    active_days_cnt = len([d for d in period_all_days if d in active_days_set])
 
     if mode == "day":
         mode_vn = "Theo Ngày"
@@ -1308,7 +1375,15 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
 
     def extract_entity_values(target_metrics):
         out = {}
-        if mode == "month" and official_month_key and key == official_month_key:
+        has_w_official = (
+            _clean_num(target_metrics.get("Volume gán", {}).get("w44_official", 0)) > 0
+            or _clean_num(target_metrics.get("Volume GTC", {}).get("w44_official", 0)) > 0
+        )
+        has_m_official = (
+            _clean_num(target_metrics.get("Volume gán", {}).get("oct_official", 0)) > 0
+            or _clean_num(target_metrics.get("Volume GTC", {}).get("oct_official", 0)) > 0
+        )
+        if mode == "month" and official_month_key and key == official_month_key and has_m_official:
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("oct_official", "")
                 num_v = _clean_num(raw_v)
@@ -1317,7 +1392,7 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
                     "numeric": num_v,
                     "formatted": raw_v or (f"{num_v:.1f}%" if m == "Tỷ lệ GTC" else _format_vnd(num_v))
                 }
-        elif mode == "week" and official_week_key and key == official_week_key:
+        elif mode == "week" and official_week_key and key == official_week_key and has_w_official:
             for m in metric_keys:
                 raw_v = target_metrics.get(m, {}).get("w44_official", "")
                 num_v = _clean_num(raw_v)
@@ -1339,19 +1414,21 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
             if (d1 and d2) or mode in ("custom", "range", "cycle_365") or (key and (" - " in str(key) or " ➔ " in str(key))):
                 days_in_period = list(period_all_days)
             elif mode == "month":
-                col_indices = matrix.get("months_cols", {}).get(key, [])
-                days_in_period = [available_days[c - 4] for c in col_indices if 0 <= c - 4 < len(available_days)]
+                days_in_period = _get_month_days(key)
             else:
-                col_indices = matrix.get("weeks_cols", {}).get(key, [])
-                days_in_period = [available_days[c - 4] for c in col_indices if 0 <= c - 4 < len(available_days)]
+                days_in_period = _get_week_days(key)
+
+            # Chỉ cộng các ngày đã có phát sinh số liệu vận hành thực tế để tránh cộng trước Chi phí xe tải cố định của các ngày tương lai chưa chạy
+            active_in_period = [d for d in days_in_period if d in active_days_set]
+            days_to_sum = active_in_period if active_in_period else days_in_period
             
-            vol_gan = sum(_clean_num(target_metrics.get("Volume gán", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
-            vol_gtc = sum(_clean_num(target_metrics.get("Volume GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
-            kg_gtc = sum(_clean_num(target_metrics.get("Kg GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
-            stop_gtc = sum(_clean_num(target_metrics.get("Stop GTC", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
-            luong_giao = sum(_clean_num(target_metrics.get("Lương giao", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
-            luong_xl = sum(_clean_num(target_metrics.get("Lương NVXL", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
-            chi_phi_xe = sum(_clean_num(target_metrics.get("Chi phí xe tải", {}).get("daily", {}).get(d, 0)) for d in days_in_period)
+            vol_gan = sum(_clean_num(target_metrics.get("Volume gán", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
+            vol_gtc = sum(_clean_num(target_metrics.get("Volume GTC", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
+            kg_gtc = sum(_clean_num(target_metrics.get("Kg GTC", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
+            stop_gtc = sum(_clean_num(target_metrics.get("Stop GTC", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
+            luong_giao = sum(_clean_num(target_metrics.get("Lương giao", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
+            luong_xl = sum(_clean_num(target_metrics.get("Lương NVXL", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
+            chi_phi_xe = sum(_clean_num(target_metrics.get("Chi phí xe tải", {}).get("daily", {}).get(d, 0)) for d in days_to_sum)
 
             tot_cost = luong_giao + luong_xl + chi_phi_xe
             cost_per_order = (tot_cost / vol_gtc) if vol_gtc > 0 else 0
@@ -1684,10 +1761,12 @@ def query_mt01_cost_data(hub="all", mode="month", key=None, restrict_to_hub=None
             "hubs": [restrict_to_hub] if restrict_to_hub else ["Toàn Vùng MT01", "Kho Cái Răng", "Kho Bình Thủy", "Kho Vị Thanh", "Kho Ô Môn"],
             "months": available_months,
             "weeks": available_weeks,
-            "days": available_days,
+            "days": [d for d in available_days if d in active_days_set or any(r.get("date") == d and not r.get("is_off") for r in all_odo)] or available_days,
             "cycles_365": [c["key"] for c in CYCLES_365_CONFIG],
             "cycles_365_items": CYCLES_365_CONFIG,
-            "latest_active_day": active_days[-1] if active_days else (available_days[-1] if available_days else "")
+            "latest_active_day": active_days[-1] if active_days else (available_days[-1] if available_days else ""),
+            "latest_active_week": available_weeks[-1] if available_weeks else "",
+            "latest_active_month": available_months[-1] if available_months else ""
         },
         "restricted_hub": restrict_to_hub,
         "metrics": result_metrics,

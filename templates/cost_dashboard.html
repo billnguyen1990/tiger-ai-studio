@@ -3005,7 +3005,15 @@
         items = (filterOptions && filterOptions.months) ? filterOptions.months : [];
       }
 
-      const defaultTarget = preferredKey || ((currentMode === "day") ? ((filterOptions && filterOptions.latest_active_day) || items[0]) : items[items.length - 1]);
+      const defaultTarget = preferredKey || (
+        (currentMode === "day")
+          ? ((filterOptions && filterOptions.latest_active_day) || items[0])
+          : (currentMode === "week")
+            ? ((filterOptions && filterOptions.latest_active_week) || items[items.length - 1])
+            : (currentMode === "month")
+              ? ((filterOptions && filterOptions.latest_active_month) || items[items.length - 1])
+              : items[items.length - 1]
+      );
       items.forEach((item) => {
         const opt = document.createElement("option");
         opt.value = item;
@@ -3077,6 +3085,9 @@
 
     function renderData(data) {
       window.lastRenderedData = data;
+      if (data.available_filters) {
+        filterOptions = data.available_filters;
+      }
       const m = data.metrics || {};
       const getVal = (name, def = "0") => (m[name] ? (m[name].formatted || m[name].raw || def) : def);
 
@@ -3100,6 +3111,21 @@
       const pRange = pi.date_range_text || "";
       const pHub = pi.hub || (data.filter && data.filter.hub) || "Toàn Vùng MT01";
       const pModeVn = pi.mode_vn || "Theo Tháng";
+
+      if (pKey && currentMode !== "custom") {
+        const selK = document.getElementById("selPeriodKey");
+        if (selK && selK.value !== pKey) {
+          selK.value = pKey;
+        }
+        const selIK = document.getElementById("selInlinePeriodKey");
+        if (selIK && selIK.value !== pKey) {
+          selIK.value = pKey;
+        }
+        const fSum = document.getElementById("filterSummaryText");
+        if (fSum) {
+          fSum.innerText = `${pHub} • ${pKey}`;
+        }
+      }
 
       if (document.getElementById("badgeHubTablePeriod")) {
         document.getElementById("badgeHubTablePeriod").innerText = `📅 Kỳ đang xem (${pModeVn}): ${pKey} • ${pRange}`;
