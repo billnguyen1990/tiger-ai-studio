@@ -2899,11 +2899,72 @@ def query_ghn_order_history(order_code):
     oper_status = OPERATION_STATUS_MAP.get(raw_oper_st, raw_oper_st or "—")
     trans_status = TRANSIT_STATUS_MAP.get(raw_trans_st, raw_trans_st or "—")
 
-    # Bóc tách Thông tin kiện hàng
+    # Bóc tách Thông tin kiện hàng & Truy vấn Tên KH, SĐT, Địa chỉ, COD
     weight_kg = round((common_data.get("weight") or 0) / 1000, 1)
     order_val = common_data.get("orderValue", 0)
     order_val_str = f"{order_val:,} đ".replace(",", ".") if order_val else "0 đ"
     items_count = len(common_data.get("items") or [])
+
+    hub_headers = headers.copy()
+    if deliver_hub_id and deliver_hub_id != "0":
+        hub_headers["x-warehouseid"] = deliver_hub_id
+    elif current_hub_id and current_hub_id != "0":
+        hub_headers["x-warehouseid"] = current_hub_id
+
+    receiver_name = "—"
+    receiver_phone = "—"
+    receiver_address = "—"
+    cod_amount_str = "0 đ (Không thu hộ)"
+
+    try:
+        rr = requests.post("https://nhanh-api.ghn.vn/api/lastmile/order/search/receiver-info", json={"order_code": order_code}, headers=hub_headers, timeout=4)
+        if rr.status_code == 200:
+            rd = rr.json().get("data") or {}
+            receiver_name = rd.get("receiver_name") or "—"
+            receiver_phone = rd.get("receiver_phone") or "—"
+    except Exception:
+        pass
+
+    try:
+        rc_cod = requests.post("https://nhanh-api.ghn.vn/api/lastmile/order/get-collected-amount", json={"order_code": order_code, "orderCode": order_code}, headers=hub_headers, timeout=4)
+        if rc_cod.status_code == 200:
+            cd = rc_cod.json().get("data") or {}
+            tot_c = cd.get("totalAmount") or cd.get("codAmount") or 0
+            if tot_c:
+                cod_amount_str = f"{int(tot_c):,} đ".replace(",", ".")
+    except Exception:
+        pass
+
+    try:
+        r_a5 = requests.post("https://nhanh-api.ghn.vn/api/lastmile/order/gen-a5-token", json={"order_codes": order_code}, headers=hub_headers, timeout=4)
+        if r_a5.status_code == 200:
+            tok = (r_a5.json().get("data") or {}).get("token", "")
+            if tok:
+                r_html = requests.get(f"https://online-gateway.ghn.vn/a5/public-api/printA5?token={tok}", timeout=4)
+                if r_html.status_code == 200:
+                    idx_bn = r_html.text.find("Bên nhận")
+                    if idx_bn != -1:
+                        chunk_bn = r_html.text[idx_bn:idx_bn + 1200]
+                        bolds = re.findall(r'<div[^>]*class="module line-clamp-1"[^>]*>\s*<b>(.*?)</b>', chunk_bn, flags=re.S)
+                        if len(bolds) >= 2:
+                            addr_clean = re.sub(r'\s+', ' ', bolds[1]).strip()
+                            if addr_clean and "***" not in addr_clean:
+                                receiver_address = addr_clean
+    except Exception:
+        pass
+
+    if receiver_address == "—":
+        try:
+            ro = requests.post("https://nhanh-api.ghn.vn/api/core/oms/get-multi", json={"orderCodes": [order_code], "data": ["delivery"]}, headers=hub_headers, timeout=4)
+            if ro.status_code == 200:
+                dl = ro.json().get("data") or []
+                if dl and isinstance(dl, list):
+                    deliv = dl[0].get("delivery") or {}
+                    w_d_c = ", ".join(filter(None, [deliv.get("wardName"), deliv.get("districtName"), deliv.get("cityName")]))
+                    if w_d_c:
+                        receiver_address = w_d_c
+        except Exception:
+            pass
 
     # Phân tích sự kiện gần nhất & mốc thời gian
     latest_actor = "—"
@@ -2971,6 +3032,10 @@ def query_ghn_order_history(order_code):
         "trip_code": latest_trip,
         "weight_kg": weight_kg,
         "order_value_str": order_val_str,
+        "cod_amount_str": cod_amount_str,
+        "receiver_name": receiver_name,
+        "receiver_phone": receiver_phone,
+        "receiver_address": receiver_address,
         "items_count": items_count,
         "note": latest_note,
         "milestones": earlier_milestones,
@@ -4265,15 +4330,21 @@ def _format_ghn_order_telegram_reply(results):
             tr_stat = html.escape(str(res.get("transit_status", "—")))
             c_hub = html.escape(str(res.get("current_hub", "—")))
             d_hub = html.escape(str(res.get("deliver_hub", "—")))
+            r_name = html.escape(str(res.get("receiver_name", "—")))
+            r_phone = html.escape(str(res.get("receiver_phone", "—")))
+            r_addr = html.escape(str(res.get("receiver_address", "—")))
+            cod_str = html.escape(str(res.get("cod_amount_str", "0 đ")))
             actor = html.escape(str(res.get("actor", "—")))
             time_str = html.escape(str(res.get("time", "—")))
             trip = html.escape(str(res.get("trip_code", "—")))
             block = (
                 f"\n{idx}. 🔹 Mã đơn: <b><code>{res['order_code']}</code></b> — <b>{c_stat}</b>\n"
-                f"   ├ Trạng thái VH: <code>{op_stat}</code> ({tr_stat})\n"
+                f"   ├ Trạng thái đơn: <b>{op_stat}</b> ({tr_stat})\n"
                 f"   ├ Kho hiện tại: <b>{c_hub}</b>\n"
                 f"   ├ Kho giao: <b>{d_hub}</b>\n"
-                f"   ├ Kiện hàng: <b>{res.get('weight_kg', 0)} kg</b> | Giá trị: <b>{res.get('order_value_str', '0 đ')}</b> ({res.get('items_count', 1)} kiện)\n"
+                f"   ├ Tên khách hàng: <b>{r_name}</b> (SĐT: <code>{r_phone}</code>)\n"
+                f"   ├ Địa chỉ giao: {r_addr}\n"
+                f"   ├ Thu hộ COD: <b>{cod_str}</b> | Kiện hàng: <b>{res.get('weight_kg', 0)} kg</b> ({res.get('items_count', 1)} kiện)\n"
                 f"   ├ NV xử lý: <b>{actor}</b> ({time_str})\n"
                 f"   ├ Mã chuyến: <code>{trip}</code>\n"
             )
