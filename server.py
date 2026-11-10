@@ -2911,20 +2911,23 @@ def query_ghn_order_history(order_code):
     B2B_HUB_IDS = {"21098000", "22328000", "22873000", "22958000", "23064000", "23065000", "23085000", "23121000"}
     is_pick_b2b = (pick_hub_id in B2B_HUB_IDS) or ("b2b" in pick_hub.lower())
 
-    if is_pick_b2b:
-        is_b2b = True
-        order_group_str = "100% Đơn B2B (Giao Hàng Nặng - Xuất phát từ Kho B2B / Điều phối Rillnet)"
-    else:
-        is_b2b = False
-        order_group_str = "Đơn lẻ C2C/B2C thường (❌ Không thuộc nhóm B2B / Ngoài phạm vi Rillnet)"
-
     tag_map = {
         "bulky": "📦 Hàng cồng kềnh (bulky)",
         "multiple": "🔢 Nhiều kiện (multiple)",
         "truck": "🚛 Giao xe tải (truck)"
     }
-    tag_labels = [tag_map.get(t, t) for t in raw_tags]
-    tags_display = " • ".join(tag_labels) if tag_labels else "Hàng tiêu chuẩn"
+
+    if is_pick_b2b:
+        is_b2b = True
+        extra_tags = [tag_map[t] for t in raw_tags if t in tag_map]
+        phan_loai_display = "B2B • " + " • ".join(extra_tags) if extra_tags else "B2B"
+    elif "bulky" in raw_tags or weight_kg >= 20:
+        is_b2b = False
+        other_tags = [tag_map[t] for t in raw_tags if t in tag_map and t != "bulky"]
+        phan_loai_display = "Hàng cồng kềnh (bulky) • " + " • ".join(other_tags) if other_tags else "Hàng cồng kềnh (bulky)"
+    else:
+        is_b2b = False
+        phan_loai_display = "Hàng tiêu chuẩn"
 
     hub_headers = headers.copy()
     if deliver_hub_id and deliver_hub_id != "0":
@@ -4361,11 +4364,9 @@ def _format_ghn_order_telegram_reply(results):
             actor = html.escape(str(res.get("actor", "—")))
             time_str = html.escape(str(res.get("time", "—")))
             trip = html.escape(str(res.get("trip_code", "—")))
-            group_disp = html.escape(str(res.get("order_group", "B2C (Chuyển phát tiêu chuẩn)")))
             tags_disp = html.escape(str(res.get("tags_display", "Hàng tiêu chuẩn")))
             block = (
                 f"\n{idx}. 🔹 Mã đơn: <b><code>{res['order_code']}</code></b> — <b>{c_stat}</b>\n"
-                f"   ├ Nhóm đơn: <b>{group_disp}</b>\n"
                 f"   ├ Phân loại: <b>{tags_disp}</b>\n"
                 f"   ├ Trạng thái đơn: <b>{op_stat}</b> ({tr_stat})\n"
                 f"   ├ Kho hiện tại: <b>{c_hub}</b>\n"
