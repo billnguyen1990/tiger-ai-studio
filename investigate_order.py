@@ -1,36 +1,121 @@
 import os
+import re
 import requests
 import json
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 DIR_NAME = os.path.dirname(os.path.abspath(__file__))
-HEADERS_FILE = os.path.join(DIR_NAME, "headers_found.json")
-if not os.path.exists(HEADERS_FILE):
-    HEADERS_FILE = "headers_found.json"
 
-try:
-    with open(HEADERS_FILE, "r", encoding="utf-8") as f:
-        HEADERS = json.load(f)
-except Exception:
-    HEADERS = {}
+STATUS_VN_MAP = {
+    "STORING": "Lưu kho giao (Sẵn sàng giao hàng)",
+    "UNPACKED_AT_LASTMILE": "Lưu kho giao (Đã dỡ tải tại kho)",
+    "DELIVERING": "Đang đi giao hàng",
+    "DELIVERED": "Giao hàng thành công",
+    "FAIL_TO_DELIVER": "Giao hàng thất bại",
+    "DELIVERY_FAIL": "Giao hàng thất bại",
+    "PICKING": "Đang đi lấy hàng",
+    "PICKED": "Đã lấy hàng thành công",
+    "READY_TO_PICK": "Chờ lấy hàng",
+    "WAITING_TO_RETURN": "Chờ xác nhận giao lại / chuyển hoàn",
+    "RETURNING": "Đang chuyển hoàn",
+    "RETURN": "Đang chuyển hoàn",
+    "RETURNED": "Đã hoàn trả hàng",
+    "CANCELLED": "Đơn đã hủy",
+    "CANCEL": "Đơn đã hủy"
+}
 
-HUBS_MAP_FILE = os.path.join(DIR_NAME, "ghn_hubs_map.json")
-HUBS_MAP = {}
-if os.path.exists(HUBS_MAP_FILE):
+PARTNER_STATUS_VN_MAP = {
+    "storing": "Sẵn sàng giao hàng",
+    "delivering": "Đang giao hàng",
+    "delivered": "Giao hàng thành công",
+    "delivery_fail": "Giao hàng không thành công",
+    "picking": "Đang lấy hàng",
+    "picked": "Lấy hàng thành công",
+    "waiting_to_return": "Chờ xác nhận giao lại/chuyển hoàn",
+    "return": "Đang chuyển hoàn",
+    "returned": "Đã trả hàng",
+    "cancel": "Đơn đã hủy",
+    "ready_to_pick": "Chờ lấy hàng"
+}
+
+def _load_headers():
+    candidates = [
+        os.path.join(DIR_NAME, "headers_found.json"),
+        os.path.join(os.path.dirname(DIR_NAME), "headers_found.json"),
+        "headers_found.json"
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    return {}
+
+def _load_hubs_map():
+    candidates = [
+        os.path.join(DIR_NAME, "ghn_hubs_map.json"),
+        os.path.join(os.path.dirname(DIR_NAME), "ghn_hubs_map.json"),
+        "ghn_hubs_map.json"
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    return {}
+
+def _resolve_hub_display(hub_id, hubs_map):
+    if not hub_id or str(hub_id) == "0":
+        return "—"
+    sid = str(hub_id).strip()
+    hname = hubs_map.get(sid, f"Kho {sid}")
+    return f"{sid} - {hname}"
+
+def _extract_unmasked_address_from_a5(order_code, headers):
+    """Lấy địa chỉ chi tiết không bị che (***) từ phiếu in A5 của GHN"""
     try:
-        with open(HUBS_MAP_FILE, "r", encoding="utf-8") as f:
-            HUBS_MAP = json.load(f)
+        r_a5 = requests.post(
+            "https://nhanh-api.ghn.vn/api/lastmile/order/gen-a5-token",
+            json={"order_codes": order_code},
+            headers=headers,
+            timeout=5
+        )
+        if r_a5.status_code == 200:
+            tok = (r_a5.json().get("data") or {}).get("token", "")
+            if tok:
+                r_html = requests.get(
+                    f"https://online-gateway.ghn.vn/a5/public-api/printA5?token={tok}",
+                    timeout=5
+                )
+                if r_html.status_code == 200:
+                    html_txt = r_html.text
+                    idx = html_txt.find("Bên nhận")
+                    if idx != -1:
+                        chunk = html_txt[idx:idx + 1200]
+                        bolds = re.findall(r'<div[^>]*class="module line-clamp-1"[^>]*>\s*<b>(.*?)</b>', chunk, flags=re.S)
+                        if len(bolds) >= 2:
+                            addr = re.sub(r'\s+', ' ', bolds[1]).strip()
+                            if addr and "***" not in addr:
+                                return addr
     except Exception:
         pass
+    return ""
 
 def get_order_deep_investigation(order_code):
     order_code = order_code.strip().upper()
+    headers = _load_headers()
+    hubs_map = _load_hubs_map()
 
     # 1. Common info
     url_common = "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info"
     common_info = {}
     try:
-        r = requests.post(url_common, json={"order_code": order_code}, headers=HEADERS, timeout=8)
+        r = requests.post(url_common, json={"order_code": order_code}, headers=headers, timeout=8)
         if r.status_code == 200:
             common_info = r.json().get("data", {}) or {}
     except Exception as e:
@@ -40,7 +125,7 @@ def get_order_deep_investigation(order_code):
     url_hist = "https://nhanh-api.ghn.vn/api/lastmile/history/get-order-history"
     history_items = []
     try:
-        r_h = requests.post(url_hist, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 1000}}, headers=HEADERS, timeout=8)
+        r_h = requests.post(url_hist, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 1000}}, headers=headers, timeout=8)
         if r_h.status_code == 200:
             history_items = r_h.json().get("data", {}).get("data", []) or []
     except Exception as e:
@@ -49,19 +134,131 @@ def get_order_deep_investigation(order_code):
     if not common_info and not history_items:
         return f"⚠️ <b>Tiger AI không tìm thấy dữ liệu đơn hàng <code>{order_code}</code> trên hệ thống GHN.</b>\n<i>Vui lòng kiểm tra lại mã vận đơn chính xác hoặc liên hệ NVXL!</i>"
 
-    # Parse common info
-    status = common_info.get("status", "N/A")
-    weight = common_info.get("weight", 0) / 1000.0
-    tags = ", ".join(common_info.get("tags", [])) or "Chuẩn"
-    order_val = common_info.get("orderValue", 0)
+    curr_id = str(common_info.get("currentId") or (history_items[0].get("hubId") if history_items else "") or "")
+    deliver_id = str(common_info.get("deliverId") or "")
+    pick_id = str(common_info.get("pickId") or "")
 
-    # Products & Warehouse
+    # Tạo header gắn đúng mã kho hiện tại/kho giao để lấy SĐT, Tên KH, COD và Địa chỉ không bị ẩn
+    hub_headers = headers.copy()
+    if deliver_id and deliver_id != "0":
+        hub_headers["x-warehouseid"] = deliver_id
+    elif curr_id and curr_id != "0":
+        hub_headers["x-warehouseid"] = curr_id
+
+    # 3. Truy vấn song song: Tên & SĐT khách hàng, COD, OMS Delivery Info, và Địa chỉ đầy đủ từ A5
+    recv_info = {}
+    cod_info = {}
+    oms_info = {}
+    unmasked_a5_addr = ""
+
+    def _fetch_receiver():
+        try:
+            rr = requests.post(
+                "https://nhanh-api.ghn.vn/api/lastmile/order/search/receiver-info",
+                json={"order_code": order_code},
+                headers=hub_headers,
+                timeout=5
+            )
+            if rr.status_code == 200:
+                return rr.json().get("data") or {}
+        except Exception:
+            pass
+        return {}
+
+    def _fetch_cod():
+        try:
+            rc = requests.post(
+                "https://nhanh-api.ghn.vn/api/lastmile/order/get-collected-amount",
+                json={"order_code": order_code, "orderCode": order_code},
+                headers=hub_headers,
+                timeout=5
+            )
+            if rc.status_code == 200:
+                return rc.json().get("data") or {}
+        except Exception:
+            pass
+        return {}
+
+    def _fetch_oms():
+        try:
+            ro = requests.post(
+                "https://nhanh-api.ghn.vn/api/core/oms/get-multi",
+                json={"orderCodes": [order_code], "data": ["core", "location", "operation", "delivery", "return"]},
+                headers=hub_headers,
+                timeout=5
+            )
+            if ro.status_code == 200:
+                d_list = ro.json().get("data") or []
+                if d_list and isinstance(d_list, list):
+                    return d_list[0]
+        except Exception:
+            pass
+        return {}
+
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        f_recv = ex.submit(_fetch_receiver)
+        f_cod = ex.submit(_fetch_cod)
+        f_oms = ex.submit(_fetch_oms)
+        f_a5 = ex.submit(_extract_unmasked_address_from_a5, order_code, hub_headers)
+        recv_info = f_recv.result()
+        cod_info = f_cod.result()
+        oms_info = f_oms.result()
+        unmasked_a5_addr = f_a5.result()
+
+    # Parse Status, Hubs, Customer, Address, COD
+    raw_status = str(common_info.get("status") or "N/A").upper()
+    raw_partner_status = str(common_info.get("partnerStatus") or "").lower()
+    status_vn = STATUS_VN_MAP.get(raw_status, PARTNER_STATUS_VN_MAP.get(raw_partner_status, raw_status))
+
+    curr_hub = _resolve_hub_display(curr_id, hubs_map)
+    deliver_hub = _resolve_hub_display(deliver_id, hubs_map)
+    pick_hub = _resolve_hub_display(pick_id, hubs_map)
+
+    customer_name = (
+        recv_info.get("receiver_name")
+        or (common_info.get("receiverInfo") or {}).get("receiverName")
+        or (oms_info.get("delivery") or {}).get("name")
+        or "—"
+    )
+    customer_phone = (
+        recv_info.get("receiver_phone")
+        or (common_info.get("receiverInfo") or {}).get("receiverPhone")
+        or (oms_info.get("delivery") or {}).get("phone")
+        or "—"
+    )
+
+    oms_deliv = oms_info.get("delivery") or {}
+    ward_dist_city = ", ".join(filter(None, [
+        oms_deliv.get("wardName"),
+        oms_deliv.get("districtName"),
+        oms_deliv.get("cityName")
+    ]))
+    if unmasked_a5_addr:
+        customer_address = unmasked_a5_addr
+        if oms_deliv.get("districtName") and oms_deliv.get("districtName") not in customer_address:
+            customer_address += f" ({oms_deliv.get('wardName', '')}, {oms_deliv.get('districtName', '')})"
+    elif ward_dist_city:
+        raw_addr = oms_deliv.get("address") or ""
+        if raw_addr and not raw_addr.startswith("***"):
+            customer_address = f"{raw_addr}, {ward_dist_city}"
+        else:
+            customer_address = ward_dist_city
+    else:
+        customer_address = "—"
+
+    cod_amount = cod_info.get("codAmount") or 0
+    total_collect = cod_info.get("totalAmount") or cod_amount or 0
+    order_val = common_info.get("orderValue") or 0
+    cod_str = f"{int(total_collect):,} đ".replace(",", ".") if total_collect else "0 đ (Không thu hộ)"
+
+    weight = (common_info.get("weight") or 0) / 1000.0
+    tags = ", ".join(common_info.get("tags", [])) or "Chuẩn"
+
+    # Products & Dimensions
     items = common_info.get("items", []) or []
     prod_names = [it.get("name") for it in items if it.get("name")]
     prod_str = ", ".join(prod_names) if prod_names else "Hàng tiêu chuẩn"
-
-    curr_id = str(common_info.get("currentId", ""))
-    curr_hub = HUBS_MAP.get(curr_id, f"Kho {curr_id}" if curr_id else "N/A")
+    items_cnt = len(items) if items else 1
 
     length = common_info.get("length", 0)
     width = common_info.get("width", 0)
@@ -74,13 +271,13 @@ def get_order_deep_investigation(order_code):
     pods = []
     updates = []
     sms_list = []
-    shippers = {}
 
     for it in history_items:
         h_type = it.get("historyType", "")
         created_time = it.get("actionTime") or it.get("createdTime") or ""
         actor = it.get("actorName") or it.get("createdByName") or "Hệ Thống Auto"
         data_raw = it.get("data") or ""
+        ev_trip = it.get("tripCode") or ""
 
         parsed_data = {}
         if isinstance(data_raw, str) and data_raw.strip().startswith(("{", "[")):
@@ -92,7 +289,7 @@ def get_order_deep_investigation(order_code):
             parsed_data = data_raw
 
         if h_type == "ADD_TO_TRIP":
-            trip_code = it.get("note") or ""
+            trip_code = ev_trip or it.get("note") or ""
             if not trip_code and isinstance(parsed_data, dict):
                 trip_code = parsed_data.get("tripCode", "")
             trips.append({
@@ -100,7 +297,6 @@ def get_order_deep_investigation(order_code):
                 "actor": actor,
                 "trip": trip_code
             })
-            shippers[actor] = shippers.get(actor, 0) + 1
         elif h_type == "CALL_LOG":
             if isinstance(parsed_data, dict):
                 dur = parsed_data.get("duration", 0)
@@ -135,23 +331,32 @@ def get_order_deep_investigation(order_code):
         elif h_type == "SMS":
             sms_list.append({"time": created_time, "actor": actor})
 
-    # Build structured response
-    msg = f"🔎 <b>TIGER AI - HỒ SƠ ĐIỀU TRA ĐƠN HÀNG {order_code}</b>\n"
+    # Build structured response with all requested fields
+    msg = f"🔎 <b>TIGER AI - HỒ SƠ CHI TIẾT ĐƠN HÀNG <code>{order_code}</code></b>\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
-    msg += f"📦 <b>Trạng thái:</b> <code>{status}</code>\n"
-    msg += f"🏢 <b>Vị trí hiện tại:</b> <b>{curr_hub}</b>\n"
-    msg += f"🛍️ <b>Sản phẩm:</b> {prod_str}{dim_str}\n"
-    msg += f"⚖️ <b>Khối lượng:</b> {weight:.1f} kg | 🏷️ <b>Phân loại:</b> {tags}\n"
+    msg += f"📊 <b>Trạng thái đơn hàng:</b> <b>{status_vn}</b> (<code>{raw_status}</code>)\n"
+    msg += f"🏢 <b>Kho hiện tại:</b> <b>{curr_hub}</b>\n"
+    msg += f"🎯 <b>Kho giao:</b> <b>{deliver_hub}</b>\n"
+    if pick_hub and pick_hub != "—":
+        msg += f"🏭 <b>Kho lấy:</b> {pick_hub}\n"
+    msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
+    msg += f"👤 <b>Tên khách hàng:</b> <b>{customer_name}</b>\n"
+    msg += f"📞 <b>SĐT khách nhận:</b> <code>{customer_phone}</code>\n"
+    msg += f"📍 <b>Địa chỉ giao:</b> {customer_address}\n"
+    msg += f"💵 <b>Tiền thu hộ COD:</b> <b>{cod_str}</b>\n"
     if order_val:
-        msg += f"💵 <b>Giá trị đơn:</b> {order_val:,.0f} đ\n"
+        msg += f"💎 <b>Giá trị khai giá:</b> {int(order_val):,} đ\n".replace(",", ".")
+    msg += f"🛍️ <b>Sản phẩm ({items_cnt} kiện):</b> {prod_str}{dim_str}\n"
+    msg += f"⚖️ <b>Khối lượng:</b> {weight:.1f} kg | 🏷️ <b>Phân loại:</b> {tags}\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
 
     # Trip assignment & Drivers
     msg += f"🚚 <b>Điều phối & Chuyến đi ({len(trips)} lần gán):</b>\n"
     if trips:
-        for tr in trips[-3:]: # 3 most recent
+        for tr in trips[-3:]:
             t_dt = tr['time'].replace('T', ' ')[:16]
-            msg += f"• <code>{t_dt}</code>: <b>{tr['actor']}</b> (Chuyến: <code>{tr['trip']}</code>)\n"
+            t_code_disp = f" (Chuyến: <code>{tr['trip']}</code>)" if tr['trip'] else ""
+            msg += f"• <code>{t_dt}</code>: <b>{tr['actor']}</b>{t_code_disp}\n"
     else:
         msg += f"• <i>Chưa có thông tin gán chuyến trên hệ thống</i>\n"
 
@@ -184,21 +389,20 @@ def get_order_deep_investigation(order_code):
             msg += f"\n⚠️ <b>Ghi chú giao thất bại:</b> {latest_upd['note']} (NV: {latest_upd['actor']})\n"
 
     # AI Diagnostics
-    partner_status = str(common_info.get("partnerStatus", "")).lower()
     action = str(common_info.get("action", "")).upper()
 
     msg += f"\n🤖 <b>TIGER AI KẾT LUẬN & ĐỀ XUẤT:</b>\n"
-    if status == "DELIVERED":
+    if raw_status == "DELIVERED":
         msg += f"• <b>Đánh giá:</b> Đơn đã hoàn tất giao thành công. Có đầy đủ ảnh POD và xác nhận.\n"
-    elif "return" in partner_status or action == "RETURN":
+    elif "return" in raw_partner_status or action == "RETURN":
         msg += f"• <b>Trạng thái:</b> Đơn đang chờ CHUYỂN HOÀN (RETURN / STORING) do khách từ chối nhận hoặc đổi ý không mua.\n"
-        msg += f"• <b>Đề xuất:</b> NVXL xác nhận thông tin hoàn với người gửi và tạo chuyến hoàn về kho gửi, tránh để tồn quá 48h tại kho {curr_hub}.\n"
+        msg += f"• <b>Đề xuất:</b> NVXL xác nhận thông tin hoàn với người gửi và tạo chuyến hoàn về kho gửi, tránh để tồn quá 48h tại {curr_hub}.\n"
     elif any(c['is_fake'] for c in calls):
         msg += f"• <b>Cảnh báo gian lận:</b> Hệ thống ghi nhận NV có cuộc gọi dưới ngưỡng chuẩn hoặc bị hệ thống quét là Call ảo. Cần trưởng kho kiểm tra lại!\n"
     elif len(calls) == 0 and has_deliver_fail:
         msg += f"• <b>Lỗi quy trình:</b> NV đã nhận chuyến nhưng không bấm gọi cho khách hàng qua ứng dụng trước khi cập nhật giao thất bại.\n"
         msg += f"• <b>Đề xuất:</b> Yêu cầu NVXL liên hệ khách ngay lập tức để xác thực và tránh đơn bị khiếu nại.\n"
-    elif status in ("STORING", "UNPACKED_AT_LASTMILE") and not has_deliver_fail:
+    elif raw_status in ("STORING", "UNPACKED_AT_LASTMILE") and not has_deliver_fail:
         msg += f"• <b>Trạng thái kho:</b> Đơn hàng đang lưu kho tại <b>{curr_hub}</b> (Chờ phân tuyến gán chuyến giao).\n"
         msg += f"• <b>Đề xuất:</b> NVXL ưu tiên gán chuyến xuất bến sớm để đẩy nhanh tiến độ GTC.\n"
     else:
@@ -208,5 +412,5 @@ def get_order_deep_investigation(order_code):
     return msg
 
 if __name__ == '__main__':
-    rep = get_order_deep_investigation('VNGH80162470615')
+    rep = get_order_deep_investigation('GYECQKKL')
     print(rep)
