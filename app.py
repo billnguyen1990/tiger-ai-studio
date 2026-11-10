@@ -3042,8 +3042,9 @@ def query_ghn_order_history(order_code):
     return {
         "order_code": order_code,
         "found": True,
-        "order_group": order_group_str,
-        "tags_display": tags_display,
+        "order_group": phan_loai_display,
+        "tags_display": phan_loai_display,
+        "phan_loai_display": phan_loai_display,
         "is_b2b": is_b2b,
         "status_text": oper_status,
         "customer_status": cust_status,
@@ -4494,9 +4495,13 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     # - Hoặc nhắn riêng 1-1 với bot / Sếp Lộc (hoặc nhân sự) Reply trực tiếp báo cáo của bot để yêu cầu kiểm tra
     # - Hoặc đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
     # =========================================================================
-    is_explicit_order_lookup = bool(order_codes) and any(k in lower_text for k in [
-        "tra đơn", "tra don", "check đơn", "check don", "kiểm tra đơn", "kiem tra don", "soi đơn", "soi don"
-    ])
+    # Nhận diện tra cứu đơn hàng: dán mã đơn độc lập, hoặc có từ khóa tra/check/soi/xem/đơn
+    is_pure_order_code = bool(order_codes) and (len(text.strip().split()) <= 2 or len(text.strip()) <= 15)
+    is_explicit_order_lookup = bool(order_codes) and (
+        is_pure_order_code or any(k in lower_text for k in [
+            "tra", "check", "kiểm tra", "kiem tra", "soi", "xem", "đơn", "don", "hành trình", "tình trạng"
+        ])
+    )
     is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat or is_reply_command or is_explicit_order_lookup
     is_slash_cmd = lower_text.startswith("/")
     is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
@@ -5061,8 +5066,10 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     reply_order_codes = extract_ghn_order_codes(reply_to_text)
     context_order_codes = order_codes if order_codes else reply_order_codes
 
-    is_lookup_intent = lower_text.startswith(("/tra", "/check", "/don")) or (
-        is_tagged and (bool(order_codes) or any(k in lower_text for k in ["tra", "check", "soi", "xem đơn"]))
+    is_lookup_intent = (
+        is_explicit_order_lookup or
+        lower_text.startswith(("/tra", "/check", "/don")) or
+        (is_tagged and (bool(order_codes) or any(k in lower_text for k in ["tra", "check", "soi", "xem"])))
     )
 
     if order_codes and is_lookup_intent:
@@ -5094,28 +5101,32 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
             except Exception as e:
                 print("Deep investigation fallback:", e)
 
-        results = []
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            results = list(executor.map(query_ghn_order_history, target_codes))
-        reply_msg = _format_ghn_order_telegram_reply(results)
-        sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
-        if sent.get("ok"):
-            res_msg = sent.get("result", {})
-            _append_telegram_bridge_message({
-                "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
-                "message_id": res_msg.get("message_id", 0),
-                "direction": "outgoing_auto",
-                "sender_name": "Tiger AI 🐯 (Tự động)",
-                "username": "@AiAgentMT_bot",
-                "hub_badge": "Auto Tra Đơn",
-                "topic_id": topic_id,
-                "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
-                "text": reply_msg,
-                "reply_to_text": text[:120],
-                "replied_to_msg_id": msg_id,
-                "is_explanation": False,
-                "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
-            })
+        try:
+            results = []
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                results = list(executor.map(query_ghn_order_history, target_codes))
+            reply_msg = _format_ghn_order_telegram_reply(results)
+            sent = _send_telegram_group_message(reply_msg, topic_id=topic_id, reply_to_message_id=msg_id)
+            if sent.get("ok"):
+                res_msg = sent.get("result", {})
+                _append_telegram_bridge_message({
+                    "id": f"tg_auto_{res_msg.get('message_id', int(time.time()))}",
+                    "message_id": res_msg.get("message_id", 0),
+                    "direction": "outgoing_auto",
+                    "sender_name": "Tiger AI 🐯 (Tự động)",
+                    "username": "@AiAgentMT_bot",
+                    "hub_badge": "Auto Tra Đơn",
+                    "topic_id": topic_id,
+                    "topic_name": TELEGRAM_TOPICS_MAP.get(topic_id, f"Topic #{topic_id}" if topic_id else "💬 # Chat chung"),
+                    "text": reply_msg,
+                    "reply_to_text": text[:120],
+                    "replied_to_msg_id": msg_id,
+                    "is_explanation": False,
+                    "timestamp": get_vietnam_now().strftime("%H:%M:%S %d/%m/%Y")
+                })
+        except Exception as ex_fb:
+            print("Fallback lookup error:", ex_fb)
+            _send_telegram_group_message(f"⚠️ Chưa thể lấy thông tin chi tiết cho đơn <code>{target_codes[0]}</code>. Vui lòng thử lại sau giây lát!", topic_id=topic_id, reply_to_message_id=msg_id)
         return
 
     # 2. XỬ LÝ CÂU HỎI NGHIỆP VỤ VỀ MÃ ĐƠN HÀNG (KHI ĐƯỢC TAG @AiAgentMT_bot)
