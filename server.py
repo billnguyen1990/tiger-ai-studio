@@ -3969,7 +3969,7 @@ def _send_telegram_group_message(text, topic_id=2690, reply_to_message_id=None, 
             "parse_mode": parse_mode,
             "disable_web_page_preview": True
         }
-        if str(chat_id) == str(TELEGRAM_BRIDGE_CHAT_ID) and topic_id and int(topic_id) > 0:
+        if str(chat_id) == str(TELEGRAM_BRIDGE_CHAT_ID) and topic_id and int(topic_id) > 1:
             payload["message_thread_id"] = int(topic_id)
         if idx == 0 and reply_to_message_id and int(reply_to_message_id) > 0:
             payload["reply_to_message_id"] = int(reply_to_message_id)
