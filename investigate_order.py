@@ -265,27 +265,27 @@ def get_order_deep_investigation(order_code):
     has_doc_return = bool(doc_ret.get("flag"))
     doc_note = doc_ret.get("note") or ""
 
-    # Kho lấy B2B là tiêu chí quyết định 100% đơn B2B
+    # Phân loại B2B hay Hàng cồng kềnh (bulky)
     B2B_HUB_IDS = {"21098000", "22328000", "22873000", "22958000", "23064000", "23065000", "23085000", "23121000"}
     is_pick_b2b = (pick_id in B2B_HUB_IDS) or ("b2b" in pick_hub.lower())
-
-    if is_pick_b2b:
-        is_b2b = True
-        order_group_str = "100% Đơn B2B (Giao Hàng Nặng - Xuất phát từ Kho B2B / Điều phối Rillnet)"
-    elif has_doc_return or ("PXK" in ext_code.upper() or "PO" in ext_code.upper()):
-        is_b2b = True
-        order_group_str = "Đơn B2B Doanh Nghiệp (Có chứng từ PXK/PO đối tác)"
-    else:
-        is_b2b = False
-        order_group_str = "Đơn lẻ C2C/B2C thường (❌ Không thuộc nhóm B2B / Ngoài phạm vi Rillnet)"
 
     tag_map = {
         "bulky": "📦 Hàng cồng kềnh (bulky)",
         "multiple": "🔢 Nhiều kiện (multiple)",
         "truck": "🚛 Giao xe tải (truck)"
     }
-    tag_labels = [tag_map.get(t, t) for t in raw_tags]
-    tags_display = " • ".join(tag_labels) if tag_labels else "Hàng tiêu chuẩn"
+
+    if is_pick_b2b or has_doc_return or ("PXK" in ext_code.upper() or "PO" in ext_code.upper()):
+        is_b2b = True
+        extra_tags = [tag_map[t] for t in raw_tags if t in tag_map]
+        phan_loai_display = "<b>B2B</b> • " + " • ".join(extra_tags) if extra_tags else "<b>B2B</b>"
+    elif "bulky" in raw_tags or weight >= 20:
+        is_b2b = False
+        other_tags = [tag_map[t] for t in raw_tags if t in tag_map and t != "bulky"]
+        phan_loai_display = "<b>Hàng cồng kềnh (bulky)</b> • " + " • ".join(other_tags) if other_tags else "<b>Hàng cồng kềnh (bulky)</b>"
+    else:
+        is_b2b = False
+        phan_loai_display = "<b>Hàng tiêu chuẩn</b>"
 
     # Products & Dimensions
     items = common_info.get("items", []) or []
@@ -367,19 +367,15 @@ def get_order_deep_investigation(order_code):
     # Build structured response with all requested fields
     msg = f"🔎 <b>TIGER AI - HỒ SƠ CHI TIẾT ĐƠN HÀNG <code>{order_code}</code></b>\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
-    msg += f"🏢 <b>Nhóm đơn hàng:</b> <b>{order_group_str}</b>\n"
-    msg += f"🏷️ <b>Phân loại vận hành:</b> <b>{tags_display}</b>\n"
+    msg += f"🏷️ <b>Phân loại:</b> {phan_loai_display}\n"
     if has_doc_return or ext_code:
         doc_label = f"Mã: <code>{ext_code}</code>" if ext_code else (f"Ghi chú: {doc_note}" if doc_note else "Có biên bản/PXK")
         msg += f"📑 <b>Chứng từ B2B:</b> Có thu hồi chứng từ/PXK ({doc_label})\n"
-    elif not is_b2b:
-        msg += f"ℹ️ <b>Nhận diện Rillnet:</b> Đơn gửi từ bưu cục lẻ thường, không nằm trong danh mục B2B của Rillnet.\n"
     msg += f"📊 <b>Trạng thái đơn hàng:</b> <b>{status_vn}</b> (<code>{raw_status}</code>)\n"
     msg += f"🏢 <b>Kho hiện tại:</b> <b>{curr_hub}</b>\n"
     msg += f"🎯 <b>Kho giao:</b> <b>{deliver_hub}</b>\n"
     if pick_hub and pick_hub != "—":
-        pick_b2b_tag = " (✅ Tổng kho B2B)" if is_pick_b2b else " (Bưu cục nhận lẻ)"
-        msg += f"🏭 <b>Kho lấy:</b> {pick_hub}{pick_b2b_tag}\n"
+        msg += f"🏭 <b>Kho lấy:</b> {pick_hub}\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
     msg += f"👤 <b>Tên khách hàng:</b> <b>{customer_name}</b>\n"
     msg += f"📞 <b>SĐT khách nhận:</b> <code>{customer_phone}</code>\n"
