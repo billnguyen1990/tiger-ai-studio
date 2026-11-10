@@ -252,7 +252,37 @@ def get_order_deep_investigation(order_code):
     cod_str = f"{int(total_collect):,} đ".replace(",", ".") if total_collect else "0 đ (Không thu hộ)"
 
     weight = (common_info.get("weight") or 0) / 1000.0
-    tags = ", ".join(common_info.get("tags", [])) or "Chuẩn"
+
+    # Phân loại nhóm đơn B2B vs B2C và chi tiết tags
+    raw_tags = common_info.get("tags") or []
+    oms_op = oms_info.get("operation") or {}
+    if not raw_tags and oms_op.get("tags"):
+        raw_tags = oms_op.get("tags")
+    sv_id = common_info.get("serviceTypeID") or oms_op.get("serviceTypeID")
+    oms_core = oms_info.get("core") or {}
+    ext_code = oms_core.get("externalCode") or ""
+    doc_ret = oms_op.get("documentReturn") or common_info.get("documentReturn") or {}
+    has_doc_return = bool(doc_ret.get("flag"))
+    doc_note = doc_ret.get("note") or ""
+
+    is_b2b = False
+    if sv_id == 5 or "b2b" in pick_hub.lower() or pick_id in ("22873000",):
+        is_b2b = True
+    elif has_doc_return or ("PXK" in ext_code.upper() or "PO" in ext_code.upper()):
+        is_b2b = True
+    elif "truck" in raw_tags or "bulky" in raw_tags:
+        if sv_id == 5 or weight >= 20:
+            is_b2b = True
+
+    order_group_str = "B2B (Giao Hàng Nặng / Rillnet)" if is_b2b else "B2C (Chuyển phát thương mại điện tử)"
+
+    tag_map = {
+        "bulky": "📦 Hàng cồng kềnh (bulky)",
+        "multiple": "🔢 Nhiều kiện (multiple)",
+        "truck": "🚛 Giao xe tải (truck)"
+    }
+    tag_labels = [tag_map.get(t, t) for t in raw_tags]
+    tags_display = " • ".join(tag_labels) if tag_labels else "Hàng tiêu chuẩn"
 
     # Products & Dimensions
     items = common_info.get("items", []) or []
@@ -334,6 +364,11 @@ def get_order_deep_investigation(order_code):
     # Build structured response with all requested fields
     msg = f"🔎 <b>TIGER AI - HỒ SƠ CHI TIẾT ĐƠN HÀNG <code>{order_code}</code></b>\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
+    msg += f"🏢 <b>Nhóm đơn hàng:</b> <b>{order_group_str}</b>\n"
+    msg += f"🏷️ <b>Phân loại vận hành:</b> <b>{tags_display}</b>\n"
+    if has_doc_return or ext_code:
+        doc_label = f"Mã: <code>{ext_code}</code>" if ext_code else (f"Ghi chú: {doc_note}" if doc_note else "Có biên bản/PXK")
+        msg += f"📑 <b>Chứng từ B2B:</b> Có thu hồi chứng từ/PXK ({doc_label})\n"
     msg += f"📊 <b>Trạng thái đơn hàng:</b> <b>{status_vn}</b> (<code>{raw_status}</code>)\n"
     msg += f"🏢 <b>Kho hiện tại:</b> <b>{curr_hub}</b>\n"
     msg += f"🎯 <b>Kho giao:</b> <b>{deliver_hub}</b>\n"
@@ -347,7 +382,7 @@ def get_order_deep_investigation(order_code):
     if order_val:
         msg += f"💎 <b>Giá trị khai giá:</b> {int(order_val):,} đ\n".replace(",", ".")
     msg += f"🛍️ <b>Sản phẩm ({items_cnt} kiện):</b> {prod_str}{dim_str}\n"
-    msg += f"⚖️ <b>Khối lượng:</b> {weight:.1f} kg | 🏷️ <b>Phân loại:</b> {tags}\n"
+    msg += f"⚖️ <b>Khối lượng:</b> {weight:.1f} kg\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
 
     # Trip assignment & Drivers
@@ -407,7 +442,7 @@ def get_order_deep_investigation(order_code):
         msg += f"• <b>Đề xuất:</b> NVXL ưu tiên gán chuyến xuất bến sớm để đẩy nhanh tiến độ GTC.\n"
     else:
         msg += f"• <b>Đề xuất:</b> Đơn đang luân chuyển tại {curr_hub}. Đốc thúc chuyến kế tiếp để đạt KPI.\n"
-    msg += f"• 🔗 <a href='https://tracuunoibo.ghn.vn/internal?order_code={order_code}'>Mở Tracuunoibo GHN ↗</a>\n"
+    msg += f"• 🔗 <a href='https://tracuunoibo.ghn.vn/internal?order_code={order_code}'>Mở Tracuunoibo GHN ↗</a> | <a href='https://rillnet.ghn.vn/'>Mở Rillnet B2B ↗</a>\n"
 
     return msg
 
