@@ -2696,7 +2696,7 @@ def format_store_telegram_reply(results, query=""):
     return "\n".join(reply_lines)
 
 def extract_ghn_order_codes(text):
-    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GYM, ICT, GHN, VNGH, PSD hoặc mã có chữ và số)"""
+    """Trích xuất danh sách tất cả các định dạng mã đơn hàng GHN (GY..., GYM, ICT, GHN, VNGH, PSD hoặc mã có chữ và số)"""
     if not text:
         return []
     import re
@@ -2710,7 +2710,7 @@ def extract_ghn_order_codes(text):
         "AIAGENTMT", "AIAGENTMTBOT", "AIAGENTMT_BOT", "AIAGENT", "AIBOT", "AIAGENTMT01",
         "MONDELEZ", "BACHHOA", "BACHHOAXANH", "KINHDO", "TIENTRINH", "DANHSACH",
         "BAOCAO", "THONGKE", "DONHANG", "GIAOHANG", "KHACHHANG", "NHANVIEN", "DIEUPHOI",
-        "PROJECT", "KEHOACH", "VANHANH"
+        "PROJECT", "KEHOACH", "VANHANH", "GIAITRINH", "GIAMSAT", "GIAODICH", "GHINHAN"
     }
     tokens = re.findall(r'[A-Za-z0-9_-]{8,35}', text)
     results = []
@@ -2725,8 +2725,8 @@ def extract_ghn_order_codes(text):
         # 1. Mã đơn dự án / hợp đồng / CPTT đặc biệt (như PSD26-CH-05070-03_CPTT)
         if raw_up.startswith("PSD") and has_digit and 8 <= len(raw_up) <= 32:
             results.append(raw_up)
-        # 2. Mã đơn chuẩn GHN: Bắt đầu bằng GYM (8-10 ký tự), VNGH (10-18 ký tự)
-        elif up.startswith("GYM") and 8 <= len(up) <= 10:
+        # 2. Mã đơn chuẩn GHN: Bắt đầu bằng GY, GA, GD, GH, GK, GL, GM, GN, GP, GT, GV, GX, G8, L8, EB, ED, EF, EH (8-10 ký tự, hỗ trợ cả mã 8 chữ cái như GYECQKKL)
+        elif up.startswith(("GY", "GA", "GD", "GH", "GK", "GL", "GM", "GN", "GP", "GT", "GV", "GX", "G8", "L8", "EB", "ED", "EF", "EH")) and 8 <= len(up) <= 10 and up.isalnum():
             results.append(up)
         elif up.startswith("VNGH") and has_digit and 10 <= len(up) <= 20:
             results.append(up)
@@ -4394,7 +4394,10 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     # - Hoặc nhắn riêng 1-1 với bot / Sếp Lộc (hoặc nhân sự) Reply trực tiếp báo cáo của bot để yêu cầu kiểm tra
     # - Hoặc đang ở trong đúng room 3365 (📸 Camera Giám Sát Kho) và yêu cầu camera
     # =========================================================================
-    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat or is_reply_command
+    is_explicit_order_lookup = bool(order_codes) and any(k in lower_text for k in [
+        "tra đơn", "tra don", "check đơn", "check don", "kiểm tra đơn", "kiem tra don", "soi đơn", "soi don"
+    ])
+    is_tagged = ("@aiagentmt_bot" in lower_text) or ("@aiagentmt" in lower_text) or is_private_chat or is_reply_command or is_explicit_order_lookup
     is_slash_cmd = lower_text.startswith("/")
     is_cam_in_cam_topic = (topic_id == 3365 and any(k in lower_text for k in [
         "kho", "cam", "ảnh", "hình", "xem", "chụp", "soi", "hiện tại", "tình hình", "xe tải", "sân", "bãi", "dock"
