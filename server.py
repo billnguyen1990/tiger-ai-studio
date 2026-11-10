@@ -2908,12 +2908,15 @@ def query_ghn_order_history(order_code):
     # Phân loại nhóm đơn B2B vs B2C
     raw_tags = common_data.get("tags") or []
     sv_id = common_data.get("serviceTypeID")
-    is_b2b = False
-    if sv_id == 5 or "b2b" in pick_hub.lower() or pick_hub_id in ("22873000",):
+    B2B_HUB_IDS = {"21098000", "22328000", "22873000", "22958000", "23064000", "23065000", "23085000", "23121000"}
+    is_pick_b2b = (pick_hub_id in B2B_HUB_IDS) or ("b2b" in pick_hub.lower())
+
+    if is_pick_b2b:
         is_b2b = True
-    elif "truck" in raw_tags or "bulky" in raw_tags:
-        if sv_id == 5 or weight_kg >= 20:
-            is_b2b = True
+        order_group_str = "100% Đơn B2B (Giao Hàng Nặng - Xuất phát từ Kho B2B / Điều phối Rillnet)"
+    else:
+        is_b2b = False
+        order_group_str = "Đơn lẻ C2C/B2C thường (❌ Không thuộc nhóm B2B / Ngoài phạm vi Rillnet)"
 
     tag_map = {
         "bulky": "📦 Hàng cồng kềnh (bulky)",
@@ -2922,7 +2925,6 @@ def query_ghn_order_history(order_code):
     }
     tag_labels = [tag_map.get(t, t) for t in raw_tags]
     tags_display = " • ".join(tag_labels) if tag_labels else "Hàng tiêu chuẩn"
-    order_group_str = "B2B (Giao Hàng Nặng / Rillnet)" if is_b2b else "B2C (Chuyển phát thương mại điện tử)"
 
     hub_headers = headers.copy()
     if deliver_hub_id and deliver_hub_id != "0":
