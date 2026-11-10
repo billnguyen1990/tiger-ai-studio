@@ -2905,6 +2905,25 @@ def query_ghn_order_history(order_code):
     order_val_str = f"{order_val:,} đ".replace(",", ".") if order_val else "0 đ"
     items_count = len(common_data.get("items") or [])
 
+    # Phân loại nhóm đơn B2B vs B2C
+    raw_tags = common_data.get("tags") or []
+    sv_id = common_data.get("serviceTypeID")
+    is_b2b = False
+    if sv_id == 5 or "b2b" in pick_hub.lower() or pick_hub_id in ("22873000",):
+        is_b2b = True
+    elif "truck" in raw_tags or "bulky" in raw_tags:
+        if sv_id == 5 or weight_kg >= 20:
+            is_b2b = True
+
+    tag_map = {
+        "bulky": "📦 Hàng cồng kềnh (bulky)",
+        "multiple": "🔢 Nhiều kiện (multiple)",
+        "truck": "🚛 Giao xe tải (truck)"
+    }
+    tag_labels = [tag_map.get(t, t) for t in raw_tags]
+    tags_display = " • ".join(tag_labels) if tag_labels else "Hàng tiêu chuẩn"
+    order_group_str = "B2B (Giao Hàng Nặng / Rillnet)" if is_b2b else "B2C (Chuyển phát thương mại điện tử)"
+
     hub_headers = headers.copy()
     if deliver_hub_id and deliver_hub_id != "0":
         hub_headers["x-warehouseid"] = deliver_hub_id
@@ -3018,6 +3037,9 @@ def query_ghn_order_history(order_code):
     return {
         "order_code": order_code,
         "found": True,
+        "order_group": order_group_str,
+        "tags_display": tags_display,
+        "is_b2b": is_b2b,
         "status_text": oper_status,
         "customer_status": cust_status,
         "operation_status": oper_status,
@@ -4337,8 +4359,12 @@ def _format_ghn_order_telegram_reply(results):
             actor = html.escape(str(res.get("actor", "—")))
             time_str = html.escape(str(res.get("time", "—")))
             trip = html.escape(str(res.get("trip_code", "—")))
+            group_disp = html.escape(str(res.get("order_group", "B2C (Chuyển phát tiêu chuẩn)")))
+            tags_disp = html.escape(str(res.get("tags_display", "Hàng tiêu chuẩn")))
             block = (
                 f"\n{idx}. 🔹 Mã đơn: <b><code>{res['order_code']}</code></b> — <b>{c_stat}</b>\n"
+                f"   ├ Nhóm đơn: <b>{group_disp}</b>\n"
+                f"   ├ Phân loại: <b>{tags_disp}</b>\n"
                 f"   ├ Trạng thái đơn: <b>{op_stat}</b> ({tr_stat})\n"
                 f"   ├ Kho hiện tại: <b>{c_hub}</b>\n"
                 f"   ├ Kho giao: <b>{d_hub}</b>\n"
@@ -4350,7 +4376,7 @@ def _format_ghn_order_telegram_reply(results):
             )
             if ms:
                 block += f"   ├ <b>Lịch sử tác động:</b>\n{ms}\n"
-            block += f"   └ 🔗 <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a>"
+            block += f"   └ 🔗 <a href='{res['tracuu_link']}'>Mở Tracuunoibo GHN ↗</a> | <a href='https://rillnet.ghn.vn/'>Mở Rillnet B2B ↗</a>"
             reply_lines.append(block)
         else:
             st = html.escape(str(res.get("status_text", "Không tìm thấy")))
