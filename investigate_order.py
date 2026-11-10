@@ -253,7 +253,7 @@ def get_order_deep_investigation(order_code):
 
     weight = (common_info.get("weight") or 0) / 1000.0
 
-    # Phân loại nhóm đơn B2B vs B2C và chi tiết tags
+    # Phân loại nhóm đơn B2B vs Đơn lẻ C2C/B2C (Căn cứ cốt lõi: Kho lấy B2B)
     raw_tags = common_info.get("tags") or []
     oms_op = oms_info.get("operation") or {}
     if not raw_tags and oms_op.get("tags"):
@@ -265,16 +265,19 @@ def get_order_deep_investigation(order_code):
     has_doc_return = bool(doc_ret.get("flag"))
     doc_note = doc_ret.get("note") or ""
 
-    is_b2b = False
-    if sv_id == 5 or "b2b" in pick_hub.lower() or pick_id in ("22873000",):
+    # Kho lấy B2B là tiêu chí quyết định 100% đơn B2B
+    B2B_HUB_IDS = {"21098000", "22328000", "22873000", "22958000", "23064000", "23065000", "23085000", "23121000"}
+    is_pick_b2b = (pick_id in B2B_HUB_IDS) or ("b2b" in pick_hub.lower())
+
+    if is_pick_b2b:
         is_b2b = True
+        order_group_str = "100% Đơn B2B (Giao Hàng Nặng - Xuất phát từ Kho B2B / Điều phối Rillnet)"
     elif has_doc_return or ("PXK" in ext_code.upper() or "PO" in ext_code.upper()):
         is_b2b = True
-    elif "truck" in raw_tags or "bulky" in raw_tags:
-        if sv_id == 5 or weight >= 20:
-            is_b2b = True
-
-    order_group_str = "B2B (Giao Hàng Nặng / Rillnet)" if is_b2b else "B2C (Chuyển phát thương mại điện tử)"
+        order_group_str = "Đơn B2B Doanh Nghiệp (Có chứng từ PXK/PO đối tác)"
+    else:
+        is_b2b = False
+        order_group_str = "Đơn lẻ C2C/B2C thường (❌ Không thuộc nhóm B2B / Ngoài phạm vi Rillnet)"
 
     tag_map = {
         "bulky": "📦 Hàng cồng kềnh (bulky)",
@@ -369,11 +372,14 @@ def get_order_deep_investigation(order_code):
     if has_doc_return or ext_code:
         doc_label = f"Mã: <code>{ext_code}</code>" if ext_code else (f"Ghi chú: {doc_note}" if doc_note else "Có biên bản/PXK")
         msg += f"📑 <b>Chứng từ B2B:</b> Có thu hồi chứng từ/PXK ({doc_label})\n"
+    elif not is_b2b:
+        msg += f"ℹ️ <b>Nhận diện Rillnet:</b> Đơn gửi từ bưu cục lẻ thường, không nằm trong danh mục B2B của Rillnet.\n"
     msg += f"📊 <b>Trạng thái đơn hàng:</b> <b>{status_vn}</b> (<code>{raw_status}</code>)\n"
     msg += f"🏢 <b>Kho hiện tại:</b> <b>{curr_hub}</b>\n"
     msg += f"🎯 <b>Kho giao:</b> <b>{deliver_hub}</b>\n"
     if pick_hub and pick_hub != "—":
-        msg += f"🏭 <b>Kho lấy:</b> {pick_hub}\n"
+        pick_b2b_tag = " (✅ Tổng kho B2B)" if is_pick_b2b else " (Bưu cục nhận lẻ)"
+        msg += f"🏭 <b>Kho lấy:</b> {pick_hub}{pick_b2b_tag}\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
     msg += f"👤 <b>Tên khách hàng:</b> <b>{customer_name}</b>\n"
     msg += f"📞 <b>SĐT khách nhận:</b> <code>{customer_phone}</code>\n"
