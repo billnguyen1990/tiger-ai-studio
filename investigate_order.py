@@ -156,14 +156,14 @@ def get_order_deep_investigation(order_code):
         msg += f"• <i>Chưa có thông tin gán chuyến trên hệ thống</i>\n"
 
     # Calls Analysis
-    msg += f"\n📞 <b>Nhật ký cuộc gọi Shipper ({len(calls)} cuộc):</b>\n"
+    msg += f"\n📞 <b>Nhật ký cuộc gọi NV ({len(calls)} cuộc):</b>\n"
     if calls:
         for c in calls[:3]:
             c_dt = c['time'].replace('T', ' ')[:16]
             fake_badge = " ⚠️ <b>[CẢNH BÁO: Cuộc gọi ảo/Fake]</b>" if c['is_fake'] else ""
             msg += f"• <code>{c_dt}</code>: <b>{c['actor']}</b> gọi {c['phone']} ({c['duration']}s, chuông {c['ring']}s){fake_badge}\n"
     else:
-        msg += f"• ⚠️ <i>Tài xế KHÔNG thực hiện cuộc gọi nào qua App!</i>\n"
+        msg += f"• ℹ️ <i>Chưa ghi nhận cuộc gọi qua App</i>\n"
 
     # Delivery & POD
     if pods:
@@ -172,13 +172,16 @@ def get_order_deep_investigation(order_code):
         msg += f"\n📸 <b>Bằng chứng giao hàng (POD):</b> Đã chụp <b>{p_latest['count']} ảnh</b> lúc <code>{p_dt}</code> bởi <b>{p_latest['actor']}</b>\n"
 
     # Status updates / Fails
+    has_deliver_fail = any("DELIVER_FAIL" in u["action"] or (u["note"] and "PICK" not in u["action"]) for u in updates)
     if updates:
         latest_upd = updates[0]
         act_name = latest_upd['action']
-        if "SUCCESS" in act_name:
-            msg += f"\n✅ <b>Kết quả cuối:</b> Giao hàng thành công bởi <b>{latest_upd['actor']}</b>\n"
+        if act_name == "PICK_SUCCESS":
+            msg += f"\n📦 <b>Thao tác lấy hàng:</b> Đã lấy hàng thành công bởi NV <b>{latest_upd['actor']}</b>\n"
+        elif "SUCCESS" in act_name:
+            msg += f"\n✅ <b>Kết quả giao:</b> Giao hàng thành công bởi NV <b>{latest_upd['actor']}</b>\n"
         elif "FAIL" in act_name or latest_upd['note']:
-            msg += f"\n⚠️ <b>Ghi chú giao thất bại:</b> {latest_upd['note']} (Tài xế: {latest_upd['actor']})\n"
+            msg += f"\n⚠️ <b>Ghi chú giao thất bại:</b> {latest_upd['note']} (NV: {latest_upd['actor']})\n"
 
     # AI Diagnostics
     partner_status = str(common_info.get("partnerStatus", "")).lower()
@@ -191,12 +194,16 @@ def get_order_deep_investigation(order_code):
         msg += f"• <b>Trạng thái:</b> Đơn đang chờ CHUYỂN HOÀN (RETURN / STORING) do khách từ chối nhận hoặc đổi ý không mua.\n"
         msg += f"• <b>Đề xuất:</b> NVXL xác nhận thông tin hoàn với người gửi và tạo chuyến hoàn về kho gửi, tránh để tồn quá 48h tại kho {curr_hub}.\n"
     elif any(c['is_fake'] for c in calls):
-        msg += f"• <b>Cảnh báo gian lận:</b> Hệ thống ghi nhận tài xế có cuộc gọi dưới ngưỡng chuẩn hoặc bị hệ thống quét là Call ảo. Cần trưởng kho kiểm tra lại tài xế!\n"
-    elif len(calls) == 0 and len(trips) > 0:
-        msg += f"• <b>Lỗi quy trình:</b> Shipper đã nhận chuyến nhưng không bấm gọi cho khách hàng qua ứng dụng trước khi hoãn.\n"
+        msg += f"• <b>Cảnh báo gian lận:</b> Hệ thống ghi nhận NV có cuộc gọi dưới ngưỡng chuẩn hoặc bị hệ thống quét là Call ảo. Cần trưởng kho kiểm tra lại!\n"
+    elif len(calls) == 0 and has_deliver_fail:
+        msg += f"• <b>Lỗi quy trình:</b> NV đã nhận chuyến nhưng không bấm gọi cho khách hàng qua ứng dụng trước khi cập nhật giao thất bại.\n"
         msg += f"• <b>Đề xuất:</b> Yêu cầu NVXL liên hệ khách ngay lập tức để xác thực và tránh đơn bị khiếu nại.\n"
+    elif status in ("STORING", "UNPACKED_AT_LASTMILE") and not has_deliver_fail:
+        msg += f"• <b>Trạng thái kho:</b> Đơn hàng đang lưu kho tại <b>{curr_hub}</b> (Chờ phân tuyến gán chuyến giao).\n"
+        msg += f"• <b>Đề xuất:</b> NVXL ưu tiên gán chuyến xuất bến sớm để đẩy nhanh tiến độ GTC.\n"
     else:
         msg += f"• <b>Đề xuất:</b> Đơn đang luân chuyển tại {curr_hub}. Đốc thúc chuyến kế tiếp để đạt KPI.\n"
+    msg += f"• 🔗 <a href='https://tracuunoibo.ghn.vn/internal?order_code={order_code}'>Mở Tracuunoibo GHN ↗</a>\n"
 
     return msg
 
