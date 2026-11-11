@@ -397,9 +397,6 @@ def get_order_deep_investigation(order_code):
     msg = f"🔎 <b>TIGER AI - HỒ SƠ CHI TIẾT ĐƠN HÀNG <code>{order_code}</code></b>\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
     msg += f"🏷️ <b>Phân loại:</b> {phan_loai_display}\n"
-    if ext_code:
-        msg += f"🔖 <b>Mã đơn khách hàng:</b> <code>{ext_code}</code>\n"
-
     if is_doc_return_required:
         doc_detail = f" (Ghi chú: {doc_note})" if doc_note else (" (Yêu cầu: Cần thu hồi chứng từ)" if has_keyword_doc_return else "")
         prefix = "Chứng từ B2B" if is_b2b else "Thu hồi chứng từ"
