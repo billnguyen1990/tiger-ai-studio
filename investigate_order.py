@@ -260,10 +260,39 @@ def get_order_deep_investigation(order_code):
         raw_tags = oms_op.get("tags")
     sv_id = common_info.get("serviceTypeID") or oms_op.get("serviceTypeID")
     oms_core = oms_info.get("core") or {}
-    ext_code = oms_core.get("externalCode") or ""
+    ext_code = (oms_core.get("externalCode") or "").strip()
     doc_ret = oms_op.get("documentReturn") or common_info.get("documentReturn") or {}
     has_doc_return = bool(doc_ret.get("flag"))
-    doc_note = doc_ret.get("note") or ""
+    doc_note = (doc_ret.get("note") or "").strip()
+
+    # Bóc tách Ghi chú khách hàng (Customer Note)
+    customer_note = ""
+    candidate_notes = [
+        common_info.get("note"),
+        common_info.get("description"),
+        oms_deliv.get("note"),
+        oms_deliv.get("requiredNote"),
+        doc_note,
+        oms_core.get("note")
+    ]
+    for cn in candidate_notes:
+        if cn and str(cn).strip() and str(cn).strip().lower() not in ("none", "null", ""):
+            customer_note = str(cn).strip()
+            break
+
+    # Kiểm tra yêu cầu thu hồi chứng từ theo đúng chỉ đạo của Sếp Lộc:
+    # 1. Cờ documentReturn.flag == True
+    # 2. Hoặc trong Ghi chú khách hàng / Ghi chú chứng từ có ghi rõ "cần thu hồi chứng từ", "thu hồi chứng từ", "thu hồi biên bản/PXK"...
+    doc_keywords = [
+        "cần thu hồi chứng từ", "can thu hoi chung tu",
+        "thu hồi chứng từ", "thu hoi chung tu",
+        "thu hồi biên bản", "thu hoi bien ban",
+        "thu hồi pxk", "thu hoi pxk",
+        "trả chứng từ", "tra chung tu",
+        "thu hồi hóa đơn", "thu hoi hoa don"
+    ]
+    has_keyword_doc_return = any(kw in customer_note.lower() for kw in doc_keywords) or any(kw in doc_note.lower() for kw in doc_keywords)
+    is_doc_return_required = has_doc_return or has_keyword_doc_return
 
     # Phân loại B2B hay Hàng cồng kềnh (bulky)
     B2B_HUB_IDS = {"21098000", "22328000", "22873000", "22958000", "23064000", "23065000", "23085000", "23121000"}
@@ -275,7 +304,7 @@ def get_order_deep_investigation(order_code):
         "truck": "🚛 Giao xe tải (truck)"
     }
 
-    if is_pick_b2b or has_doc_return or ("PXK" in ext_code.upper() or "PO" in ext_code.upper()):
+    if is_pick_b2b or (is_doc_return_required and is_pick_b2b) or ("PXK" in ext_code.upper() or "PO" in ext_code.upper()):
         is_b2b = True
         extra_tags = [tag_map[t] for t in raw_tags if t in tag_map]
         phan_loai_display = "<b>B2B</b> • " + " • ".join(extra_tags) if extra_tags else "<b>B2B</b>"
@@ -368,9 +397,21 @@ def get_order_deep_investigation(order_code):
     msg = f"🔎 <b>TIGER AI - HỒ SƠ CHI TIẾT ĐƠN HÀNG <code>{order_code}</code></b>\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
     msg += f"🏷️ <b>Phân loại:</b> {phan_loai_display}\n"
-    if has_doc_return or ext_code:
-        doc_label = f"Mã: <code>{ext_code}</code>" if ext_code else (f"Ghi chú: {doc_note}" if doc_note else "Có biên bản/PXK")
-        msg += f"📑 <b>Chứng từ B2B:</b> Có thu hồi chứng từ/PXK ({doc_label})\n"
+    if ext_code:
+        msg += f"🔖 <b>Mã đơn khách hàng:</b> <code>{ext_code}</code>\n"
+
+    if is_doc_return_required:
+        doc_detail = f" (Ghi chú: {doc_note})" if doc_note else (" (Yêu cầu: Cần thu hồi chứng từ)" if has_keyword_doc_return else "")
+        prefix = "Chứng từ B2B" if is_b2b else "Thu hồi chứng từ"
+        msg += f"📑 <b>{prefix}:</b> Có thu hồi chứng từ/PXK{doc_detail}\n"
+    else:
+        msg += f"📑 <b>Thu hồi chứng từ:</b> Không thu hồi\n"
+
+    if customer_note:
+        msg += f"📝 <b>Ghi chú khách hàng:</b> {customer_note}\n"
+    else:
+        msg += f"📝 <b>Ghi chú khách hàng:</b> <i>(Trống)</i>\n"
+
     msg += f"📊 <b>Trạng thái đơn hàng:</b> <b>{status_vn}</b> (<code>{raw_status}</code>)\n"
     msg += f"🏢 <b>Kho hiện tại:</b> <b>{curr_hub}</b>\n"
     msg += f"🎯 <b>Kho giao:</b> <b>{deliver_hub}</b>\n"
