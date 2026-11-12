@@ -3,10 +3,12 @@ import json
 import datetime
 import os
 import sys
+import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 MAP_FILE = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
+HISTORY_DIR = os.path.join(BASE_DIR, "assigned_history")
 
 # Telegram Config (Group: Miền Tây 01 - Topic: Báo Cáo)
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
@@ -40,41 +42,61 @@ def run_assigned_audit(target_date=None):
     nvxl_map = get_nvxl_map()
 
     if target_date is None:
-        target_date = get_vietnam_today()
+        target_dt = get_vietnam_today()
+    elif isinstance(target_date, str):
+        target_date = target_date.strip()
+        if "-" in target_date:
+            target_dt = datetime.datetime.strptime(target_date, "%Y-%m-%d").date()
+        else:
+            target_dt = datetime.datetime.strptime(target_date, "%Y%m%d").date()
+    else:
+        target_dt = target_date
 
-    date_int = int(target_date.strftime("%Y%m%d"))
-    date_display = target_date.strftime("%d/%m/%Y")
+    date_int = int(target_dt.strftime("%Y%m%d"))
+    date_iso = target_dt.strftime("%Y-%m-%d")
+    date_display = target_dt.strftime("%d/%m/%Y")
 
     results = {
         "date_str": date_display,
+        "date_iso": date_iso,
         "hubs": {}
     }
 
     for hid, info in nvxl_map.items():
         hname = info["short_name"]
         nvxl_tag = info["telegram_tag"]
-        headers["x-warehouseid"] = hid
+        h_headers = headers.copy()
+        h_headers["x-warehouseid"] = str(hid)
 
         hub_trips = []
         for st in ["ON_TRIP", "NEW", "FINISHED"]:
             p = {
-                "hub_id": hid,
+                "hub_id": str(hid),
                 "status": st,
                 "is_ready": 0,
                 "offset": 0,
                 "limit": 50,
                 "reverse": 1
             }
-            try:
-                r = requests.post(URL_TRIPS, headers=headers, json=p, timeout=10).json()
-                trips = r.get("data", []) or []
-                for t in trips:
-                    c_date = t.get("createDateIndex")
-                    s_date = t.get("startDateIndex")
-                    if c_date == date_int or s_date == date_int:
-                        hub_trips.append(t)
-            except Exception as e:
-                print(f"Lỗi lấy chuyến status {st} kho {hname}: {e}")
+            trips = []
+            for attempt in range(2):
+                try:
+                    r = requests.post(URL_TRIPS, headers=h_headers, json=p, timeout=12).json()
+                    trips = r.get("data", []) or []
+                    break
+                except Exception as e:
+                    if attempt == 0:
+                        time.sleep(1)
+                    else:
+                        print(f"⚠️ Lỗi lấy chuyến status {st} kho {hname}: {e}")
+
+            for t in trips:
+                c_date = t.get("createDateIndex")
+                s_date = t.get("startDateIndex")
+                c_time = str(t.get("createdTime") or "")
+                s_time = str(t.get("startTime") or "")
+                if c_date == date_int or s_date == date_int or c_time.startswith(date_iso) or s_time.startswith(date_iso):
+                    hub_trips.append(t)
 
         # Tổng hợp chuyến và đơn
         total_orders = sum(t.get("deliverCount", 0) for t in hub_trips)
@@ -117,6 +139,15 @@ def run_assigned_audit(target_date=None):
             "total_orders": total_orders,
             "trip_details": trip_details
         }
+
+    # Tự động lưu lịch sử JSON
+    try:
+        os.makedirs(HISTORY_DIR, exist_ok=True)
+        hist_file = os.path.join(HISTORY_DIR, f"assigned_{date_int}.json")
+        with open(hist_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"⚠️ Không thể lưu lịch sử assigned: {e}")
 
     return results
 
@@ -172,9 +203,26 @@ def send_telegram_alert(text):
 def main():
     args = sys.argv[1:]
     is_send = "--send" in args
+    is_force = "--force" in args
+
+    target_date = None
+    for idx, arg in enumerate(args):
+        if arg == "--date" and idx + 1 < len(args):
+            target_date = args[idx + 1]
 
     print("⏳ Tiger AI đang quét dữ liệu Gán Chuyến Sáng 09:00 cho 4 kho MT01...")
-    data = run_assigned_audit()
+    data = run_assigned_audit(target_date=target_date)
+
+    total_all_trips = sum(h["trips_count"] for h in data["hubs"].values())
+    total_all_orders = sum(h["total_orders"] for h in data["hubs"].values())
+
+    # Chốt chặn an toàn chống rỗng (Anti-Zero Safeguard)
+    if total_all_trips == 0 and not is_force:
+        print("❌ CẢNH BÁO: Toàn bộ 4 kho MT01 ghi nhận 0 chuyến gán (nghi vấn mạng GHN gián đoạn hoặc API lỗi). Hủy gửi báo cáo để tránh thông tin 0 chuyến sai lệch!")
+        if is_send:
+            sys.exit(1)
+        return
+
     msg = format_assigned_message(data)
 
     print("\n" + "=" * 55)
@@ -185,7 +233,9 @@ def main():
 
     if is_send:
         print("🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...")
-        send_telegram_alert(msg)
+        success = send_telegram_alert(msg)
+        if not success:
+            sys.exit(1)
     else:
         print("💡 Chế độ Dry-Run (chưa gửi). Dùng cờ: --send để gửi thực tế.")
 

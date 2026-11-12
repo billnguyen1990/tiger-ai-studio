@@ -5780,6 +5780,15 @@ try:
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching Checkin to GitHub Actions: {e}", flush=True)
 
+        if script_name == "tiger_morning_assigned_reporter.py" and is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Assigned_09h00.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                print(f"[CRON TRIGGER] Assigned 09:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching Assigned to GitHub Actions: {e}", flush=True)
+
         if script_name == "tiger_unassigned_backlog_reporter.py" and is_cloud_env:
             try:
                 dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Unassigned_10h00.yml/dispatches"
@@ -5913,6 +5922,14 @@ def run_cron_webhook(task_key):
             dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Checkin_07h35.yml/dispatches"
             res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
             return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (07:35 AM Checkin)", "status": res.status_code})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    if task_key == "assigned" and is_cloud_env:
+        try:
+            dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Assigned_09h00.yml/dispatches"
+            res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+            return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (09:00 AM Assigned)", "status": res.status_code})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)}), 500
 
