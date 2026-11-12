@@ -1134,7 +1134,7 @@ NỘI DUNG BÁO CÁO CHỐT CA 21:00:
     # Xử lý riêng cho b2b_looker khi chạy trên Cloud (Render Linux) -> Kích hoạt GitHub Actions Cloud Runner:
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
     if wf_id == "b2b_looker" and is_cloud:
-        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSOXfHoBFEfKc3Y3z3aO0Dq")
+        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "MH2DavxhnFOlhoNtBoOamop7bbNHUE4Mtl01")
         gh_repo = "billnguyen1990/tiger-ai-studio"
         gh_headers = {
             "Authorization": f"token {gh_token}",
@@ -5728,20 +5728,39 @@ try:
     def _job_runner(script_name):
         print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
         is_cloud_env = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
+        gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "MH2DavxhnFOlhoNtBoOamop7bbNHUE4Mtl01")
+        gh_repo = "billnguyen1990/tiger-ai-studio"
+        gh_headers = {
+            "Authorization": f"token {gh_token}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+
         if script_name == "looker_export_temp.py" and is_cloud_env:
             try:
-                gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSOXfHoBFEfKc3Y3z3aO0Dq")
-                gh_repo = "billnguyen1990/tiger-ai-studio"
-                gh_headers = {
-                    "Authorization": f"token {gh_token}",
-                    "Accept": "application/vnd.github.v3+json"
-                }
                 dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Don_Tao_auto_18h.yml/dispatches"
                 res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main", "inputs": {"headless": "true"}}, timeout=10)
                 print(f"[CRON TRIGGER] B2B 18:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
                 return
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching B2B to GitHub Actions: {e}", flush=True)
+
+        if script_name == "tiger_lastmile_trips_scraper.py" and is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Lastmile_4_Vung_Auto_05h.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                print(f"[CRON TRIGGER] Lastmile 05:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching Lastmile to GitHub Actions: {e}", flush=True)
+
+        if script_name == "tiger_gtc_kpi_reporter.py" and is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_KPI_07h00.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                print(f"[CRON TRIGGER] KPI 07:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching KPI to GitHub Actions: {e}", flush=True)
 
         script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
@@ -6061,7 +6080,7 @@ def api_war_room_run_b2b():
             status="RUNNING"
         )
         try:
-            gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "sOsXG3V9tttGRxSOXfHoBFEfKc3Y3z3aO0Dq")
+            gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "MH2DavxhnFOlhoNtBoOamop7bbNHUE4Mtl01")
             gh_repo = "billnguyen1990/tiger-ai-studio"
             gh_headers = {
                 "Authorization": f"token {gh_token}",

@@ -3,6 +3,7 @@ import json
 import datetime
 import os
 import sys
+import time
 
 # Đường dẫn file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,6 +17,21 @@ TELEGRAM_MESSAGE_THREAD_ID = 2690
 
 URL_TRIPS = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-list-by-hub"
 URL_ITEMS = "https://nhanh-api.ghn.vn/api/lastmile/v2/trip/get-trip-items"
+
+def post_with_retry(url, headers, payload, max_retries=3, timeout=12):
+    """Gửi POST request tới GHN API với cơ chế tự động thử lại khi mạng chập chờn"""
+    for attempt in range(1, max_retries + 1):
+        try:
+            r = requests.post(url, headers=headers, json=payload, timeout=timeout)
+            if r.status_code == 200:
+                return r.json()
+            elif attempt == max_retries:
+                print(f"⚠️ API {url} HTTP {r.status_code}: {r.text[:120]}")
+        except Exception as e:
+            if attempt == max_retries:
+                print(f"⚠️ Lỗi kết nối {url} (lần {attempt}/{max_retries}): {e}")
+            time.sleep(1)
+    return {}
 
 def get_headers():
     if not os.path.exists(HEADERS_FILE):
@@ -85,7 +101,7 @@ def run_kpi_audit(target_date=None):
                 "limit": 100
             }
             try:
-                res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=10).json()
+                res = post_with_retry(URL_TRIPS, headers=headers, payload=payload, max_retries=3, timeout=12)
                 trips = res.get("data", []) or []
                 for t in trips:
                     c_date = t.get("createDateIndex")
@@ -122,7 +138,7 @@ def run_kpi_audit(target_date=None):
                 "TripCode": tc
             }
             try:
-                r_items = requests.post(URL_ITEMS, headers=headers, json=p_items, timeout=10).json()
+                r_items = post_with_retry(URL_ITEMS, headers=headers, payload=p_items, max_retries=3, timeout=12)
                 items = r_items.get("data", []) or []
                 for it in items:
                     total_assigned += 1
@@ -150,7 +166,7 @@ def run_kpi_audit(target_date=None):
                 "TripCode": tc
             }
             try:
-                r_pick = requests.post(URL_ITEMS, headers=headers, json=p_pick, timeout=10).json()
+                r_pick = post_with_retry(URL_ITEMS, headers=headers, payload=p_pick, max_retries=3, timeout=12)
                 items_pick = r_pick.get("data", []) or []
                 for it in items_pick:
                     pick_assigned += 1
@@ -244,6 +260,14 @@ def format_kpi_message(results):
 
     # Thống kê từng kho
     hubs_data = results["hubs"]
+
+    total_assigned_all = sum(h["total_assigned"] for h in hubs_data.values())
+    if total_assigned_all == 0:
+        lines.append("⚠️ <b>CHƯA CÓ DỮ LIỆU ĐƠN GIAO / LẤY CA NGÀY HÔM QUA</b>")
+        lines.append("<i>Hệ thống GHN không ghi nhận chuyến đi hoặc đơn hàng nào phát sinh cho 4 kho MT01.</i>")
+        lines.append("━" * 30)
+        lines.append("💡 <i>Các kho lưu ý kiểm tra lại tiến độ gán đơn và cập nhật trạng thái đơn hàng!</i>")
+        return "\n".join(lines)
 
     # 1. KHO ĐẠT CHUẨN (>= 85%)
     dat_chuan = [h for h in hubs_data.values() if h["status_level"] == "DAT_CHUAN"]
@@ -355,7 +379,13 @@ def main():
     print(msg)
     print("=" * 55 + "\n")
 
+    total_all = sum(h.get("total_assigned", 0) for h in data.get("hubs", {}).values())
+
     if is_send:
+        if total_all == 0 and "--force-empty" not in args:
+            print("⚠️ CẢNH BÁO AN TOÀN: Tổng số đơn gán bằng 0 (khả năng lỗi kết nối API GHN hoặc chưa có chuyến).")
+            print("🛑 HỦY gửi tin nhắn rỗng lên Telegram để bảo vệ chất lượng thông tin nhóm vận hành!")
+            return
         print("🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...")
         send_telegram_alert(msg)
     else:
