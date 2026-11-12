@@ -5780,6 +5780,15 @@ try:
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching Checkin to GitHub Actions: {e}", flush=True)
 
+        if script_name == "tiger_unassigned_backlog_reporter.py" and is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Unassigned_10h00.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                print(f"[CRON TRIGGER] Unassigned 10:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching Unassigned to GitHub Actions: {e}", flush=True)
+
         script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
             subprocess.run([sys.executable, script_path, "--send"], cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
@@ -5895,6 +5904,14 @@ def run_cron_webhook(task_key):
             dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Checkin_07h35.yml/dispatches"
             res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
             return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (07:35 AM Checkin)", "status": res.status_code})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    if task_key == "unassigned" and is_cloud_env:
+        try:
+            dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Unassigned_10h00.yml/dispatches"
+            res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+            return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (10:00 AM Unassigned)", "status": res.status_code})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)}), 500
 

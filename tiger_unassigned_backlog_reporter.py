@@ -4,10 +4,12 @@ import datetime
 import os
 import sys
 import re
+import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 MAP_FILE = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
+HISTORY_DIR = os.path.join(BASE_DIR, "unassigned_history")
 
 # Telegram Config (Group: Miền Tây 01 - Topic: Báo Cáo)
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
@@ -122,12 +124,22 @@ def run_unassigned_audit():
         "order_type": "DAILY_TRIP_NONE"
     }
 
-    r = requests.post(URL_GENERAL, json=payload, headers=headers, timeout=10).json()
-    items = r.get("data", []) or []
+    items = []
+    for attempt in range(2):
+        try:
+            r = requests.post(URL_GENERAL, json=payload, headers=headers, timeout=12).json()
+            items = r.get("data", []) or []
+            break
+        except Exception as e:
+            if attempt == 0:
+                time.sleep(1)
+            else:
+                print(f"⚠️ Lỗi kết nối API đơn chưa gán: {e}")
 
     results = {
         "date_str": now.strftime("%d/%m/%Y"),
         "time_str": now.strftime("%H:%M"),
+        "timestamp_iso": now.isoformat(),
         "hubs": {}
     }
 
@@ -157,10 +169,12 @@ def run_unassigned_audit():
                     if cnt > 0 and code_grp:
                         bucket_codes[dur] = code_grp
 
-        # Lấy chi tiết đơn hàng
+        # Lấy chi tiết đơn hàng (Tối ưu: chỉ lấy tối đa 5 đơn mỗi kho để siêu tốc)
         detailed_orders = []
         headers["x-warehouseid"] = hid
         for dur, grp_code in bucket_codes.items():
+            if len(detailed_orders) >= 5:
+                break
             dur_display = next((d_lbl for k, d_lbl in DURATION_LABELS if k == dur), dur)
             try:
                 r_c = requests.post(URL_DETAIL, json={
@@ -169,7 +183,9 @@ def run_unassigned_audit():
                     "order_type": "DAILY_TRIP_NONE"
                 }, headers=headers, timeout=10).json()
                 ocodes = r_c.get("data", {}).get("order_codes", []) or []
-                for oc in ocodes[:15]: # Giới hạn 15 đơn tiêu biểu mỗi khung để tin nhắn không quá dài
+                for oc in ocodes[:5]:
+                    if len(detailed_orders) >= 5:
+                        break
                     reason = extract_order_reason_and_appointment(headers, oc)
                     detailed_orders.append({
                         "order_code": oc,
@@ -187,6 +203,15 @@ def run_unassigned_audit():
             "buckets": bucket_counts,
             "detailed_orders": detailed_orders
         }
+
+    # Lưu lịch sử JSON
+    try:
+        os.makedirs(HISTORY_DIR, exist_ok=True)
+        hist_file = os.path.join(HISTORY_DIR, f"unassigned_{now.strftime('%Y%m%d_%H%M')}.json")
+        with open(hist_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"⚠️ Không thể lưu lịch sử unassigned: {e}")
 
     return results
 
@@ -258,9 +283,17 @@ def send_telegram_alert(text):
 def main():
     args = sys.argv[1:]
     is_send = "--send" in args
+    is_force = "--force" in args
 
     print("⏳ Tiger AI đang quét đơn chưa gán & 10 khung giờ lưu kho 10:00 cho 4 kho MT01...")
     data = run_unassigned_audit()
+
+    if (not data or not data.get("hubs")) and not is_force:
+        print("❌ CẢNH BÁO: Không lấy được dữ liệu đơn chưa gán của 4 kho MT01. Hủy gửi để tránh báo cáo rỗng sai lệch!")
+        if is_send:
+            sys.exit(1)
+        return
+
     msg = format_unassigned_message(data)
 
     print("\n" + "=" * 55)
@@ -271,7 +304,9 @@ def main():
 
     if is_send:
         print("🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...")
-        send_telegram_alert(msg)
+        success = send_telegram_alert(msg)
+        if not success:
+            sys.exit(1)
     else:
         print("💡 Chế độ Dry-Run (chưa gửi). Dùng cờ: --send để gửi thực tế.")
 

@@ -1,0 +1,35 @@
+name: "Tiger AI • Báo Cáo Đơn Chưa Gán Chuyến MT01 (10:00 AM)"
+
+on:
+  schedule:
+    # 10:00 AM Việt Nam (UTC+7) = 03:00 UTC hàng ngày
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: unassigned-mt01-10h00
+  cancel-in-progress: false
+
+jobs:
+  unassigned-mt01:
+    name: "Quét Đơn Chưa Gán & Lưu Kho 4 Kho MT01 (10:00 AM)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Tải mã nguồn repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Cài đặt Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Cài đặt thư viện requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: 🚀 Chạy báo cáo đơn chưa gán & Gửi Telegram MT01
+        run: |
+          python tiger_unassigned_backlog_reporter.py --send
