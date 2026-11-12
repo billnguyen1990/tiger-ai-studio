@@ -42,3 +42,4 @@ jobs:
           else
             python tiger_truck_odo_reporter.py --fast
           fi
+

@@ -9,6 +9,7 @@ import time
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 MAP_FILE = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
+HISTORY_DIR = os.path.join(BASE_DIR, "checkin_history")
 
 # Telegram Config (Group: Miền Tây 01 - Topic: Báo Cáo)
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
@@ -43,6 +44,12 @@ def run_checkin_audit(target_date=None):
     now = get_vietnam_now()
     if target_date is None:
         target_date = now.date()
+    elif isinstance(target_date, str):
+        target_date = target_date.strip()
+        if "-" in target_date:
+            target_date = datetime.datetime.strptime(target_date, "%Y-%m-%d").date()
+        else:
+            target_date = datetime.datetime.strptime(target_date, "%Y%m%d").date()
 
     # Dải thời gian UTC tương ứng với 00:00:00 -> 23:59:59 giờ VN (UTC+7)
     dt_vn_start = datetime.datetime(target_date.year, target_date.month, target_date.day, 0, 0, 0)
@@ -58,6 +65,7 @@ def run_checkin_audit(target_date=None):
     
     results = {
         "date": date_display,
+        "target_date_iso": target_date.strftime("%Y-%m-%d"),
         "total_scheduled": 0,
         "total_checked_in": 0,
         "missing_checkin": [],   # Có ca nhưng chưa checkin
@@ -70,16 +78,25 @@ def run_checkin_audit(target_date=None):
         hname = info["short_name"]
         nvxl_tag = info["telegram_tag"]
         
-        # 1. Kéo Lịch làm việc
+        # 1. Kéo Lịch làm việc (với retry)
         p_sched = {
             "hub_id": hid,
             "from_date": from_date_iso,
             "to_date": to_date_iso
         }
-        r_sched = requests.post(URL_SCHEDULE, json=p_sched, headers=headers, timeout=10).json()
-        users_sched = r_sched.get("data", {}).get("users", [])
-        
-        # 2. Kéo Lịch sử check-in
+        users_sched = []
+        for attempt in range(2):
+            try:
+                r_sched = requests.post(URL_SCHEDULE, json=p_sched, headers=headers, timeout=12).json()
+                users_sched = r_sched.get("data", {}).get("users", []) or []
+                break
+            except Exception as e:
+                if attempt == 0:
+                    time.sleep(1)
+                else:
+                    print(f"⚠️ Lỗi kết nối API lịch làm việc kho {hname}: {e}")
+
+        # 2. Kéo Lịch sử check-in (với retry)
         p_checkin = {
             "hub_id": hid,
             "user_id": "",
@@ -88,8 +105,17 @@ def run_checkin_audit(target_date=None):
             "offset": 0,
             "limit": 100
         }
-        r_checkin = requests.post(URL_CHECKIN, json=p_checkin, headers=headers, timeout=10).json()
-        records_checkin = r_checkin.get("data", {}).get("data", [])
+        records_checkin = []
+        for attempt in range(2):
+            try:
+                r_checkin = requests.post(URL_CHECKIN, json=p_checkin, headers=headers, timeout=12).json()
+                records_checkin = r_checkin.get("data", {}).get("data", []) or []
+                break
+            except Exception as e:
+                if attempt == 0:
+                    time.sleep(1)
+                else:
+                    print(f"⚠️ Lỗi kết nối API lịch sử check-in kho {hname}: {e}")
         
         # Map user check-in
         user_checkin_map = {}
@@ -140,39 +166,42 @@ def run_checkin_audit(target_date=None):
                     top = succ[-1] if succ else recs[-1]
                     
                     t_raw = top.get("checkin_at", "")
-                    dt_checkin = datetime.datetime.strptime(t_raw[:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
-                    t_vn_str = dt_checkin.strftime("%H:%M:%S")
-                    
-                    # Chuẩn ca: 07:30
-                    shift_threshold = dt_checkin.replace(hour=7, minute=30, second=0, microsecond=0)
-                    diff_sec = (dt_checkin - shift_threshold).total_seconds()
-                    
-                    if diff_sec > 0:
-                        # Muộn
-                        hub_has_late = True
-                        diff_min = int(diff_sec // 60)
-                        results["late_checkin"].append({
-                            "hub_id": hid,
-                            "hub_name": hname,
-                            "nvxl_tag": nvxl_tag,
-                            "user_id": uid,
-                            "user_name": uname,
-                            "checkin_time": t_vn_str,
-                            "diff_min": diff_min,
-                            "message": top.get("message", "")
-                        })
-                    else:
-                        # Sớm
-                        diff_min = int(abs(diff_sec) // 60)
-                        results["early_checkin"].append({
-                            "hub_id": hid,
-                            "hub_name": hname,
-                            "nvxl_tag": nvxl_tag,
-                            "user_id": uid,
-                            "user_name": uname,
-                            "checkin_time": t_vn_str,
-                            "diff_min": diff_min
-                        })
+                    try:
+                        dt_checkin = datetime.datetime.strptime(t_raw[:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
+                        t_vn_str = dt_checkin.strftime("%H:%M:%S")
+                        
+                        # Chuẩn ca: 07:30
+                        shift_threshold = dt_checkin.replace(hour=7, minute=30, second=0, microsecond=0)
+                        diff_sec = (dt_checkin - shift_threshold).total_seconds()
+                        
+                        if diff_sec > 0:
+                            # Muộn
+                            hub_has_late = True
+                            diff_min = int(diff_sec // 60)
+                            results["late_checkin"].append({
+                                "hub_id": hid,
+                                "hub_name": hname,
+                                "nvxl_tag": nvxl_tag,
+                                "user_id": uid,
+                                "user_name": uname,
+                                "checkin_time": t_vn_str,
+                                "diff_min": diff_min,
+                                "message": top.get("message", "")
+                            })
+                        else:
+                            # Sớm
+                            diff_min = int(abs(diff_sec) // 60)
+                            results["early_checkin"].append({
+                                "hub_id": hid,
+                                "hub_name": hname,
+                                "nvxl_tag": nvxl_tag,
+                                "user_id": uid,
+                                "user_name": uname,
+                                "checkin_time": t_vn_str,
+                                "diff_min": diff_min
+                            })
+                    except Exception as e:
+                        print(f"⚠️ Lỗi phân tích giờ checkin user {uid}: {e}")
                         
         if not hub_has_late and not hub_has_missing and hub_scheduled_count > 0:
             results["spotless_hubs"].append({
@@ -185,6 +214,16 @@ def run_checkin_audit(target_date=None):
     # Sắp xếp
     results["early_checkin"].sort(key=lambda x: x["checkin_time"])
     results["late_checkin"].sort(key=lambda x: x["diff_min"], reverse=True)
+
+    # Lưu lịch sử checkin JSON phục vụ dashboard / tra cứu
+    try:
+        os.makedirs(HISTORY_DIR, exist_ok=True)
+        hist_file = os.path.join(HISTORY_DIR, f"checkin_{target_date.strftime('%Y%m%d')}.json")
+        with open(hist_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"⚠️ Không thể ghi file lịch sử checkin: {e}")
+
     return results
 
 def format_telegram_message(audit_data):
@@ -265,10 +304,23 @@ def send_telegram_alert(text):
 def main():
     args = sys.argv[1:]
     is_send = "--send" in args
-    is_dry = "--dry-run" in args or not is_send
+    is_force = "--force" in args
+    
+    target_date = None
+    for idx, arg in enumerate(args):
+        if arg == "--date" and idx + 1 < len(args):
+            target_date = args[idx + 1]
     
     print("⏳ Tiger AI đang quét Lịch Làm Việc & Lịch Sử Check-in MT01...")
-    data = run_checkin_audit()
+    data = run_checkin_audit(target_date=target_date)
+
+    # Chốt chặn an toàn chống rỗng (Anti-Zero Safeguard)
+    if data["total_scheduled"] == 0 and not is_force:
+        print("❌ CẢNH BÁO: Không lấy được dữ liệu lịch làm việc của 4 kho MT01 (Tổng quân số = 0). Hủy gửi báo cáo để tránh thông tin rỗng sai lệch!")
+        if is_send:
+            sys.exit(1)
+        return
+
     msg = format_telegram_message(data)
     
     print("\n" + "=" * 50)
@@ -279,7 +331,9 @@ def main():
     
     if is_send:
         print("🚀 Đang tiến hành gửi lên nhóm Telegram...")
-        send_telegram_alert(msg)
+        success = send_telegram_alert(msg)
+        if not success:
+            sys.exit(1)
     else:
         print("💡 Chế độ Dry-Run (chưa gửi). Để gửi thực tế lên Telegram, chạy lệnh: python tiger_checkin_reporter.py --send")
 

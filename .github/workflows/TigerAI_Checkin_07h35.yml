@@ -1,0 +1,44 @@
+name: "Tiger AI • Điểm Danh & Check-in Đầu Ca MT01 (07:35 AM)"
+
+on:
+  schedule:
+    # 07:35 AM Việt Nam (UTC+7) = 00:35 UTC hàng ngày
+    - cron: '35 0 * * *'
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Ngày kiểm tra YYYY-MM-DD hoặc YYYYMMDD (để trống = tự động lấy ngày hôm nay)'
+        required: false
+        default: ''
+
+concurrency:
+  group: checkin-mt01-07h35
+  cancel-in-progress: false
+
+jobs:
+  checkin-mt01:
+    name: "Quét Điểm Danh & Giờ Check-in 4 Kho MT01 (07:35 AM)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Tải mã nguồn repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Cài đặt Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Cài đặt thư viện requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: 🚀 Chạy quét điểm danh & Gửi Telegram MT01
+        run: |
+          if [ -n "${{ github.event.inputs.target_date }}" ]; then
+            python tiger_checkin_reporter.py --date "${{ github.event.inputs.target_date }}" --send
+          else
+            python tiger_checkin_reporter.py --send
+          fi
