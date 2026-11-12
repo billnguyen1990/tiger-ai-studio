@@ -3580,21 +3580,28 @@ def debug_order_endpoint(order_code):
         except Exception as e:
             hd = {"error": str(e)}
 
-    url_common = "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info"
-    res_info = {}
-    try:
-        rc = requests.post(url_common, json={"order_code": order_code}, headers=hd, timeout=8)
-        res_info["status"] = rc.status_code
-        res_info["text"] = rc.text[:300]
-    except Exception as e:
-        res_info["exception"] = str(e)
+    endpoints = {
+        "nhanh_common": ("POST", "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info", {"order_code": order_code}, hd),
+        "online_gateway": ("GET", f"https://online-gateway.ghn.vn/order-tracking/public-api/client/tracking-logs?order_code={order_code}", None, {"User-Agent": "Mozilla/5.0"}),
+        "fe_gateway": ("GET", f"https://fe-online-gateway.ghn.vn/order-tracking/public-api/client/tracking-logs?order_code={order_code}", None, {"User-Agent": "Mozilla/5.0"}),
+        "public_tracking": ("POST", "https://donhang.ghn.vn/api/client/tracking-logs", {"order_code": order_code}, {"User-Agent": "Mozilla/5.0", "Content-Type": "application/json"}),
+        "camera_api": ("POST", "https://camera-api.ghn.vn/public-api/permission/getPermission", {}, hd)
+    }
+
+    results = {}
+    for name, (method, url, payload, headers) in endpoints.items():
+        try:
+            if method == "POST":
+                r = requests.post(url, json=payload, headers=headers, timeout=5)
+            else:
+                r = requests.get(url, headers=headers, timeout=5)
+            results[name] = {"status": r.status_code, "text": r.text[:200]}
+        except Exception as ex:
+            results[name] = {"exception": str(ex)}
 
     return jsonify({
         "order": order_code,
-        "headers_file": headers_file,
-        "exists": exists,
-        "auth_preview": str(hd.get("authorization", ""))[:50],
-        "common_api": res_info
+        "results": results
     })
 
 def generate_gold_report():
