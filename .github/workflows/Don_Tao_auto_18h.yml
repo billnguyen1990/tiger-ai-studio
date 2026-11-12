@@ -1,9 +1,10 @@
-name: "Tiger AI • Looker Studio B2B Cloud Automation (18:00)"
+﻿name: "Tiger AI • Looker Studio B2B Cloud Automation (18:00)"
 
 on:
-  schedule:
-    # 18:00 Việt Nam (UTC+7) = 11:00 UTC hàng ngày
-    - cron: '0 11 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud]
+#   schedule:
+#     # 18:00 Việt Nam (UTC+7) = 11:00 UTC hàng ngày
+#     - cron: '0 11 * * *'
   workflow_dispatch:
     inputs:
       headless:

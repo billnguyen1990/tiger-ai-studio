@@ -1,9 +1,10 @@
-name: "Tiger AI • Đối Soát ODO Xe Tải 365 Toàn Miền Tây (02:00 AM)"
+﻿name: "Tiger AI • Đối Soát ODO Xe Tải 365 Toàn Miền Tây (02:00 AM)"
 
 on:
-  schedule:
-    # 02:00 AM Việt Nam (UTC+7) = 19:00 UTC hôm trước
-    - cron: '0 19 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud]
+#   schedule:
+#     # 02:00 AM Việt Nam (UTC+7) = 19:00 UTC hôm trước
+#     - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
       target_date:

@@ -1,9 +1,10 @@
-name: "Tiger AI • Điểm Danh & Check-in Đầu Ca MT01 (07:35 AM)"
+﻿name: "Tiger AI • Điểm Danh & Check-in Đầu Ca MT01 (07:35 AM)"
 
 on:
-  schedule:
-    # 07:35 AM Việt Nam (UTC+7) = 00:35 UTC hàng ngày
-    - cron: '35 0 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud]
+#   schedule:
+#     # 07:35 AM Việt Nam (UTC+7) = 00:35 UTC hàng ngày
+#     - cron: '35 0 * * *'
   workflow_dispatch:
     inputs:
       target_date:

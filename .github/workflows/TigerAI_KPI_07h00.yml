@@ -1,9 +1,10 @@
-name: "Tiger AI • Báo Cáo KPI Giao & Lấy Hàng MT01 (07:00 AM)"
+﻿name: "Tiger AI • Báo Cáo KPI Giao & Lấy Hàng MT01 (07:00 AM)"
 
 on:
-  schedule:
-    # 07:00 AM Việt Nam (UTC+7) = 00:00 UTC hàng ngày
-    - cron: '0 0 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud]
+#   schedule:
+#     # 07:00 AM Việt Nam (UTC+7) = 00:00 UTC hàng ngày
+#     - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
       target_date:

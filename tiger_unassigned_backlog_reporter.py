@@ -285,6 +285,18 @@ def main():
     is_send = "--send" in args
     is_force = "--force" in args
 
+    # 🛡️ TIME GUARD: Khóa bảo vệ khung giờ vàng (Chỉ cho phép 09:15 - 11:30 AM giờ VN)
+    try:
+        from datetime import datetime, timezone, timedelta
+        vn_now = datetime.now(timezone(timedelta(hours=7)))
+        is_valid_window = (vn_now.hour == 9 and vn_now.minute >= 15) or (vn_now.hour == 10) or (vn_now.hour == 11 and vn_now.minute <= 30)
+        if not is_force and not is_valid_window:
+            print(f"🛑 [TIME GUARD] Hiện tại là {vn_now.strftime('%H:%M:%S')}, không nằm trong khung giờ báo cáo 10:00 sáng (09:15 - 11:30)!")
+            print("🛡️ Tiger AI tự động hủy lệnh gửi Telegram để tránh gửi tin nhắn sai lệch/chậm trễ. Dùng --force nếu muốn chạy thử nghiệm.")
+            return
+    except Exception as e:
+        print(f"[TIME GUARD WARNING] Lỗi kiểm tra giờ: {e}")
+
     print("⏳ Tiger AI đang quét đơn chưa gán & 10 khung giờ lưu kho 10:00 cho 4 kho MT01...")
     data = run_unassigned_audit()
 

@@ -1,9 +1,10 @@
-name: "Tiger AI • Cào Chuyến Đi Lastmile 4 Vùng Miền Tây (05:00 AM)"
+﻿name: "Tiger AI • Cào Chuyến Đi Lastmile 4 Vùng Miền Tây (05:00 AM)"
 
 on:
-  schedule:
-    # 05:00 AM Việt Nam (UTC+7) = 22:00 UTC hôm trước
-    - cron: '0 22 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud]
+#   schedule:
+#     # 05:00 AM Việt Nam (UTC+7) = 22:00 UTC hôm trước
+#     - cron: '0 22 * * *'
   workflow_dispatch:
     inputs:
       target_date:

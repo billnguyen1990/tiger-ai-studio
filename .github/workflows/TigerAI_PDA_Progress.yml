@@ -1,9 +1,10 @@
-name: "Tiger AI • Tiến Độ Giao Hàng & Thao Tác PDA (10h, 12h, 15h, 19h)"
+﻿name: "Tiger AI • Tiến Độ Giao Hàng & Thao Tác PDA (10h, 12h, 15h, 19h)"
 
 on:
-  schedule:
-    # 10:00 (03:00 UTC), 12:00 (05:00 UTC), 15:00 (08:00 UTC), 19:00 (12:00 UTC) Việt Nam
-    - cron: '0 3,5,8,12 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud]
+#   schedule:
+#     # 10:00 (03:00 UTC), 12:00 (05:00 UTC), 15:00 (08:00 UTC), 19:00 (12:00 UTC) Việt Nam
+#     - cron: '0 3,5,8,12 * * *'
   workflow_dispatch:
     inputs:
       target_date:
