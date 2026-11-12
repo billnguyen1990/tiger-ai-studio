@@ -2848,12 +2848,14 @@ def query_ghn_order_history(order_code):
     # 1. TRUY VẤN COMMON-INFO (THÔNG TIN KHO & TRẠNG THÁI VẬN HÀNH)
     url_common = "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info"
     common_data = {}
+    is_conn_error = False
     try:
         rc = requests.post(url_common, json={"order_code": order_code}, headers=headers, timeout=8)
         if rc.status_code == 200:
             common_data = rc.json().get("data", {}) or {}
-    except Exception:
-        pass
+    except Exception as e:
+        if any(k in str(e).lower() for k in ["timeout", "connection", "connecttimeout", "max retries"]):
+            is_conn_error = True
 
     # 2. TRUY VẤN GET-ORDER-HISTORY (NHẬT KÝ THAO TÁC LASTMILE)
     url_hist = "https://nhanh-api.ghn.vn/api/lastmile/history/get-order-history"
@@ -2862,14 +2864,17 @@ def query_ghn_order_history(order_code):
         rh = requests.post(url_hist, json={"orderCode": order_code, "paging": {"offset": 0, "limit": 20}}, headers=headers, timeout=8)
         if rh.status_code == 200:
             events = rh.json().get("data", {}).get("data", []) or []
-    except Exception:
-        pass
+    except Exception as e:
+        if any(k in str(e).lower() for k in ["timeout", "connection", "connecttimeout", "max retries"]):
+            is_conn_error = True
 
     if not common_data and not events:
+        status_msg = "Lỗi kết nối máy chủ GHN (Tường lửa chặn IP Cloud)" if is_conn_error else "Không tìm thấy dữ liệu trên GHN"
         return {
             "order_code": order_code,
             "found": False,
-            "status_text": "Không tìm thấy dữ liệu trên GHN",
+            "is_conn_error": is_conn_error,
+            "status_text": status_msg,
             "actor": "—",
             "hub_name": "—",
             "time": "—",
@@ -3560,48 +3565,6 @@ def track_orders_endpoint():
         "total": len(results),
         "orders": results,
         "tracuu_base_url": "https://tracuunoibo.ghn.vn/internal"
-    })
-
-@app.route("/api/debug-order/<order_code>")
-def debug_order_endpoint(order_code):
-    import requests
-    headers_file = os.path.join(PARENT_DIR, "headers_found.json")
-    if not os.path.exists(headers_file):
-        headers_file = os.path.join(os.path.dirname(BASE_DIR), "headers_found.json")
-    if not os.path.exists(headers_file):
-        headers_file = os.path.join(BASE_DIR, "headers_found.json")
-
-    hd = {}
-    exists = os.path.exists(headers_file)
-    if exists:
-        try:
-            with open(headers_file, "r", encoding="utf-8") as f:
-                hd = json.load(f)
-        except Exception as e:
-            hd = {"error": str(e)}
-
-    endpoints = {
-        "nhanh_common": ("POST", "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info", {"order_code": order_code}, hd),
-        "online_gateway": ("GET", f"https://online-gateway.ghn.vn/order-tracking/public-api/client/tracking-logs?order_code={order_code}", None, {"User-Agent": "Mozilla/5.0"}),
-        "fe_gateway": ("GET", f"https://fe-online-gateway.ghn.vn/order-tracking/public-api/client/tracking-logs?order_code={order_code}", None, {"User-Agent": "Mozilla/5.0"}),
-        "public_tracking": ("POST", "https://donhang.ghn.vn/api/client/tracking-logs", {"order_code": order_code}, {"User-Agent": "Mozilla/5.0", "Content-Type": "application/json"}),
-        "camera_api": ("POST", "https://camera-api.ghn.vn/public-api/permission/getPermission", {}, hd)
-    }
-
-    results = {}
-    for name, (method, url, payload, headers) in endpoints.items():
-        try:
-            if method == "POST":
-                r = requests.post(url, json=payload, headers=headers, timeout=5)
-            else:
-                r = requests.get(url, headers=headers, timeout=5)
-            results[name] = {"status": r.status_code, "text": r.text[:200]}
-        except Exception as ex:
-            results[name] = {"exception": str(ex)}
-
-    return jsonify({
-        "order": order_code,
-        "results": results
     })
 
 def generate_gold_report():
@@ -5115,6 +5078,30 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
     )
 
     if order_codes and is_lookup_intent:
+        is_cloud_env = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
+        if is_cloud_env:
+            print(f"[Cloud Tra Đơn] Phát hiện {len(order_codes)} mã đơn trên Cloud. Tường lửa GHN chặn IP nước ngoài -> Nhường cho Local Relay tại VN xử lý!")
+            def _cloud_fallback_watch(tgt_codes, t_id, m_id, c_id):
+                time.sleep(12)
+                try:
+                    msgs = _load_telegram_bridge_messages()
+                    already_replied = any(
+                        m.get("replied_to_msg_id") == m_id and m.get("direction") in ("outgoing", "outgoing_auto")
+                        for m in msgs
+                    )
+                    if not already_replied:
+                        links = "\n".join([f"• 🔗 <a href='https://tracuunoibo.ghn.vn/internal?order_code={c}'>Tracuunoibo: <b>{c}</b> ↗</a>" for c in tgt_codes[:5]])
+                        fb_msg = (
+                            f"⚠️ <b>[TRA CỨU ĐƠN GHN]</b> Máy trạm nội bộ MT01 hiện đang tạm nghỉ hoặc ngoại tuyến.\n"
+                            f"Hệ thống Cloud tại Singapore bị tường lửa GHN chặn kết nối mạng nội bộ. Sếp & anh em vui lòng bấm link tra cứu trực tiếp:\n\n{links}"
+                        )
+                        _send_telegram_group_message(fb_msg, topic_id=t_id, reply_to_message_id=m_id, target_chat_id=c_id)
+                except Exception as ex_fb:
+                    print("[Cloud Fallback Error]", ex_fb)
+
+            threading.Thread(target=_cloud_fallback_watch, args=(order_codes, topic_id, msg_id, sender_chat_id), daemon=True).start()
+            return
+
         _record_order_search_usage(entry.get("sender_name", ""), entry.get("username", ""), entry.get("hub_badge", ""), order_codes)
         target_codes = order_codes[:10]
         if len(target_codes) == 1:
@@ -5347,6 +5334,7 @@ def _process_single_telegram_update(upd):
     entry = {
         "id": f"tg_in_{msg.get('message_id')}",
         "message_id": msg.get("message_id"),
+        "chat_id": (msg.get("chat") or {}).get("id") or TELEGRAM_BRIDGE_CHAT_ID,
         "direction": "incoming",
         "sender_name": sender_name,
         "username": username_disp,
