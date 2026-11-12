@@ -5744,6 +5744,15 @@ try:
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching B2B to GitHub Actions: {e}", flush=True)
 
+        if script_name == "tiger_truck_odo_reporter.py" and is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Truck_ODO_02h00.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                print(f"[CRON TRIGGER] Truck ODO 02:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching Truck ODO to GitHub Actions: {e}", flush=True)
+
         if script_name == "tiger_lastmile_trips_scraper.py" and is_cloud_env:
             try:
                 dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/Lastmile_4_Vung_Auto_05h.yml/dispatches"
@@ -5873,6 +5882,13 @@ def run_cron_webhook(task_key):
         return jsonify({"success": False, "error": f"Unknown cron task '{task_key}'"}), 404
     script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
     if task_key in ["truck_odo", "odo"]:
+        if is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Truck_ODO_02h00.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (02:00 AM)", "status": res.status_code})
+            except Exception as e:
+                return jsonify({"success": False, "error": str(e)}), 500
         def _bg_cron():
             print(f"[CRON WEBHOOK] Bắt đầu quét ODO Xe Tải 365 ngầm...", flush=True)
             subprocess.run([sys.executable, script_path, "--send"], cwd=BASE_DIR, creationflags=CREATE_NO_WINDOW)

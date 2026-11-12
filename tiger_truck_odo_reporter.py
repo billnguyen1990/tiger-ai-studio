@@ -366,6 +366,17 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
     total_trucks = len(all_truck_results)
     print(f"\n👉 TỔNG CỘNG XE TẢI HỢP LỆ (NGÀY N-1 {date_display}): {total_trucks} chuyến xe tải của 21 kho", flush=True)
 
+    if total_trucks == 0 and "--force-empty" not in sys.argv:
+        print("⚠️ CẢNH BÁO AN TOÀN: Tổng số xe tải hợp lệ = 0 (khả năng lỗi kết nối API GHN hoặc chưa có chuyến xe tải).", flush=True)
+        print("🛑 HỦY gửi báo cáo rỗng lên Telegram và Google Sheets để chống spam và sai lệch số liệu vận hành!", flush=True)
+        return {
+            "success": False,
+            "date": date_display,
+            "total_trucks": 0,
+            "warehouse_stats": warehouse_stats,
+            "sheet_status": "Đã chặn gửi báo cáo rỗng an toàn"
+        }
+
     # Sắp xếp theo thứ tự kho chuẩn của Sếp
     wh_order = list(WAREHOUSES_21.values())
     def sort_key(x):
