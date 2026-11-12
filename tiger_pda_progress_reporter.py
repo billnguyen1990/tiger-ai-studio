@@ -4,10 +4,12 @@ import datetime
 import os
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 MAP_FILE = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
+HISTORY_DIR = os.path.join(BASE_DIR, "pda_history")
 
 # Telegram Config (Group: Miền Tây 01 - Topic: Báo Cáo)
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
@@ -31,7 +33,7 @@ def get_nvxl_map():
     with open(MAP_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=20):
+def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=15):
     """Gửi request POST tới GHN với cơ chế tự động thử lại (Retry) khi gặp nghẽn mạng/timeout"""
     for attempt in range(max_retries):
         try:
@@ -41,7 +43,6 @@ def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=20):
                 code = data.get("code")
                 err = data.get("error")
                 err_code = data.get("errorCode")
-                # GHN có API trả code 0, có API trả code 200, có API trả error=None/False và data != None
                 is_success = (code in [0, 200, "0", "200", None]) and (not err) and (err_code in [0, "0", None])
                 if is_success:
                     return data
@@ -50,16 +51,17 @@ def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=20):
             else:
                 print(f"  [Lần {attempt+1}/{max_retries}] HTTP status {r.status_code}")
         except Exception as e:
-            print(f"  [Lần {attempt+1}/{max_retries}] Lỗi kết nối: {e}")
+            if attempt == max_retries - 1:
+                print(f"  [Lần {attempt+1}/{max_retries}] Lỗi kết nối: {e}")
         
         if attempt < max_retries - 1:
-            time.sleep(1.0 * (attempt + 1))
+            time.sleep(0.5 * (attempt + 1))
     return None
 
 def get_order_assign_count(headers, order_code):
     """Đếm số lần đơn hàng này đã từng bị gán giao (số lần đi giao)"""
     try:
-        res = fetch_ghn_post(URL_ORDER_HIST, headers, {"orderCode": order_code, "paging": {"offset": 0, "limit": 30}}, max_retries=2, timeout=10)
+        res = fetch_ghn_post(URL_ORDER_HIST, headers, {"orderCode": order_code, "paging": {"offset": 0, "limit": 30}}, max_retries=2, timeout=8)
         items = (res.get("data", {}).get("data", []) or []) if res else []
         assign_cnt = sum(1 for it in items if it.get("historyType") in ["ASSIGN_TRIP", "START_TRIP", "ASSIGN"])
         return max(1, assign_cnt)
@@ -71,27 +73,140 @@ def get_vietnam_now():
     vn_tz = datetime.timezone(datetime.timedelta(hours=7))
     return utc_now.astimezone(vn_tz)
 
-def run_pda_progress_audit():
+def _process_single_trip(t, headers, need_hist):
+    """Xử lý chi tiết 1 chuyến đi: lấy đơn hàng và timeline PDA"""
+    tc = t.get("tripCode")
+    driver = t.get("driverName") or "Chưa rõ"
+    trip_status = t.get("status")
+
+    # Lấy danh sách đơn của chuyến với retry
+    p_items = {"typeList": ["DELIVER"], "offset": 0, "limit": 200, "TripCode": tc}
+    res_items = fetch_ghn_post(URL_ITEMS, headers, p_items, max_retries=2, timeout=12)
+    items = (res_items.get("data", []) or []) if res_items else []
+
+    trip_gtc = 0
+    trip_gtb = 0
+    trip_dang_giao = 0
+    trip_gtb_details = []
+
+    for it in items:
+        is_up = it.get("isUpdated", False)
+        is_suc = it.get("isSucceeded", False)
+        if not is_up:
+            trip_dang_giao += 1
+        elif is_suc:
+            trip_gtc += 1
+        else:
+            trip_gtb += 1
+            fn = it.get("failNote") or "Không rõ lý do"
+            oc = it.get("orderCode")
+            trip_gtb_details.append({
+                "order_code": oc,
+                "driver_name": driver,
+                "trip_code": tc,
+                "fail_reason": fn,
+                "assign_count": 1
+            })
+
+    first_act = "-"
+    last_act = "-"
+    start_vn = "-"
+    end_vn = "Đang chạy" if trip_status == "ON_TRIP" else ("Hoàn tất" if trip_status == "FINISHED" else "Mới tạo")
+
+    if need_hist:
+        try:
+            res_hist = fetch_ghn_post(URL_TRIP_HIST, headers, {"tripCode": tc, "paging": {"offset": 0, "limit": 200}}, max_retries=2, timeout=8)
+            h_items = (res_hist.get("data", {}).get("data", []) or []) if res_hist else []
+            h_sorted = sorted(h_items, key=lambda x: x.get("createdTime", ""))
+
+            update_events = [x for x in h_sorted if x.get("historyType") == "UPDATE_ITEM"]
+            if update_events:
+                t_first = update_events[0].get("createdTime", "")
+                t_last = update_events[-1].get("createdTime", "")
+                if t_first:
+                    dt1 = datetime.datetime.strptime(t_first[:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
+                    first_act = dt1.strftime("%H:%M")
+                if t_last:
+                    dt2 = datetime.datetime.strptime(t_last[:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
+                    last_act = dt2.strftime("%H:%M")
+
+            start_evt = next((x for x in h_sorted if x.get("historyType") == "START_TRIP"), None)
+            if start_evt and start_evt.get("createdTime"):
+                dt_s = datetime.datetime.strptime(start_evt["createdTime"][:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
+                start_vn = dt_s.strftime("%H:%M")
+            elif t.get("startTime"):
+                try:
+                    dt_s = datetime.datetime.strptime(t["startTime"][:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
+                    start_vn = dt_s.strftime("%H:%M")
+                except:
+                    pass
+        except:
+            pass
+    elif t.get("startTime"):
+        try:
+            dt_s = datetime.datetime.strptime(t["startTime"][:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
+            start_vn = dt_s.strftime("%H:%M")
+        except:
+            pass
+
+    timeline_entry = {
+        "driver_name": driver,
+        "trip_code": tc,
+        "total_orders": len(items),
+        "done_count": trip_gtc + trip_gtb,
+        "gtc": trip_gtc,
+        "gtb": trip_gtb,
+        "remaining": trip_dang_giao,
+        "start_time": start_vn,
+        "first_action": first_act,
+        "last_action": last_act,
+        "status_text": end_vn
+    }
+
+    return {
+        "total_orders": len(items),
+        "gtc": trip_gtc,
+        "gtb": trip_gtb,
+        "dang_giao": trip_dang_giao,
+        "gtb_details": trip_gtb_details,
+        "timeline": timeline_entry
+    }
+
+def run_pda_progress_audit(target_date=None):
     headers = get_headers()
     nvxl_map = get_nvxl_map()
     now = get_vietnam_now()
-    today_int = int(now.strftime("%Y%m%d"))
-    today_str = str(today_int)
-    today_iso = now.strftime("%Y-%m-%d")
+
+    if target_date is None:
+        target_dt = now.date()
+    elif isinstance(target_date, str):
+        target_date = target_date.strip()
+        if "-" in target_date:
+            target_dt = datetime.datetime.strptime(target_date, "%Y-%m-%d").date()
+        else:
+            target_dt = datetime.datetime.strptime(target_date, "%Y%m%d").date()
+    else:
+        target_dt = target_date
+
+    today_str = target_dt.strftime("%Y%m%d")
+    today_iso = target_dt.strftime("%Y-%m-%d")
     time_str = now.strftime("%H:%M")
 
     results = {
-        "date_str": now.strftime("%d/%m/%Y"),
+        "date_str": target_dt.strftime("%d/%m/%Y"),
         "time_str": time_str,
+        "timestamp_iso": now.isoformat(),
         "hubs": {}
     }
 
-    for hid, info in nvxl_map.items():
+    def _audit_hub(item):
+        hid, info = item
         hname = info["short_name"]
         nvxl_tag = info["telegram_tag"]
-        headers["x-warehouseid"] = str(hid)
+        h_headers = headers.copy()
+        h_headers["x-warehouseid"] = str(hid)
 
-        # 1. Quét các chuyến đi hôm nay (hỗ trợ limit 100 và retry phòng nghẽn)
+        # 1. Quét các chuyến đi
         hub_trips = []
         for st in ["ON_TRIP", "FINISHED", "NEW"]:
             p = {
@@ -102,15 +217,13 @@ def run_pda_progress_audit():
                 "limit": 100,
                 "reverse": 1
             }
-            res = fetch_ghn_post(URL_TRIPS, headers, p, max_retries=3, timeout=20)
+            res = fetch_ghn_post(URL_TRIPS, h_headers, p, max_retries=2, timeout=12)
             trips = (res.get("data", []) or []) if res else []
             for t in trips:
                 c_date = str(t.get("createDateIndex") or "")
                 s_date = str(t.get("startDateIndex") or "")
                 c_time = str(t.get("createdTime") or "")
                 s_time = str(t.get("startTime") or "")
-                
-                # Nhận diện chuyến hôm nay chính xác tuyệt đối qua cả index và timestamp
                 if c_date == today_str or s_date == today_str or c_time.startswith(today_iso) or s_time.startswith(today_iso):
                     hub_trips.append(t)
 
@@ -121,108 +234,25 @@ def run_pda_progress_audit():
         gtb_details = []
         driver_pda_timelines = []
 
-        for t in hub_trips:
-            tc = t.get("tripCode")
-            driver = t.get("driverName") or "Chưa rõ"
-            phone = t.get("driverPhone") or ""
-            trip_status = t.get("status")
+        # 2. Xử lý song song các chuyến đi trong kho (Tối đa 6 luồng/kho)
+        trip_args = [(t, h_headers, idx < 5) for idx, t in enumerate(hub_trips)]
+        with ThreadPoolExecutor(max_workers=6) as trip_executor:
+            trip_results = list(trip_executor.map(lambda a: _process_single_trip(*a), trip_args))
 
-            # Lấy danh sách đơn của chuyến với retry
-            p_items = {"typeList": ["DELIVER"], "offset": 0, "limit": 200, "TripCode": tc}
-            res_items = fetch_ghn_post(URL_ITEMS, headers, p_items, max_retries=2, timeout=15)
-            items = (res_items.get("data", []) or []) if res_items else []
-
-            trip_gtc = 0
-            trip_gtb = 0
-            trip_dang_giao = 0
-
-            for it in items:
-                total_orders += 1
-                is_up = it.get("isUpdated", False)
-                is_suc = it.get("isSucceeded", False)
-                if not is_up:
-                    total_dang_giao += 1
-                    trip_dang_giao += 1
-                elif is_suc:
-                    total_gtc += 1
-                    trip_gtc += 1
-                else:
-                    total_gtb += 1
-                    trip_gtb += 1
-                    fn = it.get("failNote") or "Không rõ lý do"
-                    oc = it.get("orderCode")
-                    # Tối ưu: Chỉ query lịch sử đơn cho top 5 đơn GTB hiển thị để tốc độ cào đạt mức mili-giây
-                    assign_cnt = get_order_assign_count(headers, oc) if len(gtb_details) < 5 else 1
-                    gtb_details.append({
-                        "order_code": oc,
-                        "driver_name": driver,
-                        "trip_code": tc,
-                        "fail_reason": fn,
-                        "assign_count": assign_cnt
-                    })
-
-            # Lấy timeline PDA của chuyến đi (Tối ưu: Chỉ gọi API timeline chi tiết cho top 5 chuyến hiển thị trên báo cáo)
-            first_act = "-"
-            last_act = "-"
-            start_vn = "-"
-            end_vn = "Đang chạy" if trip_status == "ON_TRIP" else ("Hoàn tất" if trip_status == "FINISHED" else "Mới tạo")
-
-            if len(driver_pda_timelines) < 5:
-                try:
-                    res_hist = fetch_ghn_post(URL_TRIP_HIST, headers, {"tripCode": tc, "paging": {"offset": 0, "limit": 200}}, max_retries=2, timeout=8)
-                    h_items = (res_hist.get("data", {}).get("data", []) or []) if res_hist else []
-                    h_sorted = sorted(h_items, key=lambda x: x.get("createdTime", ""))
-
-                    update_events = [x for x in h_sorted if x.get("historyType") == "UPDATE_ITEM"]
-                    if update_events:
-                        t_first = update_events[0].get("createdTime", "")
-                        t_last = update_events[-1].get("createdTime", "")
-                        if t_first:
-                            dt1 = datetime.datetime.strptime(t_first[:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
-                            first_act = dt1.strftime("%H:%M")
-                        if t_last:
-                            dt2 = datetime.datetime.strptime(t_last[:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
-                            last_act = dt2.strftime("%H:%M")
-
-                    start_evt = next((x for x in h_sorted if x.get("historyType") == "START_TRIP"), None)
-                    if start_evt and start_evt.get("createdTime"):
-                        dt_s = datetime.datetime.strptime(start_evt["createdTime"][:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
-                        start_vn = dt_s.strftime("%H:%M")
-                    elif t.get("startTime"):
-                        try:
-                            dt_s = datetime.datetime.strptime(t["startTime"][:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
-                            start_vn = dt_s.strftime("%H:%M")
-                        except:
-                            pass
-                except:
-                    pass
-            elif t.get("startTime"):
-                try:
-                    dt_s = datetime.datetime.strptime(t["startTime"][:19], "%Y-%m-%dT%H:%M:%S") + datetime.timedelta(hours=7)
-                    start_vn = dt_s.strftime("%H:%M")
-                except:
-                    pass
-
-            driver_pda_timelines.append({
-                "driver_name": driver,
-                "trip_code": tc,
-                "total_orders": len(items),
-                "done_count": trip_gtc + trip_gtb,
-                "gtc": trip_gtc,
-                "gtb": trip_gtb,
-                "remaining": trip_dang_giao,
-                "start_time": start_vn,
-                "first_action": first_act,
-                "last_action": last_act,
-                "status_text": end_vn
-            })
+        for tr in trip_results:
+            total_orders += tr["total_orders"]
+            total_gtc += tr["gtc"]
+            total_gtb += tr["gtb"]
+            total_dang_giao += tr["dang_giao"]
+            gtb_details.extend(tr["gtb_details"])
+            driver_pda_timelines.append(tr["timeline"])
 
         # Tính % tiến độ
         processed = total_gtc + total_gtb
         progress_pct = round((processed / total_orders * 100), 1) if total_orders > 0 else 0.0
         gtc_rate = round((total_gtc / processed * 100), 1) if processed > 0 else 0.0
 
-        results["hubs"][hid] = {
+        return hid, {
             "hub_name": hname,
             "nvxl_name": info["nvxl_name"],
             "nvxl_tag": nvxl_tag,
@@ -235,6 +265,22 @@ def run_pda_progress_audit():
             "gtb_details": gtb_details,
             "timelines": driver_pda_timelines
         }
+
+    # Quét đồng thời cả 4 kho MT01
+    with ThreadPoolExecutor(max_workers=4) as hub_executor:
+        hub_data_list = list(hub_executor.map(_audit_hub, nvxl_map.items()))
+
+    for hid, h_data in hub_data_list:
+        results["hubs"][hid] = h_data
+
+    # Tự động lưu lịch sử JSON
+    try:
+        os.makedirs(HISTORY_DIR, exist_ok=True)
+        hist_file = os.path.join(HISTORY_DIR, f"pda_{today_str}_{now.strftime('%H%M')}.json")
+        with open(hist_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"⚠️ Không thể lưu lịch sử PDA: {e}")
 
     return results
 
@@ -320,8 +366,6 @@ def format_pda_message(results):
 
 def send_telegram_alert(text):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    
-    # Tự động chia nhỏ tin nhắn nếu dài hơn giới hạn Telegram (4096 ký tự)
     chunks = []
     if len(text) > 3800:
         parts = text.split("\n\n")
@@ -362,16 +406,22 @@ def send_telegram_alert(text):
 def main():
     args = sys.argv[1:]
     is_send = "--send" in args
+    is_force = "--force" in args
 
-    print("⏳ Tiger AI đang quét tiến độ đơn hàng & timeline PDA 4 kho MT01...")
-    data = run_pda_progress_audit()
+    target_date = None
+    for idx, arg in enumerate(args):
+        if arg == "--date" and idx + 1 < len(args):
+            target_date = args[idx + 1]
+
+    print("⏳ Tiger AI đang quét tiến độ đơn hàng & timeline PDA 4 kho MT01 (Chế độ Đa Luồng Siêu Tốc)...")
+    data = run_pda_progress_audit(target_date=target_date)
     tot_orders = sum(h["total_orders"] for h in data["hubs"].values())
 
-    # Nếu toàn bộ 4 kho ra 0 đơn (bất thường do nghẽn mạng), chờ 10s rồi thử lại toàn bộ 1 lần nữa
-    if tot_orders == 0:
-        print("⚠️ Phát hiện 0 đơn toàn cụm MT01 (bất thường), tiến hành quét lại toàn bộ sau 10 giây...")
-        time.sleep(10)
-        data = run_pda_progress_audit()
+    # Nếu toàn bộ 4 kho ra 0 đơn (bất thường do nghẽn mạng), chờ 5s rồi thử lại 1 lần nữa
+    if tot_orders == 0 and not is_force:
+        print("⚠️ Phát hiện 0 đơn toàn cụm MT01 (bất thường), tiến hành quét lại toàn bộ sau 5 giây...")
+        time.sleep(5)
+        data = run_pda_progress_audit(target_date=target_date)
         tot_orders = sum(h["total_orders"] for h in data["hubs"].values())
 
     msg = format_pda_message(data)
@@ -384,13 +434,15 @@ def main():
 
     if is_send:
         # CHỐT CHẶN AN TOÀN TUYỆT ĐỐI: Không bao giờ bắn báo cáo 0/0 gây hoang mang vận hành
-        if tot_orders == 0:
+        if tot_orders == 0 and not is_force:
             print("⛔ [HUỶ GỬI] Toàn bộ 4 kho MT01 đều ghi nhận 0 đơn. Có thể do nghẽn mạng GHN hoặc API gián đoạn.")
             print("👉 Đã chủ động hủy lệnh gửi tin nhắn 0/0 lên Telegram để bảo vệ tính chuẩn xác của hệ thống!")
-            return
+            sys.exit(1)
 
         print("🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...")
-        send_telegram_alert(msg)
+        success = send_telegram_alert(msg)
+        if not success:
+            sys.exit(1)
     else:
         print("💡 Chế độ Dry-Run (chưa gửi). Dùng cờ: --send để gửi thực tế.")
 

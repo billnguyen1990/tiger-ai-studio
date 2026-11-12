@@ -1,0 +1,44 @@
+name: "Tiger AI • Tiến Độ Giao Hàng & Thao Tác PDA (10h, 12h, 15h, 19h)"
+
+on:
+  schedule:
+    # 10:00 (03:00 UTC), 12:00 (05:00 UTC), 15:00 (08:00 UTC), 19:00 (12:00 UTC) Việt Nam
+    - cron: '0 3,5,8,12 * * *'
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Ngày kiểm tra YYYY-MM-DD hoặc YYYYMMDD (để trống = ngày hôm nay)'
+        required: false
+        default: ''
+
+concurrency:
+  group: pda-progress-mt01
+  cancel-in-progress: false
+
+jobs:
+  pda-progress-mt01:
+    name: "Quét Tiến Độ Giao & Thao Tác PDA 4 Kho MT01"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Tải mã nguồn repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Cài đặt Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Cài đặt thư viện requests
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: 🚀 Chạy báo cáo tiến độ PDA & Gửi Telegram MT01
+        run: |
+          if [ -n "${{ github.event.inputs.target_date }}" ]; then
+            python tiger_pda_progress_reporter.py --date "${{ github.event.inputs.target_date }}" --send
+          else
+            python tiger_pda_progress_reporter.py --send
+          fi
