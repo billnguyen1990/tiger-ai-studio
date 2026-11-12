@@ -3562,6 +3562,41 @@ def track_orders_endpoint():
         "tracuu_base_url": "https://tracuunoibo.ghn.vn/internal"
     })
 
+@app.route("/api/debug-order/<order_code>")
+def debug_order_endpoint(order_code):
+    import requests
+    headers_file = os.path.join(PARENT_DIR, "headers_found.json")
+    if not os.path.exists(headers_file):
+        headers_file = os.path.join(os.path.dirname(BASE_DIR), "headers_found.json")
+    if not os.path.exists(headers_file):
+        headers_file = os.path.join(BASE_DIR, "headers_found.json")
+
+    hd = {}
+    exists = os.path.exists(headers_file)
+    if exists:
+        try:
+            with open(headers_file, "r", encoding="utf-8") as f:
+                hd = json.load(f)
+        except Exception as e:
+            hd = {"error": str(e)}
+
+    url_common = "https://nhanh-api.ghn.vn/api/lastmile/v2/order/search/common-info"
+    res_info = {}
+    try:
+        rc = requests.post(url_common, json={"order_code": order_code}, headers=hd, timeout=8)
+        res_info["status"] = rc.status_code
+        res_info["text"] = rc.text[:300]
+    except Exception as e:
+        res_info["exception"] = str(e)
+
+    return jsonify({
+        "order": order_code,
+        "headers_file": headers_file,
+        "exists": exists,
+        "auth_preview": str(hd.get("authorization", ""))[:50],
+        "common_api": res_info
+    })
+
 def generate_gold_report():
     """Tra cứu trực tiếp giá vàng SJC, PNJ, DOJI, Mi Hồng và tin tức thị trường vàng thời gian thực"""
     today_str = datetime.datetime.now().strftime("%d/%m/%Y")
