@@ -234,8 +234,15 @@ def filter_provinces_fast(page, provinces):
         time.sleep(0.8)
         page.keyboard.press("Escape")
 
-        print("  ⏳ Đã chọn xong 13 tỉnh! Đợi 10 giây để Looker tải dữ liệu...")
-        time.sleep(10.0)
+        print("  ⏳ Đã chọn xong 13 tỉnh! Đợi Looker tải lại bảng dữ liệu...")
+        time.sleep(4.0)
+        for _ in range(45):
+            time.sleep(1.0)
+            cell_count = page.evaluate("""() => document.querySelectorAll('.cell, .table-cell, [role="gridcell"], .cdk-cell, .lego-table-cell').length""")
+            if cell_count > 100:
+                print(f"  ✓ Bảng dữ liệu đã render hoàn tất ({cell_count} ô)!")
+                break
+        time.sleep(2.0)
         print("  ✓ Dữ liệu mới đã sẵn sàng!")
     except Exception as e:
         print("Lỗi trong quá trình lọc:", e)
@@ -262,44 +269,72 @@ def export_b2b_fast(page, context):
         print(f"  -> Đã đóng {closed} tab Google Sheets cũ")
     time.sleep(0.5)
 
-    print(f"[{time.strftime('%X')}]   -> Hover vào bảng để kích hoạt nút 3 chấm...")
-    page.mouse.move(1705, 335)
-    time.sleep(1.5)
+    menu_opened = False
+    for attempt_menu in range(3):
+        page.keyboard.press("Escape")
+        time.sleep(0.5)
+        print(f"[{time.strftime('%X')}]   -> Hover vào bảng (1500, 500) để kích hoạt nút 3 chấm (Lần {attempt_menu+1})...")
+        page.mouse.move(1500, 500)
+        time.sleep(1.5)
 
-    print(f"[{time.strftime('%X')}]   -> JS click 'Hiển thị trình đơn biểu đồ'...")
-    clicked = page.evaluate("""() => {
-        const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
-        for (const btn of btns) {
-            const label = btn.getAttribute('aria-label') || '';
-            if (label.includes('trình đơn biểu đồ') || label.includes('More options')) {
-                btn.click();
-                return label;
+        btn_rect = page.evaluate("""() => {
+            const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
+            const btn = btns.find(b => {
+                const lbl = b.getAttribute('aria-label') || '';
+                const r = b.getBoundingClientRect();
+                return (lbl.includes('trình đơn biểu đồ') || lbl.includes('More options')) && r.width > 0 && r.height > 0 && r.y < 700;
+            });
+            if (btn) {
+                const r = btn.getBoundingClientRect();
+                return {x: r.x, y: r.y, w: r.width, h: r.height};
             }
-        }
-        return null;
-    }""")
-    if not clicked:
-        print("  ! JS click 3 chấm không hoạt động, fallback về tọa độ (1726, 330)...")
-        page.mouse.click(1726, 330)
-        clicked = "Fallback Tọa độ"
+            return null;
+        }""")
+        if not btn_rect:
+            print("  ! Không tìm thấy rect 3 chấm, dùng tọa độ chuẩn (1692, 412)...")
+            btn_rect = {'x': 1692, 'y': 412, 'w': 32, 'h': 32}
 
-    print(f"  => Đã click: {clicked}")
-    time.sleep(2.0)
+        print(f"[{time.strftime('%X')}]   -> Native Click vào nút 3 chấm tại ({int(btn_rect['x'])}, {int(btn_rect['y'])})...")
+        page.mouse.click(btn_rect['x'] + btn_rect['w']/2, btn_rect['y'] + btn_rect['h']/2)
+        time.sleep(1.5)
+
+        if page.locator("button[role='menuitem']:has-text('Xuất biểu đồ'), div[role='menuitem']:has-text('Xuất biểu đồ'), button[role='menuitem']:has-text('Export'), div[role='menuitem']:has-text('Export')").count() > 0:
+            menu_opened = True
+            break
+
+        # Fallback JS click nếu mouse click chưa mở menu
+        page.evaluate("""() => {
+            const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
+            const btn = btns.find(b => {
+                const lbl = b.getAttribute('aria-label') || '';
+                const r = b.getBoundingClientRect();
+                return (lbl.includes('trình đơn biểu đồ') || lbl.includes('More options')) && r.width > 0 && r.y < 700;
+            });
+            if (btn) btn.click();
+        }""")
+        time.sleep(1.5)
+        if page.locator("button[role='menuitem']:has-text('Xuất biểu đồ'), div[role='menuitem']:has-text('Xuất biểu đồ'), button[role='menuitem']:has-text('Export'), div[role='menuitem']:has-text('Export')").count() > 0:
+            menu_opened = True
+            break
+
+    if not menu_opened:
+        raise RuntimeError("Không thể mở menu 3 chấm 'Xuất biểu đồ...' trên Looker Studio sau 3 lần thử!")
 
     print(f"[{time.strftime('%X')}]   -> Hover 'Xuất biểu đồ...' để hiện submenu...")
-    page.get_by_text("Xuất biểu đồ", exact=False).first.hover(timeout=5000)
-    time.sleep(2.0)
+    export_menu_loc = page.locator("button[role='menuitem']:has-text('Xuất biểu đồ'), div[role='menuitem']:has-text('Xuất biểu đồ'), button[role='menuitem']:has-text('Export'), div[role='menuitem']:has-text('Export')").first
+    export_menu_loc.hover(timeout=5000)
+    time.sleep(1.5)
 
     print(f"[{time.strftime('%X')}]   -> Click 'Xuất dữ liệu'...")
-    page.get_by_text("Xuất dữ liệu", exact=False).first.click(timeout=5000)
+    page.locator("button[role='menuitem']:has-text('Xuất dữ liệu'), div[role='menuitem']:has-text('Xuất dữ liệu'), button[role='menuitem']:has-text('Export data'), div[role='menuitem']:has-text('Export data')").first.click(timeout=5000)
     time.sleep(2.0)
 
     print(f"[{time.strftime('%X')}]   -> Click 'Google Trang tính'...")
-    page.get_by_text("Google Trang tính", exact=False).first.click(timeout=5000)
-    time.sleep(3.0)
+    page.get_by_text("Google Trang tính", exact=False).or_(page.get_by_text("Google Sheets", exact=False)).first.click(timeout=5000)
+    time.sleep(2.5)
 
     print(f"[{time.strftime('%X')}]   -> Click nút 'Xuất' trong dialog...")
-    page.get_by_role("button", name="Xuất").last.click(timeout=5000)
+    page.get_by_role("button", name="Xuất").or_(page.get_by_role("button", name="Export")).last.click(timeout=5000)
     time.sleep(3.0)
 
     print(f"[{time.strftime('%X')}] [Bước 3] Đang chờ tab Google Sheets xuất hiện (Dữ liệu >200k dòng có thể mất tới 3-5 phút)...")
@@ -904,9 +939,16 @@ def run_looker_export_pipeline(max_retries=3):
 
         except Exception as e:
             last_error = str(e)
-            print(f"\n⚠️ Phát hiện chuyển hướng xác thực trên trình duyệt ({last_error}) -> Kích hoạt ngay cơ chế Google Sheets API Service Account!")
-            run_direct_sheets_api_fallback()
-            return
+            print(f"\n⚠️ LỖI CÀO DỮ LIỆU LOOKER STUDIO (Lần {attempt + 1}/{max_retries}): {last_error}")
+            try:
+                if 'looker_page' in locals() and looker_page:
+                    looker_page.screenshot(path="debug_b2b_error.png")
+            except Exception:
+                pass
+            if attempt < max_retries - 1:
+                time.sleep(3)
+                continue
+            raise RuntimeError(f"Quy trình cào Looker Studio B2B thất bại (không dùng dữ liệu cũ): {last_error}")
 
 if __name__ == "__main__":
-    run_looker_export_pipeline(max_retries=1)
+    run_looker_export_pipeline(max_retries=2)
