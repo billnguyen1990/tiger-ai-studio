@@ -442,7 +442,23 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
     # 2. Gửi lên Google Sheets (Tab Team_Leader kèm Radar Đối Soát 365)
     sheet_result = "Chưa gửi (chế độ kiểm thử)"
     if send_to_sheet and total_trucks > 0:
-        print(f"\n🚀 Đang gửi {total_trucks} chuyến xe tải lên Google Sheets qua Apps Script...", flush=True)
+        # Chốt chặn kiểm tra chống ghi trùng lặp (Anti-Duplicate Guard)
+        is_already_synced = False
+        sample_code = all_truck_results[0].get("ma_chuyen", "") if all_truck_results else ""
+        if sample_code:
+            try:
+                check_csv_url = "https://docs.google.com/spreadsheets/d/1Nf4bklPe3s3MHfaS5Us5c0AjNqaDR5n8dYaNf4pwIyE/export?format=csv&gid=489219944"
+                r_check = requests.get(check_csv_url, timeout=8)
+                if r_check.status_code == 200 and sample_code in r_check.text:
+                    is_already_synced = True
+                    print(f"\n🛡️ [CHỐT CHẶN AN TOÀN]: Dữ liệu xe tải ngày {date_display} (chuyến '{sample_code}') đã tồn tại trên Sheet '{SHEET_NAME}'!", flush=True)
+                    print(f"⏭️ Bỏ qua gửi appendRows để ngăn chặn tuyệt đối tình trạng nhân bản dòng trùng lặp.", flush=True)
+                    sheet_result = f"Dữ liệu ngày {date_display} đã có trên Sheet '{SHEET_NAME}' - Bỏ qua ghi trùng an toàn"
+            except Exception as e:
+                print(f"  ℹ️ Không thể kiểm tra trùng qua CSV ({e}) - tiếp tục gửi bình thường", flush=True)
+
+        if not is_already_synced:
+            print(f"\n🚀 Đang gửi {total_trucks} chuyến xe tải lên Google Sheets qua Apps Script...", flush=True)
         sheet_rows = []
         for r in all_truck_results:
             p_str = r.get("plate", "")
