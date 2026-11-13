@@ -912,7 +912,10 @@ def run_looker_export_pipeline(max_retries=3):
                 # 6. Chạy lọc -> Ketqua & ThongKe trên Google Sheet
                 print("\n[Bước 5 & 6] Kích hoạt Apps Script Lọc dữ liệu -> Ketqua & Tạo bảng thống kê -> ThongKe...")
                 run_filter_to_ketqua(master_page)
-                run_thongke_and_wait_telegram_modal(master_page)
+                try:
+                    run_thongke_and_wait_telegram_modal(master_page)
+                except Exception as ex_tk:
+                    print(f"  ⚠️ Lưu ý Apps Script ThongKe ({ex_tk}) -> Chuyển sang bước 8 tính trực tiếp từ tab Data mới nhất!")
 
                 # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))
                 if "--no-reporter" not in sys.argv:
