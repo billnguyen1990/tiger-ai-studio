@@ -16,7 +16,7 @@ HEADERS_FILE = os.path.join(BASE_DIR, "headers_found.json")
 MAP_FILE = os.path.join(BASE_DIR, "nvxl_telegram_map.json")
 
 # Google Apps Script Webhook URL (Bản triển khai Đa Vùng)
-WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby-dKabKNPnnSMiag5bVLqHlk7_IN0aBRP6Ir63px0Pf7tUIcUaFTGgZaGf4BE6A8sz/exec"
+WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzAwiB9O4w5YYCLF16HUegcpfdTniDlkAfN6fw46-uXhlI6EZiQ2Ewopxf82u8HfzM/exec"
 
 # Telegram Bot Config
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
