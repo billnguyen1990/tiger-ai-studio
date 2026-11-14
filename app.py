@@ -2700,6 +2700,8 @@ def extract_ghn_order_codes(text):
     if not text:
         return []
     import re
+    # 🛑 Loại bỏ các username Telegram/bot (@username) trước khi bóc tách mã đơn
+    clean_text = re.sub(r'@[A-Za-z0-9_]+', ' ', text)
     ignored = {
         "TELEGRAM", "CANDIDATE", "SCHEDULE", "AUTOMATIC", "EXCELLENT", 
         "YESTERDAY", "INTERNAL", "TRACUUNOI", "COPILOT", "STUDIO", 
@@ -2712,11 +2714,14 @@ def extract_ghn_order_codes(text):
         "BAOCAO", "THONGKE", "DONHANG", "GIAOHANG", "KHACHHANG", "NHANVIEN", "DIEUPHOI",
         "PROJECT", "KEHOACH", "VANHANH", "GIAITRINH", "GIAMSAT", "GIAODICH", "GHINHAN"
     }
-    tokens = re.findall(r'[A-Za-z0-9_-]{8,35}', text)
+    tokens = re.findall(r'[A-Za-z0-9_-]{8,35}', clean_text)
     results = []
     for t in tokens:
         raw_up = t.upper().strip('_-')
         up = raw_up.replace("-", "").replace("_", "")
+        # Bỏ qua từ khóa kết thúc bằng BOT hoặc nằm trong ignored
+        if up.endswith("BOT") or raw_up.endswith("BOT"):
+            continue
         if up in ignored or raw_up in ignored or len(up) < 8 or len(raw_up) > 35:
             continue
         has_digit = any(c.isdigit() for c in up)
