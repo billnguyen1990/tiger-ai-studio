@@ -5087,7 +5087,7 @@ def _handle_employee_telegram_auto_reply(msg_obj, entry):
         if is_cloud_env:
             print(f"[Cloud Tra Đơn] Phát hiện {len(order_codes)} mã đơn trên Cloud. Tường lửa GHN chặn IP nước ngoài -> Nhường cho Local Relay tại VN xử lý!")
             def _cloud_fallback_watch(tgt_codes, t_id, m_id, c_id):
-                time.sleep(12)
+                time.sleep(25)
                 try:
                     msgs = _load_telegram_bridge_messages()
                     already_replied = any(

@@ -1,5 +1,6 @@
 import os
 import re
+import html
 import requests
 import json
 from datetime import datetime
@@ -405,7 +406,7 @@ def get_order_deep_investigation(order_code):
         msg += f"📑 <b>Thu hồi chứng từ:</b> Không thu hồi\n"
 
     if customer_note:
-        msg += f"📝 <b>Ghi chú khách hàng:</b> {customer_note}\n"
+        msg += f"📝 <b>Ghi chú khách hàng:</b> {html.escape(str(customer_note))}\n"
     else:
         msg += f"📝 <b>Ghi chú khách hàng:</b> <i>(Trống)</i>\n"
 
@@ -415,13 +416,13 @@ def get_order_deep_investigation(order_code):
     if pick_hub and pick_hub != "—":
         msg += f"🏭 <b>Kho lấy:</b> {pick_hub}\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
-    msg += f"👤 <b>Tên khách hàng:</b> <b>{customer_name}</b>\n"
-    msg += f"📞 <b>SĐT khách nhận:</b> <code>{customer_phone}</code>\n"
-    msg += f"📍 <b>Địa chỉ giao:</b> {customer_address}\n"
+    msg += f"👤 <b>Tên khách hàng:</b> <b>{html.escape(str(customer_name))}</b>\n"
+    msg += f"📞 <b>SĐT khách nhận:</b> <code>{html.escape(str(customer_phone))}</code>\n"
+    msg += f"📍 <b>Địa chỉ giao:</b> {html.escape(str(customer_address))}\n"
     msg += f"💵 <b>Tiền thu hộ COD:</b> <b>{cod_str}</b>\n"
     if order_val:
         msg += f"💎 <b>Giá trị khai giá:</b> {int(order_val):,} đ\n".replace(",", ".")
-    msg += f"🛍️ <b>Sản phẩm ({items_cnt} kiện):</b> {prod_str}{dim_str}\n"
+    msg += f"🛍️ <b>Sản phẩm ({items_cnt} kiện):</b> {html.escape(str(prod_str))}{dim_str}\n"
     msg += f"⚖️ <b>Khối lượng:</b> {weight:.1f} kg\n"
     msg += f"━━━━━━━━━━━━━━━━━━━━━\n"
 
