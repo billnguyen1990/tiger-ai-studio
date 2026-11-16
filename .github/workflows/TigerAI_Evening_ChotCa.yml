@@ -1,0 +1,44 @@
+name: "Tiger AI • Báo Cáo Chốt Ca Cuối Ngày MT01 (21h00 & 21h30)"
+
+on:
+  schedule:
+    # 21:00 VN = 14:00 UTC | 21:30 VN = 14:30 UTC hàng ngày
+    - cron: '0,30 14 * * *'
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: 'Mốc kiểm tra (21h hoặc 21h30)'
+        required: false
+        default: '21h'
+
+concurrency:
+  group: evening-chotca-mt01
+  cancel-in-progress: false
+
+jobs:
+  chot-ca-mt01:
+    name: "Quét Chốt Ca & Nợ COD 4 Kho MT01 (21h/21h30)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Tải mã nguồn repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Cài đặt Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Cài đặt thư viện
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pytz
+
+      - name: 🚀 Chạy báo cáo chốt ca & Gửi Telegram MT01
+        run: |
+          if [ -n "${{ github.event.inputs.slot }}" ]; then
+            python tiger_evening_reporter.py --send --slot "${{ github.event.inputs.slot }}"
+          else
+            python tiger_evening_reporter.py --send
+          fi
