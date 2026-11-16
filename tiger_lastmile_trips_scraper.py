@@ -158,20 +158,24 @@ def scrape_region_trips(region_key, target_date=None, send_to_sheet=True, send_t
             "limit": 100
         }
 
-        try:
-            res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=15)
-            if res.status_code == 200:
-                data = res.json().get("data", []) or []
-                for t in data:
-                    c_date = t.get("createDateIndex")
-                    s_date = t.get("startDateIndex")
-                    e_date = t.get("endDateIndex")
-                    if c_date == date_int or s_date == date_int or e_date == date_int:
-                        hub_trips.append(t)
-            else:
-                print(f"⚠️ Lỗi HTTP {res.status_code} khi cào kho {hname}")
-        except Exception as e:
-            print(f"❌ Lỗi kết nối API kho {hname}: {e}")
+        for attempt in range(1, 4):
+            try:
+                res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=25)
+                if res.status_code == 200:
+                    data = res.json().get("data", []) or []
+                    for t in data:
+                        c_date = t.get("createDateIndex")
+                        s_date = t.get("startDateIndex")
+                        e_date = t.get("endDateIndex")
+                        if c_date == date_int or s_date == date_int or e_date == date_int:
+                            hub_trips.append(t)
+                    break
+                else:
+                    print(f"⚠️ Lần {attempt}/3: Lỗi HTTP {res.status_code} khi cào kho {hname}")
+            except Exception as e:
+                print(f"⚠️ Lần {attempt}/3: Lỗi kết nối API kho {hname}: {e}")
+            if attempt < 3:
+                time.sleep(3)
 
         hub_stats[hname] = len(hub_trips)
         raw_trips.extend(hub_trips)
@@ -190,15 +194,21 @@ def scrape_region_trips(region_key, target_date=None, send_to_sheet=True, send_t
         batch_size = 50
         for i in range(0, len(all_codes), batch_size):
             chunk = all_codes[i:i + batch_size]
-            try:
-                res_prof = requests.post(URL_PROFILE, headers=headers, json={"tripCodes": chunk}, timeout=20)
-                if res_prof.status_code == 200:
-                    for p in res_prof.json().get("data", []) or []:
-                        code = p.get("tripCode")
-                        if code:
-                            profile_map[code] = p
-            except Exception as e:
-                print(f"⚠️ Lỗi get-trip-profile batch {i}: {e}")
+            for attempt in range(1, 4):
+                try:
+                    res_prof = requests.post(URL_PROFILE, headers=headers, json={"tripCodes": chunk}, timeout=25)
+                    if res_prof.status_code == 200:
+                        for p in res_prof.json().get("data", []) or []:
+                            code = p.get("tripCode")
+                            if code:
+                                profile_map[code] = p
+                        break
+                    else:
+                        print(f"⚠️ Lần {attempt}/3: Lỗi HTTP {res_prof.status_code} get-trip-profile batch {i}")
+                except Exception as e:
+                    print(f"⚠️ Lần {attempt}/3: Lỗi get-trip-profile batch {i}: {e}")
+                if attempt < 3:
+                    time.sleep(3)
 
     # Ghép dữ liệu chuẩn 36 cột
     all_rows = []
