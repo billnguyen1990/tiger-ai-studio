@@ -111,9 +111,20 @@ def get_google_session():
             session.cookies.set(ck["name"], ck["value"], domain=ck.get("domain", ""))
     return session
 
-def fetch_sheet_rows_gviz(sheet_id, sheet_name, session=None):
+def fetch_sheet_rows_gviz(sheet_id, sheet_name, session=None, gid=None):
     if session is None:
         session = get_google_session()
+    if gid:
+        try:
+            exp_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
+            exp_resp = session.get(exp_url, timeout=30)
+            if exp_resp.status_code == 200 and exp_resp.text and not exp_resp.text.lstrip().startswith("<"):
+                exp_resp.encoding = "utf-8"
+                rows = list(csv.reader(io.StringIO(exp_resp.text)))
+                if rows:
+                    return rows
+        except Exception:
+            pass
     url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={urllib.parse.quote(sheet_name)}"
     resp = session.get(url, timeout=30)
     if resp.status_code != 200:
@@ -122,14 +133,14 @@ def fetch_sheet_rows_gviz(sheet_id, sheet_name, session=None):
     reader = csv.reader(io.StringIO(resp.text))
     return list(reader)
 
-def fetch_sheet_rows_universal(sh, sheet_id, sheet_name, session=None):
+def fetch_sheet_rows_universal(sh, sheet_id, sheet_name, session=None, gid=None):
     if sh is not None:
         try:
             ws = sh.worksheet(sheet_name)
             return ws.get_all_values()
         except Exception as e:
             print(f"[Notice] Worksheet '{sheet_name}' via gspread failed: {e}. Falling back to GVIZ CSV...")
-    return fetch_sheet_rows_gviz(sheet_id, sheet_name, session=session)
+    return fetch_sheet_rows_gviz(sheet_id, sheet_name, session=session, gid=gid)
 
 def _clean_num(val_str):
     if not val_str:
@@ -564,8 +575,8 @@ def build_cost_dashboard_matrix(force=False):
                     sh_odo = client.open_by_key(ODO_SHEET_ID)
                 except Exception:
                     sh_odo = None
-            tl_rows = fetch_sheet_rows_universal(sh_odo, ODO_SHEET_ID, "Team_Leader", session=google_session)
-            ds_rows = fetch_sheet_rows_universal(sh_odo, ODO_SHEET_ID, "365 & GHN Đối Soát", session=google_session)
+            tl_rows = fetch_sheet_rows_universal(sh_odo, ODO_SHEET_ID, "Team_Leader", session=google_session, gid="489219944")
+            ds_rows = fetch_sheet_rows_universal(sh_odo, ODO_SHEET_ID, "365 & GHN Đối Soát", session=google_session, gid="593546522")
 
             def _clean_odo_int(val_s):
                 if not val_s:
@@ -617,21 +628,49 @@ def build_cost_dashboard_matrix(force=False):
                     if t_name and t_name != "Xe Máy":
                         route_to_hub_odo[t_name] = mt01_hubs_odo[r[4].strip()]
 
-            # Lập chỉ mục sheet '365 & GHN Đối Soát'
+            # Lập chỉ mục sheet '365 & GHN Đối Soát' (tự động nhận diện cột theo tiêu đề tránh lệch khi thêm/xoá cột)
+            ds_header = [str(c or "").strip().lower() for c in ds_rows[0]] if ds_rows else []
+
+            def _find_ds_col(keywords, default_idx, exclude=()):
+                for idx, h_txt in enumerate(ds_header):
+                    if any(ex in h_txt for ex in exclude):
+                        continue
+                    if any(kw in h_txt for kw in keywords):
+                        return idx
+                return default_idx
+
+            col_ngay = _find_ds_col(["ngày"], 3)
+            col_shift = col_ngay - 3
+            col_tuyen = _find_ds_col(["tuyến"], 2 + col_shift, exclude=("check",))
+            col_bks = _find_ds_col(["biển số"], 4 + col_shift, exclude=("check",))
+            col_driver = _find_ds_col(["tài xế"], 5 + col_shift)
+            col_checkin = _find_ds_col(["checkin"], 6 + col_shift)
+            col_checkout = _find_ds_col(["checkout"], 7 + col_shift)
+            col_odo_di = _find_ds_col(["vào ca"], 8 + col_shift)
+            col_odo_ve = _find_ds_col(["ra ca"], 9 + col_shift)
+            col_km = _find_ds_col(["số km"], 10 + col_shift, exclude=("vào", "ra"))
+            col_check = 13 + col_shift
+            col_bks_trung = _find_ds_col(["check bks"], 14 + col_shift)
+            col_mcd = _find_ds_col(["mcd"], 15 + col_shift)
+            col_ghn_check = _find_ds_col(["ghn check"], 18 + col_shift)
+            col_ph = _find_ds_col(["ph"], 19 + col_shift)
+            col_thang = _find_ds_col(["tháng"], 20 + col_shift)
+            col_tuyen_trung = _find_ds_col(["check tuyến"], 21 + col_shift)
+
             ds_by_mcd = {}
             ds_by_date_plate = {}
             ds_by_date_route = {}
             ds_mt01_indexed = []
 
             for ds_idx, r in enumerate(ds_rows[1:], 1):
-                if len(r) < 11:
+                if len(r) <= col_km:
                     continue
-                d_str = r[3].strip() if len(r) > 3 else ""
+                d_str = r[col_ngay].strip() if len(r) > col_ngay else ""
                 if not d_str or "/2026" not in d_str:
                     continue
-                tuyen_365 = r[2].strip() if len(r) > 2 else ""
-                bks_365 = r[4].strip().upper() if len(r) > 4 else ""
-                mcd_col = r[15].strip() if len(r) > 15 else ""
+                tuyen_365 = r[col_tuyen].strip() if len(r) > col_tuyen else ""
+                bks_365 = r[col_bks].strip().upper() if len(r) > col_bks else ""
+                mcd_col = r[col_mcd].strip() if len(r) > col_mcd else ""
 
                 hub_365 = route_to_hub_odo.get(tuyen_365)
                 if not hub_365:
@@ -658,19 +697,19 @@ def build_cost_dashboard_matrix(force=False):
                     "route": tuyen_365,
                     "date": d_str,
                     "plate_365": bks_365,
-                    "driver_365": r[5].strip() if len(r) > 5 else "",
-                    "checkin_365": r[6].strip() if len(r) > 6 else "",
-                    "checkout_365": r[7].strip() if len(r) > 7 else "",
-                    "odo_di_365": _clean_odo_int(r[8]) if len(r) > 8 else 0,
-                    "odo_ve_365": _clean_odo_int(r[9]) if len(r) > 9 else 0,
-                    "km_365": _clean_odo_int(r[10]) if len(r) > 10 else 0,
-                    "check_col": r[13].strip() if len(r) > 13 else "",
-                    "bks_trung": r[14].strip() if len(r) > 14 else "",
+                    "driver_365": r[col_driver].strip() if len(r) > col_driver else "",
+                    "checkin_365": r[col_checkin].strip() if len(r) > col_checkin else "",
+                    "checkout_365": r[col_checkout].strip() if len(r) > col_checkout else "",
+                    "odo_di_365": _clean_odo_int(r[col_odo_di]) if len(r) > col_odo_di else 0,
+                    "odo_ve_365": _clean_odo_int(r[col_odo_ve]) if len(r) > col_odo_ve else 0,
+                    "km_365": _clean_odo_int(r[col_km]) if len(r) > col_km else 0,
+                    "check_col": r[col_check].strip() if len(r) > col_check else "",
+                    "bks_trung": r[col_bks_trung].strip() if len(r) > col_bks_trung else "",
                     "mcd_raw": mcd_col if mcd_col != "#N/A" else "",
-                    "ghn_check": r[18].strip() if len(r) > 18 else "",
-                    "ph_365": r[19].strip() if len(r) > 19 else "",
-                    "thang_365": r[20].strip() if len(r) > 20 else "",
-                    "tuyen_trung": r[21].strip() if len(r) > 21 else ""
+                    "ghn_check": r[col_ghn_check].strip() if len(r) > col_ghn_check else "",
+                    "ph_365": r[col_ph].strip() if len(r) > col_ph else "",
+                    "thang_365": r[col_thang].strip() if len(r) > col_thang else "",
+                    "tuyen_trung": r[col_tuyen_trung].strip() if len(r) > col_tuyen_trung else ""
                 }
 
                 if hub_365:
