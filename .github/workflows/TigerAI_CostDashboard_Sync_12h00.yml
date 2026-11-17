@@ -1,0 +1,48 @@
+name: TigerAI Cost & ODO Dashboard Auto Sync (12:00 VN)
+
+on:
+  schedule:
+    # 05:00 UTC = 12:00 PM (Giờ Việt Nam UTC+7) mỗi ngày
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync_cost_dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet requests gspread google-auth openpyxl pandas
+
+      - name: Sync Cost & ODO Dashboard from Google Sheets
+        env:
+          TZ: Asia/Ho_Chi_Minh
+        run: |
+          python -c "import tiger_cost_dashboard_service as svc; d = svc.build_cost_dashboard_matrix(force=True); print('Synced at:', d.get('last_sync'), 'ODO records:', len(d.get('odo_records', [])))"
+
+      - name: Commit and push updated dashboard cache
+        run: |
+          git config user.name "Tiger AI Auto Sync"
+          git config user.email "bot@tigerai.local"
+          git add data/mt01_cost_dashboard.json data/mt01_nvgh_salary_archive.json || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(cost-dashboard): auto-sync 12h00 daily cache [skip ci]"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+      - name: Trigger Live Render Server Sync
+        run: |
+          python -c "import requests; r = requests.post('https://tiger-ai-studio.onrender.com/api/cost-dashboard/sync', timeout=90); print('Render Sync HTTP:', r.status_code, r.text[:300])"

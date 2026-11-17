@@ -5842,6 +5842,15 @@ try:
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching PDA progress to GitHub Actions: {e}", flush=True)
 
+        if script_name in ("tiger_cost_dashboard_service.py", "tiger_cost_sync_service.py"):
+            try:
+                from tiger_cost_dashboard_service import build_cost_dashboard_matrix
+                build_cost_dashboard_matrix(force=True)
+                print(f"[CRON TRIGGER] Cost Dashboard MT01 synced successfully!", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error syncing Cost Dashboard MT01: {e}", flush=True)
+
         script_path = os.path.join(PARENT_DIR, script_name) if os.path.exists(os.path.join(PARENT_DIR, script_name)) else os.path.join(BASE_DIR, script_name)
         if os.path.exists(script_path):
             subprocess.run([sys.executable, script_path, "--send"], cwd=PARENT_DIR, creationflags=CREATE_NO_WINDOW)
@@ -5861,8 +5870,9 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=20, minute=0, args=["tiger_indoor_cam_scheduler.py"], id="cam_indoor_20h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
     scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
-    scheduler.add_job(_job_runner, "cron", hour=6, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_06h30")
-    scheduler.add_job(_job_runner, "cron", hour=20, minute=30, args=["tiger_cost_sync_service.py"], id="cost_sync_20h30")
+    scheduler.add_job(_job_runner, "cron", hour=6, minute=30, args=["tiger_cost_dashboard_service.py"], id="cost_sync_06h30")
+    scheduler.add_job(_job_runner, "cron", hour=12, minute=0, args=["tiger_cost_dashboard_service.py"], id="cost_sync_12h00")
+    scheduler.add_job(_job_runner, "cron", hour=20, minute=30, args=["tiger_cost_dashboard_service.py"], id="cost_sync_20h30")
     # Chế độ Cloud / Server: Tự động BẬT khi chạy trên Cloud (Linux / Render)
     # Trên máy tính cá nhân của anh (Windows): Mặc định TẮT hoàn toàn để không ảnh hưởng máy tính
     is_cloud = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
