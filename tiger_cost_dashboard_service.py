@@ -1227,11 +1227,12 @@ def _parse_date_range_str(s):
 def get_cost_dashboard_matrix():
     if os.path.exists(DASHBOARD_CACHE_FILE):
         try:
-            # Tự động đồng bộ mới từ Google Sheets nếu file cache đã cũ quá 15 phút (900s)
-            mtime = os.path.getmtime(DASHBOARD_CACHE_FILE)
-            if (get_vn_now().timestamp() - mtime) < 900:
-                with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
-                    return json.load(f)
+            with open(DASHBOARD_CACHE_FILE, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+            # Dùng sync_epoch thực tế bên trong JSON thay vì mtime của file (tránh git clone trên Render reset mtime về 0s)
+            sync_epoch = float(cached_data.get("sync_epoch") or 0)
+            if sync_epoch > 0 and (get_vn_now().timestamp() - sync_epoch) < 900:
+                return cached_data
         except Exception:
             pass
     return build_cost_dashboard_matrix(force=True)
