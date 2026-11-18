@@ -110,7 +110,8 @@ SCRIPTS_MAP = {
     "truck_odo_02h00": os.path.join(PARENT_DIR, "tiger_truck_odo_reporter.py"),
     "lastmile_05h00": os.path.join(PARENT_DIR, "tiger_lastmile_trips_scraper.py"),
     "b2b_looker_18h00": os.path.join(PARENT_DIR, "looker_export_temp.py"),
-    "cam_indoor_06h20h": os.path.join(PARENT_DIR, "tiger_indoor_cam_scheduler.py")
+    "cam_indoor_06h20h": os.path.join(PARENT_DIR, "tiger_indoor_cam_scheduler.py"),
+    "nvxl_reminder_08h00": os.path.join(PARENT_DIR, "tiger_nvxl_meeting_reminder.py")
 }
 
 TELEGRAM_BOT_TOKEN = "8809500027:AAFC2XzDOHEBdbtompu1i0oRuHGuAZu23gk"
@@ -873,7 +874,8 @@ def run_workflow():
         "b2b_report": "tiger_b2b_thongke_reporter.py",
         "b2b_thongke": "tiger_b2b_thongke_reporter.py",
         "don_tao": "tiger_b2b_thongke_reporter.py",
-        "evening_cod": "tiger_evening_reporter.py"
+        "evening_cod": "tiger_evening_reporter.py",
+        "nvxl_reminder": "tiger_nvxl_meeting_reminder.py"
     }
 
     script_name = script_map.get(wf_id)
@@ -5815,6 +5817,15 @@ try:
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching Checkin to GitHub Actions: {e}", flush=True)
 
+        if script_name == "tiger_nvxl_meeting_reminder.py" and is_cloud_env:
+            try:
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_NVXL_Meeting_Reminder.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
+                print(f"[CRON TRIGGER] NVXL Reminder 08:00 dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching NVXL Reminder to GitHub Actions: {e}", flush=True)
+
         if script_name == "tiger_morning_assigned_reporter.py" and is_cloud_env:
             try:
                 dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Assigned_09h00.yml/dispatches"
@@ -5860,6 +5871,7 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=6, minute=0, args=["tiger_indoor_cam_scheduler.py"], id="cam_indoor_06h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=0, args=["tiger_gtc_kpi_reporter.py"], id="gtc_07h00")
     scheduler.add_job(_job_runner, "cron", hour=7, minute=35, args=["tiger_checkin_reporter.py"], id="checkin_07h35")
+    scheduler.add_job(_job_runner, "cron", day_of_week="mon,thu", hour=8, minute=0, args=["tiger_nvxl_meeting_reminder.py"], id="nvxl_reminder_08h00")
     scheduler.add_job(_job_runner, "cron", hour=9, minute=0, args=["tiger_morning_assigned_reporter.py"], id="assigned_09h00")
     scheduler.add_job(_job_runner, "cron", hour=10, minute=0, args=["tiger_unassigned_backlog_reporter.py"], id="unassigned_10h00")
     for pda_hr in [10, 12, 15, 19]:
@@ -5956,7 +5968,8 @@ def run_cron_webhook(task_key):
         "cost": "tiger_cost_sync_service.py",
         "cost_sync": "tiger_cost_sync_service.py",
         "cam_indoor": "tiger_indoor_cam_scheduler.py",
-        "soikho_auto": "tiger_indoor_cam_scheduler.py"
+        "soikho_auto": "tiger_indoor_cam_scheduler.py",
+        "nvxl_reminder": "tiger_nvxl_meeting_reminder.py"
     }
     script_name = script_map.get(task_key)
     if not script_name:
@@ -5967,6 +5980,14 @@ def run_cron_webhook(task_key):
             dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Checkin_07h35.yml/dispatches"
             res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main"}, timeout=10)
             return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (07:35 AM Checkin)", "status": res.status_code})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    if task_key == "nvxl_reminder" and is_cloud_env:
+        try:
+            dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_NVXL_Meeting_Reminder.yml/dispatches"
+            res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main", "inputs": {"force": "true"}}, timeout=10)
+            return jsonify({"success": (res.status_code in [200, 204]), "task": task_key, "message": "Dispatched to GitHub Actions Cloud (08:00 AM NVXL Meeting Reminder)", "status": res.status_code})
         except Exception as e:
             return jsonify({"success": False, "error": str(e)}), 500
 
