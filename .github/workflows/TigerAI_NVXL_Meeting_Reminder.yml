@@ -1,9 +1,10 @@
 name: "Tiger AI • Nhắc Nhở NVXL Họp & Báo Cáo MT01 (08:00 AM T2 & T5)"
 
 on:
-  schedule:
-    # 08:00 AM Việt Nam (UTC+7) = 01:00 UTC Thứ Hai & Thứ Năm hàng tuần
-    - cron: '0 1 * * 1,4'
+# [GitHub Cron Disabled - Dispatched precisely at 08:00 AM by Render Cloud Dispatcher]
+#   schedule:
+#     # 08:00 AM Việt Nam (UTC+7) = 01:00 UTC Thứ Hai & Thứ Năm hàng tuần
+#     - cron: '0 1 * * 1,4'
   workflow_dispatch:
     inputs:
       force:
