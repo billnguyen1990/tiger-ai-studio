@@ -92,10 +92,10 @@ def generate_reminder_message(now=None):
 Đã đến giờ tổ chức họp giao ban định kỳ với toàn thể anh em <b>NVGH (Shipper)</b> tại kho rồi nhé!
 
 📌 <b>2 việc quan trọng cần làm ngay:</b>
-1️⃣ <b>Tập trung anh em NVGH tại kho để họp giao ban.</b>
-2️⃣ <b>Chụp hình & Gửi báo cáo tình hình cuộc họp lên Room Telegram này ngay sau khi họp xong.</b>
+1️⃣ <b>Tập trung anh em NVGH tại kho để họp và nhắc nhở những thông tin quan trọng cần nắm rõ, cả những vấn đề khó khăn trong quá trình giao hàng B2B, B2C, Điện máy, MDLZ... và các vấn đề khác hàng ngày.</b>
+2️⃣ <b>Chụp hình & Gửi báo cáo lên Room Gtalk (Báo Cáo Họp Đầu Ngày).</b>
 
-⚠️ <i>Các bạn chủ động triển khai liền tay, tuyệt đối đừng để quên nha — Sếp Lộc đang theo dõi báo cáo của các kho trên Room đấy ạ! 👀🔥</i>
+⚠️ <i>Các bạn chủ động triển khai liền tay, tuyệt đối đừng để quên nha — Sếp Lộc đang theo dõi báo cáo của các kho đấy ạ! 👀🔥</i>
 ────────────────────
 🤖 <i>Lisa • Tiger AI Copilot Miền Tây 01</i>"""
     return msg
