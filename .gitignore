@@ -13,6 +13,7 @@ credentials.json
 *.jpg
 *.log
 debug_dom.html
+.ghn_profile/
 
 !static/img/*
 !static/assets/*

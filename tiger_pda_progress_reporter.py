@@ -35,6 +35,25 @@ def get_nvxl_map():
 
 def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=15):
     """Gửi request POST tới GHN với cơ chế tự động thử lại (Retry) khi gặp nghẽn mạng/timeout"""
+    # 1. Ưu tiên gọi qua GHN Browser Bridge (Ký reqsig ECDSA P-256 tự động chuẩn xác 100%)
+    try:
+        from ghn_bridge import get_ghn_client
+        client = get_ghn_client()
+        warehouse_id = headers.get("x-warehouseid") or headers.get("X-WarehouseId")
+        data = client.post(url, payload, warehouse_id=warehouse_id, timeout=timeout)
+        if data:
+            code = data.get("code")
+            err = data.get("error")
+            err_code = data.get("errorCode")
+            is_success = (code in [0, 200, "0", "200", None]) and (not err) and (err_code in [0, "0", None])
+            if is_success:
+                return data
+            else:
+                print(f"  GHN Bridge trả mã code={code}: {data.get('message')}")
+    except Exception as bridge_err:
+        print(f"  [GHN Bridge Warning]: {bridge_err}")
+
+    # 2. Fallback sang requests thông thường
     for attempt in range(max_retries):
         try:
             r = requests.post(url, headers=headers, json=payload, timeout=timeout)
@@ -437,14 +456,29 @@ def main():
         if tot_orders == 0 and not is_force:
             print("⛔ [HUỶ GỬI] Toàn bộ 4 kho MT01 đều ghi nhận 0 đơn. Có thể do nghẽn mạng GHN hoặc API gián đoạn.")
             print("👉 Đã chủ động hủy lệnh gửi tin nhắn 0/0 lên Telegram để bảo vệ tính chuẩn xác của hệ thống!")
+            try:
+                from ghn_bridge import get_ghn_client
+                get_ghn_client().close()
+            except:
+                pass
             sys.exit(1)
 
         print("🚀 Đang tiến hành gửi lên nhóm Telegram Miền Tây 01 (Chủ đề Báo Cáo)...")
         success = send_telegram_alert(msg)
+        try:
+            from ghn_bridge import get_ghn_client
+            get_ghn_client().close()
+        except:
+            pass
         if not success:
             sys.exit(1)
     else:
         print("💡 Chế độ Dry-Run (chưa gửi). Dùng cờ: --send để gửi thực tế.")
+        try:
+            from ghn_bridge import get_ghn_client
+            get_ghn_client().close()
+        except:
+            pass
 
 if __name__ == "__main__":
     main()
