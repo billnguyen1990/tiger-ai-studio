@@ -21,7 +21,7 @@ except Exception:
 # ⚙️ CẤU HÌNH DỮ LIỆU & ĐƯỜNG DẪN
 # =============================================================================
 
-LOOKER_URL = "https://lookerstudio.google.com/u/0/reporting/24e3b6f7-8f28-4f42-bc94-fda815a0c64f/page/p_m3rsgqzjgd"
+LOOKER_URL = "https://datastudio.google.com/u/0/reporting/24e3b6f7-8f28-4f42-bc94-fda815a0c64f/page/p_m3rsgqzjgd"
 LOOKER_TAB_NAME = "1. B2B"
 
 MASTER_SHEET_URL = "https://docs.google.com/spreadsheets/d/1m2INwSknlsd9zaGXMinPqbui26tGBEa1kRLrTcYhNiI/edit?gid=0#gid=0"
