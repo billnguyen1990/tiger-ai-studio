@@ -1,0 +1,59 @@
+{
+  "date_str": "19/11/2026",
+  "time_str": "19:41",
+  "timestamp_iso": "2026-11-19T19:41:39.536418+07:00",
+  "hubs": {
+    "21088000": {
+      "hub_name": "Cái Răng",
+      "nvxl_name": "Công Bằng",
+      "nvxl_tag": "@CONGBANGCAIRANGCANTHO",
+      "total_orders": 0,
+      "total_dang_giao": 0,
+      "total_gtc": 0,
+      "total_gtb": 0,
+      "progress_pct": 0.0,
+      "gtc_rate": 0.0,
+      "gtb_details": [],
+      "timelines": []
+    },
+    "21985000": {
+      "hub_name": "Bình Thủy",
+      "nvxl_name": "Nguyễn Phước Bảo Toàn",
+      "nvxl_tag": "@Nguyen_Toan",
+      "total_orders": 0,
+      "total_dang_giao": 0,
+      "total_gtc": 0,
+      "total_gtb": 0,
+      "progress_pct": 0.0,
+      "gtc_rate": 0.0,
+      "gtb_details": [],
+      "timelines": []
+    },
+    "22862000": {
+      "hub_name": "Vị Thanh",
+      "nvxl_name": "Huỳnh Diệp Đức Trung",
+      "nvxl_tag": "@DUCTRUNG17TUOI",
+      "total_orders": 0,
+      "total_dang_giao": 0,
+      "total_gtc": 0,
+      "total_gtb": 0,
+      "progress_pct": 0.0,
+      "gtc_rate": 0.0,
+      "gtb_details": [],
+      "timelines": []
+    },
+    "22917000": {
+      "hub_name": "Ô Môn",
+      "nvxl_name": "Trần Trọng Bằng",
+      "nvxl_tag": "@pinca0602",
+      "total_orders": 0,
+      "total_dang_giao": 0,
+      "total_gtc": 0,
+      "total_gtb": 0,
+      "progress_pct": 0.0,
+      "gtc_rate": 0.0,
+      "gtb_details": [],
+      "timelines": []
+    }
+  }
+}

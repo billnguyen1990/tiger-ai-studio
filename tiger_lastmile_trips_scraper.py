@@ -86,6 +86,48 @@ COLUMNS_36 = [
     "transitOutCount", "updatedCount", "needToScan", "scanned"
 ]
 
+def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=25):
+    """Gửi request POST tới GHN với cơ chế tự động thử lại (Retry) & Tự động ký chữ ký số reqsig ECDSA P-256"""
+    # 1. Ưu tiên gọi qua GHN Browser Bridge (Ký reqsig ECDSA P-256 tự động chuẩn xác 100%)
+    try:
+        from ghn_bridge import get_ghn_client
+        client = get_ghn_client()
+        warehouse_id = headers.get("x-warehouseid") or headers.get("X-WarehouseId")
+        data = client.post(url, payload, warehouse_id=warehouse_id, timeout=timeout)
+        if data:
+            code = data.get("code")
+            err = data.get("error")
+            err_code = data.get("errorCode")
+            is_success = (code in [0, 200, "0", "200", None]) and (not err) and (err_code in [0, "0", None])
+            if is_success:
+                return data
+            else:
+                print(f"  GHN Bridge trả mã code={code}: {data.get('message')}")
+    except Exception as bridge_err:
+        pass
+
+    # 2. Fallback sang requests thông thường
+    for attempt in range(1, max_retries + 1):
+        try:
+            res = requests.post(url, headers=headers, json=payload, timeout=timeout)
+            if res.status_code == 200:
+                data = res.json()
+                code = data.get("code")
+                err = data.get("error")
+                err_code = data.get("errorCode")
+                is_success = (code in [0, 200, "0", "200", None]) and (not err) and (err_code in [0, "0", None])
+                if is_success:
+                    return data
+                else:
+                    print(f"  [Lần {attempt}/{max_retries}] GHN trả mã lỗi code={code}: {data.get('message')}")
+            else:
+                print(f"  ⚠️ Lần {attempt}/{max_retries}: Lỗi HTTP {res.status_code}")
+        except Exception as e:
+            print(f"  ⚠️ Lần {attempt}/{max_retries}: Lỗi kết nối API: {e}")
+        if attempt < max_retries:
+            time.sleep(2)
+    return None
+
 def load_headers():
     if not os.path.exists(HEADERS_FILE):
         raise FileNotFoundError(f"Không tìm thấy file {HEADERS_FILE}")
@@ -158,24 +200,15 @@ def scrape_region_trips(region_key, target_date=None, send_to_sheet=True, send_t
             "limit": 100
         }
 
-        for attempt in range(1, 4):
-            try:
-                res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=25)
-                if res.status_code == 200:
-                    data = res.json().get("data", []) or []
-                    for t in data:
-                        c_date = t.get("createDateIndex")
-                        s_date = t.get("startDateIndex")
-                        e_date = t.get("endDateIndex")
-                        if c_date == date_int or s_date == date_int or e_date == date_int:
-                            hub_trips.append(t)
-                    break
-                else:
-                    print(f"⚠️ Lần {attempt}/3: Lỗi HTTP {res.status_code} khi cào kho {hname}")
-            except Exception as e:
-                print(f"⚠️ Lần {attempt}/3: Lỗi kết nối API kho {hname}: {e}")
-            if attempt < 3:
-                time.sleep(3)
+        res_data = fetch_ghn_post(URL_TRIPS, headers, payload, max_retries=3, timeout=25)
+        if res_data:
+            data = res_data.get("data", []) or []
+            for t in data:
+                c_date = t.get("createDateIndex")
+                s_date = t.get("startDateIndex")
+                e_date = t.get("endDateIndex")
+                if c_date == date_int or s_date == date_int or e_date == date_int:
+                    hub_trips.append(t)
 
         hub_stats[hname] = len(hub_trips)
         raw_trips.extend(hub_trips)
@@ -194,21 +227,12 @@ def scrape_region_trips(region_key, target_date=None, send_to_sheet=True, send_t
         batch_size = 50
         for i in range(0, len(all_codes), batch_size):
             chunk = all_codes[i:i + batch_size]
-            for attempt in range(1, 4):
-                try:
-                    res_prof = requests.post(URL_PROFILE, headers=headers, json={"tripCodes": chunk}, timeout=25)
-                    if res_prof.status_code == 200:
-                        for p in res_prof.json().get("data", []) or []:
-                            code = p.get("tripCode")
-                            if code:
-                                profile_map[code] = p
-                        break
-                    else:
-                        print(f"⚠️ Lần {attempt}/3: Lỗi HTTP {res_prof.status_code} get-trip-profile batch {i}")
-                except Exception as e:
-                    print(f"⚠️ Lần {attempt}/3: Lỗi get-trip-profile batch {i}: {e}")
-                if attempt < 3:
-                    time.sleep(3)
+            res_prof = fetch_ghn_post(URL_PROFILE, headers, {"tripCodes": chunk}, max_retries=3, timeout=25)
+            if res_prof:
+                for p in res_prof.get("data", []) or []:
+                    code = p.get("tripCode")
+                    if code:
+                        profile_map[code] = p
 
     # Ghép dữ liệu chuẩn 36 cột
     all_rows = []
@@ -349,4 +373,11 @@ if __name__ == "__main__":
         except:
             pass
 
-    run_all_regions(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg, selected_regions=target_regions)
+    try:
+        run_all_regions(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg, selected_regions=target_regions)
+    finally:
+        try:
+            from ghn_bridge import get_ghn_client
+            get_ghn_client().close()
+        except:
+            pass

@@ -1,0 +1,967 @@
+{
+  "date_str": "19/11/2026",
+  "time_str": "19:44",
+  "timestamp_iso": "2026-11-19T19:44:29.253223+07:00",
+  "hubs": {
+    "21088000": {
+      "hub_name": "Cái Răng",
+      "nvxl_name": "Công Bằng",
+      "nvxl_tag": "@CONGBANGCAIRANGCANTHO",
+      "total_orders": 322,
+      "total_dang_giao": 0,
+      "total_gtc": 286,
+      "total_gtb": 36,
+      "progress_pct": 100.0,
+      "gtc_rate": 88.8,
+      "gtb_details": [
+        {
+          "order_code": "GYE4LDE7",
+          "driver_name": "Nguyễn Chí Linh",
+          "trip_code": "26B21088000KGQA62",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4TEBL",
+          "driver_name": "Nguyễn Chí Linh",
+          "trip_code": "26B21088000KGQA62",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWP8EF",
+          "driver_name": "Nguyễn Văn Được Em",
+          "trip_code": "26B21088000PJHZ65",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4B74K",
+          "driver_name": "Nguyễn Văn Được Em",
+          "trip_code": "26B21088000PJHZ65",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3UW44",
+          "driver_name": "Nguyễn Văn Được Em",
+          "trip_code": "26B21088000PJHZ65",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETFCHA",
+          "driver_name": "Ngô Hữu Liêm",
+          "trip_code": "26B21088000RLDN64",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3RDL7",
+          "driver_name": "Ngô Hữu Liêm",
+          "trip_code": "26B21088000RLDN64",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3MVPC",
+          "driver_name": "Ngô Hữu Liêm",
+          "trip_code": "26B21088000RLDN64",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYET67KX",
+          "driver_name": "Ngô Hữu Liêm",
+          "trip_code": "26B21088000RLDN64",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYENRC8H",
+          "driver_name": "Nguyễn Tấn Thành",
+          "trip_code": "26B21088000LKTZ63",
+          "fail_reason": "Người nhận từ chối nhận do không có tiền",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKAGRX",
+          "driver_name": "Nguyễn Tấn Thành",
+          "trip_code": "26B21088000LKTZ63",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKYEGH",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3L8EC",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3LXM7",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Người nhận từ chối nhận do sai sản phẩm",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE446CB",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Người nhận báo không đặt hàng",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWGBBA",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3NBVC",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3X94B",
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE47YAG",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80280301415",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4H4KY",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKTEAG",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4PDUF",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETUKAN",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETUWTX",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEW8ANM",
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWYULH",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Người nhận từ chối nhận do không có tiền",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4XMHP",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKXVVF",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Người nhận từ chối nhận do không có tiền",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEBXABN",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEK33B6",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4KDR7",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE44WVE",
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETNADU",
+          "driver_name": "Phan Ngọc Hải",
+          "trip_code": "26B21088000NADL57",
+          "fail_reason": "Người nhận từ chối nhận do không có tiền",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETCTH4",
+          "driver_name": "Phan Ngọc Hải",
+          "trip_code": "26B21088000NADL57",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80947471516",
+          "driver_name": "Phan Ngọc Hải",
+          "trip_code": "26B21088000NADL57",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        }
+      ],
+      "timelines": [
+        {
+          "driver_name": "Nguyễn Chí Linh",
+          "trip_code": "26B21088000KGQA62",
+          "total_orders": 55,
+          "done_count": 55,
+          "gtc": 53,
+          "gtb": 2,
+          "remaining": 0,
+          "start_time": "07:39",
+          "first_action": "09:16",
+          "last_action": "19:34",
+          "status_text": "Đang chạy"
+        },
+        {
+          "driver_name": "Nguyễn Văn Được Em",
+          "trip_code": "26B21088000PJHZ65",
+          "total_orders": 23,
+          "done_count": 23,
+          "gtc": 20,
+          "gtb": 3,
+          "remaining": 0,
+          "start_time": "08:09",
+          "first_action": "09:43",
+          "last_action": "14:52",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Ngô Hữu Liêm",
+          "trip_code": "26B21088000RLDN64",
+          "total_orders": 45,
+          "done_count": 45,
+          "gtc": 41,
+          "gtb": 4,
+          "remaining": 0,
+          "start_time": "07:44",
+          "first_action": "08:49",
+          "last_action": "17:48",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn Tấn Thành",
+          "trip_code": "26B21088000LKTZ63",
+          "total_orders": 21,
+          "done_count": 21,
+          "gtc": 19,
+          "gtb": 2,
+          "remaining": 0,
+          "start_time": "08:10",
+          "first_action": "08:26",
+          "last_action": "17:27",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Lê Hồng Tú",
+          "trip_code": "26B21088000KQZ461",
+          "total_orders": 44,
+          "done_count": 44,
+          "gtc": 37,
+          "gtb": 7,
+          "remaining": 0,
+          "start_time": "08:05",
+          "first_action": "09:01",
+          "last_action": "18:46",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn Quốc Hưng",
+          "trip_code": "26B21088000DLRZ60",
+          "total_orders": 51,
+          "done_count": 51,
+          "gtc": 43,
+          "gtb": 8,
+          "remaining": 0,
+          "start_time": "07:40",
+          "first_action": "-",
+          "last_action": "-",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn Hải Đông",
+          "trip_code": "26B21088000RRQF58",
+          "total_orders": 47,
+          "done_count": 47,
+          "gtc": 40,
+          "gtb": 7,
+          "remaining": 0,
+          "start_time": "07:35",
+          "first_action": "-",
+          "last_action": "-",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Phan Ngọc Hải",
+          "trip_code": "26B21088000NADL57",
+          "total_orders": 36,
+          "done_count": 36,
+          "gtc": 33,
+          "gtb": 3,
+          "remaining": 0,
+          "start_time": "07:34",
+          "first_action": "-",
+          "last_action": "-",
+          "status_text": "Hoàn tất"
+        }
+      ]
+    },
+    "21985000": {
+      "hub_name": "Bình Thủy",
+      "nvxl_name": "Nguyễn Phước Bảo Toàn",
+      "nvxl_tag": "@Nguyen_Toan",
+      "total_orders": 207,
+      "total_dang_giao": 2,
+      "total_gtc": 186,
+      "total_gtb": 19,
+      "progress_pct": 99.0,
+      "gtc_rate": 90.7,
+      "gtb_details": [
+        {
+          "order_code": "GYE3R6K7",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE36XHT",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3XGRT",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4D6RQ",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3FRNV",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWQKFY",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETATUR",
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4KFEA",
+          "driver_name": "Võ Trung Hiếu",
+          "trip_code": "26B21985000H7QJ81",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE39B37",
+          "driver_name": "Võ Trung Hiếu",
+          "trip_code": "26B21985000H7QJ81",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWRHPX",
+          "driver_name": "Võ Trung Hiếu",
+          "trip_code": "26B21985000H7QJ81",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETD8VX",
+          "driver_name": "Võ Trung Hiếu",
+          "trip_code": "26B21985000H7QJ81",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKLEHM",
+          "driver_name": "Võ Trung Hiếu",
+          "trip_code": "26B21985000H7QJ81",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4MTV8",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3P9KR",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE43HNL",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE97KLA",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4C4PR",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE387HK",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Sai thông tin Địa chỉ người nhận",
+          "assign_count": 1
+        },
+        {
+          "order_code": "PP1611C1",
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        }
+      ],
+      "timelines": [
+        {
+          "driver_name": "Nguyễn Anh Bằng",
+          "trip_code": "26B21985000CX7R80",
+          "total_orders": 67,
+          "done_count": 65,
+          "gtc": 58,
+          "gtb": 7,
+          "remaining": 2,
+          "start_time": "08:44",
+          "first_action": "11:06",
+          "last_action": "19:07",
+          "status_text": "Đang chạy"
+        },
+        {
+          "driver_name": "Võ Trung Hiếu",
+          "trip_code": "26B21985000H7QJ81",
+          "total_orders": 44,
+          "done_count": 44,
+          "gtc": 39,
+          "gtb": 5,
+          "remaining": 0,
+          "start_time": "08:55",
+          "first_action": "11:03",
+          "last_action": "18:34",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn Thanh Tiền",
+          "trip_code": "26B21985000UQUM79",
+          "total_orders": 44,
+          "done_count": 44,
+          "gtc": 44,
+          "gtb": 0,
+          "remaining": 0,
+          "start_time": "08:39",
+          "first_action": "10:22",
+          "last_action": "18:21",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn Duy Khương",
+          "trip_code": "26B21985000DRDC78",
+          "total_orders": 52,
+          "done_count": 52,
+          "gtc": 45,
+          "gtb": 7,
+          "remaining": 0,
+          "start_time": "08:37",
+          "first_action": "09:27",
+          "last_action": "17:59",
+          "status_text": "Hoàn tất"
+        }
+      ]
+    },
+    "22862000": {
+      "hub_name": "Vị Thanh",
+      "nvxl_name": "Huỳnh Diệp Đức Trung",
+      "nvxl_tag": "@DUCTRUNG17TUOI",
+      "total_orders": 135,
+      "total_dang_giao": 0,
+      "total_gtc": 114,
+      "total_gtb": 21,
+      "progress_pct": 100.0,
+      "gtc_rate": 84.4,
+      "gtb_details": [
+        {
+          "order_code": "GYENK7FN",
+          "driver_name": "Huỳnh Diệp Đức Trung",
+          "trip_code": "26B22862000NWJV64",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3KP9L",
+          "driver_name": "Huỳnh Diệp Đức Trung",
+          "trip_code": "26B22862000NWJV64",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWEV8M",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3YLWG",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3YVEA",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETPAGD",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETLWE7",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4F4CR",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE398CF",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKKVV7",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3PFTE",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80565991513",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80004541317",
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWCE6G",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETUBQH",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3NFVL",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4RDE4",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE46UMF",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEP6YL4",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80655391417",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80411971513",
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        }
+      ],
+      "timelines": [
+        {
+          "driver_name": "Huỳnh Diệp Đức Trung",
+          "trip_code": "26B22862000NWJV64",
+          "total_orders": 21,
+          "done_count": 21,
+          "gtc": 19,
+          "gtb": 2,
+          "remaining": 0,
+          "start_time": "07:23",
+          "first_action": "09:08",
+          "last_action": "17:59",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn An Khang",
+          "trip_code": "26B22862000X48663",
+          "total_orders": 53,
+          "done_count": 53,
+          "gtc": 42,
+          "gtb": 11,
+          "remaining": 0,
+          "start_time": "07:17",
+          "first_action": "09:55",
+          "last_action": "18:21",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Nguyễn Thành Độ",
+          "trip_code": "26B22862000DBH462",
+          "total_orders": 61,
+          "done_count": 61,
+          "gtc": 53,
+          "gtb": 8,
+          "remaining": 0,
+          "start_time": "07:13",
+          "first_action": "08:28",
+          "last_action": "17:35",
+          "status_text": "Hoàn tất"
+        }
+      ]
+    },
+    "22917000": {
+      "hub_name": "Ô Môn",
+      "nvxl_name": "Trần Trọng Bằng",
+      "nvxl_tag": "@pinca0602",
+      "total_orders": 102,
+      "total_dang_giao": 0,
+      "total_gtc": 81,
+      "total_gtb": 21,
+      "progress_pct": 100.0,
+      "gtc_rate": 79.4,
+      "gtb_details": [
+        {
+          "order_code": "GYEW8BF3",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYET7Y8F",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3M9NN",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE474MT",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4K3PT",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEFW3A9",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80929611418",
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "fail_reason": "Người nhận báo không đặt hàng",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80529601514",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYETV79R",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEW8P3K",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWWRQ9",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEPGXXR",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEWEH87",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận hẹn lại ngày giao",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYEKF9LA",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE36W87",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE3BQUM",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE39HV9",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận đổi ý không mua nữa",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4N447",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Sai thông tin Địa chỉ người nhận",
+          "assign_count": 1
+        },
+        {
+          "order_code": "GYE4T4NF",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        },
+        {
+          "order_code": "NVS886091353",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Người nhận không nghe máy",
+          "assign_count": 1
+        },
+        {
+          "order_code": "VNGH80282011419",
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "fail_reason": "Không liên lạc được người nhận / Chặn số",
+          "assign_count": 1
+        }
+      ],
+      "timelines": [
+        {
+          "driver_name": "Nguyễn Chí Toàn",
+          "trip_code": "26B22917000GUL649",
+          "total_orders": 50,
+          "done_count": 50,
+          "gtc": 43,
+          "gtb": 7,
+          "remaining": 0,
+          "start_time": "07:29",
+          "first_action": "08:08",
+          "last_action": "16:49",
+          "status_text": "Hoàn tất"
+        },
+        {
+          "driver_name": "Đào Tiến Đạt",
+          "trip_code": "26B22917000T9HW48",
+          "total_orders": 52,
+          "done_count": 52,
+          "gtc": 38,
+          "gtb": 14,
+          "remaining": 0,
+          "start_time": "06:58",
+          "first_action": "10:57",
+          "last_action": "18:17",
+          "status_text": "Hoàn tất"
+        }
+      ]
+    }
+  }
+}
