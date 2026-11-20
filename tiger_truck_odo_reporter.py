@@ -114,6 +114,43 @@ def is_valid_vehicle(plate: str, warehouse_id: str = "") -> tuple[bool, str]:
         
     return False, "Không hợp lệ"
 
+def fetch_ghn_post(url, headers, payload, max_retries=3, timeout=20):
+    """Gửi request POST tới GHN với cơ chế tự động thử lại (Retry) & Tự động ký chữ ký số reqsig ECDSA P-256"""
+    # 1. Ưu tiên gọi qua GHN Browser Bridge (Ký reqsig ECDSA P-256 tự động chuẩn xác 100%)
+    try:
+        from ghn_bridge import get_ghn_client
+        client = get_ghn_client()
+        warehouse_id = headers.get("x-warehouseid") or headers.get("X-WarehouseId")
+        data = client.post(url, payload, warehouse_id=warehouse_id, timeout=timeout)
+        if data:
+            code = data.get("code")
+            err = data.get("error")
+            err_code = data.get("errorCode")
+            is_success = (code in [0, 200, "0", "200", None]) and (not err) and (err_code in [0, "0", None])
+            if is_success:
+                return data
+            else:
+                print(f"  GHN Bridge trả mã code={code}: {data.get('message')}")
+    except Exception as bridge_err:
+        pass
+
+    # 2. Fallback sang requests thông thường
+    for attempt in range(1, max_retries + 1):
+        try:
+            res = requests.post(url, headers=headers, json=payload, timeout=timeout)
+            if res.status_code == 200:
+                data = res.json()
+                code = data.get("code")
+                err = data.get("error")
+                err_code = data.get("errorCode")
+                is_success = (code in [0, 200, "0", "200", None]) and (not err) and (err_code in [0, "0", None])
+                if is_success:
+                    return data
+            time.sleep(1.5 * attempt)
+        except Exception:
+            time.sleep(2.0 * attempt)
+    return None
+
 def load_headers():
     if not os.path.exists(HEADERS_FILE):
         raise FileNotFoundError(f"Không tìm thấy file {HEADERS_FILE}")
@@ -130,30 +167,23 @@ def _get_trip_detail_with_retry(code, wid, wname, date_display, headers, max_ret
     created_fmt = date_display
     success = False
 
-    for attempt in range(1, max_retries + 1):
-        try:
-            res_det = requests.post(URL_TRIP_DETAIL, headers=headers, json={"trip_code": code}, timeout=12)
-            if res_det.status_code == 200:
-                d_data = res_det.json().get("data") or {}
-                plate = (d_data.get("truckPlateNumber") or "").strip().upper()
-                driver_name = d_data.get("driverName") or ""
-                driver_id = str(d_data.get("driverId") or "")
-                
-                created_time_raw = d_data.get("createdTime") or d_data.get("date") or ""
-                if created_time_raw:
-                    try:
-                        dt = datetime.datetime.fromisoformat(created_time_raw.replace("Z", "+00:00"))
-                        dt_vn = dt + datetime.timedelta(hours=7)
-                        created_fmt = dt_vn.strftime("%d/%m/%Y - %H:%M:%S")
-                    except:
-                        created_fmt = created_time_raw
+    res_det = fetch_ghn_post(URL_TRIP_DETAIL, headers, {"trip_code": code}, max_retries=max_retries, timeout=12)
+    if res_det:
+        d_data = res_det.get("data") or {}
+        plate = (d_data.get("truckPlateNumber") or "").strip().upper()
+        driver_name = d_data.get("driverName") or ""
+        driver_id = str(d_data.get("driverId") or "")
+        
+        created_time_raw = d_data.get("createdTime") or d_data.get("date") or ""
+        if created_time_raw:
+            try:
+                dt = datetime.datetime.fromisoformat(created_time_raw.replace("Z", "+00:00"))
+                dt_vn = dt + datetime.timedelta(hours=7)
+                created_fmt = dt_vn.strftime("%d/%m/%Y - %H:%M:%S")
+            except:
+                created_fmt = created_time_raw
 
-                success = True
-                break
-            else:
-                time.sleep(2.0 * attempt)
-        except Exception:
-            time.sleep(2.5 * attempt)
+        success = True
 
     is_valid, v_type = is_valid_vehicle(plate, wid)
     nhan_vien = f"{driver_id} - {driver_name}".strip(" -")
@@ -259,28 +289,19 @@ def run_truck_odo_scraper(target_date=None, send_to_sheet=True, send_to_tg=True,
                 "limit": 100
             }
 
-            st_ok = False
-            for att in range(1, 4):
-                try:
-                    res = requests.post(URL_TRIPS, headers=headers, json=payload, timeout=20)
-                    if res.status_code == 200:
-                        data = res.json().get("data", []) or []
-                        for t in data:
-                            t_code = t.get("tripCode")
-                            if t_code and t_code not in hub_seen_codes:
-                                c_date = t.get("createDateIndex")
-                                s_date = t.get("startDateIndex")
-                                e_date = t.get("endDateIndex")
-                                if c_date == date_int or s_date == date_int or e_date == date_int:
-                                    hub_trips.append(t)
-                                    hub_seen_codes.add(t_code)
-                        st_ok = True
-                        break
-                    else:
-                        time.sleep(1.5)
-                except Exception:
-                    time.sleep(2.0)
-            if not st_ok:
+            res_data = fetch_ghn_post(URL_TRIPS, headers, payload, max_retries=3, timeout=20)
+            if res_data:
+                data = res_data.get("data", []) or []
+                for t in data:
+                    t_code = t.get("tripCode")
+                    if t_code and t_code not in hub_seen_codes:
+                        c_date = t.get("createDateIndex")
+                        s_date = t.get("startDateIndex")
+                        e_date = t.get("endDateIndex")
+                        if c_date == date_int or s_date == date_int or e_date == date_int:
+                            hub_trips.append(t)
+                            hub_seen_codes.add(t_code)
+            else:
                 fetch_ok = False
 
         # Nếu quét lần đầu mà kho bị lỗi mạng/rớt data -> Tự động đưa kho vào cuối hàng đợi để lát quét lại
@@ -528,4 +549,11 @@ if __name__ == "__main__":
         except:
             pass
 
-    run_truck_odo_scraper(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg, fast_mode=is_fast)
+    try:
+        run_truck_odo_scraper(target_date=custom_date, send_to_sheet=send_sheet, send_to_tg=send_tg, fast_mode=is_fast)
+    finally:
+        try:
+            from ghn_bridge import get_ghn_client
+            get_ghn_client().close()
+        except:
+            pass

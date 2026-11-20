@@ -31,10 +31,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 📦 Cài đặt thư viện requests
+      - name: 📦 Cài đặt thư viện dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
+          pip install requests playwright
+          playwright install --with-deps chromium
 
       - name: 🚀 Chạy cào ODO Xe Tải 365, Đồng Bộ Sheets & Gửi Telegram
         run: |
