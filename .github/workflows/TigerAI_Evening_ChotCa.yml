@@ -1,9 +1,10 @@
 name: "Tiger AI • Báo Cáo Chốt Ca Cuối Ngày MT01 (21h00 & 21h30)"
 
 on:
-  schedule:
-    # 21:00 VN = 14:00 UTC | 21:30 VN = 14:30 UTC hàng ngày
-    - cron: '0,30 14 * * *'
+# [GitHub Cron Disabled - Dispatched precisely by Render Cloud at 21:00 & 21:30 VN]
+# schedule cron của GitHub Actions thường xuyên bị kẹt queue từ 14:00 UTC tới 21:40 UTC (bắn nhầm 4:40 sáng)
+# schedule:
+#   - cron: '0,30 14 * * *'
   workflow_dispatch:
     inputs:
       slot:

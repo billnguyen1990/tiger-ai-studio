@@ -334,6 +334,19 @@ def main():
             slot = args[idx + 1].strip().lower()
 
     now = get_vietnam_now()
+
+    # 🛑 TIME-GATE GUARD: Chốt chặn an toàn chống bắn nhầm giờ do nghẽn hàng đợi Cloud
+    # Báo cáo chốt ca cuối ngày CHỈ ĐƯỢC PHÉP CHẠY trong khung giờ 20:45 - 23:00 tối VN.
+    # Nếu bị delay sang nửa đêm hoặc rạng sáng hôm sau (vd 04:40 sáng), LẬP TỨC DỪNG KHÔNG GỬI TELEGRAM!
+    if "--force" not in args and not (20 <= now.hour <= 23):
+        print("=" * 65)
+        print(f"🛑 [TIME-GATE ABORT] Giờ Việt Nam hiện tại: {now.strftime('%H:%M:%S (%d/%m/%Y)')}")
+        print("   Báo cáo chốt ca cuối ngày chỉ được phép chạy từ 20:45 đến 23:00 tối.")
+        print("   Phát hiện bị trễ/lệch khung giờ (do GitHub Actions queue delay),")
+        print("   -> TỰ ĐỘNG HỦY QUY TRÌNH & TUYỆT ĐỐI KHÔNG BẮN TELEGRAM!")
+        print("=" * 65)
+        return
+
     if not slot:
         # Tự động nhận diện mốc giờ dựa vào giờ thực tế Việt Nam nếu không truyền cờ --slot
         # Nếu đang trong khoảng từ 21:15 trở đi đến trước 22:00 -> Mốc 21h30

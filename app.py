@@ -5762,7 +5762,7 @@ try:
         
     scheduler = BackgroundScheduler(timezone=vn_tz)
 
-    def _job_runner(script_name):
+    def _job_runner(script_name, *extra_args):
         print(f"[CRON TRIGGER] Running {script_name}...", flush=True)
         is_cloud_env = (sys.platform != "win32") or (os.environ.get("RENDER") == "true")
         gh_token = os.environ.get("GITHUB_TOKEN") or ("ghp_" + "MH2DavxhnFOlhoNtBoOamop7bbNHUE4Mtl01")
@@ -5853,6 +5853,16 @@ try:
             except Exception as e:
                 print(f"[CRON TRIGGER] Error dispatching PDA progress to GitHub Actions: {e}", flush=True)
 
+        if script_name == "tiger_evening_reporter.py" and is_cloud_env:
+            try:
+                slot = extra_args[0] if extra_args else "21h"
+                dispatch_url = f"https://api.github.com/repos/{gh_repo}/actions/workflows/TigerAI_Evening_ChotCa.yml/dispatches"
+                res = requests.post(dispatch_url, headers=gh_headers, json={"ref": "main", "inputs": {"slot": slot}}, timeout=10)
+                print(f"[CRON TRIGGER] Evening Chot Ca {slot} dispatched to GitHub Actions: {res.status_code}", flush=True)
+                return
+            except Exception as e:
+                print(f"[CRON TRIGGER] Error dispatching Evening Chot Ca to GitHub Actions: {e}", flush=True)
+
         if script_name in ("tiger_cost_dashboard_service.py", "tiger_cost_sync_service.py"):
             try:
                 from tiger_cost_dashboard_service import build_cost_dashboard_matrix
@@ -5880,8 +5890,8 @@ try:
     scheduler.add_job(_job_runner, "cron", hour=18, minute=5, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h05")
     scheduler.add_job(_job_runner, "cron", hour=18, minute=20, args=["tiger_b2b_thongke_reporter.py"], id="b2b_report_18h20")
     scheduler.add_job(_job_runner, "cron", hour=20, minute=0, args=["tiger_indoor_cam_scheduler.py"], id="cam_indoor_20h00")
-    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py"], id="evening_21h00")
-    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py"], id="evening_21h30")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=0, args=["tiger_evening_reporter.py", "21h"], id="evening_21h00")
+    scheduler.add_job(_job_runner, "cron", hour=21, minute=30, args=["tiger_evening_reporter.py", "21h30"], id="evening_21h30")
     scheduler.add_job(_job_runner, "cron", hour=6, minute=30, args=["tiger_cost_dashboard_service.py"], id="cost_sync_06h30")
     scheduler.add_job(_job_runner, "cron", hour=12, minute=0, args=["tiger_cost_dashboard_service.py"], id="cost_sync_12h00")
     scheduler.add_job(_job_runner, "cron", hour=20, minute=30, args=["tiger_cost_dashboard_service.py"], id="cost_sync_20h30")
