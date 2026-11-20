@@ -17,6 +17,30 @@ TELEGRAM_MESSAGE_THREAD_ID = 2690
 
 URL_TRIPS = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-list-by-hub"
 
+def fetch_ghn_post(url, payload, headers, timeout=15):
+    """Gửi request POST tới GHN với cơ chế tự động ký chữ ký số reqsig ECDSA P-256 qua GHN Browser Bridge"""
+    try:
+        from ghn_bridge import get_ghn_client
+        client = get_ghn_client()
+        warehouse_id = headers.get("x-warehouseid") or headers.get("X-WarehouseId")
+        data = client.post(url, payload, warehouse_id=warehouse_id, timeout=timeout)
+        if data and (data.get("code") in [0, 200, "0", "200", None]) and not data.get("error"):
+            return data
+    except Exception:
+        pass
+
+    for attempt in range(2):
+        try:
+            res = requests.post(url, headers=headers, json=payload, timeout=timeout)
+            if res.status_code == 200:
+                data = res.json()
+                if (data.get("code") in [0, 200, "0", "200", None]) and not data.get("error"):
+                    return data
+        except Exception:
+            pass
+        time.sleep(1)
+    return None
+
 def get_headers():
     if not os.path.exists(HEADERS_FILE):
         raise FileNotFoundError(f"Không tìm thấy file {HEADERS_FILE}")
@@ -79,16 +103,11 @@ def run_assigned_audit(target_date=None):
                 "reverse": 1
             }
             trips = []
-            for attempt in range(2):
-                try:
-                    r = requests.post(URL_TRIPS, headers=h_headers, json=p, timeout=12).json()
-                    trips = r.get("data", []) or []
-                    break
-                except Exception as e:
-                    if attempt == 0:
-                        time.sleep(1)
-                    else:
-                        print(f"⚠️ Lỗi lấy chuyến status {st} kho {hname}: {e}")
+            res_data = fetch_ghn_post(URL_TRIPS, p, h_headers)
+            if res_data:
+                trips = res_data.get("data", []) or []
+            else:
+                print(f"⚠️ Không lấy được chuyến status {st} kho {hname}")
 
             for t in trips:
                 c_date = t.get("createDateIndex")
