@@ -912,14 +912,18 @@ def run_looker_export_pipeline(max_retries=3):
                 # 6. Chạy lọc -> Ketqua & ThongKe trên Google Sheet
                 print("\n[Bước 5 & 6] Kích hoạt Apps Script Lọc dữ liệu -> Ketqua & Tạo bảng thống kê -> ThongKe...")
                 run_filter_to_ketqua(master_page)
+                apps_script_ok = False
                 try:
                     run_thongke_and_wait_telegram_modal(master_page)
+                    apps_script_ok = True
                 except Exception as ex_tk:
                     print(f"  ⚠️ Lưu ý Apps Script ThongKe ({ex_tk}) -> Chuyển sang bước 8 tính trực tiếp từ tab Data mới nhất!")
 
                 # 8. Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))
-                if "--no-reporter" not in sys.argv:
-                    print("\n[Bước 8] Bắn ảnh báo cáo ThongKe sang Telegram (Topic 506 (📅 Đơn Tạo))...")
+                # CHỈ BẮN 1 BẢN DUY NHẤT: Nếu Bước 6 Apps Script đã gửi xong thì bỏ qua bước này để tránh bắn 2 lần vào room.
+                # Chỉ kích hoạt tiger_b2b_thongke_reporter dự phòng khi Bước 6 gặp sự cố.
+                if not apps_script_ok and "--no-reporter" not in sys.argv:
+                    print("\n[Bước 8] Apps Script chưa gửi được, kích hoạt tiger_b2b_thongke_reporter gửi dự phòng sang Telegram...")
                     try:
                         import subprocess
                         reporter_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tiger_b2b_thongke_reporter.py")
@@ -931,6 +935,8 @@ def run_looker_export_pipeline(max_retries=3):
                             print(f"  ⚠️ Stderr: {p_rep.stderr[:300]}")
                     except Exception as ex_rep:
                         print(f"  ⚠️ Lỗi khi chạy tiger_b2b_thongke_reporter: {ex_rep}")
+                else:
+                    print("\n[Bước 8] Báo cáo ThongKe đã được gửi tự động lên Telegram thành công -> Bỏ qua reporter để giữ DUY NHẤT 1 BÁO CÁO!")
 
                 total_elapsed = round(time.time() - start_total, 1)
                 print("\n=======================================================")
