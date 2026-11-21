@@ -19,7 +19,17 @@ URL_TRIPS = "https://nhanh-api.ghn.vn/api/lastmile/trip/get-trip-list-by-hub"
 URL_ITEMS = "https://nhanh-api.ghn.vn/api/lastmile/v2/trip/get-trip-items"
 
 def post_with_retry(url, headers, payload, max_retries=3, timeout=12):
-    """Gửi POST request tới GHN API với cơ chế tự động thử lại khi mạng chập chờn"""
+    """Gửi POST request tới GHN API với cơ chế tự động ký chữ ký số reqsig ECDSA P-256 qua GHN Browser Bridge"""
+    try:
+        from ghn_bridge import get_ghn_client
+        client = get_ghn_client()
+        warehouse_id = headers.get("x-warehouseid") or headers.get("X-WarehouseId")
+        data = client.post(url, payload, warehouse_id=warehouse_id, timeout=timeout)
+        if data and (data.get("code") in [0, 200, "0", "200", None]) and not data.get("error"):
+            return data
+    except Exception:
+        pass
+
     for attempt in range(1, max_retries + 1):
         try:
             r = requests.post(url, headers=headers, json=payload, timeout=timeout)
